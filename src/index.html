@@ -21,6 +21,8 @@
   --w2-sky-top:#6B6798; --w2-sky-bot:#E9B6A4; --w2-hill-far:#6F8C86; --w2-hill-near:#4A6B61; --w2-tree:#5C7D74; --w2-ground:#6A9A86; --w2-ground-edge:#95C7A8; --w2-ground-dot:#7FAE97; --w2-cloud:#A39BC9; --w2-ice:#CFE6EE; --w2-ice-ink:#8FB7C6; --w2-snail:#F0C9A2; --w2-snail-ink:#B98A5E;
   --font-display:'Fredoka','Nunito',system-ui,sans-serif;
   --font-body:'Nunito',system-ui,sans-serif;
+  /* notch, rounded corners and home bar of a phone */
+  --sa-t:env(safe-area-inset-top,0px); --sa-r:env(safe-area-inset-right,0px); --sa-b:env(safe-area-inset-bottom,0px); --sa-l:env(safe-area-inset-left,0px);
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -153,8 +155,23 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size
 .dash-mult.hot b{color:#FFE38A}
 .dash-mult.bump{animation:bump .4s cubic-bezier(.2,.9,.3,1.4)}
 .dash-hud::before{content:"";position:absolute;inset:0;background:linear-gradient(rgba(20,16,40,.3),transparent 90px),radial-gradient(ellipse 75% 70% at 50% 52%,transparent 62%,rgba(24,16,46,.32) 100%);pointer-events:none}
-/* phones held upright: the runner gets a tall stage, like the runners people know */
-@media (orientation: portrait) and (max-width: 700px){body.dash-tall .stage{aspect-ratio:auto;height:max(320px,calc(100dvh - 170px))}}
+/* phones held upright: the runners (Sternenbahn) fill the whole screen, the HUD floats on top */
+@media (orientation: portrait) and (max-width: 700px){
+  body.dash-tall{height:100%;overflow:hidden}
+  body.dash-tall .app{position:fixed;inset:0;max-width:none;padding:0;gap:0;display:block}
+  body.dash-tall .stage{position:absolute;inset:0;width:100%;height:100%;max-width:none;aspect-ratio:auto;border-radius:0;box-shadow:none}
+  body.dash-tall .hud{position:absolute;z-index:4;top:calc(6px + var(--sa-t));left:calc(10px + var(--sa-l));right:calc(10px + var(--sa-r));justify-content:flex-end;flex-wrap:nowrap;pointer-events:none}
+  body.dash-tall .hud-title{display:none}
+  body.dash-tall .hud-stats{flex-wrap:nowrap;gap:6px;pointer-events:auto}
+  body.dash-tall .hud .chip,body.dash-tall .hud .btn{font-size:13px;padding:4px 11px;background:color-mix(in srgb,var(--card) 80%,transparent);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+  body.dash-tall .run-top,body.dash-tall .dash-top{top:calc(46px + var(--sa-t));left:calc(12px + var(--sa-l));right:calc(12px + var(--sa-r))}
+  body.dash-tall .dash-letters{top:calc(80px + var(--sa-t));left:calc(12px + var(--sa-l))}
+  body.dash-tall .dash-ghost{top:calc(100px + var(--sa-t));right:calc(12px + var(--sa-r))}
+  body.dash-tall .dash-pow{left:calc(12px + var(--sa-l));bottom:calc(12px + var(--sa-b))}
+  body.dash-tall .hint{position:absolute;z-index:3;left:50%;top:calc(118px + var(--sa-t));width:max-content;max-width:calc(100vw - 40px);padding:6px 14px;border-radius:14px;background:color-mix(in srgb,var(--card) 90%,transparent);box-shadow:0 4px 14px rgba(31,28,43,.14);font-size:13px;line-height:1.35;pointer-events:none;opacity:0;transform:translateX(-50%)}
+  body.dash-tall .hint.show{animation:hintShow 3.6s ease 1.2s both}
+  body.dash-tall .hint:empty{display:none}
+}
 .dash-flash{position:absolute;inset:0;opacity:0;background:radial-gradient(circle at 50% 62%,var(--c,#fff) 0%,transparent 62%);mix-blend-mode:screen}
 .dash-flash.on{animation:dashFlash .5s ease-out}
 @keyframes dashFlash{0%{opacity:.85}100%{opacity:0}}
@@ -239,12 +256,12 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size
 .cine-title small{display:block;font-family:var(--font-body);font-weight:700;font-size:clamp(11px,1.8vw,15px);letter-spacing:.24em;text-transform:uppercase;text-shadow:0 2px 0 rgba(31,28,43,.55)}
 .cine-title strong{display:block;font-family:var(--font-display);font-size:clamp(38px,9vw,78px);line-height:1;letter-spacing:.02em;text-shadow:0 5px 0 #3a3850,0 10px 22px rgba(31,28,43,.35)}
 @keyframes titlePop{0%{opacity:0;transform:scale(1.5) rotate(-4deg)}12%{opacity:1;transform:scale(.94) rotate(1deg)}20%{transform:scale(1.03) rotate(0)}26%,80%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1.04)}}
-.cine-skip{position:absolute;right:14px;bottom:3.2%;color:rgba(255,255,255,.72);font-size:12px;font-style:normal;font-weight:700;opacity:0;transition:opacity .4s}
+.cine-skip{position:absolute;right:calc(14px + var(--sa-r));bottom:3.2%;color:rgba(255,255,255,.72);font-size:12px;font-style:normal;font-weight:700;opacity:0;transition:opacity .4s}
 .cine.bars .cine-skip.on{opacity:1}
 @media (prefers-reduced-motion: reduce){.cine-title.on{animation-duration:2.4s;animation-name:titleFade}@keyframes titleFade{0%,100%{opacity:0}15%,80%{opacity:1}}.cine-say{animation:none}}
 .stick{position:absolute;width:96px;height:96px;margin:-48px 0 0 -48px;border-radius:50%;border:2px solid color-mix(in srgb,var(--fg) 25%,transparent);background:color-mix(in srgb,var(--bg) 35%,transparent);pointer-events:none}
 .stick i{position:absolute;left:50%;top:50%;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;background:color-mix(in srgb,var(--accent) 70%,transparent)}
-.overlay{position:fixed;inset:0;z-index:5;display:flex;align-items:flex-start;justify-content:center;padding:calc(12px + env(safe-area-inset-top, 0px)) 12px calc(12px + env(safe-area-inset-bottom, 0px));overflow-y:auto;background:color-mix(in srgb,var(--bg) 55%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.overlay{position:fixed;inset:0;z-index:5;display:flex;align-items:flex-start;justify-content:center;padding:calc(12px + var(--sa-t)) 12px calc(12px + var(--sa-b));overflow-y:auto;background:color-mix(in srgb,var(--bg) 55%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .overlay.light{background:color-mix(in srgb,var(--bg) 25%,transparent)}
 /* result of a Sternenbahn run: the card sits at the bottom and the scene stays clear, so Mimo's show is visible */
 .overlay.scene{background:linear-gradient(to top,color-mix(in srgb,var(--bg) 55%,transparent),transparent 45%);backdrop-filter:none;-webkit-backdrop-filter:none;align-items:flex-end}
@@ -296,7 +313,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size
 .tile.wide svg{margin:0;width:28px;height:28px}
 .tile.wide .tw{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
 .tile.wide.alt{background:linear-gradient(120deg,color-mix(in srgb,var(--star) 22%,var(--bg)),color-mix(in srgb,var(--blush) 18%,var(--bg)))}
-.toast{position:fixed;left:50%;top:calc(10px + env(safe-area-inset-top, 0px));transform:translate(-50%,-160%);z-index:30;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 18px;box-shadow:0 10px 30px rgba(40,30,60,.18);display:flex;flex-direction:column;gap:2px;max-width:min(92vw,380px);text-align:center;transition:transform .32s cubic-bezier(.2,.9,.3,1.2);pointer-events:none}
+.toast{position:fixed;left:50%;top:calc(10px + var(--sa-t));transform:translate(-50%,-160%);z-index:30;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 18px;box-shadow:0 10px 30px rgba(40,30,60,.18);display:flex;flex-direction:column;gap:2px;max-width:min(92vw,380px);text-align:center;transition:transform .32s cubic-bezier(.2,.9,.3,1.2);pointer-events:none}
 .toast.show{transform:translate(-50%,0)}
 .toast b{font-family:var(--font-display);font-size:15px;font-weight:600}
 .toast span{font-size:13px;color:var(--muted);line-height:1.35}
@@ -408,22 +425,22 @@ input,textarea{-webkit-user-select:text;user-select:text}
   html,body{height:100%;overflow:hidden}
   .app{position:fixed;inset:0;max-width:none;padding:0;gap:0;display:block}
   .stage{position:absolute;inset:0;width:100%;height:100%;max-width:none;aspect-ratio:auto;border-radius:0;box-shadow:none}
-  .hud{position:absolute;z-index:4;top:calc(6px + env(safe-area-inset-top, 0px));left:calc(10px + env(safe-area-inset-left, 0px));right:calc(10px + env(safe-area-inset-right, 0px));justify-content:flex-end;flex-wrap:nowrap;pointer-events:none}
+  .hud{position:absolute;z-index:4;top:calc(6px + var(--sa-t));left:calc(10px + var(--sa-l));right:calc(10px + var(--sa-r));justify-content:flex-end;flex-wrap:nowrap;pointer-events:none}
   .hud-title{display:none}
   .hud-stats{flex-wrap:nowrap;gap:6px;pointer-events:auto}
   .hud .chip,.hud .btn{font-size:13px;padding:4px 11px;background:color-mix(in srgb,var(--card) 80%,transparent);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
   .hud .btn.warn{background:var(--accent-soft)}
   .chip.time{display:inline-flex}
-  .run-top,.dash-top{top:calc(46px + env(safe-area-inset-top, 0px));left:calc(12px + env(safe-area-inset-left, 0px));right:calc(12px + env(safe-area-inset-right, 0px))}
-  .dash-letters{top:calc(80px + env(safe-area-inset-top, 0px));left:calc(12px + env(safe-area-inset-left, 0px))}
-  .dash-ghost{top:calc(100px + env(safe-area-inset-top, 0px));right:calc(12px + env(safe-area-inset-right, 0px))}
-  .dash-pow{left:calc(12px + env(safe-area-inset-left, 0px));bottom:calc(12px + env(safe-area-inset-bottom, 0px))}
-  .boss-bar{top:calc(46px + env(safe-area-inset-top, 0px))}
-  .hint{position:absolute;z-index:3;left:50%;top:calc(46px + env(safe-area-inset-top, 0px));width:max-content;max-width:min(62vw,560px);padding:6px 14px;border-radius:14px;background:color-mix(in srgb,var(--card) 90%,transparent);box-shadow:0 4px 14px rgba(31,28,43,.14);font-size:13px;line-height:1.35;pointer-events:none;opacity:0;transform:translateX(-50%)}
+  .run-top,.dash-top{top:calc(46px + var(--sa-t));left:calc(12px + var(--sa-l));right:calc(12px + var(--sa-r))}
+  .dash-letters{top:calc(80px + var(--sa-t));left:calc(12px + var(--sa-l))}
+  .dash-ghost{top:calc(100px + var(--sa-t));right:calc(12px + var(--sa-r))}
+  .dash-pow{left:calc(12px + var(--sa-l));bottom:calc(12px + var(--sa-b))}
+  .boss-bar{top:calc(46px + var(--sa-t))}
+  .hint{position:absolute;z-index:3;left:50%;top:calc(46px + var(--sa-t));width:max-content;max-width:min(62vw,560px);padding:6px 14px;border-radius:14px;background:color-mix(in srgb,var(--card) 90%,transparent);box-shadow:0 4px 14px rgba(31,28,43,.14);font-size:13px;line-height:1.35;pointer-events:none;opacity:0;transform:translateX(-50%)}
   .hint.show{animation:hintShow 3.6s ease 1.2s both}
-  .app:has(#dashHud:not([hidden])) .hint,.app:has(#runHud:not([hidden])) .hint,.app:has(#bossBar:not([hidden])) .hint{top:calc(118px + env(safe-area-inset-top, 0px))}
+  .app:has(#dashHud:not([hidden])) .hint,.app:has(#runHud:not([hidden])) .hint,.app:has(#bossBar:not([hidden])) .hint{top:calc(118px + var(--sa-t))}
   .hint:empty{display:none}
-  .overlay{padding:calc(10px + env(safe-area-inset-top, 0px)) calc(12px + env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) calc(12px + env(safe-area-inset-left, 0px))}
+  .overlay{padding:calc(10px + var(--sa-t)) calc(12px + var(--sa-r)) calc(10px + var(--sa-b)) calc(12px + var(--sa-l))}
   .card{max-width:min(680px,100%);padding:14px 18px;gap:10px}
   .card h1{font-size:28px}
   .card h2{font-size:22px}
@@ -674,6 +691,8 @@ const JUMP = 690, BOUNCE = 1000, COYOTE = 0.10, BUFFER = 0.12, JUMP_CUT = 0.45;
 const CRUMBLE_HOLD = 0.55, CRUMBLE_FALL = 0.5, CRUMBLE_BACK = 2.5;
 const DEATH_TIME = 0.8, WIN_TIME = 1.1, INTRO_TIME = 1.9, WIPE_TIME = 0.7, HITSTOP = 0.09;
 const STEP = 1 / 120;
+// longest frame the 3D runner catches up on; a longer hitch (a phone turning) slows the run instead of jumping ahead
+const DASH_MAX_DT = 0.05;
 // Developer build: all levels, night path and bonus open, own save slot, no leaderboard writes.
 const DEV = false;
 const SAVE_KEY = DEV ? 'mimo-progress-dev' : 'mimo-progress-v2';
@@ -1200,6 +1219,47 @@ function applyWorldPalette() {
 setInterval(applyWorldPalette, 60000);
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readPalette);
 new MutationObserver(readPalette).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+// iOS 15 (as far as an iPhone 7 goes) has no color-mix(): there the page mixes those colors itself, for the current theme
+const colorMixFallback = (() => {
+  const native = window.CSS && CSS.supports && CSS.supports('color', 'color-mix(in srgb, red 50%, blue)');
+  if (native && !window.__mimoNoColorMix) return null;
+  const styles = [...document.querySelectorAll('style')].filter((s) => s.textContent.includes('color-mix('));
+  const sources = styles.map((s) => s.textContent);
+  const probe = document.createElement('i'); probe.style.display = 'none'; document.body.appendChild(probe);
+  const rgba = (c) => {
+    probe.style.color = ''; probe.style.color = c; if (!c || !probe.style.color) return null;
+    const m = getComputedStyle(probe).color.match(/[\d.]+/g);
+    return m && m.length >= 3 ? [+m[0], +m[1], +m[2], m.length > 3 ? +m[3] : 1] : null;
+  };
+  const splitTop = (s) => { const out = []; let d = 0, from = 0; for (let i = 0; i < s.length; i++) { if (s[i] === '(') d++; else if (s[i] === ')') d--; else if (s[i] === ',' && !d) { out.push(s.slice(from, i)); from = i + 1; } } out.push(s.slice(from)); return out; };
+  const side = (s) => {
+    const m = s.trim().match(/^(.*?)\s+([\d.]+)%$/), col = (m ? m[1] : s).trim(), v = col.match(/^var\((--[\w-]+)\)$/);
+    return { c: rgba(v ? getComputedStyle(document.documentElement).getPropertyValue(v[1]).trim() : col), p: m ? +m[2] / 100 : null };
+  };
+  // the same math as color-mix(in srgb, ...): premultiplied by alpha
+  const mix = (args) => {
+    const [space, A, B] = splitTop(args); if (!B || space.trim() !== 'in srgb') return null;
+    const a = side(A), b = side(B); if (!a.c || !b.c) return null;
+    let pa = a.p, pb = b.p; if (pa == null && pb == null) pa = pb = 0.5; else if (pa == null) pa = 1 - pb; else if (pb == null) pb = 1 - pa;
+    const al = a.c[3] * pa + b.c[3] * pb; if (al <= 0) return 'rgba(0,0,0,0)';
+    const ch = (i) => Math.round((a.c[i] * a.c[3] * pa + b.c[i] * b.c[3] * pb) / al);
+    return 'rgba(' + ch(0) + ',' + ch(1) + ',' + ch(2) + ',' + +al.toFixed(3) + ')';
+  };
+  const resolve = (text) => {
+    let out = '', i = 0;
+    for (;;) {
+      const at = text.indexOf('color-mix(', i); if (at < 0) return out + text.slice(i);
+      let d = 0, j = at + 9;
+      for (; j < text.length; j++) { if (text[j] === '(') d++; else if (text[j] === ')' && --d === 0) break; }
+      out += text.slice(i, at) + (mix(text.slice(at + 10, j)) || text.slice(at, j + 1)); i = j + 1;
+    }
+  };
+  const apply = () => styles.forEach((s, k) => { s.textContent = resolve(sources[k]); });
+  apply();
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', apply);
+  new MutationObserver(apply).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  return apply;
+})();
 const CONFETTI = () => [P.star, P.mush, P.toggleA, P.switchOn, P.mimo, P.leaf];
 
 // ---------- Save / load ----------
@@ -1886,14 +1946,16 @@ function applyTouches() {
   input.left = zones.includes('left'); input.right = zones.includes('right');
   const j = zones.includes('jump'); if (j !== input.jumpHeld) setKey('jump', j);
 }
-// Sternenbahn Abenteuer: swipe left, right, up or down; a short tap jumps. A long swipe can fire again.
+// Sternenbahn Abenteuer: swipe left, right, up or down; a short tap jumps.
+// A swipe counts as soon as the finger has moved a little, and one swipe is one move: lift the finger for the next.
 const swipes = new Map();
-const SWIPE_MIN = 26;
+const SWIPE_MIN = 16, TAP_MAX_MS = 300;
 function swipeMove(sw, e) {
+  if (sw.done) return;
   const dx = e.clientX - sw.x, dy = e.clientY - sw.y;
   if (Math.max(Math.abs(dx), Math.abs(dy)) < SWIPE_MIN) return;
   runAction(Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? 'left' : 'right') : dy < 0 ? 'jump' : 'down');
-  sw.done = true; sw.x = e.clientX; sw.y = e.clientY;
+  sw.done = true;
 }
 // 3D level: a floating stick appears where the left thumb lands, the right half jumps
 const stick = { id: null, ox: 0, oy: 0, el: $('stick') };
@@ -1921,7 +1983,7 @@ stage.addEventListener('pointerdown', (e) => {
   try { stage.setPointerCapture(e.pointerId); } catch (_) {}
 });
 stage.addEventListener('pointermove', (e) => { const sw = swipes.get(e.pointerId); if (sw) { swipeMove(sw, e); return; } if (e.pointerId === stick.id) { stickMove(e); return; } if (!touches.has(e.pointerId)) return; const z = touchZone(e); if (z !== 'jump' && touches.get(e.pointerId) !== 'jump') { touches.set(e.pointerId, z); applyTouches(); } });
-const touchEnd = (e) => { const sw = swipes.get(e.pointerId); if (sw) { swipes.delete(e.pointerId); if (!sw.done && e.type === 'pointerup' && performance.now() - sw.t < 350) runAction('jump'); return; } if (e.pointerId === stick.id) stickEnd(); if (touches.delete(e.pointerId)) applyTouches(); };
+const touchEnd = (e) => { const sw = swipes.get(e.pointerId); if (sw) { swipes.delete(e.pointerId); if (!sw.done && e.type === 'pointerup' && performance.now() - sw.t < TAP_MAX_MS) runAction('jump'); return; } if (e.pointerId === stick.id) stickEnd(); if (touches.delete(e.pointerId)) applyTouches(); };
 stage.addEventListener('pointerup', touchEnd); stage.addEventListener('pointercancel', touchEnd); stage.addEventListener('lostpointercapture', touchEnd);
 stage.addEventListener('contextmenu', (e) => e.preventDefault());
 // iOS Safari ignores preventDefault on pointer events for its own gestures (magnifier, double-tap zoom, page bounce);
@@ -2545,14 +2607,14 @@ async function startBonus() {
   try { runMode = window.Starway3D.create(runHost()); } catch (_) {
     runMode = null; goMenu(); hintEl.textContent = 'Dieser Browser kann die Sternenbahn leider nicht darstellen.'; return;
   }
-  window.__mimo.run = runMode; runHudLast = {}; runHudEl.hidden = false;
+  window.__mimo.run = runMode; runHudLast = {}; runHudEl.hidden = false; document.body.classList.add('dash-tall');
   hintEl.innerHTML = isTouchDevice() ? 'Links tippen: Spur wechseln · rechts tippen: springen' : '<b>← →</b> Spur wechseln · <b>Leertaste</b> springen · <b>E</b> piepen · <b>Esc</b> Pause';
   Music.start(); Music.duck(false);
 }
 function restartRun() { if (!runMode) { startBonus(); return; } hideOverlays(); releaseAll(); runHudLast = {}; runMode.restart(); }
 function stopRun() {
   if (runMode) { try { runMode.dispose(); } catch (_) { /* context already gone */ } runMode = null; }
-  runHudEl.hidden = true; runCount(null); runPrompt(null); runJudgeEl.classList.remove('on');
+  runHudEl.hidden = true; runCount(null); runPrompt(null); runJudgeEl.classList.remove('on'); document.body.classList.remove('dash-tall');
 }
 const bonusMedal = (pct) => (pct >= BONUS_GOLD ? 'gold' : pct >= BONUS_SILVER ? 'silver' : 'bronze');
 const MEDAL_RANK = { gold: 3, silver: 2, bronze: 1 };
@@ -3519,9 +3581,11 @@ function drawFallingIcicles() {
 function camTarget() {
   const L = G.L, p = G.p;
   const wW = L.w * T, wH = L.h * T;
-  let tx = p.x + p.w / 2 - VIEW_W / 2 + p.facing * 30;
+  // the camera frames the safe part of the screen; level edges may slide under the notch, Mimo never does
+  const safeW = VIEW_W - SAFE_L - SAFE_R, lo = -SAFE_L, hi = wW - VIEW_W + SAFE_R;
+  let tx = p.x + p.w / 2 - SAFE_L - safeW / 2 + p.facing * 30;
   let ty = p.y + p.h / 2 - VIEW_H * 0.56;
-  tx = wW <= VIEW_W ? (wW - VIEW_W) / 2 : Math.max(0, Math.min(wW - VIEW_W, tx));
+  tx = hi <= lo ? (lo + hi) / 2 : Math.max(lo, Math.min(hi, tx));
   ty = wH <= VIEW_H ? (wH - VIEW_H) / 2 : Math.max(0, Math.min(wH - VIEW_H, ty));
   return { x: tx, y: ty };
 }
@@ -4153,25 +4217,41 @@ function render() {
 // ---------- Sizing ----------
 // The stage is 5:3 on desktop. A phone held sideways makes it wider: then the view keeps its height and shows more to the sides.
 const BASE_VIEW_H = 384, HUD_ROW = 40;
-let HUD_PAD = 0;
+let HUD_PAD = 0, SAFE_L = 0, SAFE_R = 0, sizedFor = '';
+// reads the safe-area insets in CSS pixels
+const safeProbe = document.createElement('i');
+safeProbe.setAttribute('aria-hidden', 'true');
+safeProbe.style.cssText = 'position:fixed;left:0;top:0;width:0;height:0;visibility:hidden;pointer-events:none;padding:var(--sa-t) var(--sa-r) var(--sa-b) var(--sa-l)';
+document.body.appendChild(safeProbe);
 function resize() {
-  const rect = stage.getBoundingClientRect();
+  const rect = stage.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1);
+  const ps = getComputedStyle(safeProbe), sl = parseFloat(ps.paddingLeft) || 0, sr = parseFloat(ps.paddingRight) || 0;
+  // a turning phone reports its size several times: only a real change rebuilds the canvas
+  const key = [rect.width, rect.height, dpr, sl, sr, phoneWide.matches].join();
+  if (key === sizedFor) return;
+  sizedFor = key;
   const aspect = rect.width > 0 && rect.height > 0 ? rect.width / rect.height : 5 / 3;
   if (aspect > 5 / 3 + 0.02) { VIEW_H = BASE_VIEW_H; VIEW_W = Math.round(VIEW_H * aspect); }
   else { VIEW_W = rect.width < 560 ? 448 : 640; VIEW_H = Math.round(VIEW_W * 0.6); }
   // the floating HUD row covers the top of the stage on phones, the level title moves below it
   HUD_PAD = phoneWide.matches && rect.height > 0 ? HUD_ROW * VIEW_H / rect.height : 0;
-  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  // notch and rounded corners of a phone held sideways, in view units: the camera keeps Mimo out of them
+  const toView = rect.width > 0 ? VIEW_W / rect.width : 0;
+  SAFE_L = phoneWide.matches ? sl * toView : 0; SAFE_R = phoneWide.matches ? sr * toView : 0;
   canvas.width = Math.round(VIEW_W * dpr); canvas.height = Math.round(VIEW_H * dpr);
   if (G.L) snapCamera();
 }
 window.addEventListener('resize', resize);
+// the stage also changes size without a window resize (the runners upright fill the screen)
+if (window.ResizeObserver) new ResizeObserver(() => resize()).observe(stage);
 // some phones report the old size right at the turn, so measure again a moment later
 window.addEventListener('orientationchange', () => setTimeout(resize, 300));
 
 // ---------- Phone: fills the screen sideways, asks to turn upright 2D levels, keeps the screen awake ----------
 const phoneWide = window.matchMedia('(orientation: landscape) and (max-height: 540px)');
 const phoneTall = window.matchMedia('(orientation: portrait) and (max-width: 600px)');
+// the game covers the whole phone screen: sideways always, upright in the runners
+const phoneFull = () => phoneWide.matches || (phoneTall.matches && document.body.classList.contains('dash-tall'));
 phoneWide.addEventListener('change', resize);
 resize();
 const rotateEl = $('rotateHint');
@@ -4184,7 +4264,7 @@ $('btnPortrait').addEventListener('click', () => { allowPortrait = true; syncRot
 // each hint text pops up once per session; a restart or the same level again stays quiet
 const hintSeen = new Set();
 new MutationObserver(() => {
-  if (!phoneWide.matches) return;
+  if (!phoneFull()) return;
   const key = hintEl.textContent.trim();
   hintEl.classList.remove('show');
   if (!key || hintSeen.has(key)) return;
@@ -4233,6 +4313,11 @@ function frame(now) {
     if (runMode && (!G.overlay || G.overlay === 'win')) {
       try { runMode.update(dt); } catch (e) { console.error('Sternenbahn', e); goMenu(); hintEl.textContent = 'In der Sternenbahn ist ein Fehler passiert. Bitte starte sie noch einmal.'; }
     }
+    acc = 0;
+  } else if (G.mode === 'dash') {
+    // one update per frame, split into small steps: a fixed clock out of step with the screen made the run judder
+    const d = Math.min(dt, DASH_MAX_DT) * (progress.slow && G.state === 'play' ? 0.8 : 1), n = Math.max(1, Math.ceil(d / STEP));
+    for (let i = 0; i < n; i++) update(d / n);
     acc = 0;
   } else {
     const scale = progress.slow && G.state === 'play' ? 0.8 : 1;
@@ -4576,7 +4661,7 @@ function drawBubbles() {
     else { ax = b.anchor.x + (b.anchor.w || 0) / 2; ay = b.anchor.y - 8; }
     const pop = Math.min(1, b.life / 0.12), fade = Math.min(1, (b.max - b.life) / 0.25);
     const w = ctx.measureText(b.text).width + 14, h = 20;
-    const x = Math.max(G.cam.x + w / 2 + 4, Math.min(G.cam.x + VIEW_W - w / 2 - 4, ax)), y = ay - h / 2 - 8;
+    const x = Math.max(G.cam.x + SAFE_L + w / 2 + 4, Math.min(G.cam.x + VIEW_W - SAFE_R - w / 2 - 4, ax)), y = ay - h / 2 - 8;
     const tx = Math.max(x - w / 2 + 8, Math.min(x + w / 2 - 8, ax));
     ctx.save(); ctx.globalAlpha = fade;
     const k = 0.6 + 0.4 * pop; ctx.translate(tx, ay); ctx.scale(k, k); ctx.translate(-tx, -ay);

@@ -143,9 +143,124 @@ async function offline() {
   await browser.close();
 }
 
+async function startRunner(page) {
+  await page.waitForFunction(() => window.__mimo && !document.getElementById('ovMenu').hidden);
+  await page.evaluate(() => { window.__mimo.progress.dash = null; window.__mimo.startDash('course'); });
+  await page.waitForFunction(() => window.__mimo.dash, null, { timeout: 30000 });
+}
+
+// the Sternenbahn held upright fills the whole screen; one swipe is exactly one lane, and the lane change is quick
+async function runnerUpright() {
+  const browser = await webkit.launch();
+  for (const [name, vp] of [['iPhone 12 Pro', { width: 390, height: 844 }], ['iPhone 8', { width: 375, height: 667 }]]) {
+    const ctx = await browser.newContext({ ...iphone, viewport: vp, screen: vp });
+    const page = await ctx.newPage();
+    const errors = []; page.on('pageerror', (e) => errors.push(e.message));
+    await page.goto(URL0);
+    await startRunner(page);
+    await page.waitForTimeout(600);
+    const geo = await page.evaluate(() => {
+      const st = document.getElementById('stage').getBoundingClientRect(), cv = document.querySelector('canvas.run3d').getBoundingClientRect();
+      const hud = document.querySelector('.hud-stats').getBoundingClientRect(), top = document.querySelector('.dash-top').getBoundingClientRect();
+      return { stage: [Math.round(st.width), Math.round(st.height)], gl: [Math.round(cv.width), Math.round(cv.height)], hudRight: Math.round(innerWidth - hud.right), gap: Math.round(top.top - hud.bottom), scroll: document.scrollingElement.scrollHeight - innerHeight };
+    });
+    check(geo.stage[0] === vp.width && geo.stage[1] === vp.height && geo.gl[0] === vp.width && geo.gl[1] === vp.height, name + ' hochkant: Sternenbahn füllt den Bildschirm', JSON.stringify(geo));
+    check(geo.hudRight >= 8 && geo.gap >= 0 && geo.scroll <= 0, name + ' hochkant: Kopfzeile passt, nichts scrollt', JSON.stringify(geo));
+    await page.screenshot({ path: path.join(SHOTS, 'hoch-sternenbahn-' + vp.width + '.png') });
+    if (name === 'iPhone 12 Pro') {
+      await page.evaluate(() => window.__mimo.dash.dbg.skipIntro());
+      await page.waitForFunction(() => window.__mimo.dash.dbg.S.state === 'play', null, { timeout: 8000 });
+      // a long swipe to the right: 10 px is still nothing, 20 px moves one lane, the rest of the swipe adds nothing
+      const res = await page.evaluate(async () => {
+        const stage = document.getElementById('stage'), p = window.__mimo.dash.dbg.p, lane0 = p.lane;
+        const ev = (type, x) => stage.dispatchEvent(new PointerEvent(type, { pointerId: 7, pointerType: 'touch', isPrimary: true, clientX: x, clientY: 600, bubbles: true, cancelable: true }));
+        const frame = () => new Promise((r) => requestAnimationFrame(() => r()));
+        ev('pointerdown', 150); await frame();
+        ev('pointermove', 160); await frame(); await frame();
+        const afterTen = p.lane;
+        ev('pointermove', 170); await frame();
+        const t0 = performance.now();
+        for (const x of [200, 240, 280, 320, 360]) { ev('pointermove', x); await frame(); }
+        ev('pointerup', 360);
+        while (p.laneX !== p.lane && performance.now() - t0 < 1000) await frame();
+        return { lane0, afterTen, lane: p.lane, settleMs: Math.round(performance.now() - t0) };
+      });
+      check(res.afterTen === res.lane0, 'Wischen: kleine Bewegung löst noch nichts aus', JSON.stringify(res));
+      check(res.lane === res.lane0 + 1, 'Wischen: ein langer Wischer wechselt genau eine Spur', JSON.stringify(res));
+      check(res.settleMs <= 260, 'Wischen: Spurwechsel ist nach gut 0,15 s fertig', res.settleMs + ' ms');
+      // turning the phone: the picture keeps the right shape at once, the buffers follow once the size holds
+      await page.setViewportSize({ width: 844, height: 390 });
+      await page.waitForTimeout(500);
+      const turned = await page.evaluate(() => { const c = document.querySelector('canvas.run3d'), r = c.getBoundingClientRect(); return { css: [Math.round(r.width), Math.round(r.height)], buf: [c.width, c.height], aspect: +window.__mimo.dash.dbg.cam.aspect.toFixed(3) }; });
+      check(turned.css[0] === 844 && Math.abs(turned.buf[0] / turned.buf[1] - 844 / 390) < 0.01 && Math.abs(turned.aspect - 844 / 390) < 0.01, 'Drehen: Sternenbahn passt sich danach an', JSON.stringify(turned));
+    }
+    check(errors.length === 0, name + ': keine Skriptfehler', errors.join(' | '));
+    await ctx.close();
+  }
+  await browser.close();
+}
+
+// iPhone 12 Pro sideways: notch and rounded corners are 47 px on each side; Mimo must stay out of them
+async function notch() {
+  const browser = await webkit.launch();
+  const ctx = await browser.newContext({ ...iphone, viewport: { width: 844, height: 390 }, screen: { width: 844, height: 390 } });
+  const page = await ctx.newPage();
+  const errors = []; page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto(URL0);
+  await page.waitForFunction(() => window.__mimo && !document.getElementById('ovMenu').hidden);
+  await page.addStyleTag({ content: 'html:root{--sa-l:47px;--sa-r:47px;--sa-b:21px}' });
+  await page.evaluate(() => window.dispatchEvent(new Event('resize')));
+  await page.evaluate(() => window.__mimo.load(0));
+  await page.waitForTimeout(800);
+  const mimoX = () => page.evaluate(() => {
+    const G = window.__mimo.G, r = document.getElementById('stage').getBoundingClientRect(), k = r.width / document.getElementById('game').width * Math.min(2, devicePixelRatio || 1);
+    return { left: Math.round((G.p.x - G.cam.x) * k), right: Math.round(r.width - (G.p.x + G.p.w - G.cam.x) * k) };
+  });
+  const atStart = await mimoX();
+  // run into the left wall for a second
+  await page.evaluate(() => window.__mimo.setKey('left', true));
+  await page.waitForTimeout(1200);
+  const atWall = await mimoX();
+  await page.evaluate(() => window.__mimo.setKey('left', false));
+  await page.screenshot({ path: path.join(SHOTS, 'quer-aussparung.png') });
+  check(atStart.left >= 47 && atWall.left >= 47, 'Aussparung: Mimo bleibt links aus der Kamera-Aussparung', JSON.stringify({ atStart, atWall }));
+  check(errors.length === 0, 'keine Skriptfehler (Aussparung)', errors.join(' | '));
+  await browser.close();
+}
+
+// iPhone 7 and 8 (iOS 15) have no color-mix(): the page mixes the same colors itself
+async function oldIos() {
+  const browser = await webkit.launch();
+  const read = async (fallback) => {
+    const ctx = await browser.newContext({ ...iphone, viewport: { width: 667, height: 375 }, screen: { width: 667, height: 375 } });
+    if (fallback) await ctx.addInitScript(() => { window.__mimoNoColorMix = true; });
+    const page = await ctx.newPage();
+    await page.goto(URL0);
+    await page.waitForFunction(() => window.__mimo && !document.getElementById('ovMenu').hidden);
+    await page.waitForTimeout(300);
+    const out = await page.evaluate(() => {
+      const card = document.querySelector('#ovMenu .card').getBoundingClientRect();
+      return { overlay: getComputedStyle(document.getElementById('ovMenu')).backgroundColor, menuH: Math.round(card.height), vh: innerHeight };
+    });
+    if (fallback) await page.screenshot({ path: path.join(SHOTS, 'ios15-menu.png') });
+    await ctx.close();
+    return out;
+  };
+  const rgba = (s) => { const n = (s.match(/[\d.]+/g) || []).map(Number); return s.startsWith('color(') ? [n[0] * 255, n[1] * 255, n[2] * 255, n[3] ?? 1] : [n[0], n[1], n[2], n[3] ?? 1]; };
+  const native = await read(false), mixed = await read(true);
+  const a = rgba(native.overlay), b = rgba(mixed.overlay);
+  const same = a.every((v, i) => Math.abs(v - b[i]) <= (i === 3 ? 0.02 : 2));
+  check(same, 'iOS 15: Farben ohne color-mix() wie im neuen Safari', native.overlay + ' · ' + mixed.overlay);
+  check(native.menuH <= native.vh, 'iPhone 8 quer: Menü passt ohne Scrollen', JSON.stringify(native));
+  await browser.close();
+}
+
 try {
   await landscape();
   await portrait();
+  await runnerUpright();
+  await notch();
+  await oldIos();
   await offline();
 } finally {
   server.close();

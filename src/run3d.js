@@ -12,7 +12,7 @@
 
   // The game logic lives in track space: distance s along the ribbon, lane 0..2, height h above the tiles.
   const ROW = 2, LANE = 1.7, AHEAD = 72, BEHIND = 8;
-  const PH = { GRAV: 34, JUMP: 10.6, PAD: 17, DIVE: 24, SLIDE: 0.62, COYOTE: 0.1, BUFFER: 0.14, LANE_RATE: 15, CENTER: 0.45, SLIDE_CENTER: 0.25 };
+  const PH = { GRAV: 34, JUMP: 10.6, PAD: 17, DIVE: 24, SLIDE: 0.62, COYOTE: 0.1, BUFFER: 0.14, LANE_RATE: 15, LANE_TIME: 0.15, CENTER: 0.45, SLIDE_CENTER: 0.25 };
   const HIT = { slow: 0.55, recover: 1.3, invuln: 1.4, tumble: 0.6, freeze: 0.07 };
   const FALL = { drop: 0.5, lift: 0.95, grav: 0.55 };
   const BOOST = { time: 2.6, k: 1.45 }, MAGNET = { time: 9, reach: 11 };
@@ -126,6 +126,7 @@
   // The frame itself is rendered exactly as before; slow devices drop the glow, then resolution (QUALITY).
   const GLOW = { layer: 2, occ: 3, strength: 0.7 };
   // a phone capped at 30 fps (iOS Low Power Mode) only loses the glow; resolution drops only when frames get really slow
+  const RESIZE_SETTLE_MS = 180;
   const QUALITY = { slowMs: 25, verySlowMs: 38, holdS: 2.5, ratios: [2, 1.5, 1.25] };
   const START_ROWS = ['...', '...', '...', '...', '...', '.s.', '.s.', '.s.', '.s.', '...'];
   const SPACER = 2, PORTAL_PAD = 6, TAIL_ROWS = 10;
@@ -676,14 +677,14 @@
     function lanePos(F, laneF, h, out) { return out.copy(F.p).addScaledVector(F.r, (laneF - 1) * LANE).addScaledVector(F.u, h); }
 
     // ---------- State ----------
-    const p = { s: 3, v: 0, lane: 1, laneX: 1, h: 0, vh: 0, grounded: true, coyote: 0, buffer: 0, slide: 0, tumble: 0, invuln: 0, slowK: 1, boost: 0, magnet: 0, shield: false, flip: 0, flipV: 0, sq: 0, jig: 0, jigV: 0, walkT: 0, armUp: 0, blink: 2, moodT: 0, mood: null, fallFrom: null, fallTo: null, laneFrom: 1, stumbleT: 0, manual: false, fly: 0, trick: null, trickT: 0, trickDur: 1, jumps: 0, hopT: 0, lookT: 0, lookDur: 1, lookKind: '', lookCool: 5, dizzy: 0, stepSign: 1 };
+    const p = { s: 3, v: 0, lane: 1, laneX: 1, h: 0, vh: 0, grounded: true, coyote: 0, buffer: 0, slide: 0, tumble: 0, invuln: 0, slowK: 1, boost: 0, magnet: 0, shield: false, flip: 0, flipV: 0, sq: 0, jig: 0, jigV: 0, walkT: 0, armUp: 0, blink: 2, moodT: 0, mood: null, fallFrom: null, fallTo: null, laneFrom: 1, laneGoal: 1, laneFromX: 1, laneT: 1, stumbleT: 0, manual: false, fly: 0, trick: null, trickT: 0, trickDur: 1, jumps: 0, hopT: 0, lookT: 0, lookDur: 1, lookKind: '', lookCool: 5, dizzy: 0, stepSign: 1 };
     const S = { state: 'intro', t: 0, introT: 0, count: 3, score: 0, combo: 0, mult: 1, maxMult: 1, stars: 0, sparks: 0, hits: 0, falls: 0, hearts: UPG.hearts, time: 0, zone: 0, zoneShown: -1, freeze: 0, shake: 0, hudT: 0, reported: false, seen: new Set(), visDt: 0, fallT: 0, endT: 0, slowmo: 1 };
     let worldT = 0;
     const particles = [];
     const flyers = [];
     function resetState(mode, skipIntro) {
       opts.mode = mode || opts.mode;
-      Object.assign(p, { s: 3, v: 0, lane: 1, laneX: 1, h: 0, vh: 0, grounded: true, coyote: 0, buffer: 0, slide: 0, tumble: 0, invuln: 0, slowK: 1, boost: 0, magnet: 0, shield: false, flip: 0, flipV: 0, sq: 0, jig: 0, jigV: 0, moodT: 0, mood: null, stumbleT: 0, manual: false, fly: 0, trick: null, trickT: 0, jumps: 0, hopT: 0, lookT: 0, lookCool: 5, dizzy: 0 });
+      Object.assign(p, { s: 3, v: 0, lane: 1, laneX: 1, laneGoal: 1, laneFromX: 1, laneT: 1, h: 0, vh: 0, grounded: true, coyote: 0, buffer: 0, slide: 0, tumble: 0, invuln: 0, slowK: 1, boost: 0, magnet: 0, shield: false, flip: 0, flipV: 0, sq: 0, jig: 0, jigV: 0, moodT: 0, mood: null, stumbleT: 0, manual: false, fly: 0, trick: null, trickT: 0, jumps: 0, hopT: 0, lookT: 0, lookCool: 5, dizzy: 0 });
       Object.assign(S, { state: skipIntro ? 'count' : 'intro', t: 0, introT: 0, count: 3, score: 0, combo: 0, mult: 1, maxMult: 1, stars: 0, sparks: 0, hits: 0, falls: 0, hearts: UPG.hearts, time: 0, zone: 0, zoneShown: -1, freeze: 0, shake: 0, hudT: 0, reported: false, fallT: 0, endT: 0, slowmo: 1, lastM: 3, zoneMark: 0, recDone: false, letters: 0, letterMask: 0, letterOut: null, flyMult: null });
       p.shield = UPG.shield;
       particles.length = 0; flyers.length = 0;
@@ -860,7 +861,10 @@
       p.v = damp(p.v, target * p.slowK * (p.boost > 0 ? BOOST.k : 1), p.boost > 0 ? 6 : 3, dt);
       p.s += p.v * dt;
       const acts = input.actions || []; while (acts.length) act(acts.shift());
-      p.laneX = damp(p.laneX, p.lane, PH.LANE_RATE, dt); if (Math.abs(p.laneX - p.lane) < 0.002) p.laneX = p.lane;
+      // a lane change is a short ease-out (fast off the mark, lands exactly), restarted from wherever Mimo is when the lane changes again
+      if (p.lane !== p.laneGoal) { p.laneGoal = p.lane; p.laneFromX = p.laneX; p.laneT = 0; }
+      if (p.laneT < 1) { p.laneT = Math.min(1, p.laneT + dt / PH.LANE_TIME); p.laneX = lerp(p.laneFromX, p.lane, 1 - Math.pow(1 - p.laneT, 3)); }
+      else if (p.laneX !== p.lane) { p.laneX = damp(p.laneX, p.lane, PH.LANE_RATE, dt); if (Math.abs(p.laneX - p.lane) < 0.002) p.laneX = p.lane; }
       p.slide = Math.max(0, p.slide - dt); p.buffer = Math.max(0, p.buffer - dt);
       p.tumble = Math.max(0, p.tumble - dt); p.invuln = Math.max(0, p.invuln - dt); p.stumbleT = Math.max(0, p.stumbleT - dt);
       if (p.fly > 0) { stepFly(dt); return; }
@@ -1363,7 +1367,9 @@
       lanePos(FM, p.laneX, p.h, r.position);
       // face forward along the ribbon and lean into lane changes
       r.quaternion.copy(FM.q).multiply(qPi);
-      const turn = clamp((p.lane - p.laneX) * -0.9, -0.5, 0.5);
+      // the lean follows the lane change through a quick spring, so the body swings in instead of snapping
+      mimo.lean = damp(mimo.lean || 0, p.lane - p.laneX, 24, dt);
+      const turn = clamp(mimo.lean * -0.9, -0.5, 0.5);
       if (turn) r.quaternion.multiply(qYaw.setFromAxisAngle(Y_AX, turn));
       // whole-body turns: tumble after a bump, a flip on spring pads, a trick on every normal jump
       let rotAx = null, rotA = 0;
@@ -1400,7 +1406,7 @@
       }
       const w = Math.sin(p.walkT), runK = run ? 1 : 0, hopK = p.hopT > 0 && p.grounded ? Math.sin(Math.PI * (1 - p.hopT / MOVE.hop)) : 0;
       mimo.body.position.y = LEG + Math.abs(w) * 0.085 * runK + hopK * 0.2 - slideK * 0.06;
-      mimo.body.rotation.z = w * 0.07 * runK + (p.lane - p.laneX) * 0.45;
+      mimo.body.rotation.z = w * 0.07 * runK + mimo.lean * 0.45;
       mimo.body.rotation.x = p.boost > 0 ? 0.42 : sliding ? -0.85 * slideK : air ? clamp(-p.vh * 0.01, -0.15, 0.15) + tuck * 0.35 : 0.16;
       mimo.body.rotation.y = lookEnv * 2.7;
       p.armUp = damp(p.armUp, air ? 1 : 0, 10, dt);
@@ -1591,11 +1597,18 @@
       host.onHud({ mode: opts.mode, score: S.score, mult: S.mult, comboK: S.mult >= MULT_MAX ? 1 : (S.combo % COMBO_STEP) / COMBO_STEP, stars: S.stars, total: STAR_TOTAL, hearts: S.hearts, maxHearts: UPG.hearts, dist: Math.round(p.s), progress: prog, letters: S.letterMask, fly: p.fly > 0, ghost: S.ghostDelta == null ? null : Math.round(S.ghostDelta * 10) / 10, daily: !!opts.daily, zones: zoneStart.map((r) => (finishRow > 0 ? (r * ROW) / rowS(finishRow) : 0)), boost: p.boost / UPG.boost, magnet: p.magnet / UPG.magnet, shield: p.shield, state: S.state });
     }
 
+    // while the phone turns the size changes from frame to frame: the camera follows at once (cheap), the buffers once the size holds
+    const resizing = { w: 0, h: 0, t: 0, done: false };
     function resize() {
       const w = canvas.clientWidth || host.anchor.clientWidth, h = canvas.clientHeight || host.anchor.clientHeight;
       if (!w || !h) return;
       const pr = renderer.getPixelRatio();
-      if (canvas.width !== Math.round(w * pr) || canvas.height !== Math.round(h * pr)) { renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }
+      if (Math.abs(cam.aspect - w / h) > 1e-4) { cam.aspect = w / h; cam.updateProjectionMatrix(); }
+      if (canvas.width !== Math.round(w * pr) || canvas.height !== Math.round(h * pr)) {
+        const now = performance.now();
+        if (resizing.w !== w || resizing.h !== h) Object.assign(resizing, { w, h, t: now });
+        if (!resizing.done || now - resizing.t >= RESIZE_SETTLE_MS) { renderer.setSize(w, h, false); resizing.done = true; }
+      }
       scaleU.value = (canvas.height || h * pr) / (2 * Math.tan((cam.fov * Math.PI) / 360));
     }
     // ---------- Glow pass ----------

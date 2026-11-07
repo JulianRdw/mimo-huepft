@@ -488,11 +488,18 @@
       const avg = perf.sum / perf.n; perf.sum = 0; perf.n = 0;
       if (avg > 21 && perf.pr > 1) { perf.pr = Math.max(1, perf.pr - 0.25); renderer.setPixelRatio(perf.pr); }
     }
+    // while the phone turns the size changes from frame to frame: the camera follows at once, the buffers once the size holds
+    const resizing = { w: 0, h: 0, t: 0, done: false };
     function resize() {
       const w = canvas.clientWidth || host.anchor.clientWidth, h = canvas.clientHeight || host.anchor.clientHeight;
       if (!w || !h) return;
       const pr = perf.pr;
-      if (canvas.width !== Math.round(w * pr) || canvas.height !== Math.round(h * pr)) { renderer.setPixelRatio(pr); renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); }
+      if (Math.abs(cam.aspect - w / h) > 1e-4) { cam.aspect = w / h; cam.updateProjectionMatrix(); }
+      if (canvas.width !== Math.round(w * pr) || canvas.height !== Math.round(h * pr)) {
+        const now = performance.now();
+        if (resizing.w !== w || resizing.h !== h) Object.assign(resizing, { w, h, t: now });
+        if (!resizing.done || now - resizing.t >= 180) { renderer.setPixelRatio(pr); renderer.setSize(w, h, false); resizing.done = true; }
+      }
       world.starU.uPx.value = pr * Math.max(0.7, h / 500);
     }
     function render() { watchFrames(); resize(); renderer.render(scene, cam); }
