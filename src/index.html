@@ -393,7 +393,9 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size
 /* ---------- Phones: no page bounce, no double-tap zoom, no long-press menus ---------- */
 html,body{overscroll-behavior:none}
 body{-webkit-text-size-adjust:100%;touch-action:manipulation}
-.hud,.stage{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+/* a game: holding a finger down must not select text, open the magnifier or a callout anywhere */
+body{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+input,textarea{-webkit-user-select:text;user-select:text}
 /* asks to turn the phone while a 2D level runs upright */
 .rotate-hint{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:24px;background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .rotate-hint .card{max-width:320px}
@@ -1922,6 +1924,12 @@ stage.addEventListener('pointermove', (e) => { const sw = swipes.get(e.pointerId
 const touchEnd = (e) => { const sw = swipes.get(e.pointerId); if (sw) { swipes.delete(e.pointerId); if (!sw.done && e.type === 'pointerup' && performance.now() - sw.t < 350) runAction('jump'); return; } if (e.pointerId === stick.id) stickEnd(); if (touches.delete(e.pointerId)) applyTouches(); };
 stage.addEventListener('pointerup', touchEnd); stage.addEventListener('pointercancel', touchEnd); stage.addEventListener('lostpointercapture', touchEnd);
 stage.addEventListener('contextmenu', (e) => e.preventDefault());
+// iOS Safari ignores preventDefault on pointer events for its own gestures (magnifier, double-tap zoom, page bounce);
+// stopping the touch itself while playing keeps the finger on the game. Pointer events still arrive.
+const blockTouch = (e) => { if (inGame() && !G.overlay && e.target.closest('.stage') && !e.target.closest('.overlay')) e.preventDefault(); };
+stage.addEventListener('touchstart', blockTouch, { passive: false });
+stage.addEventListener('touchmove', blockTouch, { passive: false });
+document.addEventListener('dblclick', (e) => e.preventDefault());
 const coarse = window.matchMedia('(hover: none) and (pointer: coarse)');
 const isTouchDevice = () => coarse.matches || touchSeen || navigator.maxTouchPoints > 0;
 
