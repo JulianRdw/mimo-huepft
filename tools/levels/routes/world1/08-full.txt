@@ -1,0 +1,41 @@
+# Hin und zurück, all stars: first walk LEFT past the still-locked door for the hidden star
+L until x<=0.7
+R until x>=14.4
+RJ 0.4
+R until grounded
+R until x>=33.5
+W 1.6
+R until x>=35.5
+W until x>=42.5
+R until x>=59.5
+R until x>=65.0
+RJ 0.12
+W until y<=12
+L until x<=63.5
+W until grounded
+L until x<=59.4
+LJ 0.25
+L until grounded
+L until x<=54.4
+LJ 0.3
+L until x<=51.3
+W until grounded
+LJ 0.15
+L until x<=48.3
+W until grounded
+LJ 0.2
+L until x<=45.2
+W until grounded
+L until x<=43.6
+W 1.5
+L until x<=41.5
+W until x<=36.4
+LJ 0.4
+L until grounded
+L until x<=23.4
+LJ 0.4
+L until grounded
+L until x<=15.6
+LJ 0.3
+L until grounded
+L until x<=2.6

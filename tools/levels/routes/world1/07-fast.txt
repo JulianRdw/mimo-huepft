@@ -1,0 +1,14 @@
+# Der Schlüssel, fastest clean way (one lift ride)
+R until x>=8.0
+RJ 0.08
+R until grounded
+R until x>=17.0
+W 4.2
+R until x>=18.6
+W until y<=3.2
+R until x>=28.5
+R until grounded
+R until x>=31.5
+RJ 0.3
+R until grounded
+R until x>=52.5

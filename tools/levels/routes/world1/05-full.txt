@@ -1,0 +1,32 @@
+# Bröselig, all stars: wait on the crumbly floor to fall into the hidden cave, leave through the board
+R until x>=7.0
+R until x>=12.5
+W 0.1
+RJ 0.3
+R until x>=14.4
+W until grounded
+RJ 0.4
+R until x>=18.4
+W until grounded
+R until x>=19.3
+R until grounded
+R until x>=24.3
+W until grounded
+W 1.0
+R until x>=27.0
+W 0.1
+RJ 0.45
+R until grounded
+R until x>=35.0
+RJ 0.3
+R until x>=37.4
+W until grounded
+RJ 0.4
+R until x>=41.4
+W until grounded
+RJ 0.35
+R until x>=45.4
+W until grounded
+RJ 0.3
+R until grounded
+R until x>=53.5

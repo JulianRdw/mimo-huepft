@@ -1,0 +1,40 @@
+# Der Schalter, all stars: after the first switch, walk back and drop through the opened lid under the start
+R until x>=7.2
+RJ 0.3
+R until grounded
+R until x>=10.5
+W 0.3
+L until x<=4.5
+L until grounded
+W 0.2
+R 0.05
+RJ 0.45
+R until grounded
+R until x>=27.5
+W 0.1
+RJ 0.45
+R until grounded
+R until x>=30.6
+RJ 0.45
+R until grounded
+R until x>=32.4
+W 0.1
+J 0.45
+W until grounded
+R until x>=45.5
+R until x>=46.4
+RJ 0.3
+R until x>=47.6
+W until grounded
+R until x>=48.6
+RJ 0.35
+R until x>=50.6
+W until grounded
+L until x<=50.45
+LJ 0.45
+L until grounded
+W 0.1
+R until x>=46.6
+RJ 0.4
+R until grounded
+R until x>=55.5

@@ -1,0 +1,69 @@
+# Die Spitze, all stars: side mushroom, lilac shelf before pressing the switch, then ride the lift past the door onto its roof
+R until x>=3.3
+RJ 0.4
+R until x>=5.5
+W until grounded
+R until x>=7.4
+RJ 0.4
+R until x>=10.0
+W until grounded
+R until x>=12.4
+RJ 0.4
+R until x>=14.6
+W until grounded
+R until x>=19.3
+W until grounded
+W 0.1
+RJ 0.15
+W until y<=40
+L until x<=17.5
+W until grounded
+L until x<=14.2
+LJ 0.45
+L until x<=12.0
+W until grounded
+L until x<=7.4
+LJ 0.35
+L until x<=4.3
+W until grounded
+RJ 0.35
+R until x>=7.6
+W until grounded
+RJ 0.4
+R until x>=9.6
+W until grounded
+R until x>=17.4
+RJ 0.45
+R until x>=19.6
+W until grounded
+R until x>=22.3
+W until y>=24.9
+L until x<=21.4
+L until x<=13.2
+RJ 0.3
+R until x>=14.4
+W until grounded
+L until x<=14.2
+LJ 0.35
+L until x<=11.3
+W until grounded
+R until x>=11.8
+RJ 0.35
+R until x>=14.4
+W until grounded
+R until x>=15.8
+RJ 0.35
+R until x>=17.6
+W until y<=13
+L until x<=13.5
+W until grounded
+W 6.2
+R until x>=16.5
+W until y<=2.2
+W 0.1
+RJ 0.3
+R until x>=21.3
+W until grounded
+L until x<=18.4
+W until grounded
+R until x>=21.5

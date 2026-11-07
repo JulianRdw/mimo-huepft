@@ -1,0 +1,15 @@
+# Im Takt: wait for the thorns, never jump in the tunnels
+R until x>=8.4
+W 0.65
+R until x>=29.5
+W 0.35
+R until x>=35.6
+RJ 0.3
+R until grounded
+W 0.5
+RJ 0.3
+R until grounded
+W 0.2
+RJ 0.3
+R until grounded
+R until x>=49

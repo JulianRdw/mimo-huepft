@@ -1,0 +1,19 @@
+# Pilzwiese, fastest clean way
+R until x>=4.6
+RJ 0.3
+R until x>=6.4
+W until y<=6
+R until grounded
+R until x>=14.5
+R until grounded
+R until x>=28.6
+W until y<=7
+R until grounded
+R until x>=37.3
+W until grounded
+R until x>=39.6
+RJ 0.4
+R until x>=43.6
+W until y<=9
+R until grounded
+R until x>=56.5

@@ -1,0 +1,25 @@
+# Glitschig
+R until x>=11.5
+RJ 0.3
+R until grounded
+R until x>=17.5
+RJ 0.3
+R until grounded
+R until x>=24.6
+RJ 0.3
+R until grounded
+L until x<=26.6
+LJ 0.35
+L until grounded
+R 0.1
+R until x>=24
+RJ 0.35
+R until grounded
+RJ 0.3
+R until grounded
+R until x>=38.5
+RJ 0.3
+R until grounded
+RJ 0.3
+R until grounded
+R until x>=49

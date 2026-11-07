@@ -1,0 +1,33 @@
+# Dornenpfad, fastest clean way
+R until x>=5.8
+RJ 0.25
+R until grounded
+R until x>=10.6
+RJ 0.3
+R until grounded
+R until x>=15.3
+RJ 0.4
+R until grounded
+R until x>=21.6
+RJ 0.3
+R until grounded
+R until x>=27.9
+W 0.15
+J 0.45
+R 0.15
+W until grounded
+R until x>=31.5
+RJ 0.3
+R until x>=34.6
+W until grounded
+R until x>=36.5
+RJ 0.3
+R until x>=39.6
+W until grounded
+R until x>=41.5
+RJ 0.35
+R until grounded
+R until x>=49.1
+RJ 0.35
+R until grounded
+R until x>=58.4

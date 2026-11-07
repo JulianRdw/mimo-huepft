@@ -1,0 +1,12 @@
+# Eishöhle, fastest: switch, thorns in rhythm, take the key straight away, ice thorns in rhythm
+R until x>=4.5
+R until x>=8.2
+RJ 0.3
+R until grounded
+R until x>=17.8
+W 2.0
+R until x>=25.6
+W 0.45
+R until x>=46.3
+W 0.8
+R until x>=58.5

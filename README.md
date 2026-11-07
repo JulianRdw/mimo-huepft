@@ -23,6 +23,19 @@ node tools/phone-test.mjs     # iPhone quer und hochkant (WebKit), Offline-Start
 git add -A && git commit -m "…" && git push
 ```
 
+### Level
+
+Die Level stehen als Textkarten in `src/index.html` (`const LEVELS`). Werkzeuge dazu:
+
+```sh
+node tools/levellint.mjs                         # Unsinn finden: vergrabene Dornen, schwebende Fahnen, Sternzahl …
+node tools/levelmap.mjs --out /tmp/karten        # jedes Level als Bild mit Koordinaten
+node tools/levelbot.mjs --level Lawine --route "R 1; RJ 0.3"   # ein Level Bild für Bild nachspielen
+node tools/levelcheck.mjs [--medals]             # alle Level mit ihren Testwegen (tools/levels/routes) prüfen
+```
+
+Jedes Level hat zwei Testwege: `full` sammelt alle Sterne, `fast` ist der schnellste saubere Weg und ergibt die Medaillenzeiten (×1,3 / ×2 / ×3). Werden Level umgebaut, `LEVELS_VERSION` erhöhen: dann verwirft das Spiel alte Zeiten, Sterne und Geister einmal.
+
 Die Tests brauchen Playwright; `tools/pw.mjs` nimmt die Installation aus `~/Rdw_Datenbasis/client/node_modules/playwright` oder aus `PLAYWRIGHT_DIR`.
 
 Nach einem Push lädt die installierte App beim übernächsten Start die neue Fassung (der Offline-Speicher holt sie beim ersten Start im Hintergrund).

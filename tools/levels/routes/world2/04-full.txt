@@ -1,0 +1,23 @@
+# Im Takt: stand in the retracted thorn bed and jump up through the hole into the hollow log
+R until x>=8.4
+W 0.65
+R until x>=10.4
+RJ 0.35
+R until grounded
+W 1.0
+L until x<=11.4
+W until grounded
+R until x>=19.3
+W 0.5
+R until x>=29.5
+W 0.35
+R until x>=35.6
+RJ 0.3
+R until grounded
+W 0.5
+RJ 0.3
+R until grounded
+W 0.2
+RJ 0.3
+R until grounded
+R until x>=49

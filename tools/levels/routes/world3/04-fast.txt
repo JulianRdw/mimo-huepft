@@ -1,0 +1,16 @@
+# Frostschnecken, fastest: bounce the board snail, bounce both floe snails, hop over the step to the door
+R until x>=9.0
+RJ 0.35
+R until grounded
+R until x>=17.0
+W 0.7
+R until x>=18.9
+RJ 0.35
+R until grounded
+R until x>=30.8
+RJ 0.35
+R until grounded
+R until x>=45.3
+RJ 0.35
+R until grounded
+R until x>=51.5

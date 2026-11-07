@@ -1,0 +1,15 @@
+# Abendwind: all stars, the third one sits in the safe corner of the first pit
+R until x>=9.4
+RJ 0.35
+R until grounded
+L until x<=14.6
+W until grounded
+R until x>=16.3
+L until x<=14.4
+W 0.1
+J 0.32
+R until grounded
+R until x>=23.3
+RJ 0.35
+R until grounded
+R until x>=33

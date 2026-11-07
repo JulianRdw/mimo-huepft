@@ -1,0 +1,26 @@
+# Eiszapfen, fastest: hop the corridor gaps, run over the pillars, climb the end block
+R until x>=12.6
+RJ 0.06
+R until grounded
+R until x>=19.6
+RJ 0.06
+R until grounded
+R until x>=24.6
+RJ 0.06
+R until grounded
+R until x>=32.5
+RJ 0.3
+R until grounded
+R until x>=36.6
+RJ 0.35
+R until grounded
+R until x>=41.6
+RJ 0.3
+R until grounded
+R until x>=45.5
+RJ 0.2
+R until grounded
+R until x>=49.4
+RJ 0.35
+R until grounded
+R until x>=55.5

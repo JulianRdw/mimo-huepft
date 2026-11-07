@@ -1,0 +1,35 @@
+# Nachtpfad
+R until x>=11.6
+RJ 0.3
+R 0.2
+W until grounded
+R until x>=15.5
+RJ 0.3
+R 0.2
+W until grounded
+R until x>=20.5
+RJ 0.25
+R 0.2
+W until grounded
+R until x>=25.5
+RJ 0.3
+R until grounded
+R until x>=31.6
+RJ 0.3
+W until grounded
+R until x>=35.6
+RJ 0.3
+R 0.2
+W until grounded
+R until x>=39.6
+RJ 0.32
+R 0.25
+W until grounded
+R until x>=43.6
+RJ 0.2
+R 0.2
+W until grounded
+R until x>=46.5
+RJ 0.2
+R until grounded
+R until x>=54

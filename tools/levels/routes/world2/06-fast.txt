@@ -1,0 +1,14 @@
+# Gegenwind
+R until x>=16.3
+RJ 0.3
+R until grounded
+R until x>=22.4
+RJ 0.35
+R until grounded
+R until x>=38
+W until y<=4.5
+R until grounded
+R until x>=45.3
+RJ 0.3
+R until grounded
+R until x>=55

@@ -1,0 +1,29 @@
+# Schwebend, all stars: ride the first platform back left under the start shelf for the hidden star
+R until x>=8.6
+W 0.8
+R 0.15
+W until grounded
+W 7.3
+L until x<=3.9
+W until x>=13.5
+R until x>=21.3
+W 3.6
+RJ 0.25
+R until x>=24
+W until grounded
+W until x>=32.3
+RJ 0.4
+R until grounded
+R until x>=36.6
+W 0.1
+J 0.45
+W until grounded
+R until x>=38.6
+RJ 0.25
+R until x>=41.5
+W until grounded
+W 0.6
+R until x>=44.4
+RJ 0.4
+R until grounded
+R until x>=56.4

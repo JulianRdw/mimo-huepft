@@ -1,0 +1,46 @@
+# Gipfelgrat, all stars: star above the second board, star in the updraft, jump OVER the door to the cornice star
+L until x<=8.2
+LJ 0.35
+L until x<=6.8
+W until grounded
+R until x>=7.6
+RJ 0.35
+R until x>=10.0
+W until grounded
+J 0.35
+W until grounded
+R until x>=11.6
+RJ 0.35
+R until grounded
+R until x>=15.7
+RJ 0.3
+R until grounded
+LJ 0.35
+L until grounded
+W 0.7
+L until x<=13.6
+LJ 0.3
+L 0.2
+W until grounded
+L until x<=5.5
+W 2.0
+L until x<=4.0
+W until y<=15.1
+R until x>=6.5
+W 0.9
+R until x>=7.4
+RJ 0.35
+R until grounded
+R until x>=12.6
+RJ 0.35
+R until grounded
+R until x>=19.3
+W until y<=5.5
+L until x<=17.0
+L until grounded
+L until x<=7.6
+LJ 0.35
+L until grounded
+L until x<=2.2
+RJ 0.35
+R until grounded

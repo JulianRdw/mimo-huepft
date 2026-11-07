@@ -1,0 +1,31 @@
+# Schneesturm, fastest: through the corridor (not over the roof), then the storm stairs
+R until x>=4.6
+RJ 0.35
+R until grounded
+R until x>=15.5
+RJ 0.35
+W until grounded
+R until x>=22.5
+RJ 0.3
+R until grounded
+R until x>=34.5
+RJ 0.08
+R until grounded
+R until x>=41.3
+RJ 0.08
+R until grounded
+R until x>=51.6
+RJ 0.12
+J 0.25
+W until grounded
+R until x>=54.5
+RJ 0.35
+W until grounded
+R until x>=60.4
+RJ 0.35
+R 0.1
+W until grounded
+R until x>=66.5
+RJ 0.3
+R until grounded
+R until x>=74.5

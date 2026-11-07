@@ -1,0 +1,34 @@
+# Der Schlüssel, all stars: lift twice (sky star + thorn cloud), key, then walk into the thorn mouth (safe, no jumping)
+R until x>=8.0
+RJ 0.08
+R until grounded
+R until x>=17.0
+W 4.2
+R until x>=18.6
+W until y<=3.2
+W 0.3
+J 0.45
+W until grounded
+L 0.05
+LJ 0.45
+L until grounded
+L until x<=7.6
+R until x>=14.8
+W until grounded
+R until x>=17.3
+W 5.8
+R until x>=18.6
+W until y<=3.2
+R until x>=28.5
+R until grounded
+L until x<=28.4
+W until grounded
+R until x>=39.5
+L until x<=30.3
+W 0.1
+J 0.45
+W until grounded
+R until x>=31.5
+RJ 0.3
+R until grounded
+R until x>=52.5

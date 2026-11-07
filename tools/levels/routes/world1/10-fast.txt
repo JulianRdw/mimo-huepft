@@ -1,0 +1,50 @@
+# Die Spitze, fastest clean way
+R until x>=3.3
+RJ 0.4
+R until x>=5.5
+W until grounded
+R until x>=7.4
+RJ 0.4
+R until x>=10.0
+W until grounded
+R until x>=12.4
+RJ 0.4
+R until x>=14.6
+W until grounded
+L until x<=14.2
+LJ 0.45
+L until x<=12.0
+W until grounded
+L until x<=7.4
+LJ 0.35
+L until x<=4.3
+W until grounded
+RJ 0.35
+R until x>=7.6
+W until grounded
+RJ 0.4
+R until x>=9.6
+W until grounded
+R until x>=21.4
+L until x<=13.2
+RJ 0.3
+R until x>=14.4
+W until grounded
+L until x<=14.2
+LJ 0.35
+L until x<=11.3
+W until grounded
+R until x>=11.8
+RJ 0.35
+R until x>=14.4
+W until grounded
+R until x>=15.8
+RJ 0.35
+R until x>=17.6
+W until y<=13
+L until x<=13.5
+W until grounded
+W 2.3
+R until x>=16.5
+W until y<=5.8
+R until x>=21.5

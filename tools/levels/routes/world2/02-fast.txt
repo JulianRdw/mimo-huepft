@@ -1,0 +1,13 @@
+# Aufwind
+R 0.6
+R until grounded
+R until x>=16
+W until y<=9
+R until grounded
+R until x>=21
+W until y<=9
+R until grounded
+R until x>=34
+W until y<=9.8
+R until grounded
+R until x>=43

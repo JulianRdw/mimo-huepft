@@ -1,0 +1,22 @@
+# Frostschnecken, all stars: bounce on the board snail, stomp the snail that sits on the star above the door
+R until x>=9.0
+RJ 0.35
+R until grounded
+R until x>=17.0
+W 0.7
+R until x>=18.9
+RJ 0.35
+R until grounded
+R until x>=30.8
+RJ 0.35
+R until grounded
+R until x>=45.3
+RJ 0.35
+R until grounded
+R until x>=47.3
+R until x>=47.6
+RJ 0.3
+R until grounded
+R 0.4
+W 0.4
+L until x<=51.6

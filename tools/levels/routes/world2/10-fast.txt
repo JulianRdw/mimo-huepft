@@ -1,0 +1,26 @@
+# Waldrand
+W 0.5
+R until x>=13.0
+W 0.75
+R until x>=20.3
+RJ 0.3
+R until grounded
+R until x>=31.3
+W until y<=6.4
+R until grounded
+R until x>=35.3
+RJ 0.32
+R until grounded
+R until x>=46.2
+W until y<=3.5
+R until grounded
+R until x>=52.3
+RJ 0.3
+R until grounded
+R until x>=72.3
+R until x>=73.6
+W until y<=6.3
+RJ 0.3
+R until x>=78.2
+W 1.4
+R until x>=83

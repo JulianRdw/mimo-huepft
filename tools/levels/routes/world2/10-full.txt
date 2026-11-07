@@ -1,0 +1,31 @@
+# Waldrand: the updraft right behind the start lifts you into the treetops, the wind carries you over the first part
+L until x<=1.6
+W until y<=2.5
+R until grounded
+R until x>=5.3
+RJ 0.3
+R until grounded
+R until x>=13.3
+RJ 0.3
+R until grounded
+R until x>=22
+W until grounded
+R until x>=31.3
+W until y<=6.4
+R until grounded
+R until x>=35.3
+RJ 0.32
+R until grounded
+R until x>=46.2
+W until y<=3.5
+R until grounded
+R until x>=52.3
+RJ 0.3
+R until grounded
+R until x>=72.3
+R until x>=73.6
+W until y<=6.3
+RJ 0.3
+R until x>=78.2
+W 1.4
+R until x>=83

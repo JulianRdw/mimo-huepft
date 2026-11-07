@@ -1,0 +1,28 @@
+# Eishöhle, all stars: hop OVER the key, climb the lock-block stairs, then take the key
+R until x>=4.5
+R until x>=8.2
+RJ 0.3
+R until grounded
+R until x>=17.8
+W 2.0
+R until x>=25.6
+W 0.45
+R until x>=37.2
+RJ 0.2
+R until grounded
+R 0.1
+RJ 0.2
+R until grounded
+R 0.1
+RJ 0.2
+R until grounded
+J 0.3
+W until grounded
+L until x<=38.6
+W 0.2
+R until x>=46.0
+W 0.6
+R until x>=51.9
+RJ 0.05
+R until grounded
+R until x>=58.5

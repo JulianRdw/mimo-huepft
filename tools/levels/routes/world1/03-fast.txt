@@ -1,0 +1,23 @@
+# Schwebend, fastest clean way (waits once for the twin platforms)
+R until x>=8.6
+W 0.8
+R 0.15
+W until grounded
+W until x>=15.2
+R until x>=21.3
+W 0.5
+RJ 0.25
+R until x>=25.3
+W until grounded
+W until x>=32.3
+RJ 0.4
+R until grounded
+R until x>=38.6
+RJ 0.25
+R until x>=41.5
+W until grounded
+W 2.6
+R until x>=44.6
+RJ 0.4
+R until grounded
+R until x>=56.4

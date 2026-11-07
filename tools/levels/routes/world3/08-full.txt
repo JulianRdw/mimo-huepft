@@ -1,0 +1,29 @@
+# Lawine, all stars: first run LEFT to the star behind the start, then the whole chase
+L until x<=3.6
+R until x>=17.4
+RJ 0.3
+R until grounded
+R until x>=24.2
+RJ 0.3
+R until grounded
+R until x>=28.4
+RJ 0.3
+R until grounded
+R until x>=41.4
+RJ 0.35
+R until grounded
+R until x>=58.6
+RJ 0.3
+R until grounded
+R until x>=67.4
+RJ 0.35
+R until grounded
+R until x>=77.9
+W 1.85
+R until x>=99.4
+RJ 0.35
+R until grounded
+R until x>=105.0
+RJ 0.35
+R until grounded
+R until x>=112.5

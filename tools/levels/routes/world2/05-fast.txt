@@ -1,0 +1,14 @@
+# Schneckenpost: bounce over the snail posts
+R until x>=6.2
+RJ 0.3
+R until grounded
+R until x>=13.4
+RJ 0.3
+R until grounded
+R until grounded
+R until x>=23.4
+RJ 0.3
+R until grounded
+R until grounded
+R until grounded
+R until x>=51

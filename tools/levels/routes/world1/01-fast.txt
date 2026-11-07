@@ -1,0 +1,20 @@
+# Aufwachen, fastest clean way
+R until x>=22.9
+RJ 0.25
+R until grounded
+R until x>=27.6
+RJ 0.3
+R until grounded
+R until x>=32.8
+RJ 0.35
+R until grounded
+R until x>=39.6
+RJ 0.4
+R until grounded
+R until x>=44.6
+RJ 0.4
+R until grounded
+R until x>=47.7
+RJ 0.3
+R until grounded
+R until x>=57.5

@@ -1,0 +1,28 @@
+# Schneckenpost: up the boards, then the snail on the pole behind the door is a trampoline to the branch
+R until x>=6.2
+RJ 0.3
+R until grounded
+R until x>=13.4
+RJ 0.3
+R until grounded
+R until grounded
+R until x>=23.4
+RJ 0.3
+R until grounded
+R until grounded
+R until grounded
+R until x>=36.8
+RJ 0.32
+R until grounded
+R until x>=43.2
+RJ 0.32
+R until grounded
+R until x>=49.3
+RJ 0.3
+R until grounded
+R until x>=56.2
+L until x<=54
+L until grounded
+L until x<=52
+W until grounded
+L until x<=51.6

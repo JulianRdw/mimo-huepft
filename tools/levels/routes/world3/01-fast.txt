@@ -1,0 +1,23 @@
+# Pulverschnee, fastest: no cellar, no detour on the snow block
+R until x>=14.2
+RJ 0.3
+R until grounded
+R until x>=19.6
+RJ 0.3
+R until grounded
+R until x>=25.2
+RJ 0.4
+R until x>=30.2
+R until x>=33.3
+RJ 0.3
+R until grounded
+R until x>=39.3
+RJ 0.3
+R until grounded
+R until x>=44.4
+RJ 0.3
+R until grounded
+R until x>=57.5
+RJ 0.35
+R until grounded
+R until x>=67.5
