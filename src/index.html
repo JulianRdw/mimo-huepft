@@ -400,7 +400,7 @@ body{-webkit-text-size-adjust:100%;touch-action:manipulation}
 .rotate-hint svg{width:64px;height:64px;margin:0 auto;color:var(--accent)}
 @media (prefers-reduced-motion:no-preference){.rotate-hint svg{animation:turnPhone 2.4s ease-in-out infinite}}
 @keyframes turnPhone{0%,25%{transform:rotate(0)}55%,85%{transform:rotate(-90deg)}100%{transform:rotate(0)}}
-@keyframes hintShow{0%{opacity:0;transform:translate(-50%,-6px)}6%,84%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,0)}}
+@keyframes hintShow{0%{opacity:0;transform:translate(-50%,-6px)}10%,78%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,0)}}
 /* Phone held sideways: the stage fills the whole screen, the HUD floats on top, the hint shows for a few seconds */
 @media (orientation: landscape) and (max-height: 540px){
   html,body{height:100%;overflow:hidden}
@@ -418,7 +418,7 @@ body{-webkit-text-size-adjust:100%;touch-action:manipulation}
   .dash-pow{left:calc(12px + env(safe-area-inset-left, 0px));bottom:calc(12px + env(safe-area-inset-bottom, 0px))}
   .boss-bar{top:calc(46px + env(safe-area-inset-top, 0px))}
   .hint{position:absolute;z-index:3;left:50%;top:calc(46px + env(safe-area-inset-top, 0px));width:max-content;max-width:min(62vw,560px);padding:6px 14px;border-radius:14px;background:color-mix(in srgb,var(--card) 90%,transparent);box-shadow:0 4px 14px rgba(31,28,43,.14);font-size:13px;line-height:1.35;pointer-events:none;opacity:0;transform:translateX(-50%)}
-  .hint.show{animation:hintShow 6.5s ease 1.6s both}
+  .hint.show{animation:hintShow 3.6s ease 1.2s both}
   .app:has(#dashHud:not([hidden])) .hint,.app:has(#runHud:not([hidden])) .hint,.app:has(#bossBar:not([hidden])) .hint{top:calc(118px + env(safe-area-inset-top, 0px))}
   .hint:empty{display:none}
   .overlay{padding:calc(10px + env(safe-area-inset-top, 0px)) calc(12px + env(safe-area-inset-right, 0px)) calc(10px + env(safe-area-inset-bottom, 0px)) calc(12px + env(safe-area-inset-left, 0px))}
@@ -1228,14 +1228,14 @@ function cleanDash(x) {
   return { stars: n(x.stars, 10), score: n(x.score, 1e7), medal: ['gold', 'silver', 'bronze'].includes(x.medal) ? x.medal : null, endless: e, quests, qDone: n(x.qDone, 1e5), dust: n(x.dust, 1e8), up, ghost, dailyRun: dr, days };
 }
 function loadProgress() {
-  const empty = { unlocked: 1, stars: {}, best: {}, music: true, sfx: true, owned: [], outfit: { ...DEFAULT_OUTFIT }, ghosts: {}, ghostOn: true, hidden: {}, assisted: {}, slow: false, invincible: false, zen: false, daily: null, musicVol: 0.8, sfxVol: 0.8, bonus: null, dash: null, runOffset: 0, dailyLog: {}, companion: true, sky: null, fun: {}, codes: [], ach: {}, stats: { deaths: 0, pieps: 0, scares: 0 }, bosses: {} };
+  const empty = { touchHelp: 0, unlocked: 1, stars: {}, best: {}, music: true, sfx: true, owned: [], outfit: { ...DEFAULT_OUTFIT }, ghosts: {}, ghostOn: true, hidden: {}, assisted: {}, slow: false, invincible: false, zen: false, daily: null, musicVol: 0.8, sfxVol: 0.8, bonus: null, dash: null, runOffset: 0, dailyLog: {}, companion: true, sky: null, fun: {}, codes: [], ach: {}, stats: { deaths: 0, pieps: 0, scares: 0 }, bosses: {} };
   try {
     const raw = localStorage.getItem(SAVE_KEY);
     if (!raw) return empty;
     const d = JSON.parse(raw);
     const outfit = { ...DEFAULT_OUTFIT, ...(d.outfit || {}) };
     for (const k of Object.keys(outfit)) if (!COSTUMES.some((c) => c.id === outfit[k])) outfit[k] = DEFAULT_OUTFIT[k];
-    return { unlocked: Math.min(LEVELS.length, Math.max(1, d.unlocked | 0)), stars: d.stars || {}, best: d.best || {}, music: d.music !== false, sfx: d.sfx !== false,
+    return { touchHelp: Math.max(0, Math.min(9, d.touchHelp | 0)), unlocked: Math.min(LEVELS.length, Math.max(1, d.unlocked | 0)), stars: d.stars || {}, best: d.best || {}, music: d.music !== false, sfx: d.sfx !== false,
       owned: Array.isArray(d.owned) ? d.owned.filter((id) => COSTUMES.some((c) => c.id === id)) : [], outfit, ghosts: d.ghosts || {}, ghostOn: d.ghostOn !== false,
       hidden: d.hidden || {}, assisted: d.assisted || {}, slow: !!d.slow, invincible: !!d.invincible, zen: !!d.zen, daily: d.daily || null,
       musicVol: typeof d.musicVol === 'number' ? Math.max(0, Math.min(1, d.musicVol)) : 0.8, sfxVol: typeof d.sfxVol === 'number' ? Math.max(0, Math.min(1, d.sfxVol)) : 0.8, bonus: cleanBonus(d.bonus), dash: cleanDash(d.dash), runOffset: Math.max(0, Math.min(300, Number(d.runOffset) || 0)), dailyLog: d.dailyLog || {}, companion: d.companion !== false, sky: d.sky && typeof d.sky === 'object' ? d.sky : null,
@@ -1904,7 +1904,7 @@ function stickMove(e) {
 function stickEnd() { stick.id = null; input.ax = input.ay = 0; stick.el.hidden = true; }
 stage.addEventListener('pointerdown', (e) => {
   if (e.pointerType === 'mouse' || G.overlay || !inGame()) return;
-  e.preventDefault(); touchSeen = true; G.touchHint = Math.min(G.touchHint, 1.2);
+  e.preventDefault(); touchSeen = true; G.touchHint = Math.min(G.touchHint, 0.4);
   if (G.mode === 'dash') { swipes.set(e.pointerId, { x: e.clientX, y: e.clientY, t: performance.now(), done: false }); audio(); try { stage.setPointerCapture(e.pointerId); } catch (_) {} return; }
   if (G.mode === 'sky') {
     const r = stage.getBoundingClientRect();
@@ -2024,7 +2024,7 @@ function loadLevel(i, keepAttempts) {
   G.starsGot = 0; G.state = 'play'; G.stateT = 0; G.time = 0; G.levelTime = 0; G.clockOn = false;
   G.intro = 0; G.wipe = 0; G.freeze = 0; G.shake = 0; G.newBest = false; G.medal = null;
   if (progress.zen) { L.stars = []; L.hidden = null; }
-  G.touchHint = 4;
+  G.touchHint = touchHelpStart();
   G.rec = []; G.recT = 0; G.replay = !progress.zen && progress.ghosts[i] && progress.ghosts[i].length >= 6 ? progress.ghosts[i] : null;
   if (G.replay && progress.ghostOn) floater(G.p.x + 11, G.p.y - 14, 'Geist läuft mit', P.toggleA);
   if (!keepAttempts) G.attempts = 1;
@@ -2444,7 +2444,7 @@ function update(dt) {
   if (G.overlay === 'pause') return;
   if (G.freeze > 0) { G.freeze -= dt; return; }
   G.time += dt;
-  G.intro += dt; G.wipe += dt; G.touchHint = Math.max(0, G.touchHint - dt * 0.5);
+  G.intro += dt; G.wipe += dt; G.touchHint = Math.max(0, G.touchHint - dt);
   G.shake = Math.max(0, G.shake - dt * 3);
   updateMovers();
   if (G.state === 'play') {
@@ -2987,7 +2987,7 @@ function loadBoss(w, keepAttempts) {
   G.switchOn = false; G.keyGot = false; G.keyAnim = 0; G.toggleAnim = 1; G.ghost.clear();
   G.starsGot = 0; G.stateT = 0; G.time = 0; G.levelTime = 0; G.clockOn = false;
   G.intro = 99; G.wipe = 0; G.freeze = 0; G.shake = 0; G.newBest = false; G.medal = null;
-  G.rec = []; G.recT = 0; G.replay = null; G.touchHint = 4;
+  G.rec = []; G.recT = 0; G.replay = null; G.touchHint = touchHelpStart();
   if (!keepAttempts) G.attempts = 1;
   G.boss = makeBoss(def);
   snapCamera(); updateHud();
@@ -4086,14 +4086,31 @@ function drawIntro() {
   ctx.fillStyle = P.fg; ctx.font = '600 22px Fredoka, Nunito, sans-serif'; ctx.fillText(name, 0, 16);
   ctx.restore();
 }
+// Touch help: three soft round pads over the zones (run left, run right, jump), only at the first few level starts
+const TOUCH_HELP_STARTS = 3, TOUCH_HELP_TIME = 3;
+function touchHelpStart() {
+  if (!isTouchDevice() || (progress.touchHelp | 0) >= TOUCH_HELP_STARTS) return 0;
+  progress.touchHelp = (progress.touchHelp | 0) + 1; saveProgressSoon();
+  return TOUCH_HELP_TIME;
+}
 function drawTouchHint() {
   if (!isTouchDevice() || G.touchHint <= 0 || G.overlay) return;
-  const a = Math.min(1, G.touchHint) * 0.55;
-  ctx.save(); ctx.globalAlpha = a; ctx.fillStyle = P.card;
-  rr(10, VIEW_H - 54, VIEW_W / 4 - 14, 44, 14); ctx.fill(); rr(VIEW_W / 4 + 4, VIEW_H - 54, VIEW_W / 4 - 14, 44, 14); ctx.fill(); rr(VIEW_W / 2 + 10, VIEW_H - 54, VIEW_W / 2 - 20, 44, 14); ctx.fill();
-  ctx.fillStyle = P.fg; ctx.font = '600 15px Fredoka, Nunito, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText('◀ laufen', VIEW_W / 8 + 3, VIEW_H - 32); ctx.fillText('laufen ▶', VIEW_W * 3 / 8 - 3, VIEW_H - 32); ctx.fillText('tippen · springen', VIEW_W * 3 / 4, VIEW_H - 32);
-  ctx.restore(); ctx.textBaseline = 'alphabetic';
+  const a = Math.min(1, G.touchHint / 0.5), y = VIEW_H - 46;
+  ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  // where the jump half begins
+  ctx.globalAlpha = a * 0.5; ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 1.5; ctx.setLineDash([3, 6]);
+  ctx.beginPath(); ctx.moveTo(VIEW_W / 2, y - 30); ctx.lineTo(VIEW_W / 2, y + 30); ctx.stroke(); ctx.setLineDash([]);
+  for (const [x, kind] of [[VIEW_W * 0.125, 'left'], [VIEW_W * 0.375, 'right'], [VIEW_W * 0.75, 'jump']]) {
+    const r = kind === 'jump' ? 27 : 23;
+    ctx.globalAlpha = a; ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+    ctx.globalAlpha = a * 0.6; ctx.strokeStyle = P.mimoInk; ctx.lineWidth = 3.5; ctx.beginPath();
+    if (kind === 'left') { ctx.moveTo(x + 3, y - 8); ctx.lineTo(x - 5, y); ctx.lineTo(x + 3, y + 8); }
+    else if (kind === 'right') { ctx.moveTo(x - 3, y - 8); ctx.lineTo(x + 5, y); ctx.lineTo(x - 3, y + 8); }
+    else { ctx.moveTo(x - 8, y + 1); ctx.lineTo(x, y - 7); ctx.lineTo(x + 8, y + 1); ctx.moveTo(x - 8, y + 9); ctx.lineTo(x, y + 1); ctx.lineTo(x + 8, y + 9); }
+    ctx.stroke();
+  }
+  ctx.restore();
 }
 function drawWipe() {
   if (G.wipe >= WIPE_TIME) return;
@@ -4156,7 +4173,15 @@ const needsLandscape = () => phoneTall.matches && coarse.matches && !allowPortra
 function syncRotateHint(held) { if (rotateEl.hidden === held) rotateEl.hidden = !held; }
 $('btnPortrait').addEventListener('click', () => { allowPortrait = true; syncRotateHint(false); last = performance.now(); stage.focus({ preventScroll: true }); });
 // the level hint pops up for a few seconds on phones, because there is no room for a line under the stage
-new MutationObserver(() => { if (!phoneWide.matches) return; hintEl.classList.remove('show'); void hintEl.offsetWidth; hintEl.classList.add('show'); }).observe(hintEl, { childList: true, characterData: true, subtree: true });
+// each hint text pops up once per session; a restart or the same level again stays quiet
+const hintSeen = new Set();
+new MutationObserver(() => {
+  if (!phoneWide.matches) return;
+  const key = hintEl.textContent.trim();
+  hintEl.classList.remove('show');
+  if (!key || hintSeen.has(key)) return;
+  hintSeen.add(key); void hintEl.offsetWidth; hintEl.classList.add('show');
+}).observe(hintEl, { childList: true, characterData: true, subtree: true });
 // keep the screen on while playing (Wake Lock; quietly skipped where the browser does not allow it)
 let wakeLock = null, wakeWanted = false, wakeBusy = false;
 async function keepAwake(on) {
@@ -4274,6 +4299,8 @@ function renderMenu() {
     : g + ' Ein ruhiges Hüpfspiel. Bring Mimo zur Tür, sammle Sterne und jage Bestzeiten.';
   if (DEV) document.querySelector('.menu-title h1').textContent = 'Mimo hüpft · Dev';
   if (isTouchDevice()) $('menuKeys').innerHTML = '<b>Links halten</b> laufen · <b>rechts tippen</b> springen · länger halten, höher springen';
+  // iPhone Safari cannot hide its bars; the home-screen app can (navigator.standalone exists only on iOS)
+  if (navigator.standalone === false && window.top === window) $('menuKeys').innerHTML = '<b>Ohne Safari-Leisten spielen:</b> Teilen antippen, dann „Zum Home-Bildschirm“.';
   const golds = LEVELS.filter((_, i) => medalFor(i, progress.best[i]) === 'gold').length;
   const done = LEVELS.filter((_, i) => progress.best[i] != null).length;
   const next = continueLevel();

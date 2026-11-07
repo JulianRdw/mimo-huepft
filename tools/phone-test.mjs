@@ -47,6 +47,7 @@ async function landscape() {
   const ratioStage = geo.stage[0] / geo.stage[1], ratioCanvas = geo.canvas[0] / geo.canvas[1];
   check(Math.abs(ratioStage - ratioCanvas) < 0.02, 'Bild wird nicht verzerrt', 'Bühne ' + ratioStage.toFixed(3) + ' · Leinwand ' + ratioCanvas.toFixed(3));
   check(geo.scroll <= 0, 'Seite scrollt nicht', String(geo.scroll));
+  await page.screenshot({ path: path.join(SHOTS, 'quer-tipphilfe.png') });
   await page.waitForTimeout(2600);
   await page.screenshot({ path: path.join(SHOTS, 'quer-level1.png') });
   const hint = await page.evaluate(() => getComputedStyle(document.getElementById('hint')).opacity);
@@ -57,6 +58,13 @@ async function landscape() {
   await page.waitForTimeout(120);
   const vy = await page.evaluate(() => window.__mimo.G.p.vy);
   check(vy < 0 || (await page.evaluate(() => window.__mimo.G.p.y)) < y0, 'Tippen rechts lässt Mimo springen', 'vy ' + Math.round(vy));
+  await page.waitForTimeout(2000);
+  const gone = await page.evaluate(() => ({ hint: Number(getComputedStyle(document.getElementById('hint')).opacity), pads: window.__mimo.G.touchHint }));
+  check(gone.hint < 0.1 && gone.pads === 0, 'Hinweis und Tipp-Hilfe sind nach wenigen Sekunden weg', JSON.stringify(gone));
+  await page.evaluate(() => window.__mimo.load(0));
+  await page.waitForTimeout(2500);
+  const again = await page.evaluate(() => getComputedStyle(document.getElementById('hint')).opacity);
+  check(Number(again) < 0.1, 'Gleicher Hinweis kommt beim Neustart nicht wieder', 'opacity ' + again);
   // HUD buttons sit inside the safe area and are tappable
   const hud = await page.evaluate(() => { const r = document.getElementById('btnPause').getBoundingClientRect(); return { right: Math.round(innerWidth - r.right), top: Math.round(r.top), h: Math.round(r.height) }; });
   check(hud.right >= 10 && hud.top >= 4, 'Pause-Knopf liegt im sicheren Bereich', JSON.stringify(hud));
