@@ -10,6 +10,8 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DOCS = path.join(ROOT, 'docs');
 const SHOTS = process.argv[2] || path.join(ROOT, 'test-shots');
 fs.mkdirSync(SHOTS, { recursive: true });
+// the Sternenbahn is only checked while the build ships it
+const STARWAY = fs.existsSync(path.join(DOCS, 'run3d.js'));
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.png': 'image/png', '.webmanifest': 'application/manifest+json' };
 
 const server = http.createServer((req, res) => {
@@ -37,6 +39,25 @@ async function landscape() {
   await page.screenshot({ path: path.join(SHOTS, 'quer-menu.png') });
   const menuFits = await page.evaluate(() => { const c = document.querySelector('#ovMenu .card').getBoundingClientRect(); return { h: Math.round(c.height), top: Math.round(c.top), vh: innerHeight }; });
   check(menuFits.h <= menuFits.vh, 'Menü passt quer ohne Scrollen', JSON.stringify(menuFits));
+  const tiles = await page.evaluate(() => [...document.querySelectorAll('#ovMenu .tile')].filter((t) => !t.hidden).map((t) => { const r = t.getBoundingClientRect(); return [t.id, Math.round(r.width), Math.round(r.height)]; }));
+  check(tiles.length === 4 && tiles.every((t) => t[1] >= 120 && t[2] >= 56), 'Menü: vier große Kacheln', JSON.stringify(tiles));
+  // wardrobe: fits the screen width, pieces are big enough for a thumb, trying on and buying works
+  await page.evaluate(() => { const p = window.__mimo.progress; p.stars = { 0: 3, 1: 3 }; p.owned = []; });
+  await page.tap('#btnWardrobe');
+  await page.waitForTimeout(350);
+  await page.tap('#shopTabs [data-kind=hat]');
+  await page.waitForTimeout(150);
+  const shop = await page.evaluate(() => { const c = document.querySelector('#ovShop .card').getBoundingClientRect(), it = [...document.querySelectorAll('#shopItems .item')].map((b) => b.getBoundingClientRect()); return { w: Math.round(c.width), vw: innerWidth, n: it.length, minW: Math.round(Math.min(...it.map((r) => r.width))), minH: Math.round(Math.min(...it.map((r) => r.height))) }; });
+  check(shop.w <= shop.vw && shop.n >= 5 && shop.minW >= 80 && shop.minH >= 80, 'Kleiderschrank: Teile sind daumengroß', JSON.stringify(shop));
+  await page.tap('#shopItems .item:nth-child(2)');
+  await page.waitForTimeout(150);
+  await page.screenshot({ path: path.join(SHOTS, 'quer-kleiderschrank.png') });
+  await page.tap('#btnBuy');
+  await page.waitForTimeout(200);
+  const bought = await page.evaluate(() => { const p = window.__mimo.progress; return { hat: p.outfit.hat, owned: p.owned }; });
+  check(bought.hat === 'h_flower' && bought.owned.includes('h_flower'), 'Kleiderschrank: Anprobieren und Kaufen', JSON.stringify(bought));
+  await page.tap('#btnShopBack');
+  await page.waitForTimeout(200);
   await page.tap('#btnContinue');
   await page.waitForTimeout(800);
   const geo = await page.evaluate(() => {
@@ -52,7 +73,7 @@ async function landscape() {
   await page.screenshot({ path: path.join(SHOTS, 'quer-level1.png') });
   const hint = await page.evaluate(() => getComputedStyle(document.getElementById('hint')).opacity);
   check(Number(hint) > 0.5, 'Level-Hinweis blendet kurz ein', 'opacity ' + hint);
-  // touch: right half jumps, left quarter runs left, second quarter runs right
+  // touch: the right half jumps
   const y0 = await page.evaluate(() => window.__mimo.G.p.y);
   await page.touchscreen.tap(700, 250);
   await page.waitForTimeout(120);
@@ -61,6 +82,41 @@ async function landscape() {
   await page.waitForTimeout(2000);
   const gone = await page.evaluate(() => ({ hint: Number(getComputedStyle(document.getElementById('hint')).opacity), pads: window.__mimo.G.touchHint }));
   check(gone.hint < 0.1 && gone.pads === 0, 'Hinweis und Tipp-Hilfe sind nach wenigen Sekunden weg', JSON.stringify(gone));
+  // left thumb: touching right of the quarter line runs right, a short slide back turns around, lifting stops
+  const thumb = await page.evaluate(async () => {
+    const stage = document.getElementById('stage'), M = window.__mimo, inp = M.input;
+    const ev = (type, x, y) => stage.dispatchEvent(new PointerEvent(type, { pointerId: 21, pointerType: 'touch', isPrimary: true, clientX: x, clientY: y, bubbles: true, cancelable: true }));
+    const out = {};
+    ev('pointerdown', 300, 300); out.start = [inp.left, inp.right];
+    ev('pointermove', 292, 300); out.wobble = [inp.left, inp.right];
+    ev('pointermove', 272, 300); out.back = [inp.left, inp.right];
+    ev('pointermove', 300, 300); out.again = [inp.left, inp.right];
+    ev('pointermove', 300, 345); out.down = inp.down;
+    out.pad = !document.getElementById('pad').hidden;
+    ev('pointerup', 300, 345); out.end = [inp.left, inp.right, inp.down];
+    ev('pointerdown', 80, 300); out.farLeft = [inp.left, inp.right]; ev('pointerup', 80, 300);
+    return out;
+  });
+  const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+  check(same(thumb.start, [false, true]) && same(thumb.wobble, [false, true]), 'Daumen: rechts von der Viertellinie läuft Mimo nach rechts, Zittern ändert nichts', JSON.stringify(thumb));
+  check(same(thumb.back, [true, false]) && same(thumb.again, [false, true]), 'Daumen: kurzes Zurückschieben dreht um', JSON.stringify(thumb));
+  check(thumb.down === true && thumb.pad && same(thumb.end, [false, false, false]), 'Daumen: nach unten schieben fällt durch Bretter, Loslassen hält an', JSON.stringify(thumb));
+  check(same(thumb.farLeft, [true, false]), 'Daumen: ganz links läuft Mimo nach links', JSON.stringify(thumb));
+  // fixed buttons instead of the pad
+  const btns = await page.evaluate(async () => {
+    const stage = document.getElementById('stage'), M = window.__mimo, inp = M.input;
+    M.progress.touchMode = 'buttons';
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+    const box = document.getElementById('tbtns'), l = box.children[0].getBoundingClientRect(), r = box.children[1].getBoundingClientRect();
+    const ev = (type, x, y) => stage.dispatchEvent(new PointerEvent(type, { pointerId: 22, pointerType: 'touch', isPrimary: true, clientX: x, clientY: y, bubbles: true, cancelable: true }));
+    const out = { shown: !box.hidden, size: Math.round(l.width) };
+    ev('pointerdown', l.left + l.width / 2, l.top + l.height / 2); out.left = [inp.left, inp.right];
+    ev('pointermove', r.left + r.width / 2, r.top + r.height / 2); out.right = [inp.left, inp.right];
+    ev('pointerup', r.left + r.width / 2, r.top + r.height / 2); out.end = [inp.left, inp.right];
+    M.progress.touchMode = 'thumb';
+    return out;
+  });
+  check(btns.shown && btns.size >= 56 && same(btns.left, [true, false]) && same(btns.right, [false, true]) && same(btns.end, [false, false]), 'Knöpfe: zwei feste Pfeile statt Daumenfeld', JSON.stringify(btns));
   await page.evaluate(() => window.__mimo.load(0));
   await page.waitForTimeout(2500);
   const again = await page.evaluate(() => getComputedStyle(document.getElementById('hint')).opacity);
@@ -76,13 +132,20 @@ async function landscape() {
   await page.evaluate(() => window.__mimo.startBoss(1));
   await page.waitForTimeout(1500);
   await page.screenshot({ path: path.join(SHOTS, 'quer-boss.png') });
-  // the 3D runner in landscape: HUD row below the page HUD
-  await page.evaluate(() => { window.__mimo.progress.dash = null; window.__mimo.startDash('course'); });
-  await page.waitForFunction(() => window.__mimo.dash, null, { timeout: 30000 });
-  await page.waitForTimeout(3500);
-  await page.screenshot({ path: path.join(SHOTS, 'quer-abenteuer.png') });
-  const overlap = await page.evaluate(() => { const a = document.querySelector('.hud-stats').getBoundingClientRect(), b = document.querySelector('.dash-top').getBoundingClientRect(); return Math.round(b.top - a.bottom); });
-  check(overlap >= 0, 'Abenteuer-Anzeige liegt unter der Kopfzeile', 'Abstand ' + overlap + ' px');
+  if (STARWAY) {
+    // the 3D runner in landscape: HUD row below the page HUD
+    await page.evaluate(() => { window.__mimo.progress.dash = null; window.__mimo.startDash('course'); });
+    await page.waitForFunction(() => window.__mimo.dash, null, { timeout: 30000 });
+    await page.waitForTimeout(3500);
+    await page.screenshot({ path: path.join(SHOTS, 'quer-abenteuer.png') });
+    const overlap = await page.evaluate(() => { const a = document.querySelector('.hud-stats').getBoundingClientRect(), b = document.querySelector('.dash-top').getBoundingClientRect(); return Math.round(b.top - a.bottom); });
+    check(overlap >= 0, 'Abenteuer-Anzeige liegt unter der Kopfzeile', 'Abstand ' + overlap + ' px');
+  } else {
+    await page.evaluate(() => window.__mimo.G.overlay || document.getElementById('btnPause').click());
+    await page.evaluate(() => document.getElementById('btnPauseMenu').click());
+    await page.waitForTimeout(300);
+    check(await page.evaluate(() => document.getElementById('btnBonus').hidden), 'Sternenbahn ist im Menü nicht zu sehen');
+  }
   check(errors.length === 0, 'keine Skriptfehler (quer)', errors.join(' | '));
   await browser.close();
 }
@@ -129,7 +192,7 @@ async function offline() {
   await page.reload();
   await page.waitForFunction(() => navigator.serviceWorker.controller, null, { timeout: 15000 });
   const cached = await page.evaluate(async () => { const keys = await caches.keys(); const c = await caches.open(keys.find((k) => k.startsWith('shell-'))); return (await c.keys()).length; });
-  check(cached >= 13, 'Offline-Speicher hat alle Dateien', cached + ' Einträge');
+  check(cached >= (STARWAY ? 13 : 9), 'Offline-Speicher hat alle Dateien', cached + ' Einträge');
   const man = await page.evaluate(async () => (await fetch('manifest.webmanifest')).json());
   check(man.display === 'fullscreen' && man.icons.length === 3, 'Manifest ok');
   await ctx.setOffline(true);
@@ -137,9 +200,9 @@ async function offline() {
   await page.waitForFunction(() => window.__mimo && !document.getElementById('ovMenu').hidden, null, { timeout: 15000 });
   check(true, 'Startet ohne Internet');
   // 3D needs Three.js from the cache
-  await page.evaluate(() => window.__mimo.startDash('course'));
-  const ok3d = await page.waitForFunction(() => window.__mimo.dash, null, { timeout: 30000 }).then(() => true, () => false);
-  check(ok3d, '3D-Bahn lädt offline');
+  await page.evaluate(() => window.__mimo.startSky());
+  const ok3d = await page.waitForFunction(() => window.__mimo.sky, null, { timeout: 30000 }).then(() => true, () => false);
+  check(ok3d, '3D-Level Himmelsinseln lädt offline');
   await browser.close();
 }
 
@@ -258,7 +321,7 @@ async function oldIos() {
 try {
   await landscape();
   await portrait();
-  await runnerUpright();
+  if (STARWAY) await runnerUpright();
   await notch();
   await oldIos();
   await offline();
