@@ -15,7 +15,7 @@
   --crumble:#E9DAC4; --crumble-ink:#C9B596; --key:#F0CE7A;
   --mush:#F3A7B9; --mush-stem:#FBEFEA; --flag-off:#C9C4D9;
   --mimo:#A8C8EC; --mimo-ink:#3A3850; --blush:#F4B4C0; --dust:#FFFFFF; --leaf:#9CCDB0; --sun:#FBEBB6;
-  --mimo-mint:#A9DCC3; --mimo-peach:#F6BFA6; --mimo-lav:#C9B8EA;
+  --mimo-mint:#A9DCC3; --mimo-peach:#F6BFA6; --mimo-lav:#C9B8EA; --mimo-sun:#F3D98B; --mimo-rose:#F2B3C6;
   --night-sky-top:#33305A; --night-sky-bot:#6C5C86; --night-cloud:#716B98; --night-hill-far:#4C4A74; --night-hill-near:#3C5A52; --night-sun:#C9C2E8;
   --w3-sky-top:#D8E6F5; --w3-sky-bot:#F7F1F5; --w3-hill-far:#C3D6EA; --w3-hill-near:#E6EEF7; --w3-ground:#EDF3FA; --w3-ground-edge:#FFFFFF; --w3-ground-dot:#D5E0EC; --w3-cloud:#FFFFFF; --w3-snow:#FFFFFF;
   --w2-sky-top:#6B6798; --w2-sky-bot:#E9B6A4; --w2-hill-far:#6F8C86; --w2-hill-near:#4A6B61; --w2-tree:#5C7D74; --w2-ground:#6A9A86; --w2-ground-edge:#95C7A8; --w2-ground-dot:#7FAE97; --w2-cloud:#A39BC9; --w2-ice:#CFE6EE; --w2-ice-ink:#8FB7C6; --w2-snail:#F0C9A2; --w2-snail-ink:#B98A5E;
@@ -37,7 +37,7 @@
     --crumble:#8C7A62; --crumble-ink:#5F5141; --key:#D9B35A;
     --mush:#D77F94; --mush-stem:#EAD5CE; --flag-off:#5F5A74;
     --mimo:#8EB4E0; --mimo-ink:#1F1E2C; --blush:#D98A9A; --dust:#D9D2E6; --leaf:#7FB497; --sun:#B9B0DA;
-  --mimo-mint:#7FBF9E; --mimo-peach:#D99A80; --mimo-lav:#A491CF;
+  --mimo-mint:#7FBF9E; --mimo-peach:#D99A80; --mimo-lav:#A491CF; --mimo-sun:#D9BC62; --mimo-rose:#D98DA6;
   --night-sky-top:#1C1A30; --night-sky-bot:#3A3150; --night-cloud:#3C3858; --night-hill-far:#2A2A45; --night-hill-near:#1F332E; --night-sun:#8F89B8;
   --w3-sky-top:#2A3348; --w3-sky-bot:#4B4D68; --w3-hill-far:#3B4B64; --w3-hill-near:#56657B; --w3-ground:#8894A8; --w3-ground-edge:#B8C4D5; --w3-ground-dot:#75839A; --w3-cloud:#5B6782; --w3-snow:#DCE4F0;
   --w2-sky-top:#2C2A47; --w2-sky-bot:#7A5262; --w2-hill-far:#33504A; --w2-hill-near:#223B35; --w2-tree:#2B4740; --w2-ground:#3F6D5B; --w2-ground-edge:#6CA48C; --w2-ground-dot:#528A75; --w2-cloud:#4D4875; --w2-ice:#9DBECB; --w2-ice-ink:#6E95A4; --w2-snail:#C9A47E; --w2-snail-ink:#8E6A48;
@@ -56,7 +56,7 @@
   --crumble:#8C7A62; --crumble-ink:#5F5141; --key:#D9B35A;
   --mush:#D77F94; --mush-stem:#EAD5CE; --flag-off:#5F5A74;
   --mimo:#8EB4E0; --mimo-ink:#1F1E2C; --blush:#D98A9A; --dust:#D9D2E6; --leaf:#7FB497; --sun:#B9B0DA;
-  --mimo-mint:#7FBF9E; --mimo-peach:#D99A80; --mimo-lav:#A491CF;
+  --mimo-mint:#7FBF9E; --mimo-peach:#D99A80; --mimo-lav:#A491CF; --mimo-sun:#D9BC62; --mimo-rose:#D98DA6;
   --night-sky-top:#1C1A30; --night-sky-bot:#3A3150; --night-cloud:#3C3858; --night-hill-far:#2A2A45; --night-hill-near:#1F332E; --night-sun:#8F89B8;
   --w3-sky-top:#2A3348; --w3-sky-bot:#4B4D68; --w3-hill-far:#3B4B64; --w3-hill-near:#56657B; --w3-ground:#8894A8; --w3-ground-edge:#B8C4D5; --w3-ground-dot:#75839A; --w3-cloud:#5B6782; --w3-snow:#DCE4F0;
   --w2-sky-top:#2C2A47; --w2-sky-bot:#7A5262; --w2-hill-far:#33504A; --w2-hill-near:#223B35; --w2-tree:#2B4740; --w2-ground:#3F6D5B; --w2-ground-edge:#6CA48C; --w2-ground-dot:#528A75; --w2-cloud:#4D4875; --w2-ice:#9DBECB; --w2-ice-ink:#6E95A4; --w2-snail:#C9A47E; --w2-snail-ink:#8E6A48;
@@ -366,25 +366,6 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size
 .settings .row:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
 .settings .row.slider{cursor:default;gap:12px}
 .settings .row.slider input{flex:1;max-width:46%;accent-color:var(--accent)}
-.shop{text-align:left;gap:7px;padding:14px 16px}
-.shop-top{display:flex;align-items:center;gap:14px}
-.shop-info{min-width:0}
-.shop-info p{margin:0}
-.shop-info #shopSub{font-size:13px;margin-top:2px}
-.shop-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 8px 8px 14px;border-radius:12px;background:var(--accent-soft);color:var(--accent-ink);font-weight:700;font-size:13px;margin-top:4px}
-.item.try{border-style:dashed;border-color:var(--accent)}
-.shop-preview{width:88px;height:88px;border-radius:20px;background:linear-gradient(var(--sky-top),var(--sky-bot));flex:none;box-shadow:inset 0 0 0 1px var(--line)}
-.shop-preview canvas{width:88px;height:88px;display:block}
-.shop h3{margin:2px 0 0;font-family:var(--font-body);font-weight:700;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-.items{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
-.item{appearance:none;border:1px solid var(--line);background:var(--bg);color:var(--fg);border-radius:12px;padding:6px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:1px;font-family:var(--font-body);font-size:12px;font-weight:700;line-height:1.2;min-width:0}
-.item span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.item small{font-weight:600;color:var(--muted);font-size:12px}
-.item.on{background:var(--accent-soft);border-color:var(--accent)}
-.item.on small{color:var(--accent-ink)}
-.item.locked{opacity:.5;cursor:default}
-.item:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
-.wallet{font-family:var(--font-display);font-weight:600;font-size:17px;color:var(--fg);margin:0}
 .medals{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
 .medal{display:inline-flex;align-items:center;gap:5px}
 .medal i,.lvl-card i{display:inline-block;border-radius:50%;border:1px solid rgba(0,0,0,.08)}
@@ -399,7 +380,6 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size
   .menu-title h1{text-align:center}
   .lvl-grid{grid-template-columns:1fr}
   .chip.time{display:none}
-  .items{grid-template-columns:repeat(3,1fr)}
   .card{padding:14px 14px}
 }
 @media (prefers-reduced-motion:reduce){
@@ -458,6 +438,75 @@ input,textarea{-webkit-user-select:text;user-select:text}
   .lvl-grid,.ach-grid{grid-template-columns:repeat(3,1fr)}
   .overlay.scene .card{max-width:min(560px,100%)}
 }
+/* ---------- Release polish: menus made for thumbs ---------- */
+.menu .tiles .tile{min-height:64px;justify-content:center}
+.card-head{position:sticky;top:calc(-12px - var(--sa-t));z-index:2;background:var(--card);margin:-8px -6px 0;padding:8px 6px;border-radius:14px}
+@media (hover:none) and (pointer:coarse){
+  .btn{min-height:40px}
+  .btn.small{min-height:38px;padding:6px 16px;font-size:14px}
+  .hud .btn{min-height:34px}
+  .settings .row{min-height:48px}
+  .seg button{min-height:38px;padding:6px 18px}
+}
+.lvl-card.bonus{background:linear-gradient(120deg,color-mix(in srgb,var(--accent) 14%,var(--bg)),color-mix(in srgb,var(--mimo) 20%,var(--bg)))}
+.lvl-card.bonus .num{font-size:20px;color:var(--accent)}
+.lvl-card.boss{background:color-mix(in srgb,var(--star) 16%,var(--bg))}
+.lvl-card.boss .num{color:#C99A2E}
+.lvl-card{min-height:54px}
+/* wardrobe: Mimo on a little stage, items as small pictures */
+.card.shop{max-width:460px;text-align:left;gap:10px;padding:14px 16px}
+.shop .wallet{justify-self:end;font-family:var(--font-display);font-weight:600;font-size:16px;color:var(--accent-ink);background:color-mix(in srgb,var(--star) 38%,var(--card));padding:4px 12px;border-radius:999px;font-variant-numeric:tabular-nums;margin:0}
+.shop-body{display:flex;flex-direction:column;gap:12px;min-width:0}
+.shop-stage{display:flex;flex-direction:column;gap:8px;align-items:center;min-width:0}
+.shop-preview{position:relative;width:168px;height:168px;border-radius:50% 50% 46% 46%;flex:none;background:radial-gradient(circle at 50% 38%,var(--sky-bot),var(--sky-top) 72%);box-shadow:inset 0 0 0 1px var(--line),inset 0 -22px 0 -4px color-mix(in srgb,var(--ground) 80%,transparent);overflow:hidden}
+.shop-preview canvas{width:100%;height:100%;display:block;cursor:pointer}
+.shop-look{margin:0;font-family:var(--font-display);font-weight:600;font-size:15px;color:var(--fg);text-align:center;min-height:1.4em}
+.shop-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:50px;padding:6px 6px 6px 14px;border-radius:14px;background:var(--bg);border:1px solid var(--line);color:var(--muted);font-weight:700;font-size:13px;line-height:1.3;margin:0}
+.shop-bar.buy{background:var(--accent-soft);border-color:var(--accent);color:var(--accent-ink)}
+.shop-bar .btn[hidden]{display:none}
+.shop-pick{display:flex;flex-direction:column;gap:10px;min-width:0;flex:1}
+.shop-pick .seg{align-self:stretch}
+.shop-pick .seg button{flex:1}
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+.item{position:relative;appearance:none;border:1.5px solid var(--line);background:var(--bg);color:var(--fg);border-radius:16px;padding:4px 4px 8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:0;font-family:var(--font-body);font-size:13px;font-weight:700;line-height:1.2;min-width:0;transition:transform .12s ease,border-color .15s ease}
+.item canvas{width:64px;height:64px;display:block}
+.item span{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item small{font-weight:700;color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+.item:active{transform:scale(.96)}
+.item.on{background:var(--accent-soft);border-color:var(--accent)}
+.item.on small{color:var(--accent-ink)}
+.item.try{border-style:dashed;border-color:var(--accent)}
+.item.closed canvas{opacity:.55}
+.item.worn::after{content:"✓";position:absolute;top:6px;right:8px;width:18px;height:18px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:12px;line-height:18px;text-align:center}
+.item .price{color:#B98A1E}
+/* left thumb: a small pad shows where "left" and "right" are while the thumb is down */
+.pad,.tbtns i{pointer-events:none}
+.pad{position:absolute;width:112px;height:52px;margin:-26px 0 0 -56px;border-radius:26px;background:rgba(255,255,255,.22);border:1.5px solid rgba(255,255,255,.55);display:flex;justify-content:space-between;align-items:center;padding:0 12px}
+.pad i,.tbtns i{display:block;width:0;height:0;border-style:solid;border-color:transparent;opacity:.45;transition:opacity .08s,transform .08s}
+.pad .l{border-width:9px 13px 9px 0;border-right-color:#3C3A4E}
+.pad .r{border-width:9px 0 9px 13px;border-left-color:#3C3A4E}
+.pad.go-l .l,.pad.go-r .r{opacity:1;transform:scale(1.25)}
+.pad.down{border-style:dashed}
+.tbtns{position:absolute;inset:0;pointer-events:none}
+.tbtns i{position:absolute;bottom:calc(18px + var(--sa-b));width:64px;height:64px;border:1.5px solid rgba(255,255,255,.6);border-radius:50%;background:rgba(255,255,255,.2);opacity:.8}
+.tbtns i::before{content:"";position:absolute;inset:0;margin:auto;width:0;height:0;border-style:solid;border-color:transparent}
+.tbtns .l{left:calc(18px + var(--sa-l))}
+.tbtns .r{left:calc(96px + var(--sa-l))}
+.tbtns .j{right:calc(24px + var(--sa-r));width:76px;height:76px}
+.tbtns .l::before{border-width:10px 15px 10px 0;border-right-color:#3C3A4E;transform:translateX(-2px)}
+.tbtns .r::before{border-width:10px 0 10px 15px;border-left-color:#3C3A4E;transform:translateX(2px)}
+.tbtns .j::before{border-width:0 12px 16px 12px;border-bottom-color:#3C3A4E;transform:translateY(-2px)}
+.tbtns i.on{background:rgba(255,255,255,.5);transform:scale(.94)}
+@media (orientation: landscape) and (max-height: 540px){
+  .menu .tiles{grid-template-rows:1fr 1fr;align-self:stretch}
+  .menu .tiles .tile{padding:10px 12px;gap:2px}
+  .menu .tiles .tile svg{width:22px;height:22px;margin-bottom:3px}
+  .card.shop{max-width:min(760px,100%)}
+  .shop-body{flex-direction:row;align-items:flex-start;gap:16px}
+  .shop-stage{width:190px;flex:none;position:sticky;top:44px}
+  .shop-preview{width:132px;height:132px}
+  .items{grid-template-columns:repeat(auto-fill,minmax(88px,1fr))}
+}
 </style>
 
 <div class="app">
@@ -480,6 +529,8 @@ input,textarea{-webkit-user-select:text;user-select:text}
   <div class="stage" id="stage" tabindex="0" aria-label="Spielfeld">
     <canvas id="game"></canvas>
     <div class="stick" id="stick" hidden><i></i></div>
+    <div class="pad" id="pad" hidden><i class="l"></i><i class="r"></i></div>
+    <div class="tbtns" id="tbtns" hidden><i class="l"></i><i class="r"></i><i class="j"></i></div>
     <div class="run-hud" id="runHud" hidden>
       <div class="run-top">
         <div class="run-score"><b id="runScore">0</b><small>Punkte</small></div>
@@ -517,14 +568,11 @@ input,textarea{-webkit-user-select:text;user-select:text}
         </div>
         <button class="btn primary cta" id="btnContinue" type="button"><span class="cta-main">Weiter spielen</span><span class="cta-sub" id="ctaSub">Level 1 · Aufwachen</span></button>
         <div class="tiles">
-          <button class="tile wide" id="btnSky" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z M12 12l8-4.5 M12 12v9 M12 12L4 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span class="tw"><b>Himmelsinseln</b><small id="tileSky"></small></span><span class="badge">3D</span></button>
           <button class="tile" id="btnLevels" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3v18M5 4h11l-2.5 3.5L16 11H5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg><b>Level</b><small id="tileLevels"></small></button>
-          <button class="tile" id="btnDaily" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 10h18M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="15.5" r="1.6" fill="currentColor"/></svg><b>Tageslauf</b><small id="tileDaily"></small></button>
           <button class="tile" id="btnWardrobe" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h2a2 2 0 0 0 4 0h2l4 3-2 3-2-1v11H8V9L6 10 4 7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><b>Kleiderschrank</b><small id="tileShop"></small></button>
-          <button class="tile" id="btnBonus" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6-5.4-3-5.4 3 1.2-6L3.3 9.3l6.1-.7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><b>Sternenbahn <span class="new-badge" id="bonusNew" hidden>Neu</span></b><small id="tileBonus"></small></button>
-          <button class="tile" id="btnNight" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><b>Nachtpfad</b><small id="tileNight"></small></button>
+          <button class="tile" id="btnAch" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v4a5 5 0 0 1-10 0z M7 6H4a3 3 0 0 0 3 4 M17 6h3a3 3 0 0 1-3 4 M12 13v4 M8 20h8 M9.5 17h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg><b>Erfolge</b><small id="tileAch"></small></button>
           <button class="tile" id="btnSettings" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><b>Einstellungen</b><small id="tileSettings"></small></button>
-          <button class="tile wide alt" id="btnAch" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v4a5 5 0 0 1-10 0z M7 6H4a3 3 0 0 0 3 4 M17 6h3a3 3 0 0 1-3 4 M12 13v4 M8 20h8 M9.5 17h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg><span class="tw"><b>Erfolge</b><small id="tileAch"></small></span></button>
+          <button class="tile" id="btnBonus" type="button" hidden><b>Sternenbahn <span class="new-badge" id="bonusNew" hidden>Neu</span></b><small id="tileBonus"></small></button>
         </div>
         <p class="menu-keys" id="menuKeys"><b>← →</b> laufen · <b>Leertaste</b> springen · <b>↓</b> durch Bretter · <b>E</b> piepen · <b>Esc</b> Pause</p>
       </div>
@@ -546,10 +594,12 @@ input,textarea{-webkit-user-select:text;user-select:text}
           <button class="row" id="btnSfx" type="button"><span>Effekte</span><em>an</em></button>
           <label class="row slider"><span>Musik-Lautstärke</span><input type="range" id="volMusic" min="0" max="100" step="5"></label>
           <label class="row slider"><span>Effekt-Lautstärke</span><input type="range" id="volSfx" min="0" max="100" step="5"></label>
-          <label class="row slider"><span>Kopfhörer-Ausgleich <small id="runOffsetTxt">Sternenbahn: Bild wartet auf den Ton</small></span><input type="range" id="runOffset" min="0" max="300" step="10"></label>
+          <label class="row slider" id="rowRunOffset"><span>Kopfhörer-Ausgleich <small id="runOffsetTxt">Sternenbahn: Bild wartet auf den Ton</small></span><input type="range" id="runOffset" min="0" max="300" step="10"></label>
           <button class="row" id="btnAudioReset" type="button"><span>Ton neu starten <small id="audioDiag">falls kein Ton kommt</small></span><em>Start</em></button>
           <h3 class="sec" id="secScreen" hidden>Anzeige</h3>
           <button class="row off" id="btnFull" type="button" hidden><span>Vollbild <small>blendet die Leisten des Browsers aus</small></span><em>aus</em></button>
+          <h3 class="sec" id="secTouch">Steuerung am Handy</h3>
+          <button class="row" id="btnTouchMode" type="button"><span>Laufen <small id="touchModeTxt"></small></span><em>Daumen</em></button>
           <h3 class="sec">Spielweise</h3>
           <button class="row" id="btnGhost" type="button"><span>Geist des Bestlaufs <small>läuft als Schatten mit und zeigt Zwischenzeiten</small></span><em>an</em></button>
           <button class="row" id="btnComp" type="button"><span>Glühwürmchen-Begleiter <small>folgt Mimo und leuchtet bei Sternen</small></span><em>an</em></button>
@@ -605,16 +655,18 @@ input,textarea{-webkit-user-select:text;user-select:text}
 
     <div class="overlay" id="ovShop" hidden>
       <div class="card shop">
-        <div class="card-head"><button class="btn small" id="btnShopBack" type="button">Zurück</button><h2>Kleiderschrank</h2><span></span></div>
-        <div class="shop-top">
-          <div class="shop-preview"><canvas id="preview" width="220" height="220"></canvas></div>
-          <div class="shop-info"><p class="wallet" id="shopWallet">★ 0</p><p id="shopSub">Tippe etwas an, um es anzuprobieren.</p></div>
+        <div class="card-head"><button class="btn small" id="btnShopBack" type="button">Zurück</button><h2>Kleiderschrank</h2><span class="wallet" id="shopWallet" title="Sterne zum Ausgeben">★ 0</span></div>
+        <div class="shop-body">
+          <div class="shop-stage">
+            <div class="shop-preview"><canvas id="preview" width="360" height="360"></canvas></div>
+            <p class="shop-look" id="shopLook"></p>
+            <div class="shop-bar" id="shopBar"><span id="shopBarText"></span><button class="btn primary small" id="btnBuy" type="button">Kaufen</button></div>
+          </div>
+          <div class="shop-pick">
+            <div class="seg" id="shopTabs" role="tablist"><button type="button" role="tab" data-kind="color">Farbe</button><button type="button" role="tab" data-kind="hat">Kopf</button><button type="button" role="tab" data-kind="acc">Extra</button></div>
+            <div class="items" id="shopItems"></div>
+          </div>
         </div>
-        <h3>Farbe</h3><div class="items" id="shopColor"></div>
-        <h3>Kopf</h3><div class="items" id="shopHat"></div>
-        <h3>Extra</h3><div class="items" id="shopAcc"></div>
-        <h3>Premium-Set · bald erhältlich</h3><div class="items" id="shopPremium"></div>
-        <div class="shop-bar" id="shopBar" hidden><span id="shopBarText"></span><button class="btn primary small" id="btnBuy" type="button">Kaufen</button></div>
       </div>
     </div>
 
@@ -695,29 +747,38 @@ const STEP = 1 / 120;
 const DASH_MAX_DT = 0.05;
 // Developer build: all levels, night path and bonus open, own save slot, no leaderboard writes.
 const DEV = false;
+// The Sternenbahn (music run, adventure, endless track, course of the day) is not polished enough for the release:
+// its code stays, but nothing in the game leads to it and the app build leaves its files out.
+const STARWAY = false;
 const SAVE_KEY = DEV ? 'mimo-progress-dev' : 'mimo-progress-v2';
 const GHOST_DT = 0.05;
 // medal targets in seconds: [gold, silver, bronze]
 const MEDALS = [[7.5, 11, 17], [12.5, 19, 28], [20.5, 31, 47], [11.5, 17, 26], [11, 16, 24], [12.5, 19, 28], [20, 31, 46], [36, 55, 82], [25.5, 39, 58], [22.5, 34, 51], [5, 7, 11], [12.5, 19, 29], [14, 21, 32], [12, 18, 27], [10, 15, 23], [11, 16, 25], [13, 20, 29], [20.5, 31, 47], [17, 26, 39], [24.5, 37, 56], [12.5, 19, 28], [11, 17, 25], [26, 40, 60], [11, 17, 25], [12.5, 19, 28], [15.5, 24, 36], [25, 38, 57], [19.5, 29, 44], [11.5, 18, 26]];
 const WORLDS = [null, { name: 'Wiese' }, { name: 'Abendwald' }, { name: 'Verschneite Höhen' }];
 const MEDAL_NAMES = { gold: 'Gold', silver: 'Silber', bronze: 'Bronze' };
+// Everything in the wardrobe is for looks only. "price" is paid in collected stars; "boss", "ach" and "streak" items are rewards.
 const COSTUMES = [
   { id: 'c_blue', kind: 'color', name: 'Himmelblau', price: 0, token: 'mimo' },
   { id: 'c_mint', kind: 'color', name: 'Minze', price: 2, token: 'mimoMint' },
   { id: 'c_peach', kind: 'color', name: 'Pfirsich', price: 2, token: 'mimoPeach' },
   { id: 'c_lav', kind: 'color', name: 'Lavendel', price: 2, token: 'mimoLav' },
+  { id: 'c_sun', kind: 'color', name: 'Sonnengelb', price: 4, token: 'mimoSun' },
+  { id: 'c_rose', kind: 'color', name: 'Rosé', price: 4, token: 'mimoRose' },
+  { id: 'c_rainbow', kind: 'color', name: 'Regenbogen', price: 0, boss: 3, token: 'mimo' },
   { id: 'h_leaf', kind: 'hat', name: 'Blattspross', price: 0 },
+  { id: 'h_flower', kind: 'hat', name: 'Gänseblume', price: 2 },
   { id: 'h_straw', kind: 'hat', name: 'Strohhut', price: 3 },
   { id: 'h_cap', kind: 'hat', name: 'Zipfelmütze', price: 3 },
-  { id: 'h_crown', kind: 'hat', name: 'Krone', price: 6 },
+  { id: 'h_wizard', kind: 'hat', name: 'Zauberhut', price: 6 },
+  { id: 'h_crown', kind: 'hat', name: 'Krone', price: 0, boss: 1 },
   { id: 'h_party', kind: 'hat', name: 'Partyhut', price: 0, ach: 8 },
   { id: 'a_none', kind: 'acc', name: 'Nichts', price: 0 },
   { id: 'a_glasses', kind: 'acc', name: 'Brille', price: 3 },
   { id: 'a_bow', kind: 'acc', name: 'Schleife', price: 3 },
+  { id: 'a_scarf', kind: 'acc', name: 'Schal', price: 4 },
+  { id: 'a_cape', kind: 'acc', name: 'Umhang', price: 8 },
+  { id: 'a_wings', kind: 'acc', name: 'Flügel', price: 0, boss: 2 },
   { id: 'a_lantern', kind: 'acc', name: 'Laterne', price: 0, streak: 7 },
-  { id: 'c_rainbow', kind: 'color', name: 'Regenbogen', price: 0, premium: true, token: 'mimo' },
-  { id: 'h_wizard', kind: 'hat', name: 'Zauberhut', price: 0, premium: true },
-  { id: 'a_wings', kind: 'acc', name: 'Flügel', price: 0, premium: true },
 ];
 const DEFAULT_OUTFIT = { color: 'c_blue', hat: 'h_leaf', acc: 'a_none' };
 
@@ -1394,7 +1455,7 @@ const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)');
 const reduced = () => prefersReduced.matches;
 
 // ---------- Palette (read from CSS tokens so both themes work) ----------
-const TOKEN_NAMES = ['w3-sky-top','w3-sky-bot','w3-hill-far','w3-hill-near','w3-ground','w3-ground-edge','w3-ground-dot','w3-cloud','w3-snow','night-sky-top','night-sky-bot','night-cloud','night-hill-far','night-hill-near','night-sun','w2-sky-top','w2-sky-bot','w2-hill-far','w2-hill-near','w2-tree','w2-ground','w2-ground-edge','w2-ground-dot','w2-cloud','w2-ice','w2-ice-ink','w2-snail','w2-snail-ink','mimo-mint','mimo-peach','mimo-lav','sky-top','sky-bot','hill-far','hill-near','cloud','ground','ground-edge','ground-dot','oneway','thorn','thorn-ink','star','star-glow','door','door-glow','switch-off','switch-on','toggle-a','toggle-b','crumble','crumble-ink','key','mush','mush-stem','flag-off','mimo','mimo-ink','blush','dust','leaf','sun','fg','muted','card'];
+const TOKEN_NAMES = ['w3-sky-top','w3-sky-bot','w3-hill-far','w3-hill-near','w3-ground','w3-ground-edge','w3-ground-dot','w3-cloud','w3-snow','night-sky-top','night-sky-bot','night-cloud','night-hill-far','night-hill-near','night-sun','w2-sky-top','w2-sky-bot','w2-hill-far','w2-hill-near','w2-tree','w2-ground','w2-ground-edge','w2-ground-dot','w2-cloud','w2-ice','w2-ice-ink','w2-snail','w2-snail-ink','mimo-mint','mimo-peach','mimo-lav','mimo-sun','mimo-rose','sky-top','sky-bot','hill-far','hill-near','cloud','ground','ground-edge','ground-dot','oneway','thorn','thorn-ink','star','star-glow','door','door-glow','switch-off','switch-on','toggle-a','toggle-b','crumble','crumble-ink','key','mush','mush-stem','flag-off','mimo','mimo-ink','blush','dust','leaf','sun','fg','muted','card'];
 let P = {}, W = {};
 function readPalette() {
   const cs = getComputedStyle(document.documentElement);
@@ -1495,7 +1556,7 @@ function cleanDash(x) {
   return { stars: n(x.stars, 10), score: n(x.score, 1e7), medal: ['gold', 'silver', 'bronze'].includes(x.medal) ? x.medal : null, endless: e, quests, qDone: n(x.qDone, 1e5), dust: n(x.dust, 1e8), up, ghost, dailyRun: dr, days };
 }
 function loadProgress() {
-  const empty = { levelsVersion: LEVELS_VERSION, touchHelp: 0, unlocked: 1, stars: {}, best: {}, music: true, sfx: true, owned: [], outfit: { ...DEFAULT_OUTFIT }, ghosts: {}, ghostOn: true, hidden: {}, assisted: {}, slow: false, invincible: false, zen: false, daily: null, musicVol: 0.8, sfxVol: 0.8, bonus: null, dash: null, runOffset: 0, dailyLog: {}, companion: true, sky: null, fun: {}, codes: [], ach: {}, stats: { deaths: 0, pieps: 0, scares: 0 }, bosses: {} };
+  const empty = { levelsVersion: LEVELS_VERSION, touchHelp: 0, touchMode: 'thumb', unlocked: 1, stars: {}, best: {}, music: true, sfx: true, owned: [], outfit: { ...DEFAULT_OUTFIT }, ghosts: {}, ghostOn: true, hidden: {}, assisted: {}, slow: false, invincible: false, zen: false, daily: null, musicVol: 0.8, sfxVol: 0.8, bonus: null, dash: null, runOffset: 0, dailyLog: {}, companion: true, sky: null, fun: {}, codes: [], ach: {}, stats: { deaths: 0, pieps: 0, scares: 0 }, bosses: {} };
   try {
     const raw = localStorage.getItem(SAVE_KEY);
     if (!raw) return empty;
@@ -1503,7 +1564,7 @@ function loadProgress() {
     if (d.levelsVersion !== LEVELS_VERSION) Object.assign(d, { levelsVersion: LEVELS_VERSION, unlocked: 1, stars: {}, best: {}, ghosts: {}, hidden: {}, assisted: {} });
     const outfit = { ...DEFAULT_OUTFIT, ...(d.outfit || {}) };
     for (const k of Object.keys(outfit)) if (!COSTUMES.some((c) => c.id === outfit[k])) outfit[k] = DEFAULT_OUTFIT[k];
-    return { levelsVersion: LEVELS_VERSION, touchHelp: Math.max(0, Math.min(9, d.touchHelp | 0)), unlocked: Math.min(LEVELS.length, Math.max(1, d.unlocked | 0)), stars: d.stars || {}, best: d.best || {}, music: d.music !== false, sfx: d.sfx !== false,
+    return { levelsVersion: LEVELS_VERSION, touchHelp: Math.max(0, Math.min(9, d.touchHelp | 0)), touchMode: d.touchMode === 'buttons' ? 'buttons' : 'thumb', unlocked: Math.min(LEVELS.length, Math.max(1, d.unlocked | 0)), stars: d.stars || {}, best: d.best || {}, music: d.music !== false, sfx: d.sfx !== false,
       owned: Array.isArray(d.owned) ? d.owned.filter((id) => COSTUMES.some((c) => c.id === id)) : [], outfit, ghosts: d.ghosts || {}, ghostOn: d.ghostOn !== false,
       hidden: d.hidden || {}, assisted: d.assisted || {}, slow: !!d.slow, invincible: !!d.invincible, zen: !!d.zen, daily: d.daily || null,
       musicVol: typeof d.musicVol === 'number' ? Math.max(0, Math.min(1, d.musicVol)) : 0.8, sfxVol: typeof d.sfxVol === 'number' ? Math.max(0, Math.min(1, d.sfxVol)) : 0.8, bonus: cleanBonus(d.bonus), dash: cleanDash(d.dash), runOffset: Math.max(0, Math.min(300, Number(d.runOffset) || 0)), dailyLog: d.dailyLog || {}, companion: d.companion !== false, sky: d.sky && typeof d.sky === 'object' ? d.sky : null,
@@ -1520,12 +1581,12 @@ function saveProgress() {
 const progress = loadProgress();
 if (DEV) progress.unlocked = LEVELS.length;
 const continueLevel = () => (DEV ? 0 : Math.min(LAST_MAIN, progress.unlocked - 1));
-const starsTotal = () => LEVELS.reduce((a, _, i) => a + (progress.stars[i] || 0), 0) + Object.keys(progress.hidden).length * 2 + (progress.bonus ? progress.bonus.stars : 0) + (progress.dash ? progress.dash.stars : 0) + (progress.sky ? (progress.sky.stars || 0) + (progress.sky.gold ? SKY_GOLD_VALUE : 0) : 0);
+const starsTotal = () => LEVELS.reduce((a, _, i) => a + (progress.stars[i] || 0), 0) + Object.keys(progress.hidden).length * 2 + (STARWAY && progress.bonus ? progress.bonus.stars : 0) + (STARWAY && progress.dash ? progress.dash.stars : 0) + (progress.sky ? (progress.sky.stars || 0) + (progress.sky.gold ? SKY_GOLD_VALUE : 0) : 0);
 const BONUS_UNLOCK = 20, BONUS_STARS = 10;
 // 3D level Himmelsinseln: six stars plus a treasure worth three, medal times in seconds [gold, silver, bronze]
 const SKY_STARS = 6, SKY_GOLD_VALUE = 3;
 const SKY_MEDALS = [48, 72, 108];
-const bonusUnlocked = () => DEV || starsTotal() >= BONUS_UNLOCK;
+const bonusUnlocked = () => STARWAY && (DEV || starsTotal() >= BONUS_UNLOCK);
 function streak() { let n = 0, d = dayIndex(); if (!progress.dailyLog[d]) d--; while (progress.dailyLog[d]) { n++; d--; } return n; }
 const companionUnlocked = () => progress.best[worldEnd(2)] != null;
 const hiddenTotal = () => LEVELS.filter((l) => l.map.some((r) => r.includes('h'))).length;
@@ -1533,7 +1594,8 @@ const assistOn = () => progress.slow || progress.invincible || !!progress.fun.mo
 const funScale = () => (progress.fun.big ? 1.6 : progress.fun.mini ? 0.62 : 1);
 const dayIndex = () => Math.floor(Date.now() / 86400000);
 const dailyLevel = () => (dayIndex() * 7 + 3) % Math.max(1, Math.min(progress.unlocked, LAST_MAIN + 1));
-const isOwned = (c) => (c.price === 0 && !c.premium && !c.streak && !c.ach) || progress.owned.includes(c.id);
+const isReward = (c) => !!(c.boss || c.streak || c.ach);
+const isOwned = (c) => (c.boss ? !!progress.bosses[c.boss] : c.price === 0 && !isReward(c)) || progress.owned.includes(c.id);
 const starsSpent = () => COSTUMES.reduce((a, c) => a + (progress.owned.includes(c.id) ? c.price : 0), 0);
 const wallet = () => Math.max(0, starsTotal() - starsSpent());
 function medalFor(i, t) {
@@ -2124,7 +2186,7 @@ function setKey(name, down) {
     input.jumpHeld = down;
   } else input[name] = down;
 }
-function releaseAll() { input.left = input.right = input.up = input.down = false; input.ax = input.ay = 0; input.actions.length = 0; setKey('jump', false); }
+function releaseAll() { input.left = input.right = input.up = input.down = false; input.ax = input.ay = 0; input.actions.length = 0; setKey('jump', false); touches.clear(); if (pad.id !== null) padEnd(); }
 window.addEventListener('keydown', (e) => {
   if (e.code === 'Escape' || e.code === 'KeyP') { if (G.overlay === 'shop' || G.overlay === 'levels' || G.overlay === 'settings' || G.overlay === 'board' || G.overlay === 'ach' || G.overlay === 'run') { overlayBack(); e.preventDefault(); return; } if (inGame() && (!G.overlay || G.overlay === 'pause')) { togglePause(); e.preventDefault(); } return; }
   if (DEV && (e.code === 'KeyN' || e.code === 'KeyB') && G.L && G.mode === 'level' && !G.overlay) { const n = LEVELS.length; startLevel((G.levelIndex + (e.code === 'KeyN' ? 1 : n - 1)) % n); e.preventDefault(); return; }
@@ -2140,17 +2202,46 @@ window.addEventListener('keydown', (e) => {
 window.addEventListener('keyup', (e) => { const k = KEYMAP[e.code], k3 = KEYMAP_SKY[e.code]; if (k || k3) { if (k) setKey(k, false); if (k3 && k3 !== k) setKey(k3, false); e.preventDefault(); } });
 window.addEventListener('blur', releaseAll);
 
-// Touch: left half of the stage = run (left quarter: left, second quarter: right, thumb can slide), right half = jump (hold for a higher jump)
+// Touch: the left half of the stage runs, the right half jumps (hold for a higher jump).
+// The left thumb gets a floating pad: touching left of the quarter line runs left, right of it runs right, and from then on
+// the middle of the pad follows the thumb, so a short slide back turns Mimo around wherever the thumb rests.
+// Sliding the thumb down drops through boards. With "buttons" chosen in the settings two fixed arrow buttons take the pad's place.
 const touches = new Map();
 let touchSeen = false;
-function touchZone(e) {
-  const r = stage.getBoundingClientRect(), fx = (e.clientX - r.left) / r.width;
-  return fx < 0.5 ? (fx < 0.25 ? 'left' : 'right') : 'jump';
+const PAD_DEAD = 6, PAD_REACH = 16, PAD_DOWN = 34;
+const pad = { id: null, cx: 0, y0: 0, yTop: 0, dir: 0, down: false, el: $('pad') };
+const tbtns = $('tbtns');
+const buttonsMode = () => progress.touchMode === 'buttons';
+function buttonZone(e) { const l = tbtns.children[0].getBoundingClientRect(), r = tbtns.children[1].getBoundingClientRect(); return e.clientX < (l.right + r.left) / 2 ? 'left' : 'right'; }
+function padShow() {
+  const r = stage.getBoundingClientRect();
+  pad.el.style.left = (pad.cx - r.left) + 'px'; pad.el.style.top = (pad.y0 - r.top) + 'px';
+  pad.el.className = 'pad' + (pad.dir < 0 ? ' go-l' : pad.dir > 0 ? ' go-r' : '') + (pad.down ? ' down' : '');
 }
+function padMove(e) {
+  const x = e.clientX;
+  if (x < pad.cx - PAD_DEAD) pad.dir = -1; else if (x > pad.cx + PAD_DEAD) pad.dir = 1;
+  pad.cx = Math.max(x - PAD_REACH, Math.min(x + PAD_REACH, pad.cx));
+  pad.yTop = Math.min(pad.yTop, e.clientY + 10);
+  pad.down = e.clientY - pad.yTop > PAD_DOWN;
+  padShow();
+}
+function padStart(e, r) {
+  const line = r.left + r.width * 0.25;
+  pad.id = e.pointerId; pad.dir = e.clientX < line ? -1 : 1; pad.cx = line; pad.y0 = pad.yTop = e.clientY; pad.down = false;
+  pad.el.hidden = false; padMove(e);
+}
+function padEnd() { pad.id = null; pad.dir = 0; pad.down = false; pad.el.hidden = true; }
 function applyTouches() {
   const zones = [...touches.values()];
-  input.left = zones.includes('left'); input.right = zones.includes('right');
+  input.left = pad.dir < 0 || zones.includes('left'); input.right = pad.dir > 0 || zones.includes('right'); input.down = pad.down;
   const j = zones.includes('jump'); if (j !== input.jumpHeld) setKey('jump', j);
+  for (const el of tbtns.children) el.classList.toggle('on', el.className.includes('l') ? input.left : el.className.includes('r') ? input.right : j);
+}
+// the fixed buttons are only there in 2D play on a touch screen, when chosen
+function syncTouchButtons() {
+  const show = buttonsMode() && isTouchDevice() && !!G.L && !G.overlay && (G.mode === 'level' || G.mode === 'boss');
+  if (tbtns.hidden === show) tbtns.hidden = !show;
 }
 // Sternenbahn Abenteuer: swipe left, right, up or down; a short tap jumps.
 // A swipe counts as soon as the finger has moved a little, and one swipe is one move: lift the finger for the next.
@@ -2185,11 +2276,15 @@ stage.addEventListener('pointerdown', (e) => {
     audio(); try { stage.setPointerCapture(e.pointerId); } catch (_) {}
     return;
   }
-  touches.set(e.pointerId, touchZone(e)); applyTouches(); audio();
+  const r = stage.getBoundingClientRect(), leftHalf = e.clientX - r.left < r.width * 0.5;
+  if (!leftHalf) touches.set(e.pointerId, 'jump');
+  else if (buttonsMode()) touches.set(e.pointerId, buttonZone(e, r));
+  else if (pad.id === null) padStart(e, r);
+  applyTouches(); audio();
   try { stage.setPointerCapture(e.pointerId); } catch (_) {}
 });
-stage.addEventListener('pointermove', (e) => { const sw = swipes.get(e.pointerId); if (sw) { swipeMove(sw, e); return; } if (e.pointerId === stick.id) { stickMove(e); return; } if (!touches.has(e.pointerId)) return; const z = touchZone(e); if (z !== 'jump' && touches.get(e.pointerId) !== 'jump') { touches.set(e.pointerId, z); applyTouches(); } });
-const touchEnd = (e) => { const sw = swipes.get(e.pointerId); if (sw) { swipes.delete(e.pointerId); if (!sw.done && e.type === 'pointerup' && performance.now() - sw.t < TAP_MAX_MS) runAction('jump'); return; } if (e.pointerId === stick.id) stickEnd(); if (touches.delete(e.pointerId)) applyTouches(); };
+stage.addEventListener('pointermove', (e) => { const sw = swipes.get(e.pointerId); if (sw) { swipeMove(sw, e); return; } if (e.pointerId === stick.id) { stickMove(e); return; } if (e.pointerId === pad.id) { padMove(e); applyTouches(); return; } if (!touches.has(e.pointerId) || touches.get(e.pointerId) === 'jump') return; touches.set(e.pointerId, buttonZone(e, stage.getBoundingClientRect())); applyTouches(); });
+const touchEnd = (e) => { const sw = swipes.get(e.pointerId); if (sw) { swipes.delete(e.pointerId); if (!sw.done && e.type === 'pointerup' && performance.now() - sw.t < TAP_MAX_MS) runAction('jump'); return; } if (e.pointerId === stick.id) stickEnd(); const wasPad = e.pointerId === pad.id; if (wasPad) padEnd(); if (touches.delete(e.pointerId) || wasPad) applyTouches(); };
 stage.addEventListener('pointerup', touchEnd); stage.addEventListener('pointercancel', touchEnd); stage.addEventListener('lostpointercapture', touchEnd);
 stage.addEventListener('contextmenu', (e) => e.preventDefault());
 // iOS Safari ignores preventDefault on pointer events for its own gestures (magnifier, double-tap zoom, page bounce);
@@ -4184,6 +4279,11 @@ function drawMimo(cx, bottom, o) {
   // paws
   ctx.fillStyle = bodyColor; ctx.beginPath(); ctx.ellipse(-6 + step, -1.5, 5, 3, 0, 0, Math.PI * 2); ctx.ellipse(6 - step, -1.5, 5, 3, 0, 0, Math.PI * 2); ctx.fill();
   ctx.fillStyle = P.mimoInk; ctx.globalAlpha = alpha * 0.16; ctx.beginPath(); ctx.ellipse(-6 + step, -1.5, 5, 3, 0, 0, Math.PI * 2); ctx.ellipse(6 - step, -1.5, 5, 3, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = alpha;
+  if (outfit.acc === 'a_cape') {
+    const fl = Math.sin(G.time * 7) * 1.4 + Math.min(1, Math.abs(o.vx || 0) / RUN) * 5, lift = Math.max(-6, Math.min(6, (o.vy || 0) / 90));
+    ctx.fillStyle = P.thorn; ctx.beginPath(); ctx.moveTo(-facing * 2, -h - bob + 8); ctx.quadraticCurveTo(-facing * (13 + fl), -h - bob + 12, -facing * (15 + fl), -3 - lift);
+    ctx.quadraticCurveTo(-facing * (9 + fl * 0.5), -1 - lift * 0.5, -facing * 4, -2); ctx.closePath(); ctx.fill();
+  }
   const tilt = -(o.vx || 0) / RUN * 0.5 + ((o.vy || 0) < -50 ? 0.25 : (o.vy || 0) > 100 ? -0.25 : 0);
   // hat (drawn before the body so brims sit behind the head top)
   if (outfit.hat === 'h_leaf') {
@@ -4242,6 +4342,19 @@ function drawMimo(cx, bottom, o) {
     ctx.fillStyle = gl; ctx.globalAlpha = alpha * (0.5 + 0.2 * Math.sin(G.time * 5)); ctx.beginPath(); ctx.arc(3, 12, 16, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = alpha;
     ctx.fillStyle = P.key; rr(-1, 7, 8, 10, 2.5); ctx.fill(); ctx.fillStyle = P.dust; ctx.globalAlpha = alpha * 0.8; rr(1, 9, 4, 6, 1.5); ctx.fill(); ctx.globalAlpha = alpha;
     ctx.restore();
+  }
+  if (outfit.hat === 'h_flower') {
+    ctx.save(); ctx.translate(3, top - 1); ctx.rotate(tilt * 0.5);
+    ctx.strokeStyle = P.leaf; ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-1, 4); ctx.lineTo(0, -1); ctx.stroke();
+    ctx.fillStyle = P.dust; ctx.beginPath(); for (let i = 0; i < 6; i++) { const a = i * Math.PI / 3; ctx.moveTo(Math.cos(a) * 4.2 + 2.6, -5 + Math.sin(a) * 4.2); ctx.arc(Math.cos(a) * 4.2, -5 + Math.sin(a) * 4.2, 2.6, 0, Math.PI * 2); } ctx.fill();
+    ctx.fillStyle = P.star; ctx.beginPath(); ctx.arc(0, -5, 2.6, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
+  }
+  if (outfit.acc === 'a_scarf') {
+    const sw = Math.sin(G.time * 6) * 1.5 + Math.min(1, Math.abs(o.vx || 0) / RUN) * 4;
+    ctx.fillStyle = P.switchOn; ctx.beginPath(); ctx.moveTo(-facing * 9, -8); ctx.quadraticCurveTo(-facing * (15 + sw), -9, -facing * (17 + sw), -3); ctx.lineTo(-facing * (13 + sw), -2.5); ctx.quadraticCurveTo(-facing * 12, -5, -facing * 8, -4.5); ctx.closePath(); ctx.fill();
+    rr(-12, -9, 24, 4.6, 2.3); ctx.fill();
+    ctx.fillStyle = P.dust; ctx.globalAlpha = alpha * 0.55; ctx.fillRect(-6, -9, 2.5, 4.6); ctx.fillRect(1, -9, 2.5, 4.6); ctx.fillRect(8, -9, 2.5, 4.6); ctx.globalAlpha = alpha;
   }
   if (outfit.acc === 'a_bow') {
     ctx.save(); ctx.translate(-w / 2 + 3, top + 6); ctx.rotate(-0.3);
@@ -4515,7 +4628,7 @@ function frame(now) {
   acc += dt;
   let steps = 0;
   const held = needsLandscape();
-  syncRotateHint(held);
+  syncRotateHint(held); syncTouchButtons();
   if (held) { acc = 0; releaseAll(); }
   else if (G.mode === 'bonus') {
     // the music run keeps its own clock (the audio clock), so it gets the real frame time, once
@@ -4575,7 +4688,7 @@ function animatePreview(cv, outfitFn) {
   const draw = () => {
     const saved = ctx; ctx = pc;
     pc.setTransform(1, 0, 0, 1, 0, 0); pc.clearRect(0, 0, cv.width, cv.height);
-    const sc = cv.width / 220 * 3.4;
+    const sc = cv.width / 220 * (cv === previewCanvas ? 3.9 : 3.4);
     pc.setTransform(sc, 0, 0, sc, cv.width / 2, cv.height * 0.76);
     const t = performance.now() / 1000;
     let hop = 0, rot = 0, sx = 1, sy = 1, mood = null;
@@ -4597,10 +4710,12 @@ for (const cv of [$('menuMimo'), previewCanvas]) cv.addEventListener('pointerdow
 function renderMenu() {
   const h = new Date().getHours(); const g = h < 5 ? 'Noch wach?' : h < 11 ? 'Guten Morgen.' : h < 17 ? 'Hallo.' : h < 22 ? 'Guten Abend.' : 'Gute Nacht.';
   $('menuGreet').textContent = DEV
-    ? 'Entwicklerversion: alle Level, Nachtpfad und Bonus sind offen. Im Level: N nächstes Level, B voriges Level. Eigener Speicherstand, keine Bestenliste.'
-    : g + ' Ein ruhiges Hüpfspiel. Bring Mimo zur Tür, sammle Sterne und jage Bestzeiten.';
+    ? 'Entwicklerversion: alle Level und Bonus sind offen. Im Level: N nächstes Level, B voriges Level. Eigener Speicherstand, keine Bestenliste.'
+    : g + ' Bring Mimo zur Tür, sammle Sterne und jage Bestzeiten.';
   if (DEV) document.querySelector('.menu-title h1').textContent = 'Mimo hüpft · Dev';
-  if (isTouchDevice()) $('menuKeys').innerHTML = '<b>Links halten</b> laufen · <b>rechts tippen</b> springen · länger halten, höher springen';
+  if (isTouchDevice()) $('menuKeys').innerHTML = buttonsMode()
+    ? '<b>Pfeile links</b> laufen · <b>rechts tippen</b> springen, länger halten springt höher'
+    : '<b>Linker Daumen</b> schiebt Mimo nach links oder rechts · <b>rechts tippen</b> springt, länger halten springt höher';
   // iPhone Safari cannot hide its bars; the home-screen app can (navigator.standalone exists only on iOS)
   if (navigator.standalone === false && window.top === window) $('menuKeys').innerHTML = '<b>Ohne Safari-Leisten spielen:</b> Teilen antippen, dann „Zum Home-Bildschirm“.';
   const golds = LEVELS.filter((_, i) => medalFor(i, progress.best[i]) === 'gold').length;
@@ -4608,30 +4723,18 @@ function renderMenu() {
   const next = continueLevel();
   $('ctaSub').textContent = 'Level ' + (next + 1) + ' · ' + LEVELS[next].name + (progress.zen ? ' · Zen' : '');
   document.querySelector('#btnContinue .cta-main').textContent = progress.unlocked > 1 ? 'Weiter spielen' : 'Spielen';
-  $('tileLevels').textContent = done + ' von ' + LEVELS.length + ' · ★ ' + starsTotal() + '/' + LEVELS.length * 3 + (golds ? ' · ' + golds + ' Gold' : '');
-  const dl = dailyLevel(), d = progress.daily, doneToday = d && d.day === dayIndex();
-  const sk = streak(); $('tileDaily').textContent = 'Level ' + (dl + 1) + ' · ' + (doneToday ? fmtTime(d.time) + (d.medal ? ' · ' + MEDAL_NAMES[d.medal] : '') : 'heute offen') + (sk ? ' · Serie ' + sk + (sk === 1 ? ' Tag' : ' Tage') : '');
-  $('tileShop').textContent = '★ ' + wallet() + ' verfügbar';
-  const bu = bonusUnlocked(); $('btnBonus').classList.toggle('locked', !bu);
-  const played = (progress.bonus && progress.bonus.score) || (progress.dash && progress.dash.score);
-  $('tileBonus').textContent = bu ? bonusTileText() : 'ab ' + BONUS_UNLOCK + ' Sternen · noch ' + (BONUS_UNLOCK - starsTotal());
-  $('bonusNew').hidden = !bu || !!played;
-  $('tileAch').textContent = achCount() + ' von ' + ACHIEVEMENTS.length + (progress.owned.includes('h_party') ? ' · Partyhut freigeschaltet' : ' · ab ' + ACH_PARTY + ' gibt es den Partyhut');
-  const su = skyUnlocked(), sp = progress.sky; $('btnSky').classList.toggle('locked', !su);
-  $('tileSky').textContent = !su ? 'Öffnet sich nach Level 8'
-    : sp && sp.best != null ? 'Bestzeit ' + fmtTime(sp.best) + ' · ★ ' + (sp.stars || 0) + '/' + SKY_STARS + (sp.gold ? ' · Schatz gefunden' : '') + (sp.medal ? ' · ' + MEDAL_NAMES[sp.medal] : '')
-    : 'Neu · Inseln, Drehwelt und Endgegner';
-  const nightOpen = DEV || nightness() >= 0.5, ni = LEVELS.length - 1; $('btnNight').classList.toggle('locked', !nightOpen);
-  $('tileNight').textContent = nightOpen ? (progress.best[ni] != null ? 'Bestzeit ' + fmtTime(progress.best[ni]) : 'Nur nachts · jetzt offen') : 'erscheint zwischen 21 und 5 Uhr';
+  $('tileLevels').textContent = done + ' von ' + LEVELS.length + ' · ★ ' + starsTotal() + (golds ? ' · ' + golds + ' Gold' : '');
+  const fresh = COSTUMES.filter((c) => !isOwned(c) && !isReward(c) && c.price <= wallet()).length;
+  $('tileShop').textContent = '★ ' + wallet() + (fresh ? ' · ' + fresh + ' Teile erschwinglich' : ' zum Ausgeben');
+  $('btnBonus').hidden = !STARWAY;
+  if (STARWAY) { const bu = bonusUnlocked(); $('btnBonus').classList.toggle('locked', !bu); $('tileBonus').textContent = bu ? bonusTileText() : 'ab ' + BONUS_UNLOCK + ' Sternen'; $('bonusNew').hidden = !bu || !!((progress.bonus && progress.bonus.score) || (progress.dash && progress.dash.score)); }
+  $('tileAch').textContent = achCount() + ' von ' + ACHIEVEMENTS.length;
   const flags = [progress.zen ? 'Zen' : null, assistOn() ? 'Hilfen an' : null, !progress.music && !progress.sfx ? 'Ton aus' : !progress.music ? 'Musik aus' : null].filter(Boolean);
-  $('tileSettings').textContent = flags.length ? flags.join(' · ') : 'Ton, Geist, Hilfen';
+  $('tileSettings').textContent = flags.length ? flags.join(' · ') : 'Ton, Steuerung, Hilfen';
 }
 $('btnContinue').addEventListener('click', () => { audio(); startLevel(continueLevel()); });
 $('btnLevels').addEventListener('click', () => { buildLevelGrid(); showOverlay('levels'); });
 $('btnBonus').addEventListener('click', () => { if (!bonusUnlocked()) { SFX.pause(); return; } audio(); SFX.ui(); openRunMenu(); });
-$('btnSky').addEventListener('click', () => { if (!skyUnlocked()) { SFX.pause(); return; } audio(); SFX.ui(); startSky(); });
-$('btnNight').addEventListener('click', () => { if (!DEV && nightness() < 0.5) { SFX.pause(); return; } audio(); startLevel(LEVELS.length - 1); });
-$('btnDaily').addEventListener('click', () => { audio(); hideOverlays(); loadLevel(dailyLevel()); G.daily = true; updateHud(); });
 $('btnWardrobe').addEventListener('click', () => openShop('menu'));
 $('btnSettings').addEventListener('click', () => { navFrom = 'menu'; renderSettings(); showOverlay('settings'); });
 $('btnLevelsBack').addEventListener('click', () => showOverlay('menu'));
@@ -4641,13 +4744,13 @@ $('btnSettingsBack').addEventListener('click', () => showOverlay(navFrom));
 function buildLevelGrid() {
   const grid = $('levelGrid'); grid.innerHTML = '';
   const current = Math.min(LEVELS.length - 1, progress.unlocked - 1);
+  const head = (text) => { const hd = document.createElement('h3'); hd.className = 'world-head'; hd.textContent = text; grid.appendChild(hd); };
   let lastWorld = 0;
   LEVELS.forEach((lv, i) => {
-    if (lv.night && nightness() < 0.5) return;
-    if (lv.night) { const hd = document.createElement('h3'); hd.className = 'world-head'; hd.textContent = 'Nur nachts'; grid.appendChild(hd); lastWorld = -1; }
-    else if (lv.world !== lastWorld) { lastWorld = lv.world; const hd = document.createElement('h3'); hd.className = 'world-head'; hd.textContent = 'Welt ' + lv.world + ' · ' + WORLDS[lv.world].name; grid.appendChild(hd); }
+    if (lv.night) return;
+    if (lv.world !== lastWorld) { lastWorld = lv.world; head('Welt ' + lv.world + ' · ' + WORLDS[lv.world].name); }
     const b = document.createElement('button'); b.type = 'button'; b.className = 'lvl-card';
-    const unlocked = lv.night || i < progress.unlocked, best = progress.best[i], got = progress.stars[i] || 0, medal = medalFor(i, best);
+    const unlocked = i < progress.unlocked, best = progress.best[i], got = progress.stars[i] || 0, medal = medalFor(i, best);
     if (!unlocked) b.classList.add('locked'); if (i === current) b.classList.add('current');
     b.disabled = !unlocked;
     const meta = unlocked
@@ -4659,13 +4762,28 @@ function buildLevelGrid() {
     const bw = bossAfterLevel(i);
     if (bw > 0) grid.appendChild(bossCard(bw));
   });
+  head('Bonus');
+  const dl = dailyLevel(), d = progress.daily, doneToday = d && d.day === dayIndex(), sk = streak();
+  grid.appendChild(bonusCard('☀\uFE0E', 'Tageslauf', 'Level ' + (dl + 1) + ' · ' + (doneToday ? fmtTime(d.time) : 'heute offen') + (sk ? ' · Serie ' + sk : ''), true,
+    () => { hideOverlays(); loadLevel(dailyLevel()); G.daily = true; updateHud(); }));
+  const su = skyUnlocked(), sp = progress.sky;
+  grid.appendChild(bonusCard('3D', 'Himmelsinseln', !su ? 'Nach Level ' + (worldEnd(1) + 1) : sp && sp.best != null ? fmtTime(sp.best) + ' · ★ ' + (sp.stars || 0) + '/' + SKY_STARS : 'Inseln und Endgegner', su, startSky));
+  const ni = LEVELS.findIndex((l) => l.night), nightOpen = DEV || nightness() >= 0.5;
+  if (ni >= 0) grid.appendChild(bonusCard('☾\uFE0E', LEVELS[ni].name, nightOpen ? (progress.best[ni] != null ? 'Bestzeit ' + fmtTime(progress.best[ni]) : 'Jetzt offen') : 'Nur von 21 bis 5 Uhr', nightOpen, () => startLevel(ni)));
+}
+function bonusCard(icon, name, meta, open, go) {
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'lvl-card bonus' + (open ? '' : ' locked'); b.disabled = !open;
+  b.innerHTML = '<span class="num"></span><span class="name"></span><span class="meta"><span></span></span>';
+  b.querySelector('.num').textContent = icon; b.querySelector('.name').textContent = name; b.querySelector('.meta span').textContent = meta;
+  b.addEventListener('click', () => { if (open) { audio(); SFX.ui(); go(); } });
+  return b;
 }
 
 function bossCard(w) {
   const def = BOSSES[w], open = bossUnlocked(w), rec = progress.bosses[w];
   const b = document.createElement('button'); b.type = 'button'; b.className = 'lvl-card boss' + (open ? '' : ' locked'); b.disabled = !open;
   const meta = !open ? 'Nach Level ' + (def.after + 1) : rec ? 'Besiegt · ' + fmtTime(rec.best) + (rec.assisted ? ' · mit Hilfe' : '') : 'Endgegner';
-  b.innerHTML = '<span class="num">♛</span><span class="name"></span><span class="meta"><span></span></span>';
+  b.innerHTML = '<span class="num"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M3 18h18l1.5-10-5.5 4-5-7-5 7-5.500-4z" fill="currentColor"/></svg></span><span class="name"></span><span class="meta"><span></span></span>';
   b.querySelector('.name').textContent = def.name; b.querySelector('.meta span').textContent = meta;
   b.addEventListener('click', () => { if (open) { audio(); startBoss(w); } });
   return b;
@@ -4689,6 +4807,10 @@ function renderSettings() {
   set('btnComp', progress.companion && companionUnlocked(), companionUnlocked() ? undefined : 'nach Welt 2');
   $('secScreen').hidden = $('btnFull').hidden = !fullscreenOk(); set('btnFull', !!document.fullscreenElement);
   $('volMusic').value = Math.round(progress.musicVol * 100); $('volSfx').value = Math.round(progress.sfxVol * 100);
+  $('rowRunOffset').hidden = !STARWAY;
+  const touch = isTouchDevice(); $('secTouch').hidden = $('btnTouchMode').hidden = !touch;
+  $('btnTouchMode').querySelector('em').textContent = buttonsMode() ? 'Knöpfe' : 'Daumen';
+  $('touchModeTxt').textContent = buttonsMode() ? 'zwei feste Pfeile unten links' : 'links tippen und den Daumen schieben';
   $('runOffset').value = progress.runOffset || 0; $('runOffsetTxt').textContent = progress.runOffset ? progress.runOffset + ' ms, für Bluetooth-Kopfhörer' : 'aus, bei Bluetooth-Kopfhörern etwa 150 ms';
   renderFun();
 }
@@ -4701,6 +4823,7 @@ $('volMusic').addEventListener('input', () => { progress.musicVol = $('volMusic'
 $('volMusic').addEventListener('change', () => { if (progress.music) { Music.start(); Music.duck(!!G.overlay); } });
 $('volSfx').addEventListener('input', () => { progress.sfxVol = $('volSfx').value / 100; saveProgress(); if (fxGain) fxGain.gain.value = 2.6 * progress.sfxVol; });
 $('volSfx').addEventListener('change', () => { audio(); SFX.star(); });
+$('btnTouchMode').addEventListener('click', () => { progress.touchMode = buttonsMode() ? 'thumb' : 'buttons'; saveProgress(); renderSettings(); SFX.ui(); });
 $('btnSfx').addEventListener('click', () => { progress.sfx = !progress.sfx; saveProgress(); renderSettings(); renderSoundBtn(); audio(); SFX.ui(); });
 $('btnFull').addEventListener('click', () => { SFX.ui(); toggleFullscreen(); });
 $('btnGhost').addEventListener('click', () => { progress.ghostOn = !progress.ghostOn; saveProgress(); renderSettings(); SFX.ui(); });
@@ -4717,47 +4840,62 @@ $('btnReset').addEventListener('click', () => {
 });
 
 // ---------- Wardrobe ----------
-let shopSel = { ...DEFAULT_OUTFIT };
+// Tap a piece to try it on. Pieces Mimo owns are put on at once, others show what they cost or how to earn them.
+let shopSel = { ...DEFAULT_OUTFIT }, shopTab = 'color';
+const costume = (id) => COSTUMES.find((c) => c.id === id);
 function openShop(from) {
   navFrom = from; shopSel = { ...progress.outfit }; renderShop(); showOverlay('shop'); SFX.ui();
 }
+function rewardText(c) {
+  if (c.boss) return 'Besiege ' + BOSSES[c.boss].name + '.';
+  if (c.ach) return 'Sammle ' + c.ach + ' Erfolge (' + Math.min(achCount(), c.ach) + ' von ' + c.ach + ').';
+  return 'Spiele den Tageslauf an ' + c.streak + ' Tagen in Folge (' + Math.min(streak(), c.streak) + ' von ' + c.streak + ').';
+}
+// a small still picture of Mimo wearing one piece
+function drawThumb(cv, outfit) {
+  const pc = cv.getContext('2d'), saved = ctx; ctx = pc;
+  const sc = cv.width / 54;
+  pc.setTransform(sc, 0, 0, sc, cv.width / 2, cv.height * 0.9); drawMimo(0, 0, { facing: 1, outfit });
+  ctx = saved;
+}
 function renderShop() {
-  const groups = { color: $('shopColor'), hat: $('shopHat'), acc: $('shopAcc'), premium: $('shopPremium') };
-  for (const el of Object.values(groups)) el.innerHTML = '';
-  const toBuy = COSTUMES.filter((c) => Object.values(shopSel).includes(c.id) && !isOwned(c) && !c.premium && !c.streak && !c.ach);
-  const tryingPremium = COSTUMES.filter((c) => Object.values(shopSel).includes(c.id) && (c.premium || c.streak || c.ach) && !isOwned(c));
-  const cost = toBuy.reduce((a, c) => a + c.price, 0);
-  for (const c of COSTUMES) {
+  for (const b of $('shopTabs').children) { const on = b.dataset.kind === shopTab; b.classList.toggle('on', on); b.setAttribute('aria-selected', String(on)); }
+  const grid = $('shopItems'); grid.innerHTML = '';
+  for (const c of COSTUMES.filter((x) => x.kind === shopTab)) {
     const b = document.createElement('button'); b.type = 'button'; b.className = 'item';
     const owned = isOwned(c), sel = shopSel[c.kind] === c.id, worn = progress.outfit[c.kind] === c.id;
-    if (sel && owned) b.classList.add('on'); if (sel && !owned) b.classList.add('try');
-    b.innerHTML = '<span>' + c.name + '</span><small>' + (worn ? 'Angelegt' : owned ? 'Gekauft' : c.ach ? 'Erfolge ' + Math.min(achCount(), c.ach) + '/' + c.ach : c.streak ? 'Serie ' + Math.min(streak(), c.streak) + '/' + c.streak : c.premium ? (sel ? 'Anprobe' : 'Premium') : sel ? 'Anprobe · ★ ' + c.price : '★ ' + c.price) + '</small>';
-    b.setAttribute('aria-pressed', String(sel));
+    if (sel) b.classList.add(owned ? 'on' : 'try'); if (worn) b.classList.add('worn'); if (!owned && isReward(c)) b.classList.add('closed');
+    const cv = document.createElement('canvas'); cv.width = cv.height = 128; drawThumb(cv, { ...progress.outfit, [c.kind]: c.id });
+    const name = document.createElement('span'); name.textContent = c.name;
+    const st = document.createElement('small'); st.textContent = worn ? 'Angelegt' : owned ? 'Im Schrank' : c.boss ? 'Endgegner' : c.ach ? 'Erfolge' : c.streak ? 'Serie' : '★ ' + c.price;
+    if (!owned && !isReward(c)) st.className = 'price';
+    b.append(cv, name, st); b.setAttribute('aria-pressed', String(sel));
     b.addEventListener('click', () => {
       shopSel = { ...shopSel, [c.kind]: c.id };
-      if (owned) { progress.outfit = { ...progress.outfit, [c.kind]: c.id }; saveProgress(); SFX.ui(); } else SFX.flag();
+      if (owned) { progress.outfit = { ...progress.outfit, [c.kind]: c.id }; saveProgress(); SFX.ui(); trick = { cv: previewCanvas, t0: performance.now(), kind: 'wiggle' }; } else SFX.flag();
       renderShop();
     });
-    (c.premium ? groups.premium : groups[c.kind]).appendChild(b);
+    grid.appendChild(b);
   }
-  $('shopWallet').textContent = '★ ' + wallet() + ' verfügbar';
-  $('shopSub').textContent = toBuy.length ? 'Anprobe: ' + toBuy.map((c) => c.name).join(' + ') : starsTotal() + ' von ' + LEVELS.length * 3 + ' Sternen gesammelt. Jeder Stern zählt einmal.';
-  const bar = $('shopBar'); bar.hidden = toBuy.length === 0 && tryingPremium.length === 0;
-  if (!toBuy.length && tryingPremium.length && tryingPremium.some((c) => c.ach)) { $('shopBarText').textContent = 'Partyhut: sammle ' + ACH_PARTY + ' Erfolge (' + Math.min(achCount(), ACH_PARTY) + '/' + ACH_PARTY + ')'; $('btnBuy').disabled = true; $('btnBuy').textContent = 'Erfolge'; }
-  else if (!toBuy.length && tryingPremium.length) { const st = tryingPremium.find((c) => c.streak); $('shopBarText').textContent = st ? 'Laterne: spiele den Tageslauf an 7 Tagen in Folge (' + Math.min(streak(), 7) + '/7)' : tryingPremium.map((c) => c.name).join(' + ') + ' gehört zum Premium-Set'; $('btnBuy').disabled = true; $('btnBuy').textContent = st ? 'Serie' : 'Bald'; }
-  else if (toBuy.length) {
-    const ok = wallet() >= cost;
-    $('shopBarText').textContent = toBuy.map((c) => c.name).join(' + ') + ' · ★ ' + cost + (ok ? '' : ' · dir fehlen ' + (cost - wallet()));
-    $('btnBuy').disabled = !ok; $('btnBuy').textContent = ok ? 'Kaufen' : 'Zu wenig Sterne';
-  }
+  $('shopWallet').textContent = '★ ' + wallet();
+  const trying = Object.values(shopSel).map(costume).filter((c) => c && !isOwned(c));
+  const toBuy = trying.filter((c) => !isReward(c)), locked = trying.filter(isReward), cost = toBuy.reduce((a, c) => a + c.price, 0);
+  $('shopLook').textContent = [shopSel.color, shopSel.hat, shopSel.acc].map(costume).filter((c) => c && c.id !== 'a_none').map((c) => c.name).join(' · ');
+  const bar = $('shopBar'), buy = $('btnBuy'), ok = wallet() >= cost;
+  bar.classList.toggle('buy', toBuy.length > 0 && ok); buy.hidden = !toBuy.length; buy.disabled = !ok;
+  if (toBuy.length) { $('shopBarText').textContent = ok ? toBuy.map((c) => c.name).join(' + ') + ' für ★ ' + cost : 'Dir fehlen noch ★ ' + (cost - wallet()) + '. Sterne gibt es in jedem Level.'; buy.textContent = 'Kaufen · ★ ' + cost; }
+  else if (locked.length) $('shopBarText').textContent = locked[0].name + ': ' + rewardText(locked[0]);
+  else $('shopBarText').textContent = 'Tippe ein Teil an, um es anzuprobieren. Alles hier ist nur zum Hübschsein.';
 }
+for (const b of $('shopTabs').children) b.addEventListener('click', () => { shopTab = b.dataset.kind; SFX.ui(); renderShop(); });
 $('btnBuy').addEventListener('click', () => {
-  const toBuy = COSTUMES.filter((c) => Object.values(shopSel).includes(c.id) && !isOwned(c) && !c.premium && !c.streak && !c.ach);
+  const toBuy = Object.values(shopSel).map(costume).filter((c) => c && !isOwned(c) && !isReward(c));
   const cost = toBuy.reduce((a, c) => a + c.price, 0);
   if (!toBuy.length || wallet() < cost) return;
   progress.owned = [...progress.owned, ...toBuy.map((c) => c.id)];
-  const next = { ...shopSel }; for (const k of Object.keys(next)) { const c = COSTUMES.find((x) => x.id === next[k]); if (c && !isOwned(c)) next[k] = progress.outfit[k]; }
-  progress.outfit = next; saveProgress(); SFX.star(); renderShop();
+  const next = { ...shopSel }; for (const k of Object.keys(next)) { const c = costume(next[k]); if (c && !isOwned(c)) next[k] = progress.outfit[k]; }
+  progress.outfit = next; shopSel = { ...next }; saveProgress(); SFX.star(); setTimeout(() => SFX.yay(), 200);
+  trick = { cv: previewCanvas, t0: performance.now(), kind: 'spin' }; renderShop();
 });
 $('btnShopBack').addEventListener('click', () => { shopSel = { ...progress.outfit }; showOverlay(navFrom); });
 
@@ -5048,13 +5186,13 @@ const ACHIEVEMENTS = [
   { id: 'piep100', name: 'Hupkonzert', desc: '100 Mal gepiept.' },
   { id: 'fall100', name: 'Stuntdouble', desc: '100 Mal hingefallen.' },
   { id: 'allcodes', name: 'Codeknacker', desc: 'Alle fünf Geheimcodes gefunden.' },
-  { id: 'sternschnuppe', name: 'Sternschnuppe', desc: 'In der Sternenbahn die höchste Kombo-Stufe erreicht.' },
-  { id: 'ohrwurm', name: 'Ohrwurm', desc: 'Die ganze Melodie der Sternenbahn gespielt.' },
-  { id: 'dash1', name: 'Sternenläufer', desc: 'Das Abenteuer der Sternenbahn bis zum Sternentor geschafft.' },
-  { id: 'dashStars', name: 'Sternenfänger', desc: 'Alle zehn Sterne im Abenteuer in einem Lauf.' },
-  { id: 'dashCombo', name: 'Funkenregen', desc: 'Im Abenteuer den Multiplikator x5 erreicht.' },
-  { id: 'dash1000', name: 'Langstrecke', desc: '1000 Meter auf der Endlosbahn geschafft.' },
-];
+  { id: 'sternschnuppe', starway: true, name: 'Sternschnuppe', desc: 'In der Sternenbahn die höchste Kombo-Stufe erreicht.' },
+  { id: 'ohrwurm', starway: true, name: 'Ohrwurm', desc: 'Die ganze Melodie der Sternenbahn gespielt.' },
+  { id: 'dash1', starway: true, name: 'Sternenläufer', desc: 'Das Abenteuer der Sternenbahn bis zum Sternentor geschafft.' },
+  { id: 'dashStars', starway: true, name: 'Sternenfänger', desc: 'Alle zehn Sterne im Abenteuer in einem Lauf.' },
+  { id: 'dashCombo', starway: true, name: 'Funkenregen', desc: 'Im Abenteuer den Multiplikator x5 erreicht.' },
+  { id: 'dash1000', starway: true, name: 'Langstrecke', desc: '1000 Meter auf der Endlosbahn geschafft.' },
+].filter((a) => STARWAY || !a.starway);
 const ACH_PARTY = 8;
 const achCount = () => ACHIEVEMENTS.filter((a) => progress.ach[a.id]).length;
 function unlock(id) {
@@ -5213,6 +5351,7 @@ $('boardTabRun').addEventListener('click', () => { setBoardTab('run'); showBoard
 $('boardTabDash').addEventListener('click', () => { setBoardTab('dash'); showBoard(); });
 let boardReq = 0;
 async function showBoard() {
+  if (!STARWAY) { boardTab = 'levels'; $('boardTabRun').hidden = $('boardTabDash').hidden = true; }
   showOverlay('board'); setBoardTab(boardTab);
   const req = ++boardReq;
   const list = $('boardList'); list.innerHTML = '<div class="row"><span class="rk">…</span><span class="nm">Lade Bestenliste</span></div>';

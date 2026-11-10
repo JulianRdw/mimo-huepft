@@ -10,7 +10,9 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = path.join(ROOT, 'src');
 const OUT = path.join(ROOT, 'docs');
-const MODULES = ['mimo3d.js', 'sky3d.js', 'run3d.js', 'starway-core.js', 'starway-world.js', 'starway3d.js'];
+// the Sternenbahn files only ship while the game has it switched on (const STARWAY in src/index.html)
+const STARWAY_ON = /const STARWAY = true;/.test(fs.readFileSync(path.join(SRC, 'index.html'), 'utf8'));
+const MODULES = ['mimo3d.js', 'sky3d.js', ...(STARWAY_ON ? ['run3d.js', 'starway-core.js', 'starway-world.js', 'starway3d.js'] : [])];
 const ICONS = ['icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png'];
 const THREE_CDN = "'https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js'";
 
