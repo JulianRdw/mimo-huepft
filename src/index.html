@@ -3853,6 +3853,8 @@ function winBoss() {
   const best = prev && prev.best != null ? Math.min(prev.best, t) : t;
   progress.bosses = { ...progress.bosses, [w]: { best, assisted: best === t ? assistOn() : !!(prev && prev.assisted) } };
   unlock('boss'); if ([1, 2, 3].every((k) => progress.bosses[k])) unlock('allboss');
+  // each boss leaves a piece for the wardrobe behind
+  if (!prev) for (const c of COSTUMES) if (c.boss === w) toast(c.name + ' freigeschaltet!', 'Das Teil liegt jetzt im Kleiderschrank.');
   saveProgress();
 }
 
@@ -5023,7 +5025,7 @@ function renderMenu() {
   document.querySelector('#btnContinue .cta-main').textContent = progress.unlocked > 1 ? 'Weiter spielen' : 'Spielen';
   $('tileLevels').textContent = done + ' von ' + LEVELS.length + ' · ★ ' + starsTotal() + (golds ? ' · ' + golds + ' Gold' : '');
   const fresh = COSTUMES.filter((c) => !isOwned(c) && !isReward(c) && c.price <= wallet()).length;
-  $('tileShop').textContent = '★ ' + wallet() + (fresh ? ' · ' + fresh + ' Teile erschwinglich' : ' zum Ausgeben');
+  $('tileShop').textContent = '★ ' + wallet() + ' zum Ausgeben' + (fresh ? ' · Neues zu haben' : '');
   $('btnBonus').hidden = !STARWAY;
   if (STARWAY) { const bu = bonusUnlocked(); $('btnBonus').classList.toggle('locked', !bu); $('tileBonus').textContent = bu ? bonusTileText() : 'ab ' + BONUS_UNLOCK + ' Sternen'; $('bonusNew').hidden = !bu || !!((progress.bonus && progress.bonus.score) || (progress.dash && progress.dash.score)); }
   $('tileAch').textContent = achCount() + ' von ' + ACHIEVEMENTS.length;
@@ -5703,7 +5705,7 @@ if (window.claude && window.claude.hot && window.claude.hot.snapshot) {
   window.claude.hot.snapshot(() => (G.L && !G.overlay ? { levelIndex: G.levelIndex, attempts: G.attempts } : {}));
 }
 if (window.claude && window.claude.hot && window.claude.hot.ready) window.claude.hot.ready(boot); else boot(window.claude && window.claude.hot ? window.claude.hot.data : null);
-window.__mimo = { sim: { hold(on) { simHold = !!on; }, step(n) { for (let i = 0; i < n; i++) update(STEP); }, STEP }, startBoss, BOSSES, boss: () => G.boss, aud: () => ({ ac, masterGain, Music, audioStuck, btn: btnUnlock.textContent }), piep, bubble, unlock, startGag, CODES, ACHIEVEMENTS, progress, G, LEVELS, input, load: (i) => { hideOverlays(); loadLevel(i); }, setKey, startBonus, startDash, restartDash, openRunMenu, ph: (tx, ty) => (G.time / TT_PERIOD + (G.L.tgroup.get(tx + ',' + ty) || 0)) % 1, audioState: () => ({ state: ac && ac.state, music: musGain && musGain.gain.value, master: masterGain && masterGain.gain.value, running: Music.running, musicOn: progress.music, sfxOn: progress.sfx }),
+window.__mimo = { startSky, sim: { hold(on) { simHold = !!on; }, step(n) { for (let i = 0; i < n; i++) update(STEP); }, STEP }, startBoss, BOSSES, boss: () => G.boss, aud: () => ({ ac, masterGain, Music, audioStuck, btn: btnUnlock.textContent }), piep, bubble, unlock, startGag, CODES, ACHIEVEMENTS, progress, G, LEVELS, input, load: (i) => { hideOverlays(); loadLevel(i); }, setKey, startBonus, startDash, restartDash, openRunMenu, ph: (tx, ty) => (G.time / TT_PERIOD + (G.L.tgroup.get(tx + ',' + ty) || 0)) % 1, audioState: () => ({ state: ac && ac.state, music: musGain && musGain.gain.value, master: masterGain && masterGain.gain.value, running: Music.running, musicOn: progress.music, sfxOn: progress.sfx }),
   meter: (ms) => new Promise((res) => { if (!ac) return res(null); const an = ac.createAnalyser(); an.fftSize = 2048; masterGain.connect(an); const buf = new Float32Array(an.fftSize); let peak = 0; const t0 = performance.now(); const tick = () => { an.getFloatTimeDomainData(buf); for (const v of buf) peak = Math.max(peak, Math.abs(v)); if (performance.now() - t0 < ms) requestAnimationFrame(tick); else { masterGain.disconnect(an); res(peak); } }; tick(); }) };
 })();
 </script>
