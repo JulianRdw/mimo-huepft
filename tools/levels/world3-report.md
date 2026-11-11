@@ -76,6 +76,29 @@ Fast and full clock times are levelbot times. Difficulty is on a 1–10 scale fo
 - **Hidden star (behind the start):** Mimo starts at x 12. The star lies at x 3, behind him, exactly where the avalanche comes from. Run toward the thundering avalanche, grab it, turn around and run. At the turn the avalanche is about 4 tiles away.
 - **Caveat:** This works only on a fresh start (after a death you respawn with the avalanche 9 tiles behind the start, on top of the star). The dare lasts about the first 2 seconds.
 
+## Release extension (longer levels)
+
+Every level got new sections of the same theme, about +30 to +50 % on the fast clock. Old sections are unchanged, only shifted. Fast = levelcheck fast route, full = route with all 3 stars. Routes now come from the slab sources used for the build, so the numbers in the per-level text above (widths, clock times, x positions) describe the old versions; the table here is current.
+
+| # | Level | Size | Fast old -> new | Full new | New section |
+|---|---|---|---|---|---|
+| 1 | Pulverschnee | 101x15 | 9.4 -> 13.8 s | 17.9 s | Ice staircase with a thorn on the ice (hop twice), a thorn floe chain; flags at x 53 and x 76. Stars unchanged (cellar star x 6, block star x 28, four-gap star). |
+| 2 | Eiszapfen | 85x15 | 8.3 -> 12.2 s | 17.8 s | Second tap corridor of 25 tiles with crumble floors, a chimney opening with a thorn (full jump allowed there) and big icicles. Stars unchanged. |
+| 3 | Sessellift | 101x22 | 19.9 -> 29.3 s | 39.9 s | Two more lifts in a 33-tile section after the cliff: a horizontal lift under a ceiling of small icicles (no droppers), a flag ledge, a second lift to a ledge with a thorn. Lifts C, D, F got new phases so that their old wait pattern still fits. Stars unchanged (hidden cellar star kept). |
+| 4 | Frostschnecken | 75x14 | 8.4 -> 12.3 s | 13.7 s | Board snail chain: ice edge, board with a snail, higher board with a snail, bounce twice to the ground. Flag at x 46. Stars unchanged. |
+| 5 | Schneesturm | 119x16 | 9.3 -> 14.0 s | 15.8 s | Two wind hops of 13 tiles (island in the first one at row 10, hold right all the way works), flags on both landings. Stars unchanged (roof star kept). |
+| 6 | Eishöhle | 86x16 | 11.9 -> 16.8 s | 19.3 s | "Rückschalter": b-bridge to a second switch (turns the a-blocks back on), a-block stairs up to a ledge with one timed-thorn group under icicles, flag on the ledge. |
+| 7 | Gipfelgrat | 26x61 | 19.0 -> 28.2 s | 29.6 s | New 15-row stage between the first flag ledge and the ice ledge: boards, ice, crumbles, an ice floe with a thorn, boards, ice. One star moved to the thorn hop (x 22, row 34), the old second-board star is gone; flag added on the snow ledge before the lift. |
+| 8 | Lawine | 161x14 | 14.7 -> 22.1 s | 24.8 s | Pit and thorn ice strip under an icicle ceiling (x 36-62), crumble bridge with a thorn before the finish, a flag before the timed thorns. Last snail replaced by a thorn (see below). |
+
+Notes and shaky spots:
+- Lifts: L3 and L7 are timed by `G.time`. The fast routes contain waits that match a cycle (L3 lift E cycle 5.3 s, L7 lift 8.7 s with up to 7 s wait for the bot). A human just waits for the next cycle.
+- L8: chase speed unchanged (180). Fast route keeps a gap of over 20 tiles to the avalanche all the time; the full route still has 3.8 tiles at the turn behind the start. After a respawn the avalanche is 9 tiles behind the flag; the timed thorns need at most about 0.6 s of waiting for the bot, a bad phase costs up to about 1.4 s.
+- L8: the last snail and the n1 snail were replaced by thorns, because a snail on a wide floor patrols into the door area and made the finish timing-dependent. L1 hash note: which icicles fall depends on the absolute tile x; inserted blocks in L2, L3, L8 keep a width that is a multiple of 3 where the old ceilings sit behind them.
+- L6: after the second switch the b-bridge disappears. The flag on the ledge is placed after that switch on purpose, otherwise a death between the switch and the ledge would soft-lock.
+- Bot timing of the new snail section in L4 depends on a wait (1 s) at the flag, humans time the snails by eye.
+- Not verified by a human: all times and routes are bot runs only.
+
 ## Difficulty curve
 
 | # | Level | Length | Difficulty | Fast clock |

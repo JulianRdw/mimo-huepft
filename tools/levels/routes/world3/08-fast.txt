@@ -1,4 +1,3 @@
-# Lawine, fastest: no detour to the star behind the start, the timed thorns happen to be open
 R until x>=17.4
 RJ 0.3
 R until grounded
@@ -8,20 +7,46 @@ R until grounded
 R until x>=28.4
 RJ 0.3
 R until grounded
-R until x>=41.4
-RJ 0.35
-R until grounded
-R until x>=58.6
+R until x>=41.2
 RJ 0.3
 R until grounded
-R until x>=67.4
+R until x>=47.2
+RJ 0.3
+R until grounded
+R until x>=52
+RJ 0.3
+R until grounded
+R until x>=57.3
+RJ 0.3
+R until grounded
+R until x>=68.4
 RJ 0.35
 R until grounded
-R until x>=77.9
-R until x>=99.4
+R until x>=85.6
+RJ 0.3
+R until grounded
+R until x>=94.4
 RJ 0.35
 R until grounded
-R until x>=105.0
+R until x>=104.9
+R until x>=104
+W 0.3
+R until x>=108.4
+W 0.3
+R until x>=117.6
+RJ 0.3
+R until grounded
+R until x>=122.4
+RJ 0.3
+R until grounded
+R until x>=126.9
+RJ 0.3
+R until grounded
+W 0
+R until x>=144.4
 RJ 0.35
 R until grounded
-R until x>=112.5
+R until x>=150
+RJ 0.35
+R until grounded
+R until x>=157.5

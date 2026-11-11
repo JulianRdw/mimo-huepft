@@ -8,32 +8,44 @@ R until grounded
 R until x>=24.6
 RJ 0.06
 R until grounded
-R until x>=32.5
+R until x>=34.5
+RJ 0.06
+R until grounded
+R until x>=41.6
+RJ 0.06
+R until grounded
+R until x>=44.7
+RJ 0.25
+R until grounded
+R until x>=49.5
+RJ 0.06
+R until grounded
+R until x>=57.5
 RJ 0.3
 R until grounded
-R until x>=36.6
+R until x>=61.6
 RJ 0.35
 R until grounded
-L until x<=40.4
+L until x<=65.4
 LJ 0.35
 L until grounded
-L until x<=35.7
+L until x<=60.7
 W 1.0
-R until x>=36.6
+R until x>=61.6
 RJ 0.35
 R until grounded
-R until x>=41.0
+R until x>=66
 W 0.05
 J 0.35
 W until grounded
-R until x>=41.6
+R until x>=66.6
 RJ 0.3
 R until grounded
-R until x>=45.5
+R until x>=70.5
 RJ 0.2
 R until grounded
-R until x>=56.3
-L until x<=49.9
+R until x>=81.3
+L until x<=74.9
 RJ 0.35
 R until grounded
-R until x>=55.5
+R until x>=80.5
