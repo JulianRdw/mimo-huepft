@@ -1,14 +1,26 @@
 # Bröselig, fastest clean way
-R until x>=34.9
+R until x>=48.9
 RJ 0.3
-R until x>=37.4
+R until x>=51.4
 W until grounded
 RJ 0.4
-R until x>=41.4
+R until x>=55.4
 W until grounded
 RJ 0.35
-R until x>=45.4
+R until x>=59.4
 W until grounded
 RJ 0.3
 R until grounded
-R until x>=53.5
+R until x>=65.5
+RJ 0.3
+R until grounded
+R until x>=68.0
+RJ 0.1
+R until grounded
+R until x>=71.0
+RJ 0.1
+R until grounded
+R until x>=74.0
+RJ 0.1
+R until grounded
+R until x>=78.0
