@@ -1,4 +1,4 @@
-# Schneckenpost: bounce over the snail posts
+# Schneckenpost: snail posts, the snail staircase, boards
 R until x>=6.2
 RJ 0.3
 R until grounded
@@ -11,4 +11,8 @@ RJ 0.3
 R until grounded
 R until grounded
 R until grounded
-R until x>=51
+R until x>=37.9
+RJ 0.12
+W until falling
+R until grounded
+R until x>=70

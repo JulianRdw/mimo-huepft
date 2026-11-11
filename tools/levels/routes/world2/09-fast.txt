@@ -1,4 +1,4 @@
-# Nebelbrücke
+# Nebelbrücke: movers, key and lift, then a last ravine with a mover and a tail wind before the door
 W 0.7
 R until x>=16.4
 W 1.5
@@ -23,4 +23,15 @@ R until grounded
 R until x>=52.4
 RJ 0.3
 R until grounded
-R until x>=62
+R until x>=57.6
+W 0.00
+RJ 0.3
+W until grounded
+W until x>=64.0 max 8
+R until x>=66.3
+RJ 0.3
+R until grounded
+R until x>=75.5
+RJ 0.35
+R until grounded
+R until x>=88

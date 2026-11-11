@@ -1,4 +1,4 @@
-# Nachtpfad: from the highest firefly step, jump into the dark towards the star, invisible fireflies catch you
+# Nachtpfad: from the highest firefly step, jump into the dark towards the star
 R until x>=7.4
 RJ 0.15
 R until grounded
@@ -45,7 +45,23 @@ R until x>=43.6
 RJ 0.2
 R 0.2
 W until grounded
-R until x>=46.5
-RJ 0.2
+R until x>=47.2
+RJ 0.3
+R 0.2
+W until grounded
+R until x>=52.2
+RJ 0.3
+R 0.2
+W until grounded
+R until x>=57.2
+RJ 0.3
+R 0.2
+W until grounded
+R until x>=62.2
+RJ 0.3
+R 0.2
+W until grounded
+R until x>=67.2
+RJ 0.3
 R until grounded
-R until x>=54
+R until x>=77

@@ -1,4 +1,22 @@
-# Baumkrone
+# Baumkrone: longer climb with crumble boards and a snail
+R until x>=13.8
+RJ 0.3
+R until grounded
+L until x<=15.6
+LJ 0.32
+L until grounded
+R until x>=13.8
+RJ 0.3
+R until grounded
+L until x<=15.6
+LJ 0.32
+L until grounded
+R until x>=13.8
+RJ 0.3
+R until grounded
+L until x<=15.6
+LJ 0.32
+L until grounded
 R until x>=13.8
 RJ 0.3
 R until grounded
@@ -24,7 +42,7 @@ L 0.1
 LJ 0.32
 L until grounded
 R until x>=16.3
-W 2.6
+W 3.75
 RJ 0.3
 W until grounded
 W until y<=8.2

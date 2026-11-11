@@ -11,18 +11,23 @@ RJ 0.3
 R until grounded
 R until grounded
 R until grounded
-R until x>=36.8
+R until x>=37.9
+RJ 0.12
+W until falling
+R until grounded
+W 5.6
+R until x>=55.8
 RJ 0.32
 R until grounded
-R until x>=43.2
+R until x>=62.2
 RJ 0.32
 R until grounded
-R until x>=49.3
+R until x>=68.3
 RJ 0.3
 R until grounded
-R until x>=56.2
-L until x<=54
+R until x>=75.2
+L until x<=73
 L until grounded
-L until x<=52
+L until x<=71
 W until grounded
-L until x<=51.6
+L until x<=70.6

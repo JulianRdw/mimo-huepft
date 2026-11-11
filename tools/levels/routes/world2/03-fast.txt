@@ -1,25 +1,40 @@
-# Glitschig
+# Glitschig: runway, ice island chain, zig-zag, rock
 R until x>=11.5
 RJ 0.3
 R until grounded
 R until x>=17.5
 RJ 0.3
 R until grounded
-R until x>=24.6
+R until x>=22.4
 RJ 0.3
 R until grounded
-L until x<=26.6
+R until x>=29.4
+RJ 0.3
+R until grounded
+R until x>=35.6
+RJ 0.3
+R until grounded
+R until x>=43.6
+RJ 0.3
+R until grounded
+L until x<=45.6
 LJ 0.35
 L until grounded
 R 0.1
-R until x>=24
+R until x>=43
 RJ 0.35
 R until grounded
 RJ 0.3
 R until grounded
-R until x>=38.5
+R until x>=62.5
+RJ 0.3
+R until grounded
+R until x>=67.8
+RJ 0.3
+R until grounded
+R until x>=71.5
 RJ 0.3
 R until grounded
 RJ 0.3
 R until grounded
-R until x>=49
+R until x>=82
