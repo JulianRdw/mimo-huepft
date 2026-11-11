@@ -17,16 +17,31 @@ R until grounded
 R until x>=27.6
 RJ 0.35
 R until grounded
-R until x>=33.3
+R until x>=35.4
 RJ 0.3
 R until grounded
-R until x>=39.3
+R until x>=40.9
+RJ 0.15
+R until grounded
+R until x>=44.7
 RJ 0.3
 R until grounded
-R until x>=44.4
+R until x>=52.3
 RJ 0.3
 R until grounded
-R until x>=57.5
+R until x>=58.3
+RJ 0.3
+R until grounded
+R until x>=63.4
+RJ 0.3
+R until grounded
+R until x>=68
+RJ 0.3
+R until grounded
+R until x>=72.6
+RJ 0.3
+R until grounded
+R until x>=86.5
 RJ 0.35
 R until grounded
-R until x>=67.5
+R until x>=96.5
