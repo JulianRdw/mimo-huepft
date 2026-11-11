@@ -1,27 +1,42 @@
-# Glitschig: the hidden star is in the mouse hole at the foot of the big rock
+# Glitschig: hidden star in the mouse hole
 R until x>=11.5
 RJ 0.3
 R until grounded
 R until x>=17.5
 RJ 0.3
 R until grounded
-R until x>=33.8
-L until x<=25.6
+R until x>=22.4
+RJ 0.3
+R until grounded
+R until x>=29.4
+RJ 0.3
+R until grounded
+R until x>=35.6
+RJ 0.3
+R until grounded
+R until x>=52.8
+L until x<=44.6
 W 0.25
 RJ 0.3
 R until grounded
-L until x<=26.6
+L until x<=45.6
 LJ 0.35
 L until grounded
 R 0.1
-R until x>=24
+R until x>=43
 RJ 0.35
 R until grounded
 RJ 0.3
 R until grounded
-R until x>=38.5
+R until x>=62.5
+RJ 0.3
+R until grounded
+R until x>=67.8
+RJ 0.3
+R until grounded
+R until x>=71.5
 RJ 0.3
 R until grounded
 RJ 0.3
 R until grounded
-R until x>=49
+R until x>=82

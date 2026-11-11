@@ -1,4 +1,22 @@
-# Baumkrone: leap into the hollow trunk next to the lift, the star waits at the bottom, the long updraft brings you back up
+# Baumkrone: leap into the hollow trunk next to the lift, the star waits at the bottom
+R until x>=13.8
+RJ 0.3
+R until grounded
+L until x<=15.6
+LJ 0.32
+L until grounded
+R until x>=13.8
+RJ 0.3
+R until grounded
+L until x<=15.6
+LJ 0.32
+L until grounded
+R until x>=13.8
+RJ 0.3
+R until grounded
+L until x<=15.6
+LJ 0.32
+L until grounded
 R until x>=13.8
 RJ 0.3
 R until grounded
@@ -24,16 +42,17 @@ L 0.1
 LJ 0.32
 L until grounded
 R until x>=16.3
-W 2.6
+W 3.75
 RJ 0.3
 W until grounded
 W until y<=6.2
 RJ 0.3
 R until x>=22.3
-R until y>=37 max 6
+R until y>=55 max 6
 W until grounded
 L until x<=21.5
 W until y<=4.2
+W 1.20
 L until grounded
 L 0.1
 LJ 0.3

@@ -1,4 +1,4 @@
-# Rutschpartie: jump at the door, the updraft above it lifts you to the hidden star
+# Rutschpartie: the door lift takes you to the hidden star
 W 0.45
 R until x>=14.5
 RJ 0.3
@@ -7,22 +7,31 @@ R 0.15
 RJ 0.3
 R until grounded
 R until x>=34.3
-W 0.3
-R until x>=42.3
-W 0.1
+R until x>=35.0
+W 0.00
+R until x>=41.0
+W 0.00
+R until x>=47.0
+W 0.15
+R until x>=53.0
+W 0.60
+R until x>=62.3
+W 0.00
+R until x>=70.3
+W 0.80
 RJ 0.3
 W until grounded
-R until x>=48.6
+R until x>=76.6
 RJ 0.3
 R until grounded
-R until x>=55.6
+R until x>=83.6
 W until y>=9.5
 W until grounded
-R until x>=56.4
+R until x>=84.4
 RJ 0.15
 J 0.2
 W until y<=3.5
 R 0.25
 W until grounded
-L until x<=57.6
+L until x<=85.6
 W 1

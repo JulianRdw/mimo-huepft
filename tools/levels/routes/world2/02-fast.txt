@@ -1,13 +1,21 @@
-# Aufwind
+# Aufwind: stump, updraft staircase, pit, tall updraft
 R 0.6
 R until grounded
-R until x>=16
+R until x>=20.2
+W until y<=8.3
+R until grounded
+R until x>=25.2
+W until y<=4.4
+R until grounded
+R until x>=28.4
+W until grounded
+R until x>=36
 W until y<=9
 R until grounded
-R until x>=21
+R until x>=41
 W until y<=9
 R until grounded
-R until x>=34
+R until x>=54
 W until y<=9.8
 R until grounded
-R until x>=43
+R until x>=63

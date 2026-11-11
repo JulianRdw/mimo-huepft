@@ -1,4 +1,4 @@
-# Gegenwind
+# Gegenwind: head wind, tail wind, tower, and the new head wind jump with the tall updraft
 R until x>=16.3
 RJ 0.3
 R until grounded
@@ -11,4 +11,13 @@ R until grounded
 R until x>=45.3
 RJ 0.3
 R until grounded
-R until x>=55
+R until x>=56.0
+RJ 0.32
+R until grounded
+R until x>=64.2
+W until y<=2.4
+R until grounded
+R until x>=67.3
+RJ 0.3
+R until grounded
+R until x>=75

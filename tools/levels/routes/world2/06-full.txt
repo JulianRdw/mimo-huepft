@@ -1,4 +1,4 @@
-# Gegenwind: jump back into the head wind at the start, it carries you to the stump. Drop down the hollow stump, the updraft brings you back.
+# Gegenwind: jump back into the head wind at the start, drop down the stump
 L until x<=9.4
 LJ 0.35
 L until grounded
@@ -19,4 +19,16 @@ R until grounded
 R until x>=45.3
 RJ 0.3
 R until grounded
-R until x>=55
+R until x>=56.0
+RJ 0.32
+R until grounded
+R until x>=64.2
+W until y<=2.4
+R until grounded
+W 0.15
+J 0.5
+R until grounded
+R until x>=67.3
+RJ 0.3
+R until grounded
+R until x>=75

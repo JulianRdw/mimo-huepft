@@ -1,16 +1,26 @@
-# Aufwind: ride the last updraft to the very top for the hidden star
+# Aufwind: staircase star and the very top for the hidden star
 R 0.6
 R until grounded
-R until x>=16
+R until x>=20.2
+W until y<=8.3
+R until grounded
+R until x>=25.2
+W until y<=4.4
+R until grounded
+W 0.1
+J 0.3
+R until x>=28.4
+W until grounded
+R until x>=36
 W until y<=9
 R until grounded
-R until x>=21
+R until x>=41
 W until y<=9
 R until grounded
-R until x>=34
+R until x>=54
 W until y<=1.6
 L until grounded
-L until x<=32.6
-R until x>=36 max 3
+L until x<=52.6
+R until x>=56 max 3
 R until grounded
-R until x>=43
+R until x>=63

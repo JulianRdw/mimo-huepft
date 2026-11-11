@@ -12,4 +12,7 @@ R until grounded
 R until x>=23.3
 RJ 0.35
 R until grounded
-R until x>=33
+R until x>=33.2
+RJ 0.35
+R until grounded
+R until x>=47

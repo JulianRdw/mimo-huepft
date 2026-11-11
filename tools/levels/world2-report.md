@@ -5,6 +5,29 @@ routes in `tools/levels/routes/world2/` (`NN-full.txt` all stars, `NN-fast.txt` 
 Lint: `node tools/levellint.mjs --from tools/levels/world2.mjs` gives no findings (exit 0).
 No secret bonus star (`h`) is used in world 2. Every level has exactly 3 stars, and one of them is the hidden one.
 
+## Extension pass (release): longer levels
+
+Every world 2 level got one or two new sections (about +35 to +55 % fast-route time). The old parts, flags and hidden-star ideas are unchanged, only shifted. Sizes and times are now: fast route clock (old to new) and where things are.
+
+| # | Level | New size | Fast old to new | New sections (where) | Stars now |
+|---|---|---|---|---|---|
+| 1 | Abendwind | 50×14 | 3.65 to 5.33 s | "Windtreppe" before the door: 5-wide tailwind gap onto a 2-high ledge, flag before it | wind 1 (12,6), new one over the ledge gap (38,6), hidden in the pit (16,12) |
+| 2 | Aufwind | 66×18 | 9.6 to 14.27 s | "Aufwind-Treppe" after the stump: updraft, board, updraft, high board, drop; thorns under the stair, flag before it | stump updraft, staircase top (27,3), hidden treetop (52,1) |
+| 3 | Glitschig | 85×14 | 10.59 to 15.95 s | ice island chain (3-gaps, one island 1 higher) before the zig-zag; thorns on ice with two jumps before the door | (13,6), chain (37,5), hidden mouse hole (53,9) |
+| 4 | Im Takt | 60×14 | 8.89 to 13.99 s | two more timed-thorn pillars at the end (4 pillars, alternating beat) | log hole (13,6), tunnel pocket (28,9), pillars (39,5) |
+| 5 | Schneckenpost | 77×14 | 7.57 to 10.55 s | "Schneckentreppe" before the boards: three snail posts, each 1 higher, 2-gaps, ending on a ledge | unchanged (17,7), (31,7), hidden pole branch |
+| 6 | Gegenwind | 78×16 | 8.24 to 12.25 s | last section: headwind over a ledge, tall updraft to a tower, 5-wide tailwind gap to the door; flag before | hidden stump (0,9), updraft (40,5), tower top (66,0) |
+| 7 | Rutschpartie | 88×14 | 9.83 to 15.14 s | long ice tunnel with four timed-thorn runs before the log (pockets 4 wide, you brake on ice) | unchanged positions, shifted |
+| 8 | Baumkrone | 24×58 | 15.73 to 21.97 s | 18 more rows at the bottom: six boards zig-zag, two of them crumble boards | unchanged, shifted down |
+| 9 | Nebelbrücke | 92×14 | 12.92 to 17.32 s | after the lift: last ravine, a mover then a 6-wide tailwind gap, an island, another 6-wide wind gap; flag before | unchanged, shifted |
+| 10 | Waldrand | 138×18 | 18.59 to 26.06 s | second ice tunnel with two timed-thorn runs after the first pit; "Baumkronenweg" canopy after the tower: three 5-wide tailwind gaps over boards, the second one 2 higher; flag on the canopy | tower updraft (68,7), canopy (84,2), hidden treetop (3,3) |
+| night | Nachtpfad | 81×16 | 8.81 to 12.69 s | four more firefly steps (up, then down) before the door | unchanged, shifted |
+
+Notes for players and testers:
+- Timed-thorn waits (levels 4, 7, 10) are tuned to the middle of the safe window, windows are about 0.6 to 0.9 s.
+- Snails move on their own clock. Because the new sections change how long you need to reach them, the platform snail in Rutschpartie starts one tile further right, and the Waldrand lift mover has phase 0.85, so the old timings still hold.
+- Bot-only caveats: the bot waits for lifts and snails with fixed waits; a human reacts to what he sees.
+
 ## Old levels: verdicts
 
 | Old level | Verdict | What was wrong |
