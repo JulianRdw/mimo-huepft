@@ -1,6 +1,8 @@
 # Mimo hüpft
 
-Ein ruhiges Hüpfspiel mit Mimo: 23 Level in drei Welten, Endgegner, 3D-Himmelsinseln und die Sternenbahn.
+Ein ruhiges Hüpfspiel mit Mimo: 29 Level in drei Welten, drei Endgegner und das 3D-Bonuslevel Himmelsinseln.
+
+Die Sternenbahn (Musiklauf, Abenteuer, Endlosbahn) ruht: ihr Code liegt weiter in `src/`, ist aber über `const STARWAY = false` in `src/index.html` abgeschaltet und wird nicht in die App gebaut.
 
 **Spielen:** die GitHub-Pages-Adresse dieses Projekts öffnen.
 **Auf dem iPhone wie eine App:** in Safari öffnen, Teilen-Knopf, „Zum Home-Bildschirm“. Danach startet Mimo im Vollbild, auch ohne Internet.
@@ -32,6 +34,7 @@ node tools/levellint.mjs                         # Unsinn finden: vergrabene Dor
 node tools/levelmap.mjs --out /tmp/karten        # jedes Level als Bild mit Koordinaten
 node tools/levelbot.mjs --level Lawine --route "R 1; RJ 0.3"   # ein Level Bild für Bild nachspielen
 node tools/levelcheck.mjs [--medals]             # alle Level mit ihren Testwegen (tools/levels/routes) prüfen
+node tools/bosscheck.mjs [--boss n]              # die drei Endgegner: Bot-Sieg, Nichtstun, schludriges Spiel
 ```
 
 Jedes Level hat zwei Testwege: `full` sammelt alle Sterne, `fast` ist der schnellste saubere Weg und ergibt die Medaillenzeiten (×1,3 / ×2 / ×3). Werden Level umgebaut, `LEVELS_VERSION` erhöhen: dann verwirft das Spiel alte Zeiten, Sterne und Geister einmal.

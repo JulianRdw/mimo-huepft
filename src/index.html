@@ -753,7 +753,7 @@ const STARWAY = false;
 const SAVE_KEY = DEV ? 'mimo-progress-dev' : 'mimo-progress-v2';
 const GHOST_DT = 0.05;
 // medal targets in seconds: [gold, silver, bronze]
-const MEDALS = [[7.5, 11, 17], [12.5, 19, 28], [20.5, 31, 47], [11.5, 17, 26], [11, 16, 24], [12.5, 19, 28], [20, 31, 46], [36, 55, 82], [25.5, 39, 58], [22.5, 34, 51], [5, 7, 11], [12.5, 19, 29], [14, 21, 32], [12, 18, 27], [10, 15, 23], [11, 16, 25], [13, 20, 29], [20.5, 31, 47], [17, 26, 39], [24.5, 37, 56], [12.5, 19, 28], [11, 17, 25], [26, 40, 60], [11, 17, 25], [12.5, 19, 28], [15.5, 24, 36], [25, 38, 57], [19.5, 29, 44], [11.5, 18, 26]];
+const MEDALS = [[11, 17, 25], [18.5, 28, 43], [31, 47, 71], [17.5, 27, 40], [16, 24, 36], [18.5, 28, 42], [28.5, 44, 66], [51, 78, 117], [35.5, 54, 81], [32, 49, 73], [7, 11, 16], [19, 29, 43], [21, 32, 48], [18.5, 28, 42], [14, 21, 32], [16, 25, 37], [20, 30, 45], [29, 44, 66], [23, 35, 52], [34, 52, 78], [18, 28, 41], [16, 24, 37], [38.5, 59, 88], [16.5, 25, 37], [18.5, 28, 42], [22, 34, 50], [37, 56, 85], [29, 44, 66], [16.5, 25, 38]];
 const WORLDS = [null, { name: 'Wiese' }, { name: 'Abendwald' }, { name: 'Verschneite Höhen' }];
 const MEDAL_NAMES = { gold: 'Gold', silver: 'Silber', bronze: 'Bronze' };
 // Everything in the wardrobe is for looks only. "price" is paid in collected stars; "boss", "ach" and "streak" items are rewards.
@@ -1490,7 +1490,7 @@ const LAST_MAIN = LEVELS.findIndex((l) => l.night) - 1;
 // index of the last main level of a world (the boss, the 3D level and the companion open after it)
 const worldEnd = (w) => LEVELS.reduce((last, l, i) => (!l.night && (l.world || 1) === w ? i : last), -1);
 // bump when levels are rebuilt: times, medals, ghosts and stars of the old levels no longer fit and are cleared
-const LEVELS_VERSION = 2;
+const LEVELS_VERSION = 3;
 
 const EMPTY = 0, SOLID = 1, ONEWAY = 2, THORN_UP = 3, THORN_DOWN = 4, TOG_A = 5, TOG_B = 6, CRUMBLE = 7, LOCK = 8, WIND_R = 9, WIND_L = 10, UPDRAFT = 11, ICE = 12, TTHORN = 13, GLOW = 14;
 const GLOW_RADIUS = 4.5;
