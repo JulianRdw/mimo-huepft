@@ -6,14 +6,20 @@ W until y<=6
 R until grounded
 R until x>=14.5
 R until grounded
-R until x>=28.6
+R until x>=18.0
+RJ 0.1
+R until y<=4
+R until grounded
+R until x>=50.6
 W until y<=7
 R until grounded
-R until x>=37.3
+R until x>=59.3
 W until grounded
-R until x>=39.6
+R until x>=61.6
 RJ 0.4
-R until x>=43.6
+R until x>=65.6
 W until y<=9
 R until grounded
-R until x>=56.5
+R until x>=80.0
+R until grounded
+R until x>=86.0

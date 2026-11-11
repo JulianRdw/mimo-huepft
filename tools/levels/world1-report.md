@@ -4,6 +4,28 @@ Ten levels in play order live in `tools/levels/world1.mjs` (plain data, same sha
 Routes: `tools/levels/routes/world1/NN-full.txt` and `NN-fast.txt`.
 Only existing mechanics are used. No `src/` or tool changes.
 
+## Release extension (longer levels)
+
+Every level of world 1 was made roughly 40 to 50 percent longer (fast-route clock), with new sections that use the level's own mechanic. The sections below replace the sizes and times in the per-level notes further down; old ideas, hidden stars and the difficulty order are unchanged. All 20 routes win without deaths (`node tools/levelcheck.mjs`), lint is clean.
+
+| # | Level | Size (old to new) | Fast s (old to new) | Full s | What was added |
+|---|---|---|---|---|---|
+| 1 | Aufwachen | 60 to 76 wide | 5.7 to 8.3 | 14.0 | Longer tail: a 2-gap, a 1-high and a 2-high step, a 3-gap, then the door. Stars unchanged (hidden meadow still left of the start). |
+| 2 | Dornenpfad | 64 to 95 | 9.5 to 14.2 | 16.3 | Three single thorns with room to hop after the first board (before the flag stays); a second flag, then a thorn staircase (2 thorns, 1-high block, 2 thorns, 2-high block, 3 thorns) before the last thorn trio. The star behind the door is still the hidden one. |
+| 3 | Schwebend | 60 to 94 | 15.6 to 23.7 | 37.9 | Behind the twin platforms: a flag, a long ride on a third platform (9 tiles), a resting island with a flag, a fourth platform that starts one tile higher, then the door island. Platforms of the new part can be left with a 2-tile jump from the right end, so exact timing is not needed. |
+| 4 | Der Schalter | 58 to 89 | 8.7 to 13.3 | 18.6 | A flag and a pit crossed on peach stepping stones (state after the first switch), lilac hurdles over thorns after the lilac bridge (state before the third switch), and on the door ledge a fourth switch that makes a 4-high peach wall disappear. The three stars and the cellar are unchanged. |
+| 5 | Bröselig | 56 to 80 | 8.2 to 12.0 | 13.5 | A 10-tile crumbly bridge over a thorn bed (just keep running) with a flag behind it, and before the door a crumbly staircase (3 steps, thorns below) up to the door ledge. The cave star and the other two stars are unchanged. |
+| 6 | Pilzwiese | 60 to 89 | 9.4 to 13.9 | 17.7 | A chain-bounce tower: a mushroom row, a 2-high block with a double mushroom, and a tall block you land on top of (flag behind it). Before the door a third mushroom pillar throws you onto a raised door plateau. Stars and the secret star are unchanged. |
+| 7 | Der Schlüssel | 56 to 93 | 15.3 to 21.9 | 41.9 | After the start: two thorn pits, the second under a ceiling-thorn cloud (flat hop), and a flag. After the hill: a second, slower lift to a 14-tile board path over a thorn bed, a flag in front of it, then the lock wall. |
+| 8 | Hin und zurück | 70 to 104 | 27.4 to 39.0 | 39.0 | A longer low road (second thorn pit, flag after the drop) and a longer high road (six more crumbly stones). Also 10 tiles more at the start, so the roof run home has two more thorn hops. Star positions are unchanged, fast equals full as before. |
+| 9 | Querfeldein | 96 to 125 | 19.4 to 26.9 | 26.9 | A thorn path before the first pillar (3 hops), and after the second flag a peach bridge under a ceiling-thorn block (walk only) with a flag behind it. |
+| 10 | Die Spitze | 24x44 to 24x62 | 17.1 to 24.4 | 27.4 | Two new climbs: crumbly steps and a board above the first boards, and four boards zigzagging above the peach steps (flag on the last board). The three stars are now spread over the whole climb. The lift is unchanged. |
+
+Notes for later work:
+- Moving platforms start with phase 0 at level start; the routes wait for them by time. New movers were given phases and waits tuned for the fast route, so the bot is timing-sensitive there (L3, L7, L8, L9); a human just waits for the platform.
+- L2, L3 and L4 are around +50 percent, the others between +35 and +45 percent.
+- L4: the new flag in front of the second switch lies before the switch pit; the switch state survives a death, but the second switch is next to its flag as before.
+
 ## Old levels: what happened to them
 
 | Old # | Name | Verdict | What was wrong / what changed |
@@ -111,7 +133,7 @@ Difficulty is on a 1 to 10 scale for the whole game. World 1 tops out around 7. 
 ```
 level   1  2  3  4  5  6  7  8  9  10
 diff    1  2  3  3  4  4  5  5  6  7
-fast s  6  9 16  9  8  9 15 27 19  17   (vertical)
+fast s  8 14 24 13 12 14 22 39 27  24   (vertical, after the release extension)
 ```
 
 - **One new idea per level, taught safely:**

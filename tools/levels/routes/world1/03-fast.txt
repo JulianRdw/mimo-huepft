@@ -20,4 +20,15 @@ W 2.6
 R until x>=44.6
 RJ 0.4
 R until grounded
-R until x>=56.4
+R until x>=54.0
+R until x>=56.5
+W until x>=65.5
+R until x>=68.5
+R until x>=72.0
+RJ 0.15
+R until grounded
+W until x>=81.3
+R until x>=83.0
+RJ 0.25
+R until grounded
+R until x>=91.0
