@@ -2814,6 +2814,7 @@ function update(dt) {
   if (!G.L) return;
   if (G.overlay === 'pause') return;
   if (G.freeze > 0) { G.freeze -= dt; return; }
+  if (G.mode === 'boss') dt = bossDt(dt);
   G.time += dt;
   G.intro += dt; G.wipe += dt; G.touchHint = Math.max(0, G.touchHint - dt);
   G.shake = Math.max(0, G.shake - dt * 3);
@@ -3284,31 +3285,46 @@ function showDashWin(r, isNew) {
 
 // ---------- Endgegner: one boss arena at the end of every world ----------
 // Bosses run as their own mode on a small arena map, so level numbers, best times and ghosts stay untouched.
-const BOSS_HP = 3, BOSS_FLOOR = 10 * T, BOSS_X0 = T, BOSS_X1 = 19 * T, BOSS_GRAV = 2000, BOSS_HOVER = 3.2 * T;
-const BOSS_ARENA = (row6, row9) => ['#                  #', '#                  #', '#                  #', '#                  #', '#                  #', '#                  #', row6, '#                  #', '#                  #', row9, '####################', '####################'];
+// Every boss has one core idea, and the player makes the opening himself:
+//   König Mampf  jumps after Mimo and belly-flops: lure him into a mud puddle and he is stuck.
+//   Frau Huhu    drops pine cones: a cone that lies still shoots back up when Mimo jumps on it.
+//   Yeti Flocke  slides at Mimo: an ice pillar in his way knocks him out. Later his own icicles become the pillars.
+// A fight has phases (def.phases = life at the start of each phase). A fall puts the boss back to the start of the phase.
+const BOSS_FLOOR = 10 * T, BOSS_X0 = T, BOSS_X1 = 19 * T, BOSS_GRAV = 2000, BOSS_HOVER = 4.4 * T; // low enough to stay clear of the life bar
+const BOSS_SLOW = 0.3, BOSS_ZOOM = 1.3, BOSS_RESPAWN_SAFE = 1.4, BOSS_DARK = '23,20,43', BOSS_MUD = '#A9805F', BOSS_MUD_HI = '#D8B79A';
+const BOSS_EMPTY_ROW = '#                  #';
+const BOSS_ARENA = (row7) => [...Array(7).fill(BOSS_EMPTY_ROW), row7, BOSS_EMPTY_ROW, '# P                #', '####################', '####################'];
+// König Mampf: flop height, rise time, how close to a puddle he has to land, how deep he sinks, puddle refill time
+const MAMPF_H = 150, MAMPF_RISE = 0.55, MAMPF_CATCH = 42, MAMPF_SINK = 30, MAMPF_REFILL = 8;
+// Frau Huhu: seconds she shows a cone before letting go, launch speed of a kicked cone, how far it steers, wind push
+const HUHU_AIM = 0.6, HUHU_ROCKET = 720, HUHU_STEER = 250, HUHU_WIND = 58, HUHU_LIGHT = 125;
+// Yeti Flocke: pillar rows, seconds an icicle pillar stands, warning time of a falling icicle
+const YETI_PILLAR_ROWS = [8, 9], YETI_PILLAR_LIFE = 11, YETI_WARN = 0.9, YETI_ROLL = 1;
 const BOSSES = [null,
-  { kind: 'mampf', world: 1, after: worldEnd(1), name: 'König Mampf', kicker: 'Herrscher der Wiese', song: 'bossMeadow',
-    hint: 'Spring über die <b>Staubwellen</b>. Ist König Mampf außer Puste, spring ihm auf den Hut.',
-    lines: { intro: ['Wer trampelt da auf meiner Wiese herum?', 'Piep!', 'Dich mampf ich zum Frühstück!'], again: 'Na, noch eine Runde?', tickle: ['Hihi, das kitzelt!', 'Nicht jetzt, ich hüpfe!', 'Runter da, du Floh!'], hit: ['Aua, meine Krone!', 'Jetzt reicht es mir aber!'], beaten: 'Schon gut, schon gut. Du hast gewonnen.', piep: ['Piep zurück!', 'Was soll das Gepiepe?'] },
-    map: BOSS_ARENA('#   ----    ----   #', '# P                #') },
-  { kind: 'huhu', world: 2, after: worldEnd(2), night: true, name: 'Frau Huhu', kicker: 'Wächterin des Abendwalds', song: 'bossForest',
-    hint: 'Weich den <b>Tannenzapfen</b> aus. Leuchten ihre Augen, kommt sie im Sturzflug. Landet sie müde, spring ihr auf den Kopf.',
-    lines: { intro: ['Huhu! Wer schleicht da durch meinen Wald?', 'Piep?', 'Zeit fürs Bett, kleiner Wicht!'], again: 'Huhu, schon wieder wach?', tickle: ['Hihi, nicht an den Federn!', 'Ich fliege doch noch!'], hit: ['Meine schönen Federn!', 'Jetzt werd ich aber munter!'], beaten: 'Gut gemacht. Jetzt brauche ich ein Nickerchen.', piep: ['Huhu! Ach, du piepst nur.', 'Psst, hier wird geschlafen.'] },
-    map: BOSS_ARENA('#  ---        ---  #', '# P                #') },
-  { kind: 'yeti', world: 3, after: worldEnd(3), name: 'Yeti Flocke', kicker: 'Schrecken der Höhen', song: 'bossSnow',
-    hint: 'Spring über <b>rollende Schneebälle</b> und den rutschenden Yeti. Achte auf die Schatten der Eiszapfen. Ist er benommen, spring ihm auf den Kopf.',
-    lines: { intro: ['GRRROAR! Ach so, nur du.', 'Piep!', 'Hier oben ist MEIN Schnee!'], again: 'Noch eine Schneeballschlacht?', tickle: ['Hey, das kitzelt im Fell!', 'Runter von meinem Kopf!'], hit: ['Brrr, das zieht!', 'Jetzt wird es frostig!'], beaten: 'Okay, okay. Willst du einen Kakao?', piep: ['Piep? PIEP? Grrr.', 'Lass das, ich bin gefährlich!'] },
-    map: BOSS_ARENA('#    ---    ---    #', '# P                #').map((r, i) => (i === 10 ? '#####iiiiiiiiii#####' : r)) },
+  { kind: 'mampf', world: 1, after: worldEnd(1), name: 'König Mampf', kicker: 'Herrscher der Wiese', song: 'bossMeadow', hp: 4, phases: [4, 2, 1],
+    hint: 'König Mampf springt dir hinterher. Lock ihn in eine <b>Matschpfütze</b>, dann steckt er fest. Spring ihm dann auf den Hut.',
+    lines: { intro: ['Wer trampelt da auf meiner Wiese herum?', 'Piep!', 'Dich mampf ich zum Frühstück!'], again: 'Na, noch eine Runde?', tickle: ['Hihi, das kitzelt!', 'Nicht jetzt, ich hüpfe!', 'Runter da, du Floh!'], hit: ['Aua, meine Krone!', 'Das war mein guter Hut!'],
+      phase: ['Jetzt hüpfe ich doppelt!', 'Königlicher Dreifachhüpfer!'], stun: ['Huch, Matsch!', 'Ich stecke fest!', 'Meine guten Schuhe!'], beaten: 'Schon gut, schon gut. Die Krone steht dir.', piep: ['Piep zurück!', 'Was soll das Gepiepe?'] },
+    map: BOSS_ARENA(BOSS_EMPTY_ROW) },
+  { kind: 'huhu', world: 2, after: worldEnd(2), night: true, name: 'Frau Huhu', kicker: 'Wächterin des Abendwalds', song: 'bossForest', hp: 4, phases: [4, 2, 1],
+    hint: 'Weich den <b>Tannenzapfen</b> aus. Liegt einer still, spring darauf: Er schießt zurück nach oben. Fällt Frau Huhu herunter, spring ihr auf den Kopf.',
+    lines: { intro: ['Huhu! Wer schleicht da durch meinen Wald?', 'Piep?', 'Zeit fürs Bett, kleiner Wicht!'], again: 'Huhu, schon wieder wach?', tickle: ['Hihi, nicht an den Federn!', 'Ich fliege doch noch!'], hit: ['Meine schönen Federn!', 'Das gibt Federsalat!'],
+      phase: ['Licht aus, kleiner Wicht!', 'Jetzt gibt es Federsturm!'], stun: ['Mein eigener Zapfen!', 'Wer wirft denn da zurück?', 'Huhu? Huuu.'], beaten: 'Gut gemacht. Jetzt brauche ich ein Nickerchen.', piep: ['Huhu! Ach, du piepst nur.', 'Psst, hier wird geschlafen.'] },
+    map: BOSS_ARENA('#---            ---#') },
+  { kind: 'yeti', world: 3, after: worldEnd(3), name: 'Yeti Flocke', kicker: 'Schrecken der Höhen', song: 'bossSnow', hp: 5, phases: [5, 3, 1],
+    hint: 'Der Yeti rutscht auf dich zu. Sorg dafür, dass eine <b>Eissäule</b> zwischen euch steht. Ist er benommen, spring ihm auf den Kopf.',
+    lines: { intro: ['GRRROAR! Ach so, nur du.', 'Piep!', 'Hier oben ist MEIN Schnee!'], again: 'Noch eine Schneeballschlacht?', tickle: ['Hey, das kitzelt im Fell!', 'Runter von meinem Kopf!'], hit: ['Brrr, das zieht!', 'Mein armer Kopf!'],
+      phase: ['Jetzt wird es glatt!', 'SCHNEESTURM! Na gut, Schneegestöber.'], stun: ['Wer stellt denn da Eis hin?', 'Aua. Ich sehe Sterne.', 'Das war doch eben noch frei!'], beaten: 'Okay, okay. Willst du einen Kakao?', piep: ['Piep? PIEP? Grrr.', 'Lass das, ich bin gefährlich!'] },
+    map: BOSS_ARENA(BOSS_EMPTY_ROW) },
 ];
-const BOSS_SEQ = {
-  mampf: [['spores', 'hop', 'hop', 'tired'], ['hop', 'hop', 'spores', 'hop', 'tired'], ['bighop', 'spores', 'hop', 'hop', 'hop', 'tired']],
-  huhu: [['hover', 'swoop', 'hover', 'swoop', 'land'], ['hover', 'swoop', 'swoop', 'hover', 'swoop', 'land'], ['hover', 'swoop', 'swoop', 'swoop', 'hover', 'swoop', 'land']],
-  yeti: [['throw', 'charge'], ['throw', 'stomp', 'charge'], ['stomp', 'throw', 'stomp', 'charge2']],
-};
 const bossUnlocked = (w) => DEV || progress.best[BOSSES[w].after] != null;
 const bossBeatenBefore = (w) => !!(progress.bosses && progress.bosses[w]);
 const bossAfterLevel = (i) => BOSSES.findIndex((b) => b && b.after === i);
-const bossPhase = (B) => BOSS_HP - B.hp;
+// phase 0, 1, 2: how many phase starts the life has already dropped to
+const bossPhase = (B) => { const ph = B.def.phases; let i = 0; while (i + 1 < ph.length && B.hp <= ph[i + 1]) i++; return i; };
+// what decides the fight comes from an own seeded generator, so a fight plays the same every time; Math.random is only for sparkle
+const bossRnd = (B) => { B.seed = (B.seed * 9301 + 49297) % 233280; return B.seed / 233280; };
+const bossClampX = (x, m) => Math.max(BOSS_X0 + m, Math.min(BOSS_X1 - m, x));
 const seenBossIntro = {};
 const ease2 = (k) => k * k * (3 - 2 * k);
 
@@ -3334,10 +3350,13 @@ function bossBar(info) {
   [...hp.children].forEach((el, i) => el.classList.toggle('off', i >= info.hp));
   if (info.hit) { bossBarEl.classList.remove('hit'); void bossBarEl.offsetWidth; bossBarEl.classList.add('hit'); }
 }
+const bossBarNow = (B, hit) => bossBar({ name: B.def.name, hp: B.hp, max: B.def.hp, hit: !!hit });
 function leaveBoss() { if (G.boss || talk.who) { G.boss = null; talk.who = null; cineHide(); bossBar(null); } }
 
 function makeBoss(def) {
-  const B = { kind: def.kind, def, hp: BOSS_HP, x: 15 * T, y: BOSS_FLOOR, vx: 0, vy: 0, dir: -1, state: 'enter', t: 0, anim: 0, flash: 0, sq: 1, shots: [], si: 0, n: 0, tickleT: 0, pieT: 0, music: null, done: false, cine: null, slide: false, dropT: 0.6 };
+  const B = { kind: def.kind, def, hp: def.hp, x: 15 * T, y: BOSS_FLOOR, vx: 0, vy: 0, dir: -1, state: 'enter', t: 0, n: 0, anim: 0, flash: 0, sq: 1, shots: [], seed: 7 + def.world * 131, cyc: 0,
+    tickleT: 0, pieT: 0, barkT: 0, music: null, done: false, cine: null, slide: false, slow: 0, zoom: 1, zoomT: 0, pulse: 0,
+    puddles: [], sink: 0, chain: 0, crown: null, dropT: 1.2, drops: 0, dark: 0, windDir: 0, windT: 0, spin: 0, pillars: [], rainT: 2, said: {} };
   if (def.kind === 'mampf') B.y = -140;
   if (def.kind === 'huhu') { B.x = 21 * T; B.y = -40; }
   if (def.kind === 'yeti') B.x = 22 * T;
@@ -3361,18 +3380,33 @@ function loadBoss(w, keepAttempts) {
   G.rec = []; G.recT = 0; G.replay = null; G.touchHint = touchHelpStart();
   if (!keepAttempts) G.attempts = 1;
   G.boss = makeBoss(def);
+  bossArena(G.boss);
   snapCamera(); updateHud();
   hintEl.innerHTML = def.hint;
   startBossCine(G.boss, !seenBossIntro[w]); seenBossIntro[w] = true;
   Music.start(); Music.duck(false);
 }
-// after a fall the boss steps back to the far side, keeps his attack pattern, and Mimo blinks for a moment
-const BOSS_RESPAWN_SAFE = 1.4;
+// builds the arena for the current phase: puddles, ice floor, ice pillars
+function bossArena(B) {
+  const ph = bossPhase(B), L = G.L;
+  // later phases leave one puddle only, on the far side from Mimo: he has to cross the meadow under the king's hops
+  if (B.kind === 'mampf') B.puddles = (ph === 0 ? [4.5, 10, 15.5] : [G.p.x + G.p.w / 2 < 10 * T ? 15.5 : 4.5]).map((c) => ({ x: c * T, wet: 1 }));
+  if (B.kind === 'huhu') { B.windDir = 0; B.windT = 0; }
+  if (B.kind === 'yeti') {
+    for (const q of B.pillars) for (const r of YETI_PILLAR_ROWS) L.tiles[r][q.c] = EMPTY;
+    B.pillars = []; B.rainT = 2;
+    for (let c = 1; c <= 18; c++) L.tiles[10][c] = ph >= 1 ? ICE : SOLID;
+    if (ph === 0) { pillarAdd(B, 5, 0); pillarAdd(B, 11, 0); }
+  }
+}
+// after a fall the fight goes back to the start of the phase: the boss steps to the far side and Mimo blinks for a moment
 function bossRespawn() {
   const B = G.boss; if (!B || B.done) return;
-  B.shots.length = 0; B.slide = false; B.vx = 0; B.vy = 0; B.hopY = 0;
-  B.x = Math.max(B.x, 13 * T);
-  if (B.kind === 'huhu') B.y = BOSS_HOVER; else B.y = BOSS_FLOOR;
+  B.shots.length = 0; B.slide = false; B.vx = 0; B.vy = 0; B.hopY = 0; B.sink = 0; B.chain = 0; B.cyc = 0; B.drops = 0; B.dropT = 1.6; B.spin = 0; B.puffed = false;
+  B.hp = B.def.phases[bossPhase(B)]; bossBarNow(B);
+  bossArena(B);
+  B.x = B.kind === 'yeti' ? 16 * T : Math.max(B.x, 13 * T);
+  B.y = B.kind === 'huhu' ? BOSS_HOVER : BOSS_FLOOR;
   bossSet(B, 'idle'); B.t = -1.1;
   G.p.invT = BOSS_RESPAWN_SAFE;
 }
@@ -3391,7 +3425,7 @@ function stepBossCine(B, dt) {
     onceAt(c, 'l1', 1.5, () => bossSay(who, L.intro[0], 2.1, v));
     onceAt(c, 'mimo', 3.7, () => { bossSay('Mimo', L.intro[1], 1.2, 'mimo'); G.p.sx = 1.25; G.p.sy = 0.8; SFX.piep(); });
     onceAt(c, 'l2', 5.0, () => bossSay(who, L.intro[2], 2.1, v));
-    onceAt(c, 'title', 6.1, () => { onCine({ title: { kicker: B.def.kicker, name: B.def.name } }); SFX.sting(); shake(0.7); B.sq = 0.7; B.music = B.def.song; Music.start(); bossBar({ name: who, hp: B.hp, max: BOSS_HP }); });
+    onceAt(c, 'title', 6.1, () => { onCine({ title: { kicker: B.def.kicker, name: B.def.name } }); SFX.sting(); shake(0.7); B.sq = 0.7; B.music = B.def.song; Music.start(); bossBarNow(B); });
     if (c.t > 7.4) endBossCine(B);
   } else {
     onceAt(c, 'l1', 0.7, () => bossSay(who, L.again, 1.7, v));
@@ -3405,155 +3439,244 @@ function endBossCine(B) {
   if (!B.music) { B.music = B.def.song; Music.start(); }
   if (B.kind === 'mampf') { B.y = BOSS_FLOOR; B.vy = 0; }
   if (B.kind === 'huhu') { B.x = 14 * T; B.y = BOSS_HOVER; }
-  if (B.kind === 'yeti') { B.x = 15 * T; B.y = BOSS_FLOOR; }
-  bossBar({ name: B.def.name, hp: B.hp, max: BOSS_HP });
+  if (B.kind === 'yeti') { B.x = 16 * T; B.y = BOSS_FLOOR; B.hopY = 0; }
+  bossBarNow(B);
   bossSet(B, 'idle'); B.t = -0.4;
 }
 
 // ---------- behaviour ----------
 function bossSet(B, s) { B.state = s; B.t = 0; B.n = 0; }
-function bossNext(B) { const seq = BOSS_SEQ[B.kind][Math.min(2, bossPhase(B))]; bossSet(B, seq[B.si % seq.length]); B.si++; }
+// a short line during the fight; the first of a kind always comes, later ones only now and then
+function bossBark(B, key, dur) {
+  const list = B.def.lines[key]; if (!list || B.done) return;
+  if (B.said[key] && (B.barkT > 0 || Math.random() < 0.45)) return;
+  B.said[key] = true; B.barkT = 5; bossSay(B.def.name, pick(list), dur || 1.6, B.kind);
+}
 function bossLand(B, waves, big) {
   shake(big ? 0.9 : 0.5); SFX.stomp(); B.sq = 0.62;
   burst(B.x, BOSS_FLOOR - 2, 14, [W.groundEdge || P.groundEdge, P.dust], 150, { grav: 500 });
   if (!waves) return;
-  const sp = 200 + 45 * bossPhase(B) + (big ? 40 : 0);
-  for (const d of [-1, 1]) B.shots.push({ type: 'wave', x: B.x + d * 34, dir: d, speed: sp, h: big ? 22 : 17, t: 0 });
+  const sp = 170 + 30 * bossPhase(B);
+  for (const d of [-1, 1]) B.shots.push({ type: 'wave', x: B.x + d * 36, dir: d, speed: sp, h: big ? 22 : 17, t: 0 });
+}
+// --- Yeti: ice pillars are real tiles, so Mimo can hide behind them and stand on them
+const pillarAt = (B, c) => B.pillars.find((q) => q.c === c);
+function pillarAdd(B, c, life) {
+  if (pillarAt(B, c)) return;
+  for (const r of YETI_PILLAR_ROWS) G.L.tiles[r][c] = ICE;
+  B.pillars.push({ c, life, t: 0 });
+  // never wall Mimo in: whoever stands in the column is moved to the nearer side
+  const p = G.p, x0 = c * T, top = YETI_PILLAR_ROWS[0] * T;
+  if (p && p.x + p.w > x0 && p.x < x0 + T && p.y + p.h > top) p.x = p.x + p.w / 2 < x0 + T / 2 ? x0 - p.w : x0 + T;
+}
+function pillarBreak(B, c, quiet) {
+  const i = B.pillars.findIndex((q) => q.c === c); if (i < 0) return;
+  B.pillars.splice(i, 1);
+  for (const r of YETI_PILLAR_ROWS) G.L.tiles[r][c] = EMPTY;
+  const x = c * T + T / 2, y = BOSS_FLOOR - T;
+  burst(x, y, quiet ? 8 : 22, [P.w2Ice, P.card, P.w3Snow], quiet ? 90 : 210, { grav: 520, rect: true });
+  if (!quiet) { ring(x, y, P.w2Ice); SFX.ice(); }
+  SFX.crumble();
+}
+function yetiIcicles(B, count, stick) {
+  const p = G.p, own = Math.floor(B.x / T), cols = [Math.max(2, Math.min(17, Math.floor((p.x + p.w / 2) / T)))];
+  if (Math.abs(cols[0] - own) < 2) cols[0] = Math.max(2, Math.min(17, own + (cols[0] >= own && own < 15 ? 3 : -3)));
+  for (let tries = 0; cols.length < count && tries < 60; tries++) { const c = 2 + Math.floor(bossRnd(B) * 16); if (Math.abs(c - own) >= 2 && cols.every((q) => Math.abs(q - c) >= 3)) cols.push(c); }
+  cols.forEach((c, i) => { if (!pillarAt(B, c)) B.shots.push({ type: 'icicle', c, x: c * T + T / 2, y: 4, vy: 0, t: -i * 0.16, warn: YETI_WARN, stick }); });
+}
+function yetiNext(B) {
+  const ph = bossPhase(B), seq = ph === 0 ? ['throw', 'charge'] : ph === 1 ? ['stomp', 'throw', 'charge'] : ['stomp', 'charge2'];
+  let s = seq[B.cyc % seq.length];
+  // he never slides without a pillar somewhere: first he stamps new icicles down
+  if (s !== 'stomp' && s !== 'throw' && !B.pillars.length && !B.shots.some((q) => q.type === 'icicle' && q.stick)) s = 'stomp'; else B.cyc++;
+  bossSet(B, s);
 }
 const BOSS_AI = {
   mampf(B, dt) {
-    const ph = bossPhase(B), k = 1 + 0.2 * ph, p = G.p, px = p.x + p.w / 2;
-    B.dir = px < B.x ? -1 : 1;
+    const ph = bossPhase(B), p = G.p, px = p.x + p.w / 2;
+    B.sink += ((B.state === 'stuck' ? 1 : 0) - B.sink) * Math.min(1, dt * (B.state === 'stuck' ? 14 : 9));
+    for (const q of B.puddles) if (q.wet < 1) q.wet = Math.min(1, q.wet + dt / (ph ? MAMPF_REFILL * 0.6 : MAMPF_REFILL));
     switch (B.state) {
       case 'enter': if (B.cine && B.cine.t < 0.5) break; B.vy += 1800 * dt; B.y += B.vy * dt; if (B.y >= BOSS_FLOOR) { B.y = BOSS_FLOOR; B.vy = 0; bossLand(B, false, true); B.state = 'wait'; } break;
-      case 'idle': if (B.t > 0.45 / k) bossNext(B); break;
-      case 'hop': case 'bighop': {
-        const big = B.state === 'bighop';
-        if (B.n === 0) {
-          if (B.t < 0.22 / k) { B.sq = 0.84; break; }
-          const tx = big ? 10 * T : Math.max(BOSS_X0 + 40, Math.min(BOSS_X1 - 40, px)), air = big ? 0.92 : 0.62;
-          B.vy = -BOSS_GRAV * air / 2; B.vx = (tx - B.x) / air; B.n = 1; B.sq = 1.25; SFX.jump();
+      case 'idle': B.dir = px < B.x ? -1 : 1; if (B.t > 0.55 - 0.1 * ph) { B.chain = 0; if (ph >= 1 && !B.puffed) { B.puffed = true; bossSet(B, 'spores'); } else bossSet(B, 'flop'); } break;
+      case 'flop':
+        if (B.n === 0) { // crouch
+          B.sq = 0.8; B.dir = px < B.x ? -1 : 1;
+          if (B.t > (B.chain ? 0.16 : 0.36)) { B.n = 1; B.t = 0; B.sq = 1.3; SFX.jump(); }
+        } else if (B.n === 1) { // rise and follow Mimo
+          const k = Math.min(1, B.t / MAMPF_RISE), want = bossClampX(px, 40) - B.x, step = (390 + 45 * ph) * dt;
+          B.y = BOSS_FLOOR - MAMPF_H * (1 - (1 - k) * (1 - k));
+          B.x += Math.max(-step, Math.min(step, want));
+          if (k >= 1) {
+            B.n = 2; B.t = 0;
+            const q = B.puddles.find((u) => u.wet >= 1 && Math.abs(u.x - B.x) < MAMPF_CATCH); if (q) B.x = q.x;
+            floater(B.x, B.y - 96, '!', P.thorn); SFX.sw();
+          }
+        } else if (B.n === 2) { // hang: the spot is fixed now
+          if (B.t > 0.5 - 0.05 * ph) { B.n = 3; B.vy = 250; }
         } else {
-          B.vy += BOSS_GRAV * dt; B.x = Math.max(BOSS_X0 + 36, Math.min(BOSS_X1 - 36, B.x + B.vx * dt)); B.y += B.vy * dt;
-          if (B.y >= BOSS_FLOOR && B.vy > 0) { B.y = BOSS_FLOOR; B.vy = 0; B.vx = 0; bossLand(B, true, big); bossSet(B, 'idle'); }
+          B.vy += 3200 * dt; B.y += B.vy * dt;
+          if (B.y >= BOSS_FLOOR) {
+            B.y = BOSS_FLOOR; B.vy = 0;
+            const q = B.puddles.find((u) => u.wet >= 1 && Math.abs(u.x - B.x) < MAMPF_CATCH);
+            if (q) {
+              q.wet = 0; bossSet(B, 'stuck'); B.sq = 0.6; shake(0.6); SFX.stomp(); SFX.quak();
+              burst(B.x, BOSS_FLOOR - 4, 26, [BOSS_MUD, BOSS_MUD_HI], 230, { grav: 620, vy: -120 }); floater(B.x, B.y - 70, 'Platsch!', BOSS_MUD);
+              bossBark(B, 'stun');
+            } else {
+              bossLand(B, true, ph >= 2); B.chain++;
+              if (B.chain <= ph) { B.n = 0; B.t = 0; } else bossSet(B, B.hp < B.def.hp ? 'spores' : 'rest');
+            }
+          }
         }
         break;
-      }
+      case 'rest': if (B.t > 0.7) bossSet(B, 'idle'); break;
       case 'spores':
-        if (B.t > 0.75 && B.n === 0) {
-          B.n = 1; const m = 3 + ph; SFX.open();
-          for (let i = 0; i < m; i++) { const o = i - (m - 1) / 2; B.shots.push({ type: 'spore', x: B.x + o * 26, y: B.y - 80, vx: o * 70 + (Math.random() - 0.5) * 30, vy: -200 - Math.random() * 80, r: 9, t: 0, ph: Math.random() * 6 }); }
+        if (B.t > 0.7 && B.n === 0) {
+          B.n = 1; const m = 2 + ph; SFX.open();
+          for (let i = 0; i < m; i++) { const o = i - (m - 1) / 2; B.shots.push({ type: 'spore', x: B.x + o * 30, y: B.y - 80, vx: o * 90 + (bossRnd(B) - 0.5) * 60, vy: -210 - bossRnd(B) * 80, r: 9, t: 0, ph: bossRnd(B) * 6 }); }
         }
-        if (B.t > 1.15) bossSet(B, 'idle');
+        if (B.t > 1.2) bossSet(B, 'idle');
         break;
-      case 'tired': if (B.t > Math.max(1.6, 2.6 - 0.35 * ph)) { bossSet(B, 'idle'); B.si = 0; } if (Math.random() < dt * 3) floater(B.x + 30, B.y - 70, 'puh', P.muted); break;
-      case 'hurt': if (B.t > 0.8) bossSet(B, 'idle'); break;
+      case 'stuck':
+        if (Math.random() < dt * 5) G.particles.push({ x: B.x + (Math.random() - 0.5) * 70, y: BOSS_FLOOR - 2, vx: (Math.random() - 0.5) * 60, vy: -90 - Math.random() * 60, life: 0, max: 0.5, r: 2.5, color: BOSS_MUD, grav: 400, rect: false, rot: 0 });
+        if (B.t > 3.1 - 0.3 * ph) { bossSet(B, 'pop'); B.sq = 1.35; SFX.bounce(); burst(B.x, BOSS_FLOOR - 4, 12, BOSS_MUD, 140, { grav: 500 }); }
+        break;
+      case 'pop': if (B.t > 0.55) bossSet(B, 'idle'); break;
+      case 'hurt': if (B.t > (B.pulse > 0 ? 1.5 : 0.9)) bossSet(B, 'idle'); break;
     }
   },
   huhu(B, dt) {
-    const ph = bossPhase(B), k = 1 + 0.2 * ph, p = G.p, px = p.x + p.w / 2;
+    const ph = bossPhase(B), p = G.p, px = p.x + p.w / 2;
+    // the finale blows: the wind turns every few seconds, with a calm second in between
+    if (ph >= 2 && G.state === 'play') { B.windT += dt; const k = B.windT % 6; B.windDir = k < 1 ? 0 : (Math.floor(B.windT / 6) % 2 ? 1 : -1) * Math.min(1, k - 1, (6 - k) * 2); } else B.windDir = 0;
     switch (B.state) {
       case 'enter': { const e = ease2(Math.min(1, B.t / 1.5)); B.x = 21 * T + (14 * T - 21 * T) * e; B.y = -40 + (BOSS_HOVER + 40) * e; B.dir = -1; if (e >= 1) B.state = 'wait'; break; }
       case 'wait': B.y = BOSS_HOVER + Math.sin(B.anim * 2) * 6; break;
-      case 'idle': B.y += (BOSS_HOVER - B.y) * Math.min(1, dt * 4); if (B.t > 0.3) bossNext(B); break;
+      case 'idle': B.y += (BOSS_HOVER - B.y) * Math.min(1, dt * 4); if (B.t > 0.35) { bossSet(B, 'hover'); B.drops = 0; B.dropT = Math.min(1.6, Math.max(B.dropT, 1.1)); } break;
       case 'hover': {
-        const tx = Math.max(BOSS_X0 + 60, Math.min(BOSS_X1 - 60, px));
-        B.x += (tx - B.x) * Math.min(1, dt * 1.1 * k); B.y += (BOSS_HOVER + Math.sin(B.anim * 2.4) * 8 - B.y) * Math.min(1, dt * 4); B.dir = px < B.x ? -1 : 1;
-        B.dropT -= dt; if (B.dropT <= 0) { B.dropT = 1.5 - 0.3 * ph; B.shots.push({ type: 'cone', x: B.x, y: B.y + 4, vx: 0, vy: 60, r: 8, t: 0, bounce: 1, rot: 0 }); }
-        if (B.t > 2.5 - 0.35 * ph) bossNext(B);
+        const aiming = B.dropT < HUHU_AIM, tx = bossClampX(px, 60);
+        B.x += (tx - B.x) * Math.min(1, dt * (aiming ? 0.35 : 1.5 + 0.2 * ph)); B.y += (BOSS_HOVER + Math.sin(B.anim * 2.4) * 8 - B.y) * Math.min(1, dt * 4); B.dir = px < B.x ? -1 : 1;
+        const before = B.dropT; B.dropT -= dt;
+        if (before >= HUHU_AIM && B.dropT < HUHU_AIM) SFX.hup();
+        if (B.dropT <= 0) {
+          B.dropT = 2 - 0.25 * ph; B.drops++; B.sq = 1.15; SFX.land();
+          B.shots.push({ type: 'cone', mode: 'fall', x: B.x, y: B.y + 6, vx: 0, vy: 40, r: 9, t: 0, bounce: 1, rot: 0, rest: 0 });
+          if (ph >= 1) B.shots.push({ type: 'cone', mode: 'fall', x: B.x, y: B.y + 6, vx: (bossRnd(B) < 0.5 ? -1 : 1) * 120, vy: -60, r: 9, t: 0, bounce: 1, rot: 0, rest: 0 });
+          if (B.drops >= (ph === 0 ? 3 : 2)) { B.dropT = 9; B.n = 1; B.t = 0; }
+        }
+        // the cones get a moment to land before she dives
+        if (B.n === 1 && B.t > 0.8) bossSet(B, 'swoop');
         break;
       }
       case 'swoop': {
-        const warn = 0.72 - 0.1 * ph, dur = 1.15 - 0.15 * ph;
+        const warn = 0.78 - 0.08 * ph, dur = 1.15 - 0.12 * ph;
         if (B.t < warn) {
           if (B.n === 0) {
-            B.n = 1; B.sx0 = B.x; B.sy0 = B.y; B.tx = Math.max(BOSS_X0 + 40, Math.min(BOSS_X1 - 40, px));
+            B.n = 1; B.sx0 = B.x; B.sy0 = B.y; B.tx = bossClampX(px, 40);
             let x2 = B.sx0 + (B.tx - B.sx0) * 2; if (Math.abs(x2 - B.sx0) < 220) x2 = B.sx0 > 10 * T ? BOSS_X0 + 80 : BOSS_X1 - 80;
-            B.sx2 = Math.max(BOSS_X0 + 60, Math.min(BOSS_X1 - 60, x2)); SFX.hoot(); floater(B.x, B.y - 66, '!', P.thorn);
+            B.sx2 = bossClampX(x2, 60); SFX.hoot(); floater(B.x, B.y - 66, '!', P.thorn);
           }
           B.y = B.sy0 - Math.sin(B.t / warn * Math.PI) * 12; B.dir = B.tx < B.x ? -1 : 1;
           break;
         }
         const u = Math.min(1, (B.t - warn) / dur), x0 = B.sx0, y0 = B.sy0, x2 = B.sx2, y2 = BOSS_HOVER;
         const cy = 2 * (BOSS_FLOOR - 4) - (y0 + y2) / 2, cx = 2 * B.tx - (x0 + x2) / 2, a = (1 - u) * (1 - u), b2 = 2 * (1 - u) * u, c2 = u * u;
-        B.x = a * x0 + b2 * cx + c2 * x2; B.y = a * y0 + b2 * cy + c2 * y2; B.dir = x2 < x0 ? -1 : 1;
+        B.x = bossClampX(a * x0 + b2 * cx + c2 * x2, 26); B.y = a * y0 + b2 * cy + c2 * y2; B.dir = x2 < x0 ? -1 : 1;
         if (u > 0.35 && u < 0.65 && Math.random() < dt * 30) G.particles.push({ x: B.x, y: B.y - 20, vx: -B.dir * 60, vy: -30, life: 0, max: 0.5, r: 2.5, color: P.mimoLav, grav: 60, rect: true, rot: Math.random() * 6 });
-        if (u >= 1) bossNext(B);
+        if (u >= 1) { bossSet(B, 'idle'); B.dropT = 1.3; }
         break;
       }
-      case 'land': B.y += (BOSS_FLOOR - B.y) * Math.min(1, dt * 5); B.x = Math.max(BOSS_X0 + 60, Math.min(BOSS_X1 - 60, B.x)); if (BOSS_FLOOR - B.y < 3) { B.y = BOSS_FLOOR; bossSet(B, 'tired'); SFX.land(); burst(B.x, BOSS_FLOOR - 2, 10, P.dust, 110, { grav: 400 }); } break;
-      case 'tired': if (Math.random() < dt * 1.4) floater(B.x + 18, B.y - 62, 'z', P.muted); if (B.t > Math.max(1.8, 2.8 - 0.35 * ph)) bossSet(B, 'takeoff'); break;
-      case 'takeoff': B.y += (BOSS_HOVER - B.y) * Math.min(1, dt * 4); if (B.t > 0.7) { B.si = 0; bossNext(B); } break;
-      case 'hurt': B.y += (BOSS_HOVER - 16 - B.y) * Math.min(1, dt * 4); if (B.t > 0.9) { bossSet(B, 'idle'); } break;
+      case 'stunned': // hit by her own cone: she tumbles down
+        B.vy += 1300 * dt; B.y += B.vy * dt; B.spin += dt * 14;
+        if (Math.random() < dt * 24) G.particles.push({ x: B.x + (Math.random() - 0.5) * 30, y: B.y - 30, vx: (Math.random() - 0.5) * 80, vy: -40, life: 0, max: 0.7, r: 2.5, color: P.mimoLav, grav: 120, rect: true, rot: Math.random() * 6 });
+        if (B.y >= BOSS_FLOOR) { B.y = BOSS_FLOOR; B.vy = 0; B.spin = 0; bossSet(B, 'dazed'); B.sq = 0.6; shake(0.5); SFX.stomp(); burst(B.x, BOSS_FLOOR - 2, 12, P.dust, 120, { grav: 400 }); bossBark(B, 'stun'); }
+        break;
+      case 'dazed': if (B.t > 3.4 - 0.35 * ph) { bossSet(B, 'takeoff'); B.sq = 1.2; } break;
+      case 'takeoff': B.y += (BOSS_HOVER - B.y) * Math.min(1, dt * 4); if (B.t > 0.7) bossSet(B, 'idle'); break;
+      case 'hurt': B.y += (BOSS_HOVER - 16 - B.y) * Math.min(1, dt * 4); if (B.t > (B.pulse > 0 ? 1.5 : 0.9)) bossSet(B, 'idle'); break;
     }
   },
   yeti(B, dt) {
-    const ph = bossPhase(B), k = 1 + 0.2 * ph, p = G.p, px = p.x + p.w / 2;
-    const wallL = BOSS_X0 + 34, wallR = BOSS_X1 - 34;
+    const ph = bossPhase(B), k = 1 + 0.15 * ph, p = G.p, px = p.x + p.w / 2;
+    const wallL = BOSS_X0 + 34, wallR = BOSS_X1 - 34, sliding = B.state === 'charge' || B.state === 'charge2';
+    // icicle pillars melt after a while, but never under a slide that is already on its way
+    if (!sliding) for (const q of [...B.pillars]) { if (!q.life) continue; q.t += dt; if (q.t > q.life) pillarBreak(B, q.c, true); }
+    // the finale keeps small icicles coming down on Mimo
+    if (ph >= 2 && G.state === 'play' && !['dizzy', 'hurt', 'idle'].includes(B.state)) { B.rainT -= dt; if (B.rainT <= 0) { B.rainT = 1.9; B.shots.push({ type: 'icicle', x: bossClampX(px, 14), y: 4, vy: 0, t: 0, warn: YETI_WARN, stick: false }); } }
     switch (B.state) {
       case 'enter': {
         if (B.cine && B.cine.t < 0.4) break;
         B.x -= 300 * dt; B.dir = -1; B.hopY = Math.abs(Math.sin(B.x / 40)) * 10;
-        if (B.x <= 15 * T) { B.x = 15 * T; B.hopY = 0; bossLand(B, false, true); B.state = 'wait'; }
+        if (B.x <= 16 * T) { B.x = 16 * T; B.hopY = 0; bossLand(B, false, true); B.state = 'wait'; }
         break;
       }
-      case 'idle': B.dir = px < B.x ? -1 : 1; if (B.t > 0.5 / k) bossNext(B); break;
+      case 'idle': B.dir = px < B.x ? -1 : 1; if (B.t > 0.5 / k) yetiNext(B); break;
       case 'throw': {
-        const n = 2 + Math.min(1, ph), gap = 0.62 / k;
+        const n = 2, gap = 0.8 / k;
         B.dir = px < B.x ? -1 : 1;
-        if (B.n < n && B.t > 0.4 + B.n * gap) {
-          B.n++; const air = 0.72, vx = Math.max(-420, Math.min(420, (px - B.x) / air));
-          B.shots.push({ type: 'snow', x: B.x + B.dir * 20, y: B.y - 64, vx, vy: -0.5 * 1300 * air, r: 11, t: 0, roll: false, rot: 0, rollSpeed: 150 + 40 * ph });
+        if (B.n < n && B.t > 0.45 + B.n * gap) {
+          B.n++; const air = ph >= 1 ? 0.86 : 0.74, vx = Math.max(-420, Math.min(420, (px - B.x) / air));
+          B.shots.push({ type: 'snow', x: B.x + B.dir * 20, y: B.y - 64, vx, vy: -0.5 * 1300 * air, r: 11, t: 0, roll: false, rot: 0, rollSpeed: 150 + 25 * ph, rollT: 0 });
           SFX.jump(); B.sq = 0.88;
         }
-        if (B.t > 0.4 + n * gap + 0.4) bossSet(B, 'idle');
+        if (B.t > 0.45 + n * gap + 0.4) yetiNext(B);
         break;
       }
       case 'stomp':
-        if (B.n === 0) { if (B.t > 0.3) { B.n = 1; B.vy = -560; B.sq = 1.25; SFX.jump(); } else B.sq = 0.85; break; }
-        B.vy += BOSS_GRAV * dt; B.y += B.vy * dt;
-        if (B.y >= BOSS_FLOOR && B.vy > 0) {
-          B.y = BOSS_FLOOR; B.vy = 0; bossLand(B, false, true);
-          const m = 3 + ph, xs = [Math.max(BOSS_X0 + 20, Math.min(BOSS_X1 - 20, px))];
-          for (let tries = 0; xs.length < m && tries < 40; tries++) { const x = BOSS_X0 + 30 + Math.random() * (BOSS_X1 - BOSS_X0 - 60); if (xs.every((q) => Math.abs(q - x) > 64)) xs.push(x); }
-          xs.forEach((x, i) => B.shots.push({ type: 'icicle', x, y: 16, vy: 0, t: -i * 0.12, warn: 0.85 }));
-          bossSet(B, 'idle');
+        if (B.n === 0) { if (B.t > 0.35) { B.n = 1; B.vy = -560; B.sq = 1.25; SFX.jump(); } else B.sq = 0.85; break; }
+        if (B.n === 1) {
+          B.vy += BOSS_GRAV * dt; B.y += B.vy * dt;
+          if (B.y >= BOSS_FLOOR && B.vy > 0) { B.y = BOSS_FLOOR; B.vy = 0; B.n = 2; B.t = 0; bossLand(B, false, true); yetiIcicles(B, ph === 1 ? 3 : 2, true); }
+          break;
         }
+        if (B.t > 0.9) yetiNext(B);
         break;
       case 'charge': case 'charge2':
         if (!B.slide) {
-          if (B.n === 0) { B.n = 1; B.dir = px < B.x ? -1 : 1; SFX.crumble(); }
+          if (B.n === 0) { B.n = 1; B.dir = px < B.x ? -1 : 1; SFX.crumble(); floater(B.x, B.y - 86, '!', P.thorn); }
           B.sq = 0.82 + Math.sin(B.t * 40) * 0.03;
           if (Math.random() < dt * 20) G.particles.push({ x: B.x - B.dir * 20, y: B.y - 4, vx: -B.dir * 80, vy: -40, life: 0, max: 0.5, r: 3, color: P.w3Snow, grav: 100, rect: false, rot: 0 });
-          if (B.t > (B.n === 2 ? 0.55 : 0.6)) { B.slide = true; B.vx = B.dir * (320 + 35 * ph); SFX.bounce(); }
+          if (B.t > (B.n === 2 ? 0.6 : 0.75)) { B.slide = true; B.vx = B.dir * (330 + 30 * ph); SFX.bounce(); }
           break;
         }
         B.x += B.vx * dt;
         if (Math.random() < dt * 30) G.particles.push({ x: B.x - B.dir * 30, y: B.y - 2, vx: -B.dir * 60, vy: -60 - Math.random() * 60, life: 0, max: 0.5, r: 2.5, color: P.w3Snow, grav: 300, rect: false, rot: 0 });
-        if (B.x <= wallL || B.x >= wallR) {
-          B.x = Math.max(wallL, Math.min(wallR, B.x)); B.slide = false; B.vx = 0; shake(0.8); SFX.stomp(); SFX.crumble();
-          burst(B.x + B.dir * 30, B.y - 30, 16, [P.w3Snow, P.dust], 160, { grav: 400 });
-          if (B.state === 'charge2' && B.n === 1) { B.n = 2; B.t = 0; B.dir = -B.dir; floater(B.x, B.y - 84, '!', P.thorn); } else { bossSet(B, 'dizzy'); B.dizzyDur = Math.max(1.8, Math.min(3.6, Math.abs(px - B.x) / RUN + 1.1 - 0.15 * ph)); }
+        {
+          const c = Math.floor((B.x + B.dir * 38) / T);
+          if (pillarAt(B, c)) {
+            // crashed into the ice: the pillar is gone and he sees stars
+            pillarBreak(B, c); B.slide = false; B.vx = 0; B.x -= B.dir * 6; shake(1); SFX.stomp(); G.freeze = 0.08;
+            bossSet(B, 'dizzy'); B.sq = 0.6; floater(B.x, B.y - 84, 'Rumms!', P.w2IceInk || P.muted); bossBark(B, 'stun');
+          } else if (B.x <= wallL || B.x >= wallR) {
+            B.x = Math.max(wallL, Math.min(wallR, B.x)); B.slide = false; B.vx = 0; shake(0.7); SFX.stomp(); SFX.crumble();
+            burst(B.x + B.dir * 30, B.y - 30, 16, [P.w3Snow, P.dust], 160, { grav: 400 });
+            if (B.state === 'charge2' && B.n === 1) { B.n = 2; B.t = 0; B.dir = -B.dir; floater(B.x, B.y - 84, '!', P.thorn); } else bossSet(B, 'bonk');
+          }
         }
         break;
-      case 'dizzy': if (B.t > (B.dizzyDur || 2.2)) { bossSet(B, 'idle'); B.si = 0; } break;
-      case 'hurt': if (B.t > 0.8) bossSet(B, 'idle'); break;
+      case 'bonk': if (B.t > 0.8) yetiNext(B); break;
+      case 'dizzy': if (B.t > 3.4 - 0.3 * ph) yetiNext(B); break;
+      case 'hurt': if (B.t > (B.pulse > 0 ? 1.5 : 0.9)) bossSet(B, 'idle'); break;
     }
   },
 };
 // hit box per state; "soft" means a stomp hurts the boss, "harmless" means touching does not hurt Mimo
+const BOSS_SOFT = { mampf: 'stuck', huhu: 'dazed', yeti: 'dizzy' };
+const BOSS_HARMLESS = ['enter', 'wait', 'hurt', 'beaten', 'stuck', 'pop', 'stunned', 'dazed', 'dizzy', 'bonk'];
 function bossBox(B) {
-  const s = B.state, harmless = ['enter', 'wait', 'hurt', 'beaten', 'tired', 'dizzy'].includes(s);
-  if (B.kind === 'mampf') { const top = B.y - (s === 'tired' ? 62 : 74) * B.sq; return { l: B.x - 36, r: B.x + 36, top, bottom: B.y, soft: s === 'tired', harmless }; }
-  if (B.kind === 'huhu') return { l: B.x - 24, r: B.x + 24, top: B.y - 54, bottom: B.y - 4, soft: s === 'tired', harmless };
+  const s = B.state, soft = s === BOSS_SOFT[B.kind], harmless = BOSS_HARMLESS.includes(s) || (s === 'takeoff' && B.t < 0.45);
+  // König Mampf only hurts while he comes down: boss 1 forgives bumping into him
+  if (B.kind === 'mampf') return { l: B.x - 36, r: B.x + 36, top: B.y - 74 * B.sq + B.sink * MAMPF_SINK, bottom: B.y, soft, harmless: !(s === 'flop' && B.n === 3) };
+  if (B.kind === 'huhu') return { l: B.x - 24, r: B.x + 24, top: B.y - 54, bottom: B.y - 4, soft, harmless };
   if (B.slide) return { l: B.x - 36, r: B.x + 36, top: B.y - 30, bottom: B.y, soft: false, harmless: false };
-  return { l: B.x - 28, r: B.x + 28, top: B.y - (s === 'dizzy' ? 58 : 70), bottom: B.y, soft: s === 'dizzy', harmless };
+  return { l: B.x - 28, r: B.x + 28, top: B.y - (s === 'dizzy' ? 58 : 70), bottom: B.y, soft, harmless };
 }
 function bossCollide(B) {
   const p = G.p, bx = bossBox(B);
   if (B.done) return;
   if (!(p.x + p.w - 4 > bx.l && p.x + 4 < bx.r && p.y + p.h > bx.top && p.y < bx.bottom)) return;
-  if (p.vy > 0 && p.prevBottom <= bx.top + 14 && !['hurt', 'enter', 'wait'].includes(B.state)) { if (bx.soft) bossHit(B); else bossTickle(B); return; }
+  if (p.vy > 0 && p.prevBottom <= bx.top + 14 && !['hurt', 'enter', 'wait', 'stunned'].includes(B.state)) { if (bx.soft) bossHit(B); else bossTickle(B); return; }
   if (!bx.harmless) hurt();
 }
 function bossTickle(B) {
@@ -3563,30 +3686,48 @@ function bossTickle(B) {
   if (B.tickleT <= 0) { B.tickleT = 3.5; bossSay(B.def.name, pick(B.def.lines.tickle), 1.6, B.kind); }
 }
 function bossHit(B) {
-  const p = G.p, bx = bossBox(B);
-  B.hp--; B.flash = 1; B.sq = 0.6; G.freeze = 0.14; G.flash = 0.35; shake(1);
+  const p = G.p, bx = bossBox(B), before = bossPhase(B), last = B.hp <= 1;
+  B.hp--; B.flash = 1; B.sq = 0.55; G.freeze = last ? 0.3 : 0.16; G.flash = last ? 0.7 : 0.35; shake(last ? 1.4 : 1);
   p.vy = -STOMP * 1.15; p.y = bx.top - p.h; p.canCut = false; p.sx = 0.8; p.sy = 1.25; setMood('happy', 1);
   SFX.bounce(); SFX.stomp(); SFX.yay();
-  burst(B.x, bx.top, 26, [P.star, P.card, P.mush, P.mimoLav], 220, { grav: 320, rect: true }); ring(B.x, bx.top, P.star);
-  floater(B.x, bx.top - 18, B.hp > 0 ? 'Treffer!' : 'Gewonnen!', P.star);
+  burst(B.x, bx.top, last ? 40 : 26, [P.star, P.card, P.mush, P.mimoLav], 220, { grav: 320, rect: true }); ring(B.x, bx.top, P.star);
+  floater(B.x, bx.top - 18, last ? 'Gewonnen!' : 'Treffer!', P.star);
   B.shots.length = 0; B.slide = false; B.vx = 0;
-  bossBar({ name: B.def.name, hp: B.hp, max: BOSS_HP, hit: true });
-  Music.setIntensity(bossPhase(B));
-  if (B.hp <= 0) { bossDefeat(B); return; }
-  bossSay(B.def.name, B.def.lines.hit[BOSS_HP - B.hp - 1] || pick(B.def.lines.hit), 1.8, B.kind);
-  bossSet(B, 'hurt'); B.si = 0;
+  bossBarNow(B, true);
+  if (last) { if (!reduced()) { B.slow = 1.1; B.zoomT = 1.7; } bossDefeat(B); return; }
+  const ph = bossPhase(B);
+  Music.setIntensity(ph);
+  bossSet(B, 'hurt'); B.cyc = 0; B.chain = 0;
+  if (ph !== before) bossPhaseStart(B, ph); else bossSay(B.def.name, pick(B.def.lines.hit), 1.6, B.kind);
+}
+// a new phase: the boss says so and the arena changes
+function bossPhaseStart(B, ph) {
+  B.pulse = 1.2; B.puffed = false; SFX.sting(); shake(0.8);
+  bossSay(B.def.name, B.def.lines.phase[ph - 1], 2.2, B.kind);
+  if (B.kind === 'mampf') for (const q of B.puddles) burst(q.x, BOSS_FLOOR - 2, 12, [BOSS_MUD_HI, P.dust], 130, { grav: 300 });
+  if (B.kind === 'yeti') { for (const q of [...B.pillars]) pillarBreak(B, q.c, true); if (ph === 1) { for (let c = 1; c <= 18; c += 2) burst(c * T + T, BOSS_FLOOR + 2, 3, [P.w2Ice, P.card], 120, { grav: 300, vy: -80 }); SFX.ice(); } }
+  bossArena(B);
 }
 function bossDefeat(B) {
-  bossSet(B, 'beaten'); B.done = true; G.freeze = 0.3; shake(1.3);
+  bossSet(B, 'beaten'); B.done = true;
   if (B.kind === 'huhu') B.y = Math.min(B.y, BOSS_FLOOR);
+  if (B.kind === 'yeti') for (const q of [...B.pillars]) pillarBreak(B, q.c, true);
+  if (B.kind === 'mampf') B.crown = { x: B.x, y: B.y - 80 + B.sink * MAMPF_SINK, x0: B.x, y0: B.y - 80 + B.sink * MAMPF_SINK, t: 0, on: false };
+  B.windDir = 0;
   burst(B.x, B.y - 40, 40, CONFETTI(), 260, { grav: 260, rect: true, life: 1 });
   bossSay(B.def.name, B.def.lines.beaten, 3, B.kind);
   B.music = 'none'; Music.start('none'); SFX.achieve();
 }
 function bossAfterDefeat(B, dt) {
-  if (B.kind === 'huhu' && B.y < BOSS_FLOOR) B.y = Math.min(BOSS_FLOOR, B.y + 220 * dt);
-  if (B.kind === 'mampf' && B.y < BOSS_FLOOR) { B.vy += BOSS_GRAV * dt; B.y = Math.min(BOSS_FLOOR, B.y + B.vy * dt); }
-  if (B.kind === 'yeti' && B.y < BOSS_FLOOR) { B.vy += BOSS_GRAV * dt; B.y = Math.min(BOSS_FLOOR, B.y + B.vy * dt); }
+  B.sink += (0 - B.sink) * Math.min(1, dt * 3);
+  if (B.y < BOSS_FLOOR) { if (B.kind === 'huhu') B.y = Math.min(BOSS_FLOOR, B.y + 220 * dt); else { B.vy += BOSS_GRAV * dt; B.y = Math.min(BOSS_FLOOR, B.y + B.vy * dt); } }
+  // Kronenklau: the crown sails over and lands on Mimo
+  const cr = B.crown;
+  if (cr && !cr.on) {
+    cr.t += dt; const k = Math.min(1, cr.t / 1.1), e = ease2(k), tx = G.p.x + G.p.w / 2, ty = G.p.y - 3;
+    cr.x = cr.x0 + (tx - cr.x0) * e; cr.y = cr.y0 + (ty - cr.y0) * e - Math.sin(k * Math.PI) * 90;
+    if (k >= 1) { cr.on = true; SFX.key(); ring(tx, ty, P.key); burst(tx, ty, 10, P.key, 110, { grav: 200 }); setMood('happy', 1.5); }
+  }
   if (B.t > 1.6 && !G.L.door) {
     const left = G.p.x + G.p.w / 2 < 10 * T, dx = left ? 17 : 2;
     G.L.door = { x: Math.abs(dx * T - B.x) < 2 * T ? (left ? 15 : 4) : dx, y: 9, open: 0, rise: 0 };
@@ -3596,47 +3737,95 @@ function bossAfterDefeat(B, dt) {
   }
   if (G.L.door && G.L.door.rise < 1) G.L.door.rise = Math.min(1, G.L.door.rise + dt * 1.6);
 }
+// a kicked cone reached her
+function huhuStun(B) {
+  bossSet(B, 'stunned'); B.vy = -260; B.flash = 0.8; B.sq = 0.7; G.freeze = 0.1; shake(0.6);
+  SFX.stomp(); SFX.hoot(); floater(B.x, B.y - 70, 'Zack!', P.star);
+  burst(B.x, B.y - 30, 18, [P.mimoLav, P.card, P.oneway], 190, { grav: 240, rect: true }); ring(B.x, B.y - 30, P.star);
+}
 function updateShots(B, dt) {
-  const p = G.p;
+  const p = G.p, play = G.state === 'play' && !B.done;
   for (let i = B.shots.length - 1; i >= 0; i--) {
-    const s = B.shots[i]; s.t += dt; let dead = false;
+    const s = B.shots[i]; s.t += dt; let dead = false, danger = true;
     switch (s.type) {
-      case 'wave': s.x += s.dir * s.speed * dt; if (s.x < BOSS_X0 + 8 || s.x > BOSS_X1 - 8) dead = true; if (Math.random() < dt * 25) G.particles.push({ x: s.x, y: BOSS_FLOOR - 4, vx: -s.dir * 30, vy: -60 - Math.random() * 60, life: 0, max: 0.4, r: 2, color: P.dust, grav: 300, rect: false, rot: 0 }); break;
-      case 'spore': s.vy = Math.min(48, s.vy + 300 * dt); s.vx *= 1 - dt * 0.9; s.x += (s.vx + Math.sin(s.t * 3 + s.ph) * 34) * dt; s.y += s.vy * dt; s.x = Math.max(BOSS_X0 + 10, Math.min(BOSS_X1 - 10, s.x)); if (s.y > BOSS_FLOOR - s.r || s.t > 8) { dead = true; burst(s.x, s.y, 6, P.mush, 60, { grav: 60 }); } break;
+      case 'wave': s.x += s.dir * s.speed * Math.min(1, 0.5 + s.t * 2) * dt; danger = s.t > 0.22; if (s.x < BOSS_X0 + 8 || s.x > BOSS_X1 - 8) dead = true; if (Math.random() < dt * 25) G.particles.push({ x: s.x, y: BOSS_FLOOR - 4, vx: -s.dir * 30, vy: -60 - Math.random() * 60, life: 0, max: 0.4, r: 2, color: P.dust, grav: 300, rect: false, rot: 0 }); break;
+      case 'spore': s.vy = Math.min(46, s.vy + 300 * dt); s.vx *= 1 - dt * 0.9; s.x += (s.vx + Math.sin(s.t * 3 + s.ph) * 30) * dt; s.y += s.vy * dt; s.x = bossClampX(s.x, 10); if (s.y > BOSS_FLOOR - s.r || s.t > 8) { dead = true; burst(s.x, s.y, 6, P.mush, 60, { grav: 60 }); } break;
       case 'cone':
-        s.vy += 1400 * dt; s.x += s.vx * dt; s.y += s.vy * dt; s.rot += s.vx * dt / 8;
-        if (s.x < BOSS_X0 + 8 || s.x > BOSS_X1 - 8) s.vx = -s.vx;
-        if (s.y >= BOSS_FLOOR - s.r) { s.y = BOSS_FLOOR - s.r; if (s.bounce > 0) { s.bounce--; s.vy = -280; s.vx = (Math.random() < 0.5 ? -1 : 1) * 95; SFX.land(); } else { s.vy = 0; s.rest = (s.rest || 0) + dt; if (s.rest > 0.9) dead = true; } }
+        if (s.mode === 'fall') {
+          s.vy += 900 * dt; s.x += s.vx * dt; s.y += s.vy * dt; s.rot += (s.vx || 40) * dt / 8;
+          if (s.x < BOSS_X0 + 10 || s.x > BOSS_X1 - 10) { s.vx = -s.vx; s.x = bossClampX(s.x, 10); }
+          if (s.y >= BOSS_FLOOR - s.r) {
+            s.y = BOSS_FLOOR - s.r;
+            if (s.bounce > 0) { s.bounce--; s.vy = -230; s.vx = (bossRnd(B) < 0.5 ? -1 : 1) * 60; SFX.land(); } else { s.mode = 'rest'; s.vy = 0; s.vx = 0; s.rot = 0; }
+          }
+        } else if (s.mode === 'rest') {
+          danger = false; s.rest += dt;
+          if (s.rest > 5 - bossPhase(B)) { dead = true; burst(s.x, s.y, 6, P.oneway, 70, { grav: 200 }); }
+          // Mimo lands on it: it shoots back up
+          else if (play && !p.grounded && p.vy > 0 && Math.abs(p.x + p.w / 2 - s.x) < 20 && p.y + p.h >= s.y - s.r - 2 && p.prevBottom <= s.y + 4) {
+            s.mode = 'rocket'; s.vy = -HUHU_ROCKET; s.t = 0;
+            p.vy = -STOMP; p.canCut = false; p.sx = 0.82; p.sy = 1.22; SFX.bounce(); SFX.sw(); ring(s.x, s.y, P.star); burst(s.x, s.y + 6, 8, [P.star, P.dust], 110, { grav: 300 });
+          }
+        } else {
+          danger = false;
+          const air = !B.done && ['hover', 'idle', 'swoop', 'takeoff'].includes(B.state);
+          if (air) { const want = Math.max(-HUHU_STEER, Math.min(HUHU_STEER, (B.x - s.x) * 5)); s.vx += (want - s.vx) * Math.min(1, dt * 12); }
+          s.x += s.vx * dt; s.y += s.vy * dt; s.rot += dt * 20;
+          if (Math.random() < dt * 60) G.particles.push({ x: s.x, y: s.y + 8, vx: (Math.random() - 0.5) * 30, vy: 60, life: 0, max: 0.35, r: 2, color: P.star, grav: 0, rect: false, rot: 0 });
+          if (air && Math.abs(s.x - B.x) < 32 && s.y < B.y + 4 && s.y > B.y - 62) { dead = true; huhuStun(B); }
+          else if (s.y < -30) dead = true;
+        }
         break;
       case 'snow':
         if (!s.roll) { s.vy += 1300 * dt; s.x += s.vx * dt; s.y += s.vy * dt; if (s.y >= BOSS_FLOOR - s.r) { s.y = BOSS_FLOOR - s.r; s.roll = true; s.vx = (s.vx < 0 ? -1 : 1) * s.rollSpeed; SFX.land(); } }
-        else { s.x += s.vx * dt; s.rot += s.vx * dt / s.r; }
-        if (s.x < BOSS_X0 + s.r || s.x > BOSS_X1 - s.r) { dead = true; burst(s.x, s.y, 10, P.w3Snow, 120, { grav: 400 }); SFX.crumble(); }
+        else { s.x += s.vx * dt; s.rot += s.vx * dt / s.r; s.rollT += dt; s.r = 11 - Math.max(0, s.rollT - YETI_ROLL + 0.4) * 10; s.y = BOSS_FLOOR - s.r; }
+        // snowballs burst on walls and on ice pillars, so a pillar is cover; a rolling one does not get far
+        if (s.rollT > YETI_ROLL || s.x < BOSS_X0 + s.r || s.x > BOSS_X1 - s.r || isSolid(Math.floor((s.x + Math.sign(s.vx) * s.r) / T), Math.floor(s.y / T))) { dead = true; burst(s.x, s.y, 10, P.w3Snow, 120, { grav: 400 }); SFX.crumble(); }
         break;
       case 'icicle':
-        if (s.t >= s.warn) { s.vy += 2200 * dt; s.y += s.vy * dt; if (s.y >= BOSS_FLOOR - 2) { dead = true; burst(s.x, BOSS_FLOOR - 4, 10, [P.w2Ice || P.w3Snow, P.card], 150, { grav: 500 }); SFX.crumble(); } }
+        danger = s.t >= s.warn;
+        if (danger) {
+          s.vy += 2200 * dt; s.y += s.vy * dt;
+          if (s.y >= BOSS_FLOOR - 2) {
+            dead = true; SFX.crumble();
+            const onYeti = Math.abs(B.x - s.x) < 46 && !B.done;
+            if (s.stick && !onYeti) { pillarAdd(B, s.c, YETI_PILLAR_LIFE); shake(0.35); SFX.ice(); burst(s.x, BOSS_FLOOR - 4, 8, [P.w2Ice, P.card], 130, { grav: 500 }); }
+            else burst(s.x, BOSS_FLOOR - 4, 10, [P.w2Ice || P.w3Snow, P.card], 150, { grav: 500 });
+          }
+        }
         break;
     }
-    if (!dead && G.state === 'play' && !B.done && shotHits(s, p)) { hurt(); if (s.type !== 'wave') dead = true; }
+    if (!dead && danger && play && shotHits(s, p)) { hurt(); if (s.type !== 'wave') dead = true; }
     if (dead) B.shots.splice(i, 1);
   }
 }
 function shotHits(s, p) {
   const cx = p.x + p.w / 2;
   if (s.type === 'wave') return p.y + p.h > BOSS_FLOOR - s.h + 4 && Math.abs(cx - s.x) < 9 + s.h * 0.4;
-  if (s.type === 'icicle') return s.t >= s.warn && p.x + p.w - 4 > s.x - 7 && p.x + 4 < s.x + 7 && p.y + p.h > s.y - 26 && p.y < s.y;
+  if (s.type === 'icicle') { const hw = s.stick ? 10 : 7, len = s.stick ? 52 : 26; return p.x + p.w - 4 > s.x - hw && p.x + 4 < s.x + hw && p.y + p.h > s.y - len && p.y < s.y; }
   const nx = Math.max(p.x + 3, Math.min(p.x + p.w - 3, s.x)), ny = Math.max(p.y + 3, Math.min(p.y + p.h - 2, s.y));
   return Math.hypot(nx - s.x, ny - s.y) < s.r * 0.85;
 }
+// the last hit plays in slow motion; update() asks here how much time really passes
+function bossDt(dt) {
+  const B = G.boss; if (!B || B.slow <= 0) return dt;
+  B.slow -= dt; return dt * BOSS_SLOW;
+}
 function updateBoss(dt) {
   const B = G.boss; if (!B) return;
-  B.t += dt; B.anim += dt; B.flash = Math.max(0, B.flash - dt * 3); B.tickleT = Math.max(0, B.tickleT - dt); B.pieT = Math.max(0, B.pieT - dt);
+  B.t += dt; B.anim += dt; B.flash = Math.max(0, B.flash - dt * 3); B.tickleT = Math.max(0, B.tickleT - dt); B.pieT = Math.max(0, B.pieT - dt); B.barkT = Math.max(0, B.barkT - dt); B.pulse = Math.max(0, B.pulse - dt);
   B.sq += (1 - B.sq) * Math.min(1, dt * 10);
+  B.zoomT = Math.max(0, B.zoomT - dt / (B.slow > 0 ? BOSS_SLOW : 1)); B.zoom += ((B.zoomT > 0 ? BOSS_ZOOM : 1) - B.zoom) * Math.min(1, dt / (B.slow > 0 ? BOSS_SLOW : 1) * 7);
+  if (B.kind === 'huhu') { const to = B.done ? 0 : ([0, 0.76, 0.5][bossPhase(B)] * (['stunned', 'dazed'].includes(B.state) ? 0.45 : 1)); B.dark += (to - B.dark) * Math.min(1, dt * 1.6); }
   if (G.p.invT > 0) G.p.invT = Math.max(0, G.p.invT - dt);
   if (B.cine) stepBossCine(B, dt);
   if (B.done) bossAfterDefeat(B, dt); else BOSS_AI[B.kind](B, dt);
   updateShots(B, dt);
-  if (G.state === 'play' && !B.cine) bossCollide(B);
+  if (G.state === 'play' && !B.cine) {
+    bossCollide(B);
+    // Frau Huhu's storm pushes Mimo along
+    if (B.windDir) { const p = G.p; p.x = Math.max(BOSS_X0, Math.min(BOSS_X1 - p.w, p.x + B.windDir * HUHU_WIND * dt)); if (!reduced() && Math.random() < dt * 22) G.particles.push({ x: B.windDir > 0 ? BOSS_X0 : BOSS_X1, y: 60 + Math.random() * 250, vx: B.windDir * (520 + Math.random() * 200), vy: 20, life: 0, max: 1.1, r: 2.2, color: Math.random() < 0.5 ? P.leaf : P.dust, grav: 30, rect: true, rot: Math.random() * 6 }); }
+  }
   updateTalk(dt);
 }
 function bossPiep() {
@@ -3674,76 +3863,139 @@ function bossShadow(B, w) {
   ctx.fillStyle = P.mimoInk; ctx.globalAlpha = 0.16 * k; ctx.beginPath(); ctx.ellipse(B.x, BOSS_FLOOR, w * k, 5 * k, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
 }
 function bossEyes(B, ex, ey, r, look, mode) {
-  // mode: open, closed, swirl, glow
-  if (mode === 'closed') { ctx.strokeStyle = P.mimoInk; ctx.lineWidth = 2.4; ctx.lineCap = 'round'; for (const s of [-1, 1]) { ctx.beginPath(); ctx.arc(s * ex, ey - 1, r * 0.8, 0.15 * Math.PI, 0.85 * Math.PI); ctx.stroke(); } return; }
+  // mode: open, closed, swirl, cross (squeezed shut), wide
+  ctx.lineCap = 'round';
+  if (mode === 'closed') { ctx.strokeStyle = P.mimoInk; ctx.lineWidth = 2.4; for (const s of [-1, 1]) { ctx.beginPath(); ctx.arc(s * ex, ey - 1, r * 0.8, 0.15 * Math.PI, 0.85 * Math.PI); ctx.stroke(); } return; }
+  if (mode === 'cross') { ctx.strokeStyle = P.mimoInk; ctx.lineWidth = 2.4; for (const s of [-1, 1]) { ctx.beginPath(); ctx.moveTo(s * ex - s * r, ey - r * 0.8); ctx.lineTo(s * ex + s * r * 0.5, ey); ctx.lineTo(s * ex - s * r, ey + r * 0.8); ctx.stroke(); } return; }
   if (mode === 'swirl') { ctx.strokeStyle = P.mimoInk; ctx.lineWidth = 1.8; for (const s of [-1, 1]) { ctx.beginPath(); for (let a = 0; a < Math.PI * 3.2; a += 0.3) { const rr2 = a / (Math.PI * 3.2) * r; ctx.lineTo(s * ex + Math.cos(a + B.anim * 6) * rr2, ey + Math.sin(a + B.anim * 6) * rr2); } ctx.stroke(); } return; }
+  const wide = mode === 'wide';
   for (const s of [-1, 1]) {
-    ctx.fillStyle = P.mimoInk; ctx.beginPath(); ctx.ellipse(s * ex + look, ey, r * 0.78, r, 0, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.arc(s * ex + look + r * 0.28, ey - r * 0.38, r * 0.32, 0, Math.PI * 2); ctx.fill();
+    if (wide) { ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.arc(s * ex, ey, r * 1.35, 0, Math.PI * 2); ctx.fill(); }
+    ctx.fillStyle = P.mimoInk; ctx.beginPath(); ctx.ellipse(s * ex + look, ey + (wide ? 1.5 : 0), r * (wide ? 0.6 : 0.78), r * (wide ? 0.7 : 1), 0, 0, Math.PI * 2); ctx.fill();
+    if (!wide) { ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.arc(s * ex + look + r * 0.28, ey - r * 0.38, r * 0.32, 0, Math.PI * 2); ctx.fill(); }
+  }
+}
+function bossStars(x, y, B) { for (let i = 0; i < 3; i++) { const a = B.anim * 4 + i * 2.09; drawMiniStar(x + Math.cos(a) * 25, y + Math.sin(a) * 6, 5); } }
+function drawCrown(x, y, rot, k, color) {
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.scale(k, k);
+  ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(-11, 0); ctx.lineTo(-11, -11); ctx.lineTo(-5.5, -5); ctx.lineTo(0, -15); ctx.lineTo(5.5, -5); ctx.lineTo(11, -11); ctx.lineTo(11, 0); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = P.mush; ctx.beginPath(); ctx.arc(0, -3.5, 1.8, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
+function drawPuddles(B) {
+  for (const q of B.puddles) {
+    const w = q.wet, y = BOSS_FLOOR + 3;
+    ctx.fillStyle = BOSS_MUD_HI; ctx.globalAlpha = 0.6; ctx.beginPath(); ctx.ellipse(q.x, y, 48, 7, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
+    if (w <= 0.02) continue;
+    ctx.fillStyle = BOSS_MUD; ctx.beginPath(); ctx.ellipse(q.x, y, 44 * (0.3 + 0.7 * w), 5.5 * (0.4 + 0.6 * w), 0, 0, Math.PI * 2); ctx.fill();
+    if (w < 1) continue;
+    ctx.fillStyle = '#FFFFFF'; ctx.globalAlpha = 0.4; ctx.beginPath(); ctx.ellipse(q.x - 14, y - 1.5, 13, 1.5, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
+    ctx.fillStyle = BOSS_MUD_HI;
+    for (let i = 0; i < 2; i++) { const k = (B.anim * 0.7 + i * 0.45 + q.x * 0.01) % 1; ctx.globalAlpha = 1 - k; ctx.beginPath(); ctx.arc(q.x - 8 + i * 24, y - 1 - k * 7, 1.4 + k * 2.2, 0, Math.PI * 2); ctx.fill(); }
+    ctx.globalAlpha = 1;
   }
 }
 function drawMampf(B) {
-  const c = (x) => bossCol(B, x), s = B.state, tired = s === 'tired', beaten = s === 'beaten', ph = bossPhase(B);
-  bossShadow(B, 34);
-  ctx.save(); ctx.translate(B.x, B.y); ctx.scale(2 - B.sq, B.sq);
-  const walk = s === 'idle' ? Math.sin(B.anim * 8) * 2 : 0, droop = tired ? 8 : beaten ? 10 : 0;
+  const c = (x) => bossCol(B, x), s = B.state, stuck = s === 'stuck', beaten = s === 'beaten', ph = bossPhase(B), flop = s === 'flop' ? B.n : -1;
+  drawPuddles(B);
+  // the shadow shows where he comes down; it turns red once the spot is fixed
+  if (flop >= 1) {
+    const lock = flop >= 2, k = lock ? 1 : Math.min(1, B.t / MAMPF_RISE);
+    ctx.fillStyle = lock ? P.thorn : P.mimoInk; ctx.globalAlpha = lock ? 0.5 + 0.25 * Math.sin(B.anim * 30) : 0.12 + 0.14 * k;
+    ctx.beginPath(); ctx.ellipse(B.x, BOSS_FLOOR + 1, 28 + 14 * k, 5 + 2 * k, 0, 0, Math.PI * 2); ctx.fill();
+    if (lock) { ctx.strokeStyle = P.thorn; ctx.lineWidth = 2; ctx.globalAlpha = 0.9; ctx.lineCap = 'round'; ctx.beginPath(); for (const d of [-1, 1]) { ctx.moveTo(B.x + d * 50, BOSS_FLOOR - 14); ctx.lineTo(B.x + d * 44, BOSS_FLOOR - 4); ctx.lineTo(B.x + d * 38, BOSS_FLOOR - 14); } ctx.stroke(); }
+    ctx.globalAlpha = 1;
+  } else bossShadow(B, 34);
+  ctx.save();
+  if (B.sink > 0.02) { ctx.beginPath(); ctx.rect(B.x - 90, B.y - 240, 180, 240); ctx.clip(); }
+  ctx.translate(B.x, B.y + B.sink * MAMPF_SINK); ctx.rotate(stuck ? Math.sin(B.anim * 9) * 0.05 : 0); ctx.scale(2 - B.sq, B.sq);
+  const walk = s === 'idle' ? Math.sin(B.anim * 8) * 2 : 0, droop = beaten ? 10 : stuck ? 4 : 0;
   // feet and stubby arms
   ctx.fillStyle = c(P.mushStem); ctx.beginPath(); ctx.ellipse(-13 + walk, -4, 11, 6, 0, 0, Math.PI * 2); ctx.ellipse(13 - walk, -4, 11, 6, 0, 0, Math.PI * 2); ctx.fill();
-  const armUp = s === 'spores' ? -14 + Math.sin(B.anim * 30) * 3 : B.vy < 0 ? -10 : 0;
-  ctx.beginPath(); ctx.ellipse(-25, -22 + armUp, 6, 9, 0.4, 0, Math.PI * 2); ctx.ellipse(25, -22 + armUp, 6, 9, -0.4, 0, Math.PI * 2); ctx.fill();
+  const armUp = stuck ? -15 + Math.sin(B.anim * 20) * 6 : s === 'spores' ? -14 + Math.sin(B.anim * 30) * 3 : flop === 1 ? -12 : flop === 2 ? -17 : flop === 3 ? 4 : 0, armOut = flop === 2 || stuck ? 5 : 0;
+  ctx.beginPath(); ctx.ellipse(-25 - armOut, -22 + armUp, 6, 9, 0.4 + armOut * 0.12, 0, Math.PI * 2); ctx.ellipse(25 + armOut, -22 + (stuck ? -15 - Math.sin(B.anim * 20) * 6 : armUp), 6, 9, -0.4 - armOut * 0.12, 0, Math.PI * 2); ctx.fill();
   // stem body with face
   ctx.fillStyle = c(P.mushStem); rr(-22, -44, 44, 42, 17); ctx.fill();
   ctx.fillStyle = P.mimoInk; ctx.globalAlpha = 0.07; rr(-22, -20, 44, 18, 12); ctx.fill(); ctx.globalAlpha = 1;
   const look = (G.p.x + G.p.w / 2 > B.x ? 1 : -1) * 1.6;
-  bossEyes(B, 8, -30, 5, look, beaten ? 'swirl' : tired ? 'closed' : 'open');
-  if (ph >= 1 && !tired && !beaten) { ctx.strokeStyle = P.mimoInk; ctx.lineWidth = 2.2; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-13, -40); ctx.lineTo(-4, -37); ctx.moveTo(13, -40); ctx.lineTo(4, -37); ctx.stroke(); }
-  ctx.fillStyle = c(P.blush); ctx.globalAlpha = 0.7; ctx.beginPath(); ctx.ellipse(-15, -22, 4.5, 2.6, 0, 0, Math.PI * 2); ctx.ellipse(15, -22, 4.5, 2.6, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
+  bossEyes(B, 8, -30, 5, look, beaten ? 'swirl' : stuck || s === 'hurt' ? 'cross' : flop === 2 ? 'wide' : flop === 3 ? 'closed' : 'open');
+  if (ph >= 1 && !stuck && !beaten && s !== 'hurt') { ctx.strokeStyle = P.mimoInk; ctx.lineWidth = 2.2 + ph * 0.3; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-14, -41 - ph); ctx.lineTo(-4, -37); ctx.moveTo(14, -41 - ph); ctx.lineTo(4, -37); ctx.stroke(); }
+  ctx.fillStyle = c(ph >= 2 ? P.thorn : P.blush); ctx.globalAlpha = 0.7; ctx.beginPath(); ctx.ellipse(-15, -22, 4.5 + ph, 2.6 + ph * 0.5, 0, 0, Math.PI * 2); ctx.ellipse(15, -22, 4.5 + ph, 2.6 + ph * 0.5, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
   // royal moustache
   ctx.fillStyle = c(P.oneway); ctx.beginPath(); ctx.ellipse(-6, -19, 7, 3.4, 0.35, 0, Math.PI * 2); ctx.ellipse(6, -19, 7, 3.4, -0.35, 0, Math.PI * 2); ctx.fill();
   ctx.beginPath(); ctx.arc(-13, -21, 2.6, 0, Math.PI * 2); ctx.arc(13, -21, 2.6, 0, Math.PI * 2); ctx.fill();
-  if (tired || s === 'hurt') { ctx.fillStyle = P.mimoInk; ctx.beginPath(); ctx.ellipse(0, -12, 3.6, 4.2, 0, 0, Math.PI * 2); ctx.fill(); }
+  if (stuck || s === 'hurt' || flop === 2) { ctx.fillStyle = P.mimoInk; ctx.beginPath(); ctx.ellipse(0, -12, flop === 2 ? 5 : 3.6, 4.2, 0, 0, Math.PI * 2); ctx.fill(); }
   // cap with dots and a crown
-  ctx.save(); ctx.translate(0, droop); ctx.rotate(tired ? Math.sin(B.anim * 3) * 0.06 : beaten ? 0.25 : 0);
+  ctx.save(); ctx.translate(0, droop); ctx.rotate(stuck ? Math.sin(B.anim * 12) * 0.07 : beaten ? 0.25 : 0);
   ctx.fillStyle = c(P.mush); ctx.beginPath(); ctx.ellipse(0, -42, 42, 32, 0, Math.PI, 0); ctx.quadraticCurveTo(40, -36, 30, -36); ctx.lineTo(-30, -36); ctx.quadraticCurveTo(-40, -36, -42, -42); ctx.fill();
   ctx.fillStyle = P.mimoInk; ctx.globalAlpha = 0.1; ctx.beginPath(); ctx.ellipse(0, -39, 38, 5, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
   ctx.fillStyle = c('#FFFFFF'); ctx.globalAlpha = 0.9; ctx.beginPath(); for (const [dx, dy, r] of [[-22, -52, 6], [2, -64, 7], [22, -50, 5.5], [-6, -48, 3.5], [30, -44, 3]]) { ctx.moveTo(dx + r, dy); ctx.arc(dx, dy, r, 0, Math.PI * 2); } ctx.fill(); ctx.globalAlpha = 1;
-  if (!beaten) { ctx.fillStyle = c(P.key); ctx.beginPath(); ctx.moveTo(-11, -71); ctx.lineTo(-11, -82); ctx.lineTo(-5.5, -76); ctx.lineTo(0, -86); ctx.lineTo(5.5, -76); ctx.lineTo(11, -82); ctx.lineTo(11, -71); ctx.closePath(); ctx.fill(); ctx.fillStyle = P.mush; ctx.beginPath(); ctx.arc(0, -74.5, 1.8, 0, Math.PI * 2); ctx.fill(); }
+  // every lost phase leaves a plaster on the cap
+  for (let i = 0; i < ph; i++) { ctx.save(); ctx.translate(i ? 16 : -15, i ? -60 : -58); ctx.rotate(i ? 0.5 : -0.4); ctx.fillStyle = c(P.card); rr(-7, -2.5, 14, 5, 2); ctx.fill(); ctx.rotate(Math.PI / 2); rr(-7, -2.5, 14, 5, 2); ctx.fill(); ctx.restore(); }
+  if (!beaten) drawCrown(0, -71, ph >= 2 ? -0.18 : 0, 1, c(P.key));
   ctx.restore();
   ctx.restore();
-  if (tired && Math.sin(B.anim * 6) > 0.6) { ctx.fillStyle = P.w2Ice || '#BFE3F4'; ctx.beginPath(); ctx.ellipse(B.x - 30, B.y - 56 + (B.anim * 40 % 14), 2.5, 4, 0, 0, Math.PI * 2); ctx.fill(); }
-  if (beaten) for (let i = 0; i < 3; i++) { const a = B.anim * 3 + i * 2.09; drawMiniStar(B.x + Math.cos(a) * 26, B.y - 84 + Math.sin(a) * 6, 5); }
+  if (B.sink > 0.02) { // mud rim around the stuck king
+    ctx.fillStyle = BOSS_MUD; ctx.beginPath(); ctx.ellipse(B.x, BOSS_FLOOR + 2, 46, 6, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = BOSS_MUD_HI; ctx.globalAlpha = 0.8; ctx.beginPath(); ctx.ellipse(B.x - 30, BOSS_FLOOR, 7, 2.5, 0, 0, Math.PI * 2); ctx.ellipse(B.x + 28, BOSS_FLOOR + 1, 9, 2.5, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
+  }
+  if (stuck && Math.sin(B.anim * 6) > 0.2) { ctx.fillStyle = P.w2Ice || '#BFE3F4'; ctx.beginPath(); ctx.ellipse(B.x - 34, B.y - 40 + (B.anim * 40 % 14), 2.5, 4, 0, 0, Math.PI * 2); ctx.fill(); }
+  if (ph >= 2 && !beaten && !stuck) for (let i = 0; i < 2; i++) { const k = (B.anim * 1.3 + i * 0.5) % 1; ctx.fillStyle = P.card; ctx.globalAlpha = 0.6 * (1 - k); ctx.beginPath(); ctx.arc(B.x + (i ? 34 : -34) + Math.sin(k * 5) * 3, B.y - 60 - k * 22, 3 + k * 4, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; }
+  if (beaten) bossStars(B.x, B.y - 84, B);
+  if (B.crown && !B.crown.on) drawCrown(B.crown.x, B.crown.y, B.crown.t * 9, 1, P.key);
 }
 function drawHuhu(B) {
-  const c = (x) => bossCol(B, x), s = B.state, onFloor = s === 'tired' || s === 'beaten', warn = s === 'swoop' && B.t < 0.72 - 0.1 * bossPhase(B), diving = s === 'swoop' && !warn;
+  const c = (x) => bossCol(B, x), s = B.state, ph = bossPhase(B), onFloor = s === 'dazed' || s === 'beaten', warnT = 0.78 - 0.08 * ph, warn = s === 'swoop' && B.t < warnT, diving = s === 'swoop' && !warn;
+  const aiming = s === 'hover' && B.dropT < HUHU_AIM, tumbling = s === 'stunned';
   bossShadow(B, 26);
-  ctx.save(); ctx.translate(B.x, B.y); ctx.scale(B.dir * (2 - B.sq), B.sq);
-  const flap = onFloor ? 0 : Math.sin(B.anim * (diving ? 4 : 13)) * 0.8;
+  ctx.save(); ctx.translate(B.x, B.y);
+  if (tumbling) { ctx.translate(0, -28); ctx.rotate(B.spin); ctx.translate(0, 28); }
+  ctx.scale(B.dir * (2 - B.sq), B.sq);
+  const flap = onFloor ? 0 : tumbling ? Math.sin(B.anim * 30) * 0.5 : Math.sin(B.anim * (diving ? 4 : 13)) * 0.8;
   // wings
   ctx.fillStyle = c(P.toggleA);
-  for (const sd of [-1, 1]) { ctx.save(); ctx.translate(sd * 20, -32); ctx.rotate(sd * (diving ? 1.1 : onFloor ? 0.2 : 0.5 + flap)); ctx.beginPath(); ctx.ellipse(sd * 10, 4, 15, 8, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore(); }
+  for (const sd of [-1, 1]) { ctx.save(); ctx.translate(sd * 20, -32); ctx.rotate(sd * (diving ? 1.1 : onFloor ? 0.2 : tumbling ? -0.6 + flap : 0.5 + flap)); ctx.beginPath(); ctx.ellipse(sd * 10, 4, 15, 8, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore(); }
   // body, belly with feather marks
   ctx.fillStyle = c(P.mimoLav); ctx.beginPath(); ctx.ellipse(0, -28, 25, 28, 0, 0, Math.PI * 2); ctx.fill();
   ctx.fillStyle = c(P.card); ctx.beginPath(); ctx.ellipse(2, -20, 15, 17, 0, 0, Math.PI * 2); ctx.fill();
   ctx.strokeStyle = c(P.mimoLav); ctx.lineWidth = 1.6; ctx.lineCap = 'round'; ctx.beginPath(); for (const [fx, fy] of [[-4, -26], [6, -26], [1, -18], [-6, -12], [8, -12]]) { ctx.moveTo(fx - 3, fy); ctx.quadraticCurveTo(fx, fy + 3, fx + 3, fy); } ctx.stroke();
-  // ear tufts
+  // ear tufts; ruffled feathers once she has lost a phase
   ctx.fillStyle = c(P.mimoLav); ctx.beginPath(); ctx.moveTo(-20, -44); ctx.lineTo(-17, -60); ctx.lineTo(-8, -50); ctx.moveTo(20, -44); ctx.lineTo(17, -60); ctx.lineTo(8, -50); ctx.fill();
+  if (ph >= 1) { ctx.strokeStyle = c(P.mimoLav); ctx.lineWidth = 2.4; ctx.beginPath(); for (const [fx, fy, dx, dy] of [[-24, -32, -7, -4], [24, -24, 7, -3], [-2, -56, -2, -8], [-22, -14, -6, 3]].slice(0, ph * 2)) { ctx.moveTo(fx, fy); ctx.lineTo(fx + dx, fy + dy); } ctx.stroke(); }
   // face discs and eyes
   ctx.fillStyle = c(P.card); ctx.beginPath(); ctx.arc(-9, -38, 10, 0, Math.PI * 2); ctx.arc(9, -38, 10, 0, Math.PI * 2); ctx.fill();
   if (warn) { const g = ctx.createRadialGradient(0, -38, 2, 0, -38, 30); g.addColorStop(0, P.star); g.addColorStop(1, 'rgba(0,0,0,0)'); ctx.fillStyle = g; ctx.globalAlpha = 0.6 + 0.4 * Math.sin(B.t * 30); ctx.beginPath(); ctx.arc(0, -38, 30, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; }
-  if (onFloor) bossEyes(B, 9, -37, 6, 0, s === 'beaten' ? 'swirl' : 'closed');
+  if (onFloor || tumbling) bossEyes(B, 9, -37, 6, 0, s === 'beaten' ? 'closed' : 'swirl');
   else {
-    for (const sd of [-1, 1]) { ctx.fillStyle = warn ? '#FFF3B0' : c(P.star); ctx.beginPath(); ctx.arc(sd * 9, -38, 6.5, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = P.mimoInk; ctx.beginPath(); ctx.arc(sd * 9 + 1.5, -38, warn ? 2.2 : 3.4, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.arc(sd * 9 + 3, -40, 1.3, 0, Math.PI * 2); ctx.fill(); }
-    if (bossPhase(B) >= 1) { ctx.strokeStyle = P.mimoInk; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-17, -49); ctx.lineTo(-4, -45); ctx.moveTo(17, -49); ctx.lineTo(4, -45); ctx.stroke(); }
+    for (const sd of [-1, 1]) { ctx.fillStyle = warn ? '#FFF3B0' : c(P.star); ctx.beginPath(); ctx.arc(sd * 9, -38, 6.5, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = P.mimoInk; ctx.beginPath(); ctx.arc(sd * 9 + 1.5, -38 + (aiming ? 2 : 0), warn ? 2.2 : 3.4, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.arc(sd * 9 + 3, -40, 1.3, 0, Math.PI * 2); ctx.fill(); }
+    if (ph >= 1 || s === 'hurt') { ctx.strokeStyle = P.mimoInk; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-17, -49 - ph); ctx.lineTo(-4, -45); ctx.moveTo(17, -49 - ph); ctx.lineTo(4, -45); ctx.stroke(); }
   }
   ctx.fillStyle = c(P.key); ctx.beginPath(); ctx.moveTo(-4, -31); ctx.lineTo(4, -31); ctx.lineTo(0, -24); ctx.closePath(); ctx.fill();
-  // feet
+  // feet; while she aims, the next cone dangles from them
   ctx.fillStyle = c(P.key); ctx.beginPath(); ctx.ellipse(-8, -2, 5, 3, 0, 0, Math.PI * 2); ctx.ellipse(8, -2, 5, 3, 0, 0, Math.PI * 2); ctx.fill();
-  // sleepy nightcap when she rests
-  if (onFloor) { ctx.fillStyle = c(P.toggleB); ctx.beginPath(); ctx.moveTo(-14, -52); ctx.quadraticCurveTo(4, -76, 26, -60); ctx.lineTo(10, -50); ctx.closePath(); ctx.fill(); ctx.fillStyle = c('#FFFFFF'); ctx.beginPath(); ctx.arc(27, -59, 4, 0, Math.PI * 2); ctx.fill(); }
+  if (aiming) { ctx.save(); ctx.translate(0, 9); ctx.rotate(Math.sin(B.anim * 26) * 0.25); drawCone(); ctx.restore(); }
+  // sleepy nightcap once she has given up
+  if (s === 'beaten') { ctx.fillStyle = c(P.toggleB); ctx.beginPath(); ctx.moveTo(-14, -52); ctx.quadraticCurveTo(4, -76, 26, -60); ctx.lineTo(10, -50); ctx.closePath(); ctx.fill(); ctx.fillStyle = c('#FFFFFF'); ctx.beginPath(); ctx.arc(27, -59, 4, 0, Math.PI * 2); ctx.fill(); }
   ctx.restore();
+  if (s === 'dazed') bossStars(B.x, B.y - 66, B);
+}
+function drawCone() {
+  ctx.fillStyle = P.oneway; ctx.beginPath(); ctx.ellipse(0, 0, 6.5, 9.5, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = P.mimoInk; ctx.globalAlpha = 0.25; ctx.lineWidth = 1.2; ctx.beginPath(); for (const y of [-5, -1, 3]) { ctx.moveTo(-5, y); ctx.lineTo(0, y + 3); ctx.lineTo(5, y); } ctx.stroke(); ctx.globalAlpha = 1;
+}
+function drawPillars(B) {
+  for (const q of B.pillars) {
+    const x = q.c * T, y = YETI_PILLAR_ROWS[0] * T, h = YETI_PILLAR_ROWS.length * T, left = q.life ? q.life - q.t : 99;
+    ctx.fillStyle = '#FFFFFF'; ctx.globalAlpha = 0.5; ctx.fillRect(x + 5, y + 7, 4, h - 16); ctx.globalAlpha = 0.28; ctx.fillRect(x + 13, y + 12, 2, h - 30); ctx.globalAlpha = 1;
+    ctx.fillStyle = P.w3Snow; ctx.beginPath(); ctx.ellipse(x + T / 2, y + 1, T / 2 + 2, 5, 0, Math.PI, 0); ctx.fill();
+    // about to melt: it flickers
+    if (left < 2.5 && Math.sin(q.t * (left < 1 ? 26 : 13)) > 0) { ctx.fillStyle = W.skyBot; ctx.globalAlpha = 0.45; ctx.fillRect(x, y, T, h); ctx.globalAlpha = 1; }
+  }
 }
 function drawYeti(B) {
-  const c = (x) => bossCol(B, x), s = B.state, dizzy = s === 'dizzy', beaten = s === 'beaten', snow = P.w3Snow || '#EEF2FA', hop = B.hopY || 0;
+  const c = (x) => bossCol(B, x), s = B.state, ph = bossPhase(B), dizzy = s === 'dizzy', bonk = s === 'bonk', beaten = s === 'beaten', snow = P.w3Snow || '#EEF2FA', hop = B.hopY || 0;
+  const winding = (s === 'charge' || s === 'charge2') && !B.slide;
+  drawPillars(B);
   bossShadow(B, 34);
   ctx.save(); ctx.translate(B.x, B.y - hop); ctx.scale(B.dir * (2 - B.sq), B.sq);
   if (B.slide) {
@@ -3754,45 +4006,60 @@ function drawYeti(B) {
     ctx.fillStyle = c(snow); ctx.beginPath(); ctx.ellipse(44, -14, 9, 5, 0.2, 0, Math.PI * 2); ctx.fill();
     ctx.restore(); return;
   }
-  const throwing = s === 'throw' && B.n > 0 && (B.t - 0.4) % (0.62 / (1 + 0.2 * bossPhase(B))) < 0.2;
+  if (winding) ctx.rotate(0.2);
+  if (dizzy) ctx.rotate(Math.sin(B.anim * 3) * 0.08);
+  const throwing = s === 'throw' && B.n > 0 && (B.t - 0.45) % (0.8 / (1 + 0.15 * ph)) < 0.2;
   // feet
-  ctx.fillStyle = c(P.mimoLav); ctx.beginPath(); ctx.ellipse(-14, -4, 13, 6, 0, 0, Math.PI * 2); ctx.ellipse(14, -4, 13, 6, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = c(P.mimoLav); ctx.beginPath(); ctx.ellipse(-14 - (winding ? Math.sin(B.t * 40) * 5 : 0), -4, 13, 6, 0, 0, Math.PI * 2); ctx.ellipse(14, -4, 13, 6, 0, 0, Math.PI * 2); ctx.fill();
   // fluffy body
   ctx.fillStyle = c(snow); ctx.beginPath(); ctx.ellipse(0, -34, 28, 32, 0, 0, Math.PI * 2); ctx.fill();
   ctx.beginPath(); for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2, x = Math.cos(a) * 27, y = -34 + Math.sin(a) * 31; ctx.moveTo(x + 6, y); ctx.arc(x, y, 6, 0, Math.PI * 2); } ctx.fill();
   ctx.fillStyle = P.mimoInk; ctx.globalAlpha = 0.06; ctx.beginPath(); ctx.ellipse(4, -20, 22, 14, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
-  // arms (one up while throwing)
+  // arms (one up while throwing, both up for the stamp)
   ctx.fillStyle = c(snow);
-  ctx.save(); ctx.translate(-24, -40); ctx.rotate(0.5 + (dizzy ? Math.sin(B.anim * 6) * 0.3 : 0)); ctx.beginPath(); ctx.ellipse(0, 12, 8, 15, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
-  ctx.save(); ctx.translate(24, -40); ctx.rotate(throwing ? -2.4 : s === 'stomp' && B.n === 1 ? -2.2 : -0.5); ctx.beginPath(); ctx.ellipse(0, 12, 8, 15, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+  const stamping = s === 'stomp' && B.n <= 1;
+  ctx.save(); ctx.translate(-24, -40); ctx.rotate(stamping ? 2.3 : 0.5 + (dizzy ? Math.sin(B.anim * 6) * 0.3 : 0)); ctx.beginPath(); ctx.ellipse(0, 12, 8, 15, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+  ctx.save(); ctx.translate(24, -40); ctx.rotate(throwing ? -2.4 : stamping ? -2.3 : -0.5); ctx.beginPath(); ctx.ellipse(0, 12, 8, 15, 0, 0, Math.PI * 2); ctx.fill(); ctx.restore();
   // horns
   ctx.fillStyle = c(P.oneway); ctx.beginPath(); ctx.moveTo(-14, -60); ctx.quadraticCurveTo(-22, -72, -12, -76); ctx.quadraticCurveTo(-14, -68, -8, -63); ctx.moveTo(14, -60); ctx.quadraticCurveTo(22, -72, 12, -76); ctx.quadraticCurveTo(14, -68, 8, -63); ctx.fill();
   // face
   ctx.fillStyle = c(P.mimoLav); ctx.beginPath(); ctx.ellipse(4, -42, 17, 14, 0, 0, Math.PI * 2); ctx.fill();
-  ctx.save(); ctx.translate(4, 0); bossEyes(B, 7, -45, 4.2, 1.2, beaten ? 'closed' : dizzy ? 'swirl' : 'open'); ctx.restore();
-  if (!dizzy && !beaten) { ctx.strokeStyle = P.mimoInk; ctx.lineWidth = 2.4; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-8, -53); ctx.lineTo(1, -50 - bossPhase(B)); ctx.moveTo(16, -53); ctx.lineTo(7, -50 - bossPhase(B)); ctx.stroke(); }
-  ctx.fillStyle = P.mimoInk; ctx.beginPath(); ctx.ellipse(4, -34, 7, beaten ? 2 : 4, 0, 0, Math.PI); ctx.fill();
+  ctx.save(); ctx.translate(4, 0); bossEyes(B, 7, -45, 4.2, 1.2, beaten ? 'closed' : dizzy ? 'swirl' : bonk || s === 'hurt' ? 'cross' : 'open'); ctx.restore();
+  if (!dizzy && !beaten && !bonk && s !== 'hurt') { ctx.strokeStyle = P.mimoInk; ctx.lineWidth = 2.4 + ph * 0.3; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(-8, -53 - ph); ctx.lineTo(1, -50 - ph * 0.5); ctx.moveTo(16, -53 - ph); ctx.lineTo(7, -50 - ph * 0.5); ctx.stroke(); }
+  ctx.fillStyle = P.mimoInk; ctx.beginPath(); ctx.ellipse(4, -34, winding ? 9 : 7, beaten ? 2 : winding ? 6 : 4, 0, 0, Math.PI); ctx.fill();
   ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.moveTo(-1, -34); ctx.lineTo(1, -30); ctx.lineTo(3, -34); ctx.moveTo(5, -34); ctx.lineTo(7, -30); ctx.lineTo(9, -34); ctx.fill();
-  ctx.fillStyle = c(P.blush); ctx.globalAlpha = 0.6; ctx.beginPath(); ctx.ellipse(-8, -38, 3.5, 2, 0, 0, Math.PI * 2); ctx.ellipse(17, -38, 3.5, 2, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
+  ctx.fillStyle = c(ph >= 2 ? P.thorn : P.blush); ctx.globalAlpha = 0.6; ctx.beginPath(); ctx.ellipse(-8, -38, 3.5, 2, 0, 0, Math.PI * 2); ctx.ellipse(17, -38, 3.5, 2, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
+  // a bump for every lost phase
+  for (let i = 0; i < ph && !beaten; i++) { ctx.fillStyle = c(P.blush); ctx.beginPath(); ctx.arc(i ? 12 : -4, -64, 5, Math.PI, 0); ctx.fill(); }
   if (beaten) { ctx.fillStyle = P.oneway; rr(22, -36, 12, 12, 3); ctx.fill(); ctx.fillStyle = P.card; ctx.globalAlpha = 0.7; ctx.fillRect(25, -42 - Math.sin(B.anim * 3) * 2, 2, 5); ctx.fillRect(29, -44 - Math.cos(B.anim * 3) * 2, 2, 6); ctx.globalAlpha = 1; }
   ctx.restore();
-  if (dizzy) for (let i = 0; i < 3; i++) { const a = B.anim * 4 + i * 2.09; drawMiniStar(B.x + Math.cos(a) * 24, B.y - 74 + Math.sin(a) * 6, 5); }
+  if (dizzy) bossStars(B.x, B.y - 74, B);
+  // frosty breath in the finale
+  if (ph >= 2 && !beaten && !dizzy) for (let i = 0; i < 2; i++) { const k = (B.anim * 1.1 + i * 0.5) % 1; ctx.fillStyle = P.card; ctx.globalAlpha = 0.55 * (1 - k); ctx.beginPath(); ctx.arc(B.x + B.dir * (26 + k * 26), B.y - 34 - hop - k * 8, 3 + k * 5, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; }
 }
 function drawShots(B) {
   for (const s of B.shots) {
     if (s.type === 'icicle' && s.t < s.warn) {
-      const k = Math.max(0, s.t / s.warn);
-      ctx.fillStyle = P.mimoInk; ctx.globalAlpha = 0.12 + 0.2 * k; ctx.beginPath(); ctx.ellipse(s.x, BOSS_FLOOR, 6 + 10 * k, 3 + 2 * k, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
+      const k = Math.max(0, s.t / s.warn), w = s.stick ? 1.5 : 1;
+      ctx.fillStyle = s.stick ? P.thorn : P.mimoInk; ctx.globalAlpha = 0.2 + 0.35 * k; ctx.beginPath(); ctx.ellipse(s.x, BOSS_FLOOR, (6 + 10 * k) * w, 3 + 2 * k, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
     }
   }
   for (const s of B.shots) {
+    if (s.type === 'icicle' && s.t < 0) continue;
     ctx.save(); ctx.translate(s.x, s.y);
     switch (s.type) {
-      case 'wave': ctx.translate(0, BOSS_FLOOR - s.y); ctx.fillStyle = W.groundEdge || P.groundEdge; ctx.beginPath(); ctx.ellipse(0, 0, 13, s.h, 0, Math.PI, 0); ctx.fill(); ctx.fillStyle = P.dust; ctx.globalAlpha = 0.6; ctx.beginPath(); ctx.ellipse(-s.dir * 4, -s.h * 0.55, 6, s.h * 0.35, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; break;
+      case 'wave': { const k = Math.min(1, 0.4 + s.t * 4); ctx.translate(0, BOSS_FLOOR - s.y); ctx.fillStyle = W.groundEdge || P.groundEdge; ctx.beginPath(); ctx.ellipse(0, 0, 13, s.h * k, 0, Math.PI, 0); ctx.fill(); ctx.fillStyle = P.dust; ctx.globalAlpha = 0.6; ctx.beginPath(); ctx.ellipse(-s.dir * 4, -s.h * k * 0.55, 6, s.h * k * 0.35, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; break; }
       case 'spore': { const g = ctx.createRadialGradient(0, 0, 2, 0, 0, s.r * 2); g.addColorStop(0, P.mush); g.addColorStop(1, 'rgba(0,0,0,0)'); ctx.fillStyle = g; ctx.globalAlpha = 0.35; ctx.beginPath(); ctx.arc(0, 0, s.r * 2, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; ctx.fillStyle = P.mush; ctx.beginPath(); ctx.arc(0, 0, s.r, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.arc(-3, -3, 2.4, 0, Math.PI * 2); ctx.arc(3, 2, 1.6, 0, Math.PI * 2); ctx.fill(); break; }
-      case 'cone': ctx.rotate(s.rot); ctx.fillStyle = P.oneway; ctx.beginPath(); ctx.ellipse(0, 0, 6, 9, 0, 0, Math.PI * 2); ctx.fill(); ctx.strokeStyle = P.mimoInk; ctx.globalAlpha = 0.25; ctx.lineWidth = 1.2; ctx.beginPath(); for (const y of [-5, -1, 3]) { ctx.moveTo(-5, y); ctx.lineTo(0, y + 3); ctx.lineTo(5, y); } ctx.stroke(); ctx.globalAlpha = 1; break;
+      case 'cone':
+        if (s.mode === 'rest') { ctx.rotate(Math.sin(s.rest * 9) * 0.12); if (s.rest > 3.6 - bossPhase(B) && Math.sin(s.rest * 24) > 0) ctx.globalAlpha = 0.45; }
+        else if (s.mode === 'rocket') ctx.scale(0.85, 1.3); else ctx.rotate(s.rot);
+        drawCone(); ctx.globalAlpha = 1; break;
       case 'snow': ctx.rotate(s.rot || 0); ctx.fillStyle = P.w3Snow || '#EEF2FA'; ctx.beginPath(); ctx.arc(0, 0, s.r, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = P.mimoInk; ctx.globalAlpha = 0.1; ctx.beginPath(); ctx.arc(3, 3, s.r * 0.7, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 0.25; ctx.fillRect(-1, -s.r + 2, 2, 5); ctx.globalAlpha = 1; break;
-      case 'icicle': ctx.fillStyle = P.w2Ice || '#BFE3F4'; ctx.beginPath(); ctx.moveTo(-7, -26); ctx.lineTo(7, -26); ctx.lineTo(0, 2); ctx.closePath(); ctx.fill(); ctx.fillStyle = '#FFFFFF'; ctx.globalAlpha = 0.6; ctx.beginPath(); ctx.moveTo(-3, -24); ctx.lineTo(0, -24); ctx.lineTo(-1, -8); ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1; break;
+      case 'icicle': {
+        const hw = s.stick ? 11 : 7, len = s.stick ? 54 : 26;
+        if (s.t < s.warn) ctx.translate(Math.sin(s.t * 46) * 1.6 * (s.t / s.warn), len - 4);
+        ctx.fillStyle = P.w2Ice || '#BFE3F4'; ctx.beginPath(); ctx.moveTo(-hw, -len); ctx.lineTo(hw, -len); ctx.lineTo(0, 2); ctx.closePath(); ctx.fill(); ctx.fillStyle = '#FFFFFF'; ctx.globalAlpha = 0.6; ctx.beginPath(); ctx.moveTo(-hw * 0.45, -len + 2); ctx.lineTo(0, -len + 2); ctx.lineTo(-1, -len * 0.3); ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1; break;
+      }
     }
     ctx.restore();
   }
@@ -3801,6 +4068,37 @@ function drawBoss() {
   const B = G.boss; if (!B) return;
   if (B.kind === 'mampf') drawMampf(B); else if (B.kind === 'huhu') drawHuhu(B); else drawYeti(B);
   drawShots(B);
+}
+// zoom on the boss for the last hit; render() calls this right after it moved the picture to the camera
+function bossView() {
+  const B = G.boss; if (!B || B.zoom < 1.003) return;
+  const fx = (B.x + G.p.x + G.p.w / 2) / 2, fy = Math.min(B.y, BOSS_FLOOR) - 44;
+  ctx.translate(fx, fy); ctx.scale(B.zoom, B.zoom); ctx.translate(-fx, -fy);
+}
+// everything that lies over Mimo: Frau Huhu's darkness with what still glows in it, the stolen crown
+function drawBossFront() {
+  const B = G.boss; if (!B) return;
+  if (B.kind === 'mampf' && B.crown && B.crown.on && G.state !== 'dead') { const p = G.p; drawCrown(p.x + p.w / 2, p.y + 3 + (1 - p.sy) * 10, -0.12, 0.72, P.key); }
+  if (B.kind !== 'huhu') return;
+  const p = G.p, cx = p.x + p.w / 2, cy = p.y + p.h / 2;
+  if (B.dark > 0.01) {
+    const g = ctx.createRadialGradient(cx, cy, HUHU_LIGHT * 0.3, cx, cy, HUHU_LIGHT);
+    g.addColorStop(0, 'rgba(' + BOSS_DARK + ',0)'); g.addColorStop(1, 'rgba(' + BOSS_DARK + ',' + B.dark.toFixed(3) + ')');
+    ctx.fillStyle = g; ctx.fillRect(G.cam.x - 120, G.cam.y - 120, VIEW_W + 240, VIEW_H + 240);
+    // her eyes glow in the dark
+    if (!['dazed', 'beaten', 'stunned'].includes(B.state)) { const hot = B.state === 'swoop'; ctx.fillStyle = hot ? '#FFF3B0' : P.star; ctx.globalAlpha = Math.min(1, B.dark * 1.4); for (const sd of [-1, 1]) { ctx.beginPath(); ctx.arc(B.x + sd * 9, B.y - 38, hot ? 6 : 4.5, 0, Math.PI * 2); ctx.fill(); } ctx.globalAlpha = 1; }
+  }
+  // where the next cone comes down
+  if (B.state === 'hover' && B.dropT < HUHU_AIM) { const k = 1 - B.dropT / HUHU_AIM; ctx.fillStyle = P.thorn; ctx.globalAlpha = 0.2 + 0.3 * k; ctx.beginPath(); ctx.ellipse(B.x, BOSS_FLOOR, 6 + 9 * k, 3 + 1.5 * k, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; }
+  for (const s of B.shots) {
+    if (s.type !== 'cone') continue;
+    if (s.mode === 'rest') {
+      // a cone that lies still invites a jump: glow and a small arrow
+      const k = 0.5 + 0.5 * Math.sin(s.rest * 7);
+      ctx.strokeStyle = P.star; ctx.lineWidth = 2; ctx.globalAlpha = 0.45 + 0.4 * k; ctx.beginPath(); ctx.arc(s.x, s.y, 13 + k * 3, 0, Math.PI * 2); ctx.stroke();
+      ctx.fillStyle = P.star; const ay = s.y - 26 - k * 4; ctx.beginPath(); ctx.moveTo(s.x - 5, ay - 6); ctx.lineTo(s.x + 5, ay - 6); ctx.lineTo(s.x, ay); ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1;
+    } else if (B.dark > 0.2) { ctx.fillStyle = s.mode === 'rocket' ? P.star : P.thorn; ctx.globalAlpha = 0.9; ctx.beginPath(); ctx.arc(s.x, s.y, 3.5, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1; }
+  }
 }
 
 // ---------- Ice world: thorns are icicles, some of the hanging ones wobble and fall ----------
@@ -4524,8 +4822,8 @@ function render() {
   drawDisco();
   const sh = G.shake > 0 ? G.shake * 5 : 0;
   const ox = Math.round(G.cam.x) - (sh ? (Math.random() - 0.5) * sh * 2 : 0), oy = Math.round(G.cam.y) - (sh ? (Math.random() - 0.5) * sh * 2 : 0);
-  ctx.save(); ctx.translate(-ox, -oy);
-  drawPollen(); drawTiles(); drawItems(); drawMovers(); drawSnails(); drawFallingIcicles(); if (G.mode === 'boss') drawBoss(); drawGhost(); drawPlayer(); drawCompanion(); drawChase(); drawParticles(); drawBubbles();
+  ctx.save(); ctx.translate(-ox, -oy); if (G.mode === 'boss') bossView();
+  drawPollen(); drawTiles(); drawItems(); drawMovers(); drawSnails(); drawFallingIcicles(); if (G.mode === 'boss') drawBoss(); drawGhost(); drawPlayer(); drawCompanion(); drawChase(); drawParticles(); if (G.mode === 'boss') drawBossFront(); drawBubbles();
   ctx.restore();
   if (G.flash > 0) { ctx.fillStyle = '#FFFFFF'; ctx.globalAlpha = G.flash * 0.75; ctx.fillRect(0, 0, VIEW_W, VIEW_H); ctx.globalAlpha = 1; }
   if (G.state === 'dead') { ctx.fillStyle = P.thorn; ctx.globalAlpha = 0.18 * Math.max(0, 1 - G.stateT / DEATH_TIME); ctx.fillRect(0, 0, VIEW_W, VIEW_H); ctx.globalAlpha = 1; }
