@@ -82,26 +82,45 @@ async function landscape() {
   await page.waitForTimeout(2000);
   const gone = await page.evaluate(() => ({ hint: Number(getComputedStyle(document.getElementById('hint')).opacity), pads: window.__mimo.G.touchHint }));
   check(gone.hint < 0.1 && gone.pads === 0, 'Hinweis und Tipp-Hilfe sind nach wenigen Sekunden weg', JSON.stringify(gone));
-  // left thumb: touching right of the quarter line runs right, a short slide back turns around, lifting stops
+  // left thumb: an invisible stick. Where the thumb lands is the middle, sideways runs, back to the middle stops,
+  // only a quick flick down drops through boards, and a lost finger never keeps Mimo running
   const thumb = await page.evaluate(async () => {
     const stage = document.getElementById('stage'), M = window.__mimo, inp = M.input;
-    const ev = (type, x, y) => stage.dispatchEvent(new PointerEvent(type, { pointerId: 21, pointerType: 'touch', isPrimary: true, clientX: x, clientY: y, bubbles: true, cancelable: true }));
+    const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+    const ev = (type, x, y, id = 21, primary = true) => stage.dispatchEvent(new PointerEvent(type, { pointerId: id, pointerType: 'touch', isPrimary: primary, clientX: x, clientY: y, bubbles: true, cancelable: true }));
+    const lr = () => [inp.left, inp.right];
     const out = {};
-    ev('pointerdown', 300, 300); out.start = [inp.left, inp.right];
-    ev('pointermove', 292, 300); out.wobble = [inp.left, inp.right];
-    ev('pointermove', 272, 300); out.back = [inp.left, inp.right];
-    ev('pointermove', 300, 300); out.again = [inp.left, inp.right];
-    ev('pointermove', 300, 345); out.down = inp.down;
-    out.pad = !document.getElementById('pad').hidden;
-    ev('pointerup', 300, 345); out.end = [inp.left, inp.right, inp.down];
-    ev('pointerdown', 80, 300); out.farLeft = [inp.left, inp.right]; ev('pointerup', 80, 300);
+    ev('pointerdown', 300, 300); out.start = lr(); out.shown = !document.getElementById('pad').hidden;
+    ev('pointermove', 316, 300); out.right = lr();
+    ev('pointermove', 310, 300); out.wobble = lr();
+    ev('pointermove', 302, 300); out.stop = lr();
+    ev('pointermove', 284, 300); out.left = lr();
+    ev('pointermove', 420, 300); out.far = lr();
+    ev('pointermove', 390, 300); out.halt = lr();
+    ev('pointermove', 372, 300); out.turn = lr();
+    // a slow drift down while running is no drop
+    ev('pointermove', 420, 300); M.input.dropT = 0;
+    for (let i = 1; i <= 8; i++) { ev('pointermove', 420, 300 + i * 8); await wait(70); }
+    out.drift = [inp.down, inp.dropT > 0];
+    ev('pointermove', 420, 304); await wait(200);
+    ev('pointermove', 420, 304); ev('pointermove', 421, 348); out.flick = [inp.down, inp.dropT > 0];
+    ev('pointerup', 421, 348); out.end = [inp.left, inp.right, inp.down, !document.getElementById('pad').hidden];
+    ev('pointerdown', 80, 300); out.farLeft = lr(); ev('pointerup', 80, 300);
+    // a finger whose end got lost: the next first finger clears it
+    ev('pointerdown', 300, 300, 30); ev('pointermove', 330, 300, 30); ev('pointerdown', 700, 300, 31, false);
+    out.stale = [inp.right, inp.jumpHeld];
+    ev('pointerdown', 200, 300, 32); out.fresh = [inp.left, inp.right, inp.jumpHeld];
+    ev('pointerup', 200, 300, 32);
+    M.input.dropT = 0;
     return out;
   });
   const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
-  check(same(thumb.start, [false, true]) && same(thumb.wobble, [false, true]), 'Daumen: rechts von der Viertellinie läuft Mimo nach rechts, Zittern ändert nichts', JSON.stringify(thumb));
-  check(same(thumb.back, [true, false]) && same(thumb.again, [false, true]), 'Daumen: kurzes Zurückschieben dreht um', JSON.stringify(thumb));
-  check(thumb.down === true && thumb.pad && same(thumb.end, [false, false, false]), 'Daumen: nach unten schieben fällt durch Bretter, Loslassen hält an', JSON.stringify(thumb));
-  check(same(thumb.farLeft, [true, false]), 'Daumen: ganz links läuft Mimo nach links', JSON.stringify(thumb));
+  check(thumb.shown && same(thumb.start, [false, false]) && same(thumb.right, [false, true]) && same(thumb.wobble, [false, true]), 'Daumen: Aufsetzen steht, zur Seite schieben läuft, Zittern ändert nichts', JSON.stringify(thumb));
+  check(same(thumb.stop, [false, false]) && same(thumb.left, [true, false]), 'Daumen: zurück zur Mitte bleibt Mimo stehen, weiter schieben dreht um', JSON.stringify(thumb));
+  check(same(thumb.far, [false, true]) && same(thumb.halt, [false, false]) && same(thumb.turn, [true, false]), 'Daumen: nach weitem Schieben genügt ein kurzer Weg zurück', JSON.stringify(thumb));
+  check(same(thumb.drift, [false, false]) && same(thumb.flick, [false, true]), 'Daumen: langsames Abrutschen lässt nicht durch Bretter fallen, schneller Wisch schon', JSON.stringify(thumb));
+  check(same(thumb.end, [false, false, false, false]) && same(thumb.farLeft, [false, false]), 'Daumen: Loslassen hält an, Aufsetzen ganz links läuft nicht los', JSON.stringify(thumb));
+  check(same(thumb.stale, [true, true]) && same(thumb.fresh, [false, false, false]), 'Daumen: ein verlorener Finger hält Mimo nicht fest', JSON.stringify(thumb));
   // fixed buttons instead of the pad
   const btns = await page.evaluate(async () => {
     const stage = document.getElementById('stage'), M = window.__mimo, inp = M.input;
@@ -116,7 +135,7 @@ async function landscape() {
     M.progress.touchMode = 'thumb';
     return out;
   });
-  check(btns.shown && btns.size >= 56 && same(btns.left, [true, false]) && same(btns.right, [false, true]) && same(btns.end, [false, false]), 'Knöpfe: zwei feste Pfeile statt Daumenfeld', JSON.stringify(btns));
+  check(btns.shown && btns.size >= 56 && same(btns.left, [true, false]) && same(btns.right, [false, true]) && same(btns.end, [false, false]), 'Knöpfe: feste Knöpfe statt Daumenfeld', JSON.stringify(btns));
   await page.evaluate(() => window.__mimo.load(0));
   await page.waitForTimeout(2500);
   const again = await page.evaluate(() => getComputedStyle(document.getElementById('hint')).opacity);

@@ -480,13 +480,11 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .item.worn::after{content:"✓";position:absolute;top:6px;right:8px;width:18px;height:18px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:12px;line-height:18px;text-align:center}
 .item .price{color:#B98A1E}
 /* left thumb: a small pad shows where "left" and "right" are while the thumb is down */
-.pad,.tbtns i{pointer-events:none}
-.pad{position:absolute;width:112px;height:52px;margin:-26px 0 0 -56px;border-radius:26px;background:rgba(255,255,255,.22);border:1.5px solid rgba(255,255,255,.55);display:flex;justify-content:space-between;align-items:center;padding:0 12px}
-.pad i,.tbtns i{display:block;width:0;height:0;border-style:solid;border-color:transparent;opacity:.45;transition:opacity .08s,transform .08s}
-.pad .l{border-width:9px 13px 9px 0;border-right-color:#3C3A4E}
-.pad .r{border-width:9px 0 9px 13px;border-left-color:#3C3A4E}
-.pad.go-l .l,.pad.go-r .r{opacity:1;transform:scale(1.25)}
-.pad.down{border-style:dashed}
+.pad,.pad i,.tbtns i{pointer-events:none}
+.pad{position:absolute;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;border:1.5px solid rgba(255,255,255,.28);background:rgba(255,255,255,.06);transition:border-color .12s}
+.pad i{position:absolute;left:50%;top:50%;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;background:rgba(255,255,255,.32)}
+.pad.go{border-color:rgba(255,255,255,.42)}
+.tbtns i{display:block;width:0;height:0;border-style:solid;border-color:transparent;transition:opacity .08s,transform .08s}
 .tbtns{position:absolute;inset:0;pointer-events:none}
 .tbtns i{position:absolute;bottom:calc(18px + var(--sa-b));width:64px;height:64px;border:1.5px solid rgba(255,255,255,.6);border-radius:50%;background:rgba(255,255,255,.2);opacity:.8}
 .tbtns i::before{content:"";position:absolute;inset:0;margin:auto;width:0;height:0;border-style:solid;border-color:transparent}
@@ -529,7 +527,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
   <div class="stage" id="stage" tabindex="0" aria-label="Spielfeld">
     <canvas id="game"></canvas>
     <div class="stick" id="stick" hidden><i></i></div>
-    <div class="pad" id="pad" hidden><i class="l"></i><i class="r"></i></div>
+    <div class="pad" id="pad" hidden><i></i></div>
     <div class="tbtns" id="tbtns" hidden><i class="l"></i><i class="r"></i><i class="j"></i></div>
     <div class="run-hud" id="runHud" hidden>
       <div class="run-top">
@@ -747,6 +745,9 @@ const STEP = 1 / 120;
 const DASH_MAX_DT = 0.05;
 // Developer build: all levels, night path and bonus open, own save slot, no leaderboard writes.
 const DEV = false;
+// Test phase: every level, boss and bonus can be played. Only the doors are open, nothing is written to the progress,
+// so switching this off brings back the normal unlocking with everyone's real progress.
+const OPEN_ALL = true;
 // The Sternenbahn (music run, adventure, endless track, course of the day) is not polished enough for the release:
 // its code stays, but nothing in the game leads to it and the app build leaves its files out.
 const STARWAY = false;
@@ -785,7 +786,7 @@ const DEFAULT_OUTFIT = { color: 'c_blue', hat: 'h_leaf', acc: 'a_none' };
 const LEVELS = [
   { name: 'Aufwachen', world: 1,
     hint: 'Lauf mit den <b>Pfeiltasten</b>, spring mit der <b>Leertaste</b>. Länger drücken springt höher. Ab zur <b>Tür</b>, aber schau dich ruhig um.',
-    touchHint: 'Linkes Viertel: <b>nach links</b>, zweites Viertel: <b>nach rechts</b>, rechte Hälfte: <b>springen</b> (länger halten springt höher). Ab zur <b>Tür</b>, aber schau dich ruhig um.',
+    touchHint: 'Links den Daumen <b>zur Seite schieben</b> zum Laufen, zurück zur Mitte bleibt Mimo stehen. Rechts <b>tippen</b> zum Springen, länger halten springt höher. Ab zur <b>Tür</b>, aber schau dich ruhig um.',
     map: [
       '                                                                            ',
       '                                                                            ',
@@ -1607,7 +1608,7 @@ function cleanDash(x) {
   return { stars: n(x.stars, 10), score: n(x.score, 1e7), medal: ['gold', 'silver', 'bronze'].includes(x.medal) ? x.medal : null, endless: e, quests, qDone: n(x.qDone, 1e5), dust: n(x.dust, 1e8), up, ghost, dailyRun: dr, days };
 }
 function loadProgress() {
-  const empty = { levelsVersion: LEVELS_VERSION, touchHelp: 0, touchMode: 'thumb', unlocked: 1, stars: {}, best: {}, music: true, sfx: true, owned: [], outfit: { ...DEFAULT_OUTFIT }, ghosts: {}, ghostOn: true, hidden: {}, assisted: {}, slow: false, invincible: false, zen: false, daily: null, musicVol: 0.8, sfxVol: 0.8, bonus: null, dash: null, runOffset: 0, dailyLog: {}, companion: true, sky: null, fun: {}, codes: [], ach: {}, stats: { deaths: 0, pieps: 0, scares: 0 }, bosses: {} };
+  const empty = { levelsVersion: LEVELS_VERSION, touchHelp: 0, stickHelp: 0, touchMode: 'thumb', unlocked: 1, stars: {}, best: {}, music: true, sfx: true, owned: [], outfit: { ...DEFAULT_OUTFIT }, ghosts: {}, ghostOn: true, hidden: {}, assisted: {}, slow: false, invincible: false, zen: false, daily: null, musicVol: 0.8, sfxVol: 0.8, bonus: null, dash: null, runOffset: 0, dailyLog: {}, companion: true, sky: null, fun: {}, codes: [], ach: {}, stats: { deaths: 0, pieps: 0, scares: 0 }, bosses: {} };
   try {
     const raw = localStorage.getItem(SAVE_KEY);
     if (!raw) return empty;
@@ -1615,7 +1616,7 @@ function loadProgress() {
     if (d.levelsVersion !== LEVELS_VERSION) Object.assign(d, { levelsVersion: LEVELS_VERSION, unlocked: 1, stars: {}, best: {}, ghosts: {}, hidden: {}, assisted: {} });
     const outfit = { ...DEFAULT_OUTFIT, ...(d.outfit || {}) };
     for (const k of Object.keys(outfit)) if (!COSTUMES.some((c) => c.id === outfit[k])) outfit[k] = DEFAULT_OUTFIT[k];
-    return { levelsVersion: LEVELS_VERSION, touchHelp: Math.max(0, Math.min(9, d.touchHelp | 0)), touchMode: d.touchMode === 'buttons' ? 'buttons' : 'thumb', unlocked: Math.min(LEVELS.length, Math.max(1, d.unlocked | 0)), stars: d.stars || {}, best: d.best || {}, music: d.music !== false, sfx: d.sfx !== false,
+    return { levelsVersion: LEVELS_VERSION, touchHelp: Math.max(0, Math.min(9, d.touchHelp | 0)), stickHelp: Math.max(0, Math.min(9, d.stickHelp | 0)), touchMode: d.touchMode === 'buttons' ? 'buttons' : 'thumb', unlocked: Math.min(LEVELS.length, Math.max(1, d.unlocked | 0)), stars: d.stars || {}, best: d.best || {}, music: d.music !== false, sfx: d.sfx !== false,
       owned: Array.isArray(d.owned) ? d.owned.filter((id) => COSTUMES.some((c) => c.id === id)) : [], outfit, ghosts: d.ghosts || {}, ghostOn: d.ghostOn !== false,
       hidden: d.hidden || {}, assisted: d.assisted || {}, slow: !!d.slow, invincible: !!d.invincible, zen: !!d.zen, daily: d.daily || null,
       musicVol: typeof d.musicVol === 'number' ? Math.max(0, Math.min(1, d.musicVol)) : 0.8, sfxVol: typeof d.sfxVol === 'number' ? Math.max(0, Math.min(1, d.sfxVol)) : 0.8, bonus: cleanBonus(d.bonus), dash: cleanDash(d.dash), runOffset: Math.max(0, Math.min(300, Number(d.runOffset) || 0)), dailyLog: d.dailyLog || {}, companion: d.companion !== false, sky: d.sky && typeof d.sky === 'object' ? d.sky : null,
@@ -2223,7 +2224,7 @@ btnUnlock.addEventListener('click', () => {
 });
 
 // ---------- Input ----------
-const input = { left: false, right: false, up: false, down: false, ax: 0, ay: 0, jumpHeld: false, jumpQueued: false, actions: [] };
+const input = { left: false, right: false, up: false, down: false, dropT: 0, ax: 0, ay: 0, jumpHeld: false, jumpQueued: false, actions: [] };
 // Sternenbahn Abenteuer: each key press or swipe is one action (lane left or right, jump, slide)
 const RUN_KEYS = { ArrowLeft: 'left', KeyA: 'left', ArrowRight: 'right', KeyD: 'right', ArrowUp: 'jump', KeyW: 'jump', Space: 'jump', ArrowDown: 'down', KeyS: 'down' };
 function runAction(a) { if (input.actions.length < 6) input.actions.push(a); if (a === 'jump') input.jumpQueued = true; }
@@ -2237,7 +2238,7 @@ function setKey(name, down) {
     input.jumpHeld = down;
   } else input[name] = down;
 }
-function releaseAll() { input.left = input.right = input.up = input.down = false; input.ax = input.ay = 0; input.actions.length = 0; setKey('jump', false); touches.clear(); if (pad.id !== null) padEnd(); }
+function releaseAll() { input.left = input.right = input.up = input.down = false; input.dropT = 0; input.ax = input.ay = 0; input.actions.length = 0; setKey('jump', false); touches.clear(); if (pad.id !== null) padEnd(); }
 window.addEventListener('keydown', (e) => {
   if (e.code === 'Escape' || e.code === 'KeyP') { if (G.overlay === 'shop' || G.overlay === 'levels' || G.overlay === 'settings' || G.overlay === 'board' || G.overlay === 'ach' || G.overlay === 'run') { overlayBack(); e.preventDefault(); return; } if (inGame() && (!G.overlay || G.overlay === 'pause')) { togglePause(); e.preventDefault(); } return; }
   if (DEV && (e.code === 'KeyN' || e.code === 'KeyB') && G.L && G.mode === 'level' && !G.overlay) { const n = LEVELS.length; startLevel((G.levelIndex + (e.code === 'KeyN' ? 1 : n - 1)) % n); e.preventDefault(); return; }
@@ -2254,40 +2255,59 @@ window.addEventListener('keyup', (e) => { const k = KEYMAP[e.code], k3 = KEYMAP_
 window.addEventListener('blur', releaseAll);
 
 // Touch: the left half of the stage runs, the right half jumps (hold for a higher jump).
-// The left thumb gets a floating pad: touching left of the quarter line runs left, right of it runs right, and from then on
-// the middle of the pad follows the thumb, so a short slide back turns Mimo around wherever the thumb rests.
-// Sliding the thumb down drops through boards. With "buttons" chosen in the settings two fixed arrow buttons take the pad's place.
+// The left thumb steers an invisible stick: where it lands is the middle, sliding left or right runs, back to the middle stops.
+// Past the reach the middle is dragged along with the thumb, so turning around is always a short way.
+// Only a quick flick down drops through boards; a thumb slowly drifting down does nothing.
+// With "buttons" chosen in the settings fixed buttons take the stick's place.
 const touches = new Map();
 let touchSeen = false;
-const PAD_DEAD = 6, PAD_REACH = 16, PAD_DOWN = 34;
-const pad = { id: null, cx: 0, y0: 0, yTop: 0, dir: 0, down: false, el: $('pad') };
+const STICK2D_DEAD = 12, STICK2D_HOLD = 7, STICK2D_REACH = 34, STICK2D_KNOB = 22;
+const FLICK_DY = 32, FLICK_MS = 160, FLICK_REARM = 8, DROP_TIME = 0.22;
+const pad = { id: null, ox: 0, oy: 0, dir: 0, hist: [], flicked: false, el: $('pad') };
 const tbtns = $('tbtns');
 const buttonsMode = () => progress.touchMode === 'buttons';
 function buttonZone(e) { const l = tbtns.children[0].getBoundingClientRect(), r = tbtns.children[1].getBoundingClientRect(); return e.clientX < (l.right + r.left) / 2 ? 'left' : 'right'; }
-function padShow() {
-  const r = stage.getBoundingClientRect();
-  pad.el.style.left = (pad.cx - r.left) + 'px'; pad.el.style.top = (pad.y0 - r.top) + 'px';
-  pad.el.className = 'pad' + (pad.dir < 0 ? ' go-l' : pad.dir > 0 ? ' go-r' : '') + (pad.down ? ' down' : '');
+function padShow(x, y) {
+  const r = stage.getBoundingClientRect(), k = Math.max(-STICK2D_KNOB, Math.min(STICK2D_KNOB, x - pad.ox)), ky = Math.max(-STICK2D_KNOB, Math.min(STICK2D_KNOB, y - pad.oy));
+  pad.el.style.left = (pad.ox - r.left) + 'px'; pad.el.style.top = (pad.oy - r.top) + 'px';
+  pad.el.firstElementChild.style.transform = 'translate(' + k + 'px,' + ky + 'px)';
+  pad.el.classList.toggle('go', pad.dir !== 0);
+}
+// a quick move down within a short time drops through boards once; it arms again when the thumb stops going down
+function padFlick(x, y) {
+  const now = performance.now();
+  pad.hist.push({ x, y, t: now });
+  while (pad.hist.length > 1 && now - pad.hist[0].t > FLICK_MS) pad.hist.shift();
+  const o = pad.hist[0], dy = y - o.y, dx = Math.abs(x - o.x);
+  if (!pad.flicked && dy > FLICK_DY && dy > dx * 1.5) { pad.flicked = true; input.dropT = DROP_TIME; }
+  else if (pad.flicked && dy < FLICK_REARM) pad.flicked = false;
 }
 function padMove(e) {
-  const x = e.clientX;
-  if (x < pad.cx - PAD_DEAD) pad.dir = -1; else if (x > pad.cx + PAD_DEAD) pad.dir = 1;
-  pad.cx = Math.max(x - PAD_REACH, Math.min(x + PAD_REACH, pad.cx));
-  pad.yTop = Math.min(pad.yTop, e.clientY + 10);
-  pad.down = e.clientY - pad.yTop > PAD_DOWN;
-  padShow();
+  const x = e.clientX, y = e.clientY;
+  if (x - pad.ox > STICK2D_REACH) pad.ox = x - STICK2D_REACH; else if (pad.ox - x > STICK2D_REACH) pad.ox = x + STICK2D_REACH;
+  if (y - pad.oy > STICK2D_REACH) pad.oy = y - STICK2D_REACH; else if (pad.oy - y > STICK2D_REACH) pad.oy = y + STICK2D_REACH;
+  const dx = x - pad.ox;
+  if (dx > (pad.dir > 0 ? STICK2D_HOLD : STICK2D_DEAD)) pad.dir = 1;
+  else if (dx < -(pad.dir < 0 ? STICK2D_HOLD : STICK2D_DEAD)) pad.dir = -1;
+  else pad.dir = 0;
+  padFlick(x, y);
+  padShow(x, y);
 }
-function padStart(e, r) {
-  const line = r.left + r.width * 0.25;
-  pad.id = e.pointerId; pad.dir = e.clientX < line ? -1 : 1; pad.cx = line; pad.y0 = pad.yTop = e.clientY; pad.down = false;
+function padStart(e) {
+  pad.id = e.pointerId; pad.ox = e.clientX; pad.oy = e.clientY; pad.dir = 0; pad.hist = []; pad.flicked = false;
   pad.el.hidden = false; padMove(e);
 }
-function padEnd() { pad.id = null; pad.dir = 0; pad.down = false; pad.el.hidden = true; }
+function padEnd() { pad.id = null; pad.dir = 0; pad.hist = []; pad.flicked = false; pad.el.hidden = true; }
 function applyTouches() {
   const zones = [...touches.values()];
-  input.left = pad.dir < 0 || zones.includes('left'); input.right = pad.dir > 0 || zones.includes('right'); input.down = pad.down;
+  input.left = pad.dir < 0 || zones.includes('left'); input.right = pad.dir > 0 || zones.includes('right');
   const j = zones.includes('jump'); if (j !== input.jumpHeld) setKey('jump', j);
   for (const el of tbtns.children) el.classList.toggle('on', el.className.includes('l') ? input.left : el.className.includes('r') ? input.right : j);
+}
+// a finger whose end never arrived (iOS swallows it now and then) must not keep Mimo running or jumping
+function dropStaleTouches() {
+  if (pad.id === null && !touches.size && stick.id === null) return;
+  touches.clear(); if (pad.id !== null) padEnd(); if (stick.id !== null) stickEnd(); applyTouches();
 }
 // the fixed buttons are only there in 2D play on a touch screen, when chosen
 function syncTouchButtons() {
@@ -2317,6 +2337,8 @@ function stickEnd() { stick.id = null; input.ax = input.ay = 0; stick.el.hidden 
 stage.addEventListener('pointerdown', (e) => {
   if (e.pointerType === 'mouse' || G.overlay || !inGame()) return;
   e.preventDefault(); touchSeen = true; G.touchHint = Math.min(G.touchHint, 0.4);
+  // the first finger of a new touch: anything still held from before is a lost finger
+  if (e.isPrimary) dropStaleTouches();
   if (G.mode === 'dash') { swipes.set(e.pointerId, { x: e.clientX, y: e.clientY, t: performance.now(), done: false }); audio(); try { stage.setPointerCapture(e.pointerId); } catch (_) {} return; }
   if (G.mode === 'sky') {
     const r = stage.getBoundingClientRect();
@@ -2330,13 +2352,16 @@ stage.addEventListener('pointerdown', (e) => {
   const r = stage.getBoundingClientRect(), leftHalf = e.clientX - r.left < r.width * 0.5;
   if (!leftHalf) touches.set(e.pointerId, 'jump');
   else if (buttonsMode()) touches.set(e.pointerId, buttonZone(e, r));
-  else if (pad.id === null) padStart(e, r);
+  else padStart(e);
   applyTouches(); audio();
   try { stage.setPointerCapture(e.pointerId); } catch (_) {}
 });
 stage.addEventListener('pointermove', (e) => { const sw = swipes.get(e.pointerId); if (sw) { swipeMove(sw, e); return; } if (e.pointerId === stick.id) { stickMove(e); return; } if (e.pointerId === pad.id) { padMove(e); applyTouches(); return; } if (!touches.has(e.pointerId) || touches.get(e.pointerId) === 'jump') return; touches.set(e.pointerId, buttonZone(e, stage.getBoundingClientRect())); applyTouches(); });
 const touchEnd = (e) => { const sw = swipes.get(e.pointerId); if (sw) { swipes.delete(e.pointerId); if (!sw.done && e.type === 'pointerup' && performance.now() - sw.t < TAP_MAX_MS) runAction('jump'); return; } if (e.pointerId === stick.id) stickEnd(); const wasPad = e.pointerId === pad.id; if (wasPad) padEnd(); if (touches.delete(e.pointerId) || wasPad) applyTouches(); };
 stage.addEventListener('pointerup', touchEnd); stage.addEventListener('pointercancel', touchEnd); stage.addEventListener('lostpointercapture', touchEnd);
+// safety net: when no finger is on the glass any more, nothing may stay pressed
+const allFingersUp = (e) => { if (!e.touches.length) dropStaleTouches(); };
+document.addEventListener('touchend', allFingersUp, { passive: true }); document.addEventListener('touchcancel', allFingersUp, { passive: true });
 stage.addEventListener('contextmenu', (e) => e.preventDefault());
 // iOS Safari ignores preventDefault on pointer events for its own gestures (magnifier, double-tap zoom, page bounce);
 // stopping the touch itself while playing keeps the finger on the game. Pointer events still arrive.
@@ -2661,6 +2686,8 @@ function updatePlayer(dt) {
 
   if (input.jumpQueued) { p.jumpBuf = BUFFER; input.jumpQueued = false; }
   p.jumpBuf = Math.max(0, p.jumpBuf - dt);
+  // through boards: holding down (keys, pad) or a short drop after a flick of the thumb
+  const drop = input.down || input.dropT > 0; input.dropT = Math.max(0, input.dropT - dt);
   p.coyote = p.wasGrounded ? COYOTE : Math.max(0, p.coyote - dt);
   if (p.jumpBuf > 0 && p.coyote > 0) {
     p.vy = -JUMP; p.coyote = 0; p.jumpBuf = 0; p.canCut = true;
@@ -2679,7 +2706,7 @@ function updatePlayer(dt) {
     const ty = Math.floor((p.y + p.h - 0.01) / T);
     for (let tx = x0; tx <= x1; tx++) {
       const t = tileAt(tx, ty);
-      const solid = isSolid(tx, ty) || (t === ONEWAY && !input.down && p.prevBottom <= ty * T + 0.5);
+      const solid = isSolid(tx, ty) || (t === ONEWAY && !drop && p.prevBottom <= ty * T + 0.5);
       if (solid) {
         p.y = ty * T - p.h; p.vy = 0; p.grounded = true;
         if (t === CRUMBLE) { const c = L.crumbles.get(tx + ',' + ty); if (c.state === 0) { c.state = 1; c.t = 0; SFX.crumble(); } }
@@ -2692,7 +2719,7 @@ function updatePlayer(dt) {
   }
 
   for (const m of L.movers) {
-    if (p.vy < 0 || input.down) continue;
+    if (p.vy < 0 || drop) continue;
     if (p.x + p.w - 2 > m.x && p.x + 2 < m.x + m.w && p.prevBottom <= m.prevY + 8 && p.y + p.h >= m.y) {
       p.y = m.y - p.h; p.vy = 0; p.grounded = true; p.carried = m;
     }
@@ -3368,7 +3395,7 @@ const BOSSES = [null,
       phase: ['Jetzt wird es glatt!', 'SCHNEESTURM! Na gut, Schneegestöber.'], stun: ['Wer stellt denn da Eis hin?', 'Aua. Ich sehe Sterne.', 'Das war doch eben noch frei!'], beaten: 'Okay, okay. Willst du einen Kakao?', piep: ['Piep? PIEP? Grrr.', 'Lass das, ich bin gefährlich!'] },
     map: BOSS_ARENA(BOSS_EMPTY_ROW) },
 ];
-const bossUnlocked = (w) => DEV || progress.best[BOSSES[w].after] != null;
+const bossUnlocked = (w) => DEV || OPEN_ALL || progress.best[BOSSES[w].after] != null;
 const bossBeatenBefore = (w) => !!(progress.bosses && progress.bosses[w]);
 const bossAfterLevel = (i) => BOSSES.findIndex((b) => b && b.after === i);
 // phase 0, 1, 2: how many phase starts the life has already dropped to
@@ -4828,30 +4855,33 @@ function drawIntro() {
   ctx.fillStyle = P.fg; ctx.font = '600 22px Fredoka, Nunito, sans-serif'; ctx.fillText(name, 0, 16);
   ctx.restore();
 }
-// Touch help: three soft round pads over the zones (run left, run right, jump), only at the first few level starts
-const TOUCH_HELP_STARTS = 3, TOUCH_HELP_TIME = 3;
+// Touch help at the first few level starts with the thumb stick: a dot sliding sideways on the left, a tap ring on the right.
+// It counts separately from the old help, so everyone sees the new way to steer once.
+const TOUCH_HELP_STARTS = 3, TOUCH_HELP_TIME = 3.2;
 function touchHelpStart() {
-  if (!isTouchDevice() || (progress.touchHelp | 0) >= TOUCH_HELP_STARTS) return 0;
-  progress.touchHelp = (progress.touchHelp | 0) + 1; saveProgressSoon();
+  if (!isTouchDevice() || buttonsMode() || (progress.stickHelp | 0) >= TOUCH_HELP_STARTS) return 0;
+  progress.stickHelp = (progress.stickHelp | 0) + 1; saveProgressSoon();
   return TOUCH_HELP_TIME;
 }
 function drawTouchHint() {
   if (!isTouchDevice() || G.touchHint <= 0 || G.overlay) return;
-  const a = Math.min(1, G.touchHint / 0.5), y = VIEW_H - 46;
-  ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  const a = Math.min(1, G.touchHint / 0.5), y = VIEW_H - 52, t = G.time;
+  ctx.save(); ctx.textAlign = 'center'; ctx.font = '700 12px Nunito, sans-serif';
   // where the jump half begins
-  ctx.globalAlpha = a * 0.5; ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 1.5; ctx.setLineDash([3, 6]);
+  ctx.globalAlpha = a * 0.45; ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 1.5; ctx.setLineDash([3, 6]);
   ctx.beginPath(); ctx.moveTo(VIEW_W / 2, y - 30); ctx.lineTo(VIEW_W / 2, y + 30); ctx.stroke(); ctx.setLineDash([]);
-  for (const [x, kind] of [[VIEW_W * 0.125, 'left'], [VIEW_W * 0.375, 'right'], [VIEW_W * 0.75, 'jump']]) {
-    const r = kind === 'jump' ? 27 : 23;
-    ctx.globalAlpha = a; ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.strokeStyle = 'rgba(255,255,255,0.9)'; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-    ctx.globalAlpha = a * 0.6; ctx.strokeStyle = P.mimoInk; ctx.lineWidth = 3.5; ctx.beginPath();
-    if (kind === 'left') { ctx.moveTo(x + 3, y - 8); ctx.lineTo(x - 5, y); ctx.lineTo(x + 3, y + 8); }
-    else if (kind === 'right') { ctx.moveTo(x - 3, y - 8); ctx.lineTo(x + 5, y); ctx.lineTo(x - 3, y + 8); }
-    else { ctx.moveTo(x - 8, y + 1); ctx.lineTo(x, y - 7); ctx.lineTo(x + 8, y + 1); ctx.moveTo(x - 8, y + 9); ctx.lineTo(x, y + 1); ctx.lineTo(x + 8, y + 9); }
-    ctx.stroke();
-  }
+  const label = (txt, x) => { ctx.globalAlpha = a * 0.9; ctx.fillStyle = P.card; const w = ctx.measureText(txt).width + 16; rr(x - w / 2, y + 30, w, 20, 10); ctx.fill(); ctx.fillStyle = P.fg; ctx.fillText(txt, x, y + 44); };
+  // left: a ring with a dot that slides to both sides
+  const lx = VIEW_W * 0.25, slide = Math.sin(t * 2.4) * 14;
+  ctx.globalAlpha = a * 0.7; ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = 2; ctx.fillStyle = 'rgba(255,255,255,0.18)';
+  ctx.beginPath(); ctx.arc(lx, y, 24, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.globalAlpha = a; ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.beginPath(); ctx.arc(lx + slide, y, 9, 0, Math.PI * 2); ctx.fill();
+  label('Daumen schieben', lx);
+  // right: a ring that pulses like a tap
+  const rx = VIEW_W * 0.75, pulse = (t * 1.2) % 1;
+  ctx.globalAlpha = a * 0.7; ctx.fillStyle = 'rgba(255,255,255,0.18)'; ctx.beginPath(); ctx.arc(rx, y, 24, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+  ctx.globalAlpha = a * (1 - pulse) * 0.8; ctx.beginPath(); ctx.arc(rx, y, 24 + pulse * 12, 0, Math.PI * 2); ctx.stroke();
+  label('Tippen: hüpfen', rx);
   ctx.restore();
 }
 function drawWipe() {
@@ -5101,7 +5131,7 @@ function buildLevelGrid() {
     if (lv.night) return;
     if (lv.world !== lastWorld) { lastWorld = lv.world; head('Welt ' + lv.world + ' · ' + WORLDS[lv.world].name); }
     const b = document.createElement('button'); b.type = 'button'; b.className = 'lvl-card';
-    const unlocked = i < progress.unlocked, best = progress.best[i], got = progress.stars[i] || 0, medal = medalFor(i, best);
+    const unlocked = OPEN_ALL || i < progress.unlocked, best = progress.best[i], got = progress.stars[i] || 0, medal = medalFor(i, best);
     if (!unlocked) b.classList.add('locked'); if (i === current) b.classList.add('current');
     b.disabled = !unlocked;
     const meta = unlocked
@@ -5119,7 +5149,7 @@ function buildLevelGrid() {
     () => { hideOverlays(); loadLevel(dailyLevel()); G.daily = true; updateHud(); }));
   const su = skyUnlocked(), sp = progress.sky;
   grid.appendChild(bonusCard('3D', 'Himmelsinseln', !su ? 'Nach Level ' + (worldEnd(1) + 1) : sp && sp.best != null ? fmtTime(sp.best) + ' · ★ ' + (sp.stars || 0) + '/' + SKY_STARS : 'Inseln und Endgegner', su, startSky));
-  const ni = LEVELS.findIndex((l) => l.night), nightOpen = DEV || nightness() >= 0.5;
+  const ni = LEVELS.findIndex((l) => l.night), nightOpen = DEV || OPEN_ALL || nightness() >= 0.5;
   if (ni >= 0) grid.appendChild(bonusCard('☾\uFE0E', LEVELS[ni].name, nightOpen ? (progress.best[ni] != null ? 'Bestzeit ' + fmtTime(progress.best[ni]) : 'Jetzt offen') : 'Nur von 21 bis 5 Uhr', nightOpen, () => startLevel(ni)));
 }
 function bonusCard(icon, name, meta, open, go) {
@@ -5572,7 +5602,7 @@ $('btnPiep').addEventListener('click', () => { piep(); stage.focus({ preventScro
 // ---------- Bonus: Himmelsinseln (3D diorama, module and Three.js load on demand) ----------
 const THREE_URL = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js';
 let sky = null, skyLoad = null;
-const skyUnlocked = () => DEV || progress.best[worldEnd(1)] != null;
+const skyUnlocked = () => DEV || OPEN_ALL || progress.best[worldEnd(1)] != null;
 const isDarkTheme = () => { const h = P.skyTop || '#ffffff'; return h[0] === '#' && parseInt(h.slice(1, 3), 16) < 110; };
 function loadScript(src) {
   return new Promise((resolve, reject) => {
