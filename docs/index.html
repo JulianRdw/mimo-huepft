@@ -745,9 +745,9 @@ const STEP = 1 / 120;
 const DASH_MAX_DT = 0.05;
 // Developer build: all levels, night path and bonus open, own save slot, no leaderboard writes.
 const DEV = false;
-// Test phase: every level, boss and bonus can be played. Only the doors are open, nothing is written to the progress,
-// so switching this off brings back the normal unlocking with everyone's real progress.
-const OPEN_ALL = true;
+// Test switch: true opens every level, boss and bonus. Only the doors open, saved progress stays as it is,
+// so switching it back off returns to the normal unlocking with everyone's real progress.
+const OPEN_ALL = false;
 // The Sternenbahn (music run, adventure, endless track, course of the day) is not polished enough for the release:
 // its code stays, but nothing in the game leads to it and the app build leaves its files out.
 const STARWAY = false;
