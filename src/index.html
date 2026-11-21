@@ -521,6 +521,10 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .item.closed canvas{opacity:.55}
 .item.worn::after{content:"✓";position:absolute;top:6px;right:8px;width:18px;height:18px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font-size:12px;line-height:18px;text-align:center}
 .item .price{color:#B98A1E}
+.item.master{border-color:#E9B949;border-color:color-mix(in srgb,#E9B949 70%,var(--line));background:linear-gradient(to bottom,color-mix(in srgb,#E9B949 14%,var(--bg)),var(--bg) 70%)}
+.item.master small{color:#B98A1E}
+.item.master.on{border-color:var(--accent);background:var(--accent-soft)}
+.item.master.on small{color:var(--accent-ink)}
 /* left thumb: a small pad shows where "left" and "right" are while the thumb is down */
 .pad,.pad i,.tbtns i{pointer-events:none}
 .pad{position:absolute;width:76px;height:76px;margin:-38px 0 0 -38px;border-radius:50%;border:1.5px solid rgba(255,255,255,.28);background:rgba(255,255,255,.06);transition:border-color .12s}
@@ -881,6 +885,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
 <script src="worlds/coast-boss-draw.js"></script>
 <script src="worlds/coast-boss-bot.js"></script>
 <script src="worlds/coast-closing.js"></script>
+<script src="worlds/coast-master.js"></script>
 <script src="worlds/garden-base.js"></script>
 <script src="worlds/garden-chase.js"></script>
 <script src="worlds/garden-caspar.js"></script>
@@ -929,7 +934,7 @@ const DEV = false;
 // Test switch: true opens every level, boss and bonus. Only the doors open, saved progress stays as it is,
 // so switching it back off returns to the normal unlocking with everyone's real progress.
 const OPEN_ALL = false;
-// The same for one visit: the address parameter ?offen opens everything without touching the save.
+// The same for one visit: the address parameter ?offen opens everything (the masterpieces of the wardrobe too) without touching the save.
 // Never on the published app (github.io), so a shared link cannot spoil the game for anyone.
 const OPEN_URL = /[?&]offen(=|&|$)/.test(location.search) && !/github\.io$/.test(location.hostname);
 const OPEN = OPEN_ALL || OPEN_URL;
@@ -969,6 +974,10 @@ const COSTUMES = [
   { id: 'c_sun', kind: 'color', name: 'Sonnengelb', price: 4, token: 'mimoSun' },
   { id: 'c_rose', kind: 'color', name: 'Rosé', price: 4, token: 'mimoRose' },
   { id: 'c_rainbow', kind: 'color', name: 'Regenbogen', price: 0, boss: 3, token: 'mimo' },
+  // a rare piece across all worlds: a body that shimmers like the inside of a shell
+  { id: 'c_pearl', kind: 'color', name: 'Perlmutt', price: 0, token: 'mimoLav', master: true, tag: 'Selten',
+    own: () => goldTotal() >= PEARL_GOLD, how: () => 'Hole ' + PEARL_GOLD + ' Goldmedaillen, ohne Hilfen, egal in welcher Welt (' + Math.min(goldTotal(), PEARL_GOLD) + ' von ' + PEARL_GOLD + ').',
+    paint: (c, o) => pearlPaint(c, o) },
   { id: 'h_leaf', kind: 'hat', name: 'Blattspross', price: 0 },
   { id: 'h_flower', kind: 'hat', name: 'Gänseblume', price: 2 },
   { id: 'h_straw', kind: 'hat', name: 'Strohhut', price: 3 },
@@ -1729,7 +1738,8 @@ function installWorlds() {
     for (const lv of w.levels) { MEDALS[LEVELS.length] = Array.isArray(lv.medals) && lv.medals.length === 3 ? lv.medals : [0, 0, 0]; LEVELS.push(lv); }
     for (const c of w.costumes) {
       if (COSTUMES.some((x) => x.id === c.id)) { console.error('Welt: Kostüm ' + c.id + ' gibt es schon (' + at + ')'); continue; }
-      COSTUMES.push({ price: 0, ...c, draw: safeHook(at + ' Kostüm ' + c.id, c.draw), own: safeHook(at + ' Kostüm ' + c.id, c.own), how: safeHook(at + ' Kostüm ' + c.id, c.how) });
+      const hook = (f) => safeHook(at + ' Kostüm ' + c.id, f);
+      COSTUMES.push({ price: 0, ...c, draw: hook(c.draw), back: hook(c.back), paint: hook(c.paint), own: hook(c.own), how: hook(c.how) });
     }
     WORLDS[w.world] = w;
   }
@@ -1918,13 +1928,31 @@ const dayIndex = () => Math.floor(Date.now() / 86400000);
 const dailyLevel = () => MAIN[(dayIndex() * 7 + 3) % mainOpen()];
 const isReward = (c) => !!(c.boss || c.streak || c.ach || c.own);
 // c.own (a world's costume) is a function that says when the piece has been earned
-const isOwned = (c) => (c.own ? !!c.own() : c.boss ? !!progress.bosses[c.boss] : c.price === 0 && !isReward(c)) || progress.owned.includes(c.id);
+const isOwned = (c) => (OPEN && c.master) || (c.own ? !!c.own() : c.boss ? !!progress.bosses[c.boss] : c.price === 0 && !isReward(c)) || progress.owned.includes(c.id);
 const starsSpent = () => COSTUMES.reduce((a, c) => a + (progress.owned.includes(c.id) ? c.price : 0), 0);
 const wallet = () => Math.max(0, starsTotal() - starsSpent());
 function medalFor(i, t) {
   if (t == null) return null;
   const m = MEDALS[i] || [0, 0, 0];
   return t <= m[0] ? 'gold' : t <= m[1] ? 'silver' : t <= m[2] ? 'bronze' : null;
+}
+// the masterpieces of the wardrobe count gold without help only (like the gold achievement)
+const goldClean = (i) => medalFor(i, progress.best[i]) === 'gold' && !progress.assisted[i];
+const PEARL_GOLD = 25;
+const goldTotal = () => LEVELS.reduce((a, _, i) => a + (goldClean(i) ? 1 : 0), 0);
+const PEARL_LIGHT = ['#F5E6F0', '#D9ECF7', '#E7F6E9', '#F7EAD6', '#E6DDF6'], PEARL_DARK = ['#CDB8C8', '#AFC4D3', '#B9CDBC', '#CFBEA8', '#BCB2D0'];
+function pearlPaint(c, o) {
+  const g = c.createLinearGradient(-14, o.top, 14, 0), cols = darkTheme() ? PEARL_DARK : PEARL_LIGHT, s = reduced() ? 0 : G.time * 0.12;
+  for (let i = 0; i < 6; i++) { const u = i / 5; g.addColorStop(u, cols[Math.floor(((u + s) % 1) * 5 + 5) % 5]); }
+  return g;
+}
+// masterpieces that are not earned yet; after a win, the ones that are earned now get a toast
+const mastersOpen = () => COSTUMES.filter((c) => c.master && !isOwned(c)).map((c) => c.id);
+function announceMasters(before) {
+  for (const id of before) {
+    const c = COSTUMES.find((x) => x.id === id);
+    if (c && isOwned(c)) toast(c.name + ' verdient!', (c.tag === 'Selten' ? 'Ein seltenes Teil.' : 'Ein Meisterstück.') + ' Es liegt jetzt im Kleiderschrank.');
+  }
 }
 function fmtTime(s) {
   if (s == null || !isFinite(s)) return '–';
@@ -2907,7 +2935,8 @@ function die() {
 }
 
 function win() {
-  if (G.mode === 'boss') { winBoss(); return; }
+  const mastersBefore = mastersOpen();
+  if (G.mode === 'boss') { winBoss(); announceMasters(mastersBefore); return; }
   G.state = 'win'; G.stateT = 0;
   const L = G.L, d = L.door;
   burst(d.x * T + T / 2, d.y * T + 4, 36, CONFETTI(), 190, { grav: 260, rect: true, life: 0.8 });
@@ -2932,6 +2961,7 @@ function win() {
   }
   unlock('first'); if (LEVELS[G.levelIndex].night) unlock('night');
   saveProgress();
+  announceMasters(mastersBefore);
 }
 
 function toggleSwitch(sw) {
@@ -3116,7 +3146,8 @@ function updatePlayer(dt) {
   if (L.hidden && !L.hidden.got) {
     const hx = L.hidden.x * T + T / 2, hy = L.hidden.y * T + T / 2;
     if (Math.hypot(cx - hx, cy - hy) < 24) {
-      L.hidden.got = true; progress.hidden[G.levelIndex] = true; saveProgress(); unlock('secret'); SFX.key(); SFX.yay(); setMood('happy', 1);
+      const mastersBefore = mastersOpen();
+      L.hidden.got = true; progress.hidden[G.levelIndex] = true; saveProgress(); announceMasters(mastersBefore); unlock('secret'); SFX.key(); SFX.yay(); setMood('happy', 1);
       burst(hx, hy, 20, [P.star, P.toggleA], 160, { grav: 200, rect: true }); ring(hx, hy, P.toggleA); floater(hx, hy - 12, 'Geheimstern!', P.toggleA);
     }
   }
@@ -5028,10 +5059,13 @@ function drawMovers() {
   }
 }
 // a wardrobe piece of a world module draws itself; the picture stands at Mimo's feet, scaled like him (o.top = top of the head)
-function drawWorldCostume(id, o, late) {
+// layer: 'back' (c.back, before the body, e.g. the far half of a ring), 'face' (pieces with face: true, after the eyes) or none
+function drawWorldCostume(id, o, layer) {
   const c = id && COSTUMES.find((x) => x.id === id);
-  if (!c || !c.draw || !!c.face !== !!late) return; // face pieces (late) are drawn after the eyes
-  ctx.save(); c.draw(ctx, o); ctx.restore(); ctx.globalAlpha = o.alpha;
+  if (!c) return;
+  const fn = layer === 'back' ? c.back : !!c.face === (layer === 'face') ? c.draw : null;
+  if (!fn) return;
+  ctx.save(); fn(ctx, o); ctx.restore(); ctx.globalAlpha = o.alpha;
 }
 function outfitColor(outfit) {
   const c = COSTUMES.find((x) => x.id === (outfit || progress.outfit).color);
@@ -5045,10 +5079,15 @@ function drawMimo(cx, bottom, o) {
   ctx.save(); ctx.translate(cx, bottom); ctx.scale((o.sx || 1) * scale * (1 - breathe), (o.sy || 1) * scale * (1 + breathe)); ctx.globalAlpha = alpha;
   let bodyColor = o.tint || outfitColor(outfit);
   if (!o.tint && outfit.color === 'c_rainbow') { const gr = ctx.createLinearGradient(0, -h - (o.bob || 0), 0, 0); gr.addColorStop(0, P.mush); gr.addColorStop(0.5, P.star); gr.addColorStop(1, P.mimoMint); bodyColor = gr; }
+  const top = -h - bob;
+  if (!o.tint) { const cc = COSTUMES.find((x) => x.id === outfit.color); const painted = cc && cc.paint && cc.paint(ctx, { top, h }); if (painted) bodyColor = painted; }
   ctx.fillStyle = P.mimoInk; ctx.globalAlpha = alpha * 0.14;
   ctx.beginPath(); ctx.ellipse(0, 0, 11, 2.5, 0, 0, Math.PI * 2); ctx.fill();
   ctx.globalAlpha = alpha;
-  const top = -h - bob;
+  // what a world's wardrobe piece may know: live = this is the Mimo being played (not a picture in the wardrobe)
+  const tiltNow = -(o.vx || 0) / RUN * 0.5 + ((o.vy || 0) < -50 ? 0.25 : (o.vy || 0) > 100 ? -0.25 : 0);
+  const wo = { top, tilt: tiltNow, facing, alpha, bob, w, h, live: !!o.live, mood: o.mood || null };
+  drawWorldCostume(outfit.acc, wo, 'back');
   // paws
   ctx.fillStyle = bodyColor; ctx.beginPath(); ctx.ellipse(-6 + step, -1.5, 5, 3, 0, 0, Math.PI * 2); ctx.ellipse(6 - step, -1.5, 5, 3, 0, 0, Math.PI * 2); ctx.fill();
   ctx.fillStyle = P.mimoInk; ctx.globalAlpha = alpha * 0.16; ctx.beginPath(); ctx.ellipse(-6 + step, -1.5, 5, 3, 0, 0, Math.PI * 2); ctx.ellipse(6 - step, -1.5, 5, 3, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = alpha;
@@ -5057,7 +5096,7 @@ function drawMimo(cx, bottom, o) {
     ctx.fillStyle = P.thorn; ctx.beginPath(); ctx.moveTo(-facing * 2, -h - bob + 8); ctx.quadraticCurveTo(-facing * (13 + fl), -h - bob + 12, -facing * (15 + fl), -3 - lift);
     ctx.quadraticCurveTo(-facing * (9 + fl * 0.5), -1 - lift * 0.5, -facing * 4, -2); ctx.closePath(); ctx.fill();
   }
-  const tilt = -(o.vx || 0) / RUN * 0.5 + ((o.vy || 0) < -50 ? 0.25 : (o.vy || 0) > 100 ? -0.25 : 0);
+  const tilt = tiltNow;
   // hat (drawn before the body so brims sit behind the head top)
   if (outfit.hat === 'h_leaf') {
     ctx.save(); ctx.translate(1, top + 2); ctx.rotate(tilt);
@@ -5090,7 +5129,7 @@ function drawMimo(cx, bottom, o) {
     ctx.fillStyle = P.star; ctx.beginPath(); ctx.moveTo(-5.6, -6); ctx.lineTo(5.6, -6); ctx.lineTo(4.3, -9.6); ctx.lineTo(-4.3, -9.6); ctx.closePath(); ctx.moveTo(-3, -13); ctx.lineTo(3, -13); ctx.lineTo(1.9, -16); ctx.lineTo(-1.9, -16); ctx.closePath(); ctx.fill();
     ctx.fillStyle = P.mush; ctx.beginPath(); ctx.arc(0, -21, 3, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
-  } else drawWorldCostume(outfit.hat, { top, tilt, facing, alpha, bob, w, h });
+  } else drawWorldCostume(outfit.hat, wo);
   if (outfit.acc === 'a_wings') {
     const flap = Math.sin(G.time * 9) * 0.25;
     for (const sgn of [-1, 1]) {
@@ -5136,7 +5175,7 @@ function drawMimo(cx, bottom, o) {
     ctx.fillStyle = P.dust; ctx.globalAlpha = alpha * 0.8; ctx.beginPath(); ctx.arc(0, 0, 2, 0, Math.PI * 2); ctx.fill();
     ctx.restore(); ctx.globalAlpha = alpha;
   }
-  drawWorldCostume(outfit.acc, { top, tilt, facing, alpha, bob, w, h });
+  drawWorldCostume(outfit.acc, wo);
   // face
   ctx.save(); ctx.scale(facing, 1);
   const eyeY = -h / 2 - 3 - bob, mood = o.mood || null;
@@ -5157,7 +5196,7 @@ function drawMimo(cx, bottom, o) {
     ctx.fillStyle = P.dust; ctx.globalAlpha = alpha * 0.18; ctx.beginPath(); ctx.arc(1, eyeY + 0.5, 4.6, 0, Math.PI * 2); ctx.arc(8, eyeY + 0.5, 4.6, 0, Math.PI * 2); ctx.fill();
     ctx.globalAlpha = alpha;
   }
-  drawWorldCostume(outfit.acc, { top, tilt, facing, alpha, bob, w, h, eyeY }, true);
+  drawWorldCostume(outfit.acc, { ...wo, eyeY }, 'face');
   ctx.fillStyle = P.blush; ctx.globalAlpha = alpha * 0.8;
   ctx.beginPath(); ctx.ellipse(-3, eyeY + 6, 2.6, 1.6, 0, 0, Math.PI * 2); ctx.ellipse(10, eyeY + 6, 2.6, 1.6, 0, 0, Math.PI * 2); ctx.fill();
   ctx.globalAlpha = alpha;
@@ -5195,7 +5234,7 @@ function drawPlayer() {
     sx: p.sx, sy: p.sy, scale, alpha, facing: p.facing,
     bob: p.walkT > 0 ? Math.abs(Math.sin(p.walkT)) * 2 : beat * 3, step: p.walkT > 0 ? Math.sin(p.walkT) * 3 : 0,
     vx: p.vx, vy: p.vy, blink: p.blinkT > 0 ? 0.12 : 1, breathe: p.idleT > 0.3 && !reduced() ? Math.sin(G.time * 3) * 0.025 : 0,
-    look: p.vy < -50 ? -2 : p.vy > 100 ? 2 : 0, jumping: p.vy < -50,
+    look: p.vy < -50 ? -2 : p.vy > 100 ? 2 : 0, jumping: p.vy < -50, live: true,
     mood: p.mood || (beat ? 'happy' : null) || (p.idleT > 2.5 && p.idleT < 4 ? 'look' : null),
   };
   if (g && g.kind === 'dance') { const k = g.t * 9; o.bob = Math.abs(Math.sin(k)) * 6; o.step = Math.sin(k) * 4; o.facing = Math.sin(g.t * 4.5) > 0 ? 1 : -1; o.mood = 'happy'; o.sx = 1 + Math.sin(k * 2) * 0.05; o.sy = 1 - Math.sin(k * 2) * 0.05; }
@@ -6634,7 +6673,8 @@ function renderShop() {
     if (sel) b.classList.add(owned ? 'on' : 'try'); if (worn) b.classList.add('worn'); if (!owned && isReward(c)) b.classList.add('closed');
     const cv = document.createElement('canvas'); cv.width = cv.height = 128; drawThumb(cv, { ...progress.outfit, [c.kind]: c.id });
     const name = document.createElement('span'); name.textContent = c.name;
-    const st = document.createElement('small'); st.textContent = worn ? 'Angelegt' : owned ? 'Im Schrank' : c.boss ? 'Endgegner' : c.own ? 'Fundstücke' : c.ach ? 'Erfolge' : c.streak ? 'Serie' : '★ ' + c.price;
+    if (c.master) b.classList.add('master');
+    const st = document.createElement('small'); st.textContent = worn ? 'Angelegt' : owned ? 'Im Schrank' : c.boss ? 'Endgegner' : c.own ? c.tag || 'Fundstücke' : c.ach ? 'Erfolge' : c.streak ? 'Serie' : '★ ' + c.price;
     if (!owned && !isReward(c)) st.className = 'price';
     b.append(cv, name, st); b.setAttribute('aria-pressed', String(sel));
     b.addEventListener('click', () => {
@@ -7212,6 +7252,8 @@ const worldApi = Object.freeze({
   get P() { return P; }, get W() { return W; }, get cam() { return G.cam; }, get time() { return G.time; }, get state() { return G.state; }, get mode() { return G.mode; },
   get view() { return { w: VIEW_W, h: VIEW_H, hudPad: HUD_PAD, safeL: SAFE_L, safeR: SAFE_R }; },
   get reduced() { return reduced(); }, get dark() { return darkTheme(); }, get levelIndex() { return G.levelIndex; }, levels: LEVELS,
+  // what the player has reached, read only: gold without help in level i, its best star count, its hidden diamond, the record of a boss
+  record: Object.freeze({ gold: (i) => goldClean(i), stars: (i) => progress.stars[i] || 0, hidden: (i) => !!progress.hidden[i], boss: (w) => (progress.bosses[w] ? { ...progress.bosses[w] } : null) }),
   rr, hash, mixHex, rnd: seeded, pick,
   burst, dust, ring, floater, shake, bubble, setMood,
   // a short opening scene of a level (letterbox bars, Mimo waits, jump skips): begin() returns false when it cannot start
