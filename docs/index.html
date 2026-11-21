@@ -5964,23 +5964,24 @@ function drawSplashPhoto(c, k) {
 }
 
 // ---------- Main menu backdrop: the family's garden party ----------
-// A 60 s loop on the real clock behind the menu (decoration, not gameplay). The garden is GD.W units wide; a phone held
-// upright sees only part of it, so the camera follows whatever prank is going on. Everyone can run out of the picture
-// and come back in from the other side.
-//   0-11   the chase: the dog snaps a sausage off the grill and runs out on the right, the redbeard, the kid and Mimo
-//          after it; all of them come back in on the left, the dog first, and the dog eats it ("Mampf!")
-//   11-22  Julian (striped shirt) and Caspar (side parting) dig a hole in the sandbox, Caspar climbs in, Julian fills it
-//          up to his neck, puts a towel over his head and tiptoes off whistling; from under the towel: "Hilfe … hilfe …"
-//   22-32  Julian's ketchup bottle is stuck, he squeezes hard, the ketchup hits the reporter in the face
-//   32-42  the kid sneaks up with a water bomb and hits the filmer; she chases him out, he comes back in on the other
-//          side and whistles, she comes back dripping and does not find him
-//   42-50  the professor wakes up and wants to sit down, Julian pulls the folding chair away: "Plumps!"
-//   28-32  the redbeard runs over, takes the towel off and digs Caspar out ("Danke!"); from then on Caspar joins in
-//          everything and runs along in the next chase, until Julian has another idea at 11
-//   50-56  revenge: the reporter slips an ice cube down Julian's collar, he hops about wildly
-//   56-60  "Die Würstchen sind fertig!": everyone cheers
+// A 150 s loop on the real clock behind the menu (decoration, not gameplay), told calmly: one prank at a time, quiet
+// stretches between them in which the party just goes on and the camera drives slowly through the garden. The garden is
+// GD.W units wide; an upright phone sees only part of it, so the camera follows the story. Everyone can run out of the
+// picture and come back in from the other side.
+//    10-22   the chase: the dog snaps a sausage off the grill and runs out on the right, the others after it; all come
+//            back in on the left, the dog first, and the dog eats it ("Mampf!")
+//    34-54   Julian (striped shirt) and Caspar (side parting) dig a hole in the sandbox, Caspar climbs in, Julian fills it
+//            up to his neck, lets a big towel sink over his head and tiptoes off. Then nothing: the party goes on
+//            without Caspar, and his calls are not heard while the camera is elsewhere.
+//    64-73   Julian's ketchup bottle is stuck, he squeezes hard, the ketchup hits the reporter in the face
+//    81-102  "Wo ist eigentlich Caspar?" Everyone looks around, the camera drives to the sandbox, "Hilfe …"; Mimo hops
+//            over and raises the alarm, the redbeard runs over, takes the towel off and digs Caspar out ("Danke!")
+//   107-118  the kid's water bomb hits the filmer; she chases him out, he comes back in on the other side and whistles
+//   122-130  the professor wakes up and wants to sit down, Julian pulls the folding chair away: "Plumps!"
+//   134-140  revenge: the reporter slips an ice cube down Julian's collar, he hops about wildly
+//   142-146  "Die Würstchen sind fertig!": everyone cheers
 // Tapping a figure makes it react (a gesture and a line), tapping the grill makes it flare up.
-const GD = { LOOP: 60, W: 560, BACK: 170, FRONT: 186, GRILL: { x: 112, y: 168 }, TABLE: { x: 205, y: 168 }, CHAIR: { x: 300, y: 176 }, BOX: { x0: 372, x1: 488, y: 192 }, POST: { x: 344, y: 110 }, HOLE: 430, SAND: 189 };
+const GD = { LOOP: 150, W: 560, BACK: 170, FRONT: 186, GRILL: { x: 112, y: 168 }, TABLE: { x: 205, y: 168 }, CHAIR: { x: 300, y: 176 }, BOX: { x0: 372, x1: 488, y: 192 }, POST: { x: 344, y: 110 }, HOLE: 430, SAND: 189 };
 const gdEase = { lin: (k) => k, io: (k) => k * k * (3 - 2 * k), out: (k) => 1 - (1 - k) * (1 - k), in: (k) => k * k };
 // a value along keys [[t, v, ease?], ...] (eased towards each key), and a held value along keys [[t, v], ...]
 function gdAt(keys, t) {
@@ -5992,36 +5993,42 @@ function gdHold(keys, t) { let v = null; for (const k of keys) { if (t >= k[0]) 
 const gdIn = (t, a, b) => t >= a && t < b;
 // where everyone is: x tracks (out of the picture means far beyond the garden: -240 or 800)
 const GD_X = {
-  redbeard: [[0, 88], [3.8, 88], [7.2, 800, 'in'], [7.21, -240], [10.2, 70, 'out'], [11.2, 88], [27.6, 88], [29.6, GD.HOLE - 20, 'lin'], [32.4, GD.HOLE - 20], [35.0, 88, 'lin']],
-  striped: [[0, 196], [11.2, 196], [13.0, GD.HOLE - 22, 'lin'], [18.6, GD.HOLE - 22], [21.6, 192, 'lin'], [42.4, 192], [44.4, 278, 'lin'], [47.4, 278], [49.4, 198, 'lin'], [52, 198],
-    [52.4, 182], [52.8, 204], [53.2, 186], [53.6, 206], [54, 190], [54.6, 198], [60, 196]],
-  kid: [[0, 152], [4.0, 152], [7.4, 800, 'in'], [7.41, -240], [10.4, 152, 'out'], [32.3, 152], [34.8, 252, 'lin'], [36.4, 252], [38.2, 800, 'in'], [38.21, -240], [40.4, 152, 'out']],
-  reporter: [[0, 226], [50.2, 226], [51.4, 212, 'lin'], [54.6, 212], [56, 226, 'lin']],
-  filmer: [[0, 302], [36.8, 302], [38.8, 800, 'in'], [38.81, -240], [41.6, 302, 'out']],
-  professor: [[0, 330], [42.8, 330], [44.4, 300, 'lin']],
-  sidepart: [[0, 350], [4.4, 350], [7.8, 800, 'in'], [7.81, -240], [10.9, GD.HOLE + 22, 'out'], [14.4, GD.HOLE + 22], [15.0, GD.HOLE, 'lin'], [31.2, GD.HOLE], [31.9, GD.HOLE + 22, 'lin'], [34.0, 384, 'lin'], [59.6, 384], [60, 350]],
+  redbeard: [[0, 88], [10.8, 88], [15.8, 800, 'in'], [15.81, -240], [20.0, 70, 'out'], [21, 88], [90.2, 88], [92.4, GD.HOLE - 20, 'lin'], [99.0, GD.HOLE - 20], [101.4, 88, 'lin']],
+  striped: [[0, 196], [34.0, 196], [36.8, GD.HOLE - 22, 'lin'], [49.4, GD.HOLE - 22], [53.6, 196, 'lin'], [122.4, 196], [124.4, 278, 'lin'], [127.5, 278], [129.5, 198, 'lin'], [135.9, 198],
+    [136.3, 184], [136.7, 206], [137.1, 188], [137.5, 208], [137.9, 190], [138.6, 198], [150, 196]],
+  kid: [[0, 152], [11.0, 152], [16.0, 800, 'in'], [16.01, -240], [20.6, 152, 'out'], [107.4, 152], [110.4, 252, 'lin'], [112.2, 252], [114.0, 800, 'in'], [114.01, -240], [116.2, 152, 'out']],
+  reporter: [[0, 226], [134.2, 226], [135.4, 212, 'lin'], [138.6, 212], [140, 226, 'lin']],
+  filmer: [[0, 302], [112.6, 302], [114.4, 800, 'in'], [114.41, -240], [117.4, 302, 'out']],
+  professor: [[0, 330], [122.8, 330], [124.4, 300, 'lin']],
+  sidepart: [[0, 370], [11.2, 370], [16.4, 800, 'in'], [16.41, -240], [22.5, 370, 'out'], [34.4, 370], [36.0, GD.HOLE + 22, 'lin'], [41.4, GD.HOLE + 22], [42.2, GD.HOLE, 'lin'], [95.4, GD.HOLE], [96.2, GD.HOLE + 22, 'lin'], [99.4, GD.HOLE + 22], [101.8, 370, 'lin']],
 };
 const GD_Y = { redbeard: 170, striped: 168, kid: 182, reporter: 172, filmer: 170, professor: 170, sidepart: 176 };
 // what each one does: [[t, pose, dir, face, expr]] (pose of coast-cast-actions.js, dir for sided poses, face -1|0|1)
 const GD_POSE = {
-  redbeard: [[0, 'pat', 1, 1], [3.3, 'flail', 0, 1], [3.8, null], [10.4, null, 0, 0, null], [11.2, 'pat', 1, 1], [25.4, 'applaud'], [27.2, null, 0, 0], [29.7, 'take', 1, 1], [30.2, 'pat', 1, 1], [31.4, 'hooray', 0, 0], [32.4, null, 0, 0], [35.0, 'pat', 1, 1], [45.1, 'applaud'], [46.6, 'pat', 1, 1], [52.2, 'hooray'], [54, 'pat', 1, 1], [56.2, 'hooray'], [58.2, 'pat', 1, 1]],
-  striped: [[0, null], [13.0, 'pat', 1, 1], [14.4, null, 0, 1], [15.3, 'pat', 1, 1], [17.6, null, 0, 1], [17.8, 'take', 1, 1], [18.5, null, 0, 0], [22, 'offer', 1, 1], [25.0, 'flail', 0, 1, 'ouch'], [25.6, 'applaud', 0, 1], [27.6, null],
-    [44.6, 'take', 1, 1], [45.1, 'applaud', 0, 1], [46.8, null], [51.9, 'hop', 0, 0, 'ouch'], [54.6, null, 0, 0, null], [56.4, 'hooray', 0, 0], [58.2, null]],
-  kid: [[0, null], [3.5, 'hooray'], [3.9, null], [10.6, 'hooray'], [11.4, null], [25.4, 'hooray'], [26.6, null], [35.0, 'throw'], [35.6, 'hooray'], [36.3, null], [40.4, null, 0, 1], [52.1, 'hooray'], [53.6, null], [56.4, 'hooray'], [58.2, null]],
-  reporter: [[0, 'mic', 0, 1], [25.0, 'flail', 0, 1, 'daze'], [26.6, 'mic', 0, 1, 'daze'], [30, 'mic', 0, 1, null], [50.2, null], [51.5, 'throw'], [52.2, 'applaud'], [54.6, 'mic', 0, 1], [56.4, 'hooray'], [58.2, 'mic', 0, 1]],
-  filmer: [[0, 'cam', 0, -1], [25.4, 'applaud', 0, -1], [27.4, 'cam', 0, -1], [35.7, 'flail', 0, -1, 'daze'], [36.8, null, 0, 0, 'daze'], [41.6, 'cam', 0, -1, 'daze'], [43, 'cam', 0, -1, null], [45.1, 'applaud'], [46.6, 'cam', 0, -1], [52.2, 'applaud'], [54, 'cam', 0, -1], [56.4, 'applaud'], [58.2, 'cam', 0, -1]],
-  professor: [[0, null, 0, 0], [42.2, 'point', -1, -1], [42.8, null], [47.2, 'point', 1, 1, 'serious'], [48.6, null, 0, 0, null], [56.4, 'hooray'], [58.2, null]],
-  sidepart: [[0, null], [11.2, 'pat', -1, -1], [14.4, null, 0, 0], [16.4, null, 0, 0, 'daze'], [18.4, null, 0, 0, null], [31.9, 'hooray', 0, 0], [32.9, null, 0, 0], [45.1, 'applaud'], [46.6, null], [52.2, 'applaud'], [54, null], [56.4, 'hooray'], [58.2, null]],
+  redbeard: [[0, 'pat', 1, 1], [10.2, 'flail', 0, 1], [10.8, null], [20.4, null, 0, 0, null], [21, 'pat', 1, 1], [67.4, 'applaud'], [69.2, 'pat', 1, 1], [90.0, null, 0, 0], [92.6, 'take', 1, 1],
+    [93.0, 'pat', 1, 1], [95.6, null, 0, 0], [96.2, 'hooray', 0, 0], [97.4, null, 0, 0], [101.4, 'pat', 1, 1], [125.1, 'applaud'], [126.6, 'pat', 1, 1], [136.2, 'hooray'], [138, 'pat', 1, 1], [142.4, 'hooray'], [144.2, 'pat', 1, 1]],
+  striped: [[0, null], [37.0, 'pat', 1, 1], [41.0, null, 0, 1], [43.4, 'pat', 1, 1], [46.6, null, 0, 1], [47.0, 'take', 1, 1], [48.8, null, 0, 0], [64.6, 'offer', 1, 1], [67.0, 'flail', 0, 1, 'ouch'],
+    [67.6, 'applaud', 0, 1], [69.6, null], [124.6, 'take', 1, 1], [125.1, 'applaud', 0, 1], [126.8, null], [135.9, 'hop', 0, 0, 'ouch'], [138.6, null, 0, 0, null], [142.4, 'hooray', 0, 0], [144.2, null]],
+  kid: [[0, null], [10.4, 'hooray'], [10.9, null], [20.8, 'hooray'], [21.6, null], [67.4, 'hooray'], [68.6, null], [110.8, 'throw'], [111.4, 'hooray'], [112.1, null], [116.2, null, 0, 1], [136.2, 'hooray'], [137.6, null], [142.4, 'hooray'], [144.2, null]],
+  reporter: [[0, 'mic', 0, 1], [67.0, 'flail', 0, 1, 'daze'], [68.6, 'mic', 0, 1, 'daze'], [72, 'mic', 0, 1, null], [81.0, null, 0, 0], [86.5, 'mic', 0, 1], [134.2, null], [135.5, 'throw'], [136.2, 'applaud'], [138.6, 'mic', 0, 1], [142.4, 'hooray'], [144.2, 'mic', 0, 1]],
+  filmer: [[0, 'cam', 0, -1], [67.4, 'applaud', 0, -1], [69.4, 'cam', 0, -1], [82, null, 0, 0], [86.5, 'cam', 0, -1], [111.5, 'flail', 0, -1, 'daze'], [112.6, null, 0, 0, 'daze'], [117.4, 'cam', 0, -1, 'daze'], [119, 'cam', 0, -1, null],
+    [125.1, 'applaud'], [126.6, 'cam', 0, -1], [136.2, 'applaud'], [138, 'cam', 0, -1], [142.4, 'applaud'], [144.2, 'cam', 0, -1]],
+  professor: [[0, null, 0, 0], [122.2, 'point', -1, -1], [122.8, null], [127.2, 'point', 1, 1, 'serious'], [128.6, null, 0, 0, null], [142.4, 'hooray'], [144.2, null]],
+  sidepart: [[0, null], [37.0, 'pat', -1, -1], [41.0, null, 0, 0], [45.0, null, 0, 0, 'daze'], [46.8, null, 0, 0, null], [96.2, 'hooray', 0, 0], [97.4, null, 0, 0], [125.1, 'applaud'], [126.6, null], [136.2, 'applaud'], [138, null], [142.4, 'hooray'], [144.2, null]],
 };
-// the timed lines: [t, speaker, text, seconds, quiet]
+// the timed lines: [t, speaker, text, seconds, quiet] (a bubble shows only while its speaker is in the picture)
 const GD_LINES = [
-  [1.0, 'reporter', 'Mimo, wie gefällt dir die Party?', 2.0], [3.0, 'mimo', 'Piep!', 1.0], [3.4, 'redbeard', 'Mein Würstchen!', 1.6], [8.4, 'kid', 'Da ist er wieder!', 1.4], [10.4, 'redbeard', 'Na gut. Dann eben das nächste.', 2.0],
-  [11.4, 'striped', 'Caspar, wir buddeln ein Loch!', 1.8], [13.4, 'sidepart', 'Noch tiefer?', 1.2], [14.6, 'sidepart', 'Passt genau!', 1.3], [15.8, 'striped', 'Hihi …', 1.0], [16.6, 'sidepart', 'Äh … Julian?', 1.4], [18.4, 'striped', 'Psst!', 1.0], [19.4, 'sidepart', 'Hilfe … hilfe …', 1.6, true], [23.2, 'sidepart', 'Hilfe …', 1.4, true],
-  [22.8, 'striped', 'Hmpf! Die klemmt.', 1.6], [25.3, 'striped', 'Ups!', 1.0], [26.8, 'reporter', 'Live vom Grillfest … mit Ketchup.', 2.4],
-  [26.6, 'sidepart', 'Hilfe … hilfe …', 1.4, true], [27.7, 'redbeard', 'Ich komme, Caspar!', 1.6], [32.0, 'sidepart', 'Danke!', 1.4], [33.4, 'kid', 'Pssst …', 1.4], [36.0, 'filmer', 'Na warte!', 1.4], [40.6, 'kid', '♪ Pfeif …', 1.6], [41.7, 'filmer', 'Wo ist er hin?', 1.6],
-  [42.2, 'professor', 'Ich setz mich mal kurz.', 1.6], [45.3, 'striped', 'Hoppla!', 1.2], [47.3, 'professor', 'Sehr witzig, Julian.', 1.8],
-  [52.0, 'striped', 'Iiiih! Kalt!', 1.8], [52.9, 'reporter', 'Rache!', 1.2], [53.2, 'mimo', 'Piep piep!', 1.2],
-  [56.2, 'redbeard', 'Die Würstchen sind fertig!', 1.8], [57.4, 'mimo', 'Piep!', 1.0],
+  [10.2, 'redbeard', 'Mein Würstchen!', 1.8], [17.4, 'kid', 'Da ist er wieder!', 1.6], [21.2, 'redbeard', 'Na gut. Dann eben das nächste.', 2.2],
+  [26.0, 'reporter', 'Mimo, wie gefällt dir die Party?', 2.4], [28.6, 'mimo', 'Piep!', 1.0],
+  [34.2, 'striped', 'Caspar! Wir buddeln ein Loch!', 2.0], [39.0, 'sidepart', 'Noch tiefer?', 1.4], [40.2, 'striped', 'Viel tiefer!', 1.2], [42.6, 'sidepart', 'Passt genau!', 1.4],
+  [45.0, 'sidepart', 'Äh … Julian?', 1.6], [46.8, 'striped', 'Hihi.', 1.0], [49.0, 'striped', 'Psst!', 1.0],
+  [65.0, 'striped', 'Hmpf! Die klemmt.', 1.8], [67.3, 'striped', 'Ups!', 1.0], [68.8, 'reporter', 'Live vom Grillfest … mit Ketchup.', 2.6],
+  [81.0, 'reporter', 'Sagt mal … wo ist eigentlich Caspar?', 2.4], [84.4, 'filmer', 'Keine Ahnung.', 1.4], [85.8, 'sidepart', 'Hilfe … hilfe …', 1.8, true], [88.0, 'sidepart', 'Hilfe …', 1.6, true],
+  [89.8, 'mimo', 'Piep piep piep!', 1.6], [90.0, 'redbeard', 'Caspar?!', 1.2], [96.4, 'sidepart', 'Danke!', 1.4], [97.6, 'redbeard', 'Wer war das denn?', 1.6], [98.6, 'sidepart', 'Ich hab da so eine Ahnung …', 2.0],
+  [108.0, 'kid', 'Pssst …', 1.4], [111.8, 'filmer', 'Na warte!', 1.4], [116.4, 'kid', '♪ Pfeif …', 1.6], [117.6, 'filmer', 'Wo ist er hin?', 1.6],
+  [122.2, 'professor', 'Ich setz mich mal kurz.', 1.6], [125.3, 'striped', 'Hoppla!', 1.2], [127.3, 'professor', 'Sehr witzig, Julian.', 1.8],
+  [136.0, 'striped', 'Iiiih! Kalt!', 1.8], [136.9, 'reporter', 'Rache!', 1.2], [137.2, 'mimo', 'Piep piep!', 1.2],
+  [142.2, 'redbeard', 'Die Würstchen sind fertig!', 1.8], [143.4, 'mimo', 'Piep!', 1.0],
 ];
 const GD_SAY = {
   redbeard: ['Wer will noch eins?', 'Medium oder durch?', 'Finger weg vom Grill!'], striped: ['Ich war das nicht!', 'Hihi.', 'Ich hab da eine Idee …'],
@@ -6030,15 +6037,17 @@ const GD_SAY = {
 };
 // the props the hands hold: [[t, name | null, hand]]
 const GD_HOLD = {
-  striped: [[0, null], [11.2, 'spade', 'r'], [17.6, null], [22, 'ketchup', 'r'], [27.6, null]],
-  sidepart: [[0, null], [10.9, 'spade', 'r'], [14.4, null]],
-  kid: [[0, null], [32.2, 'balloon', 'r'], [35.25, null]],
-  reporter: [[0, null], [50.2, 'ice', 'r'], [51.8, null], [54.6, null]],
+  striped: [[0, null], [34.0, 'spade', 'r'], [46.6, null], [64.0, 'ketchup', 'r'], [69.6, null]],
+  sidepart: [[0, null], [34.4, 'spade', 'r'], [41.0, null]],
+  kid: [[0, null], [107.0, 'balloon', 'r'], [111.05, null]],
+  reporter: [[0, null], [134.2, 'ice', 'r'], [135.8, null]],
 };
-const GD_FOCUS = [[0, 150], [3.4, 150], [6.6, 470, 'lin'], [6.9, 470], [7.5, 110, 'out'], [10.5, 150], [11.4, 160], [13.4, 425], [18.8, 425], [21.6, 210], [27.6, 215], [29.0, 420], [32.6, 420], [33.4, 230], [34.6, 260], [36.6, 280],
-  [38.2, 470, 'lin'], [38.5, 470], [39.2, 120, 'out'], [41.2, 230], [42.2, 290], [49.6, 280], [50.6, 210], [55.6, 220], [59, 200], [60, 150]];
-const GD_DOG = [[0, 134], [3.3, 134], [6.6, 800, 'in'], [6.61, -240], [9.6, 140, 'out'], [11, 134]];
-const GD_MIMO = [[0, 250], [4.2, 250], [7.6, 800, 'in'], [7.61, -240], [10.8, 250, 'out']];
+// the camera (upright screens): slow drives through the garden in the quiet parts, to each prank before it starts
+const GD_FOCUS = [[0, 150], [5, 300], [10, 160], [10.6, 160], [14.8, 470, 'lin'], [15.6, 470], [17.2, 110], [21, 160], [26, 230], [31, 300], [34.6, 420], [49.4, 420], [54, 230],
+  [58.5, 120], [63, 215], [73, 215], [77, 310], [81, 230], [85.4, 230], [89.0, 425], [99.0, 425], [102.5, 230], [105, 160], [107.5, 220], [110.4, 260], [112.2, 260], [114.0, 470, 'lin'], [114.6, 470],
+  [116.0, 120], [117.8, 230], [120, 230], [122, 290], [129.5, 290], [133, 210], [140, 210], [142, 190], [146, 190], [150, 150]];
+const GD_DOG = [[0, 134], [10.3, 134], [14.8, 800, 'in'], [14.81, -240], [19.0, 140, 'out'], [20, 134]];
+const GD_MIMO = [[0, 250], [11.4, 250], [16.6, 800, 'in'], [16.61, -240], [21.5, 250, 'out'], [86.4, 250], [89.6, GD.HOLE - 48, 'lin'], [99.0, GD.HOLE - 48], [102.0, 250, 'lin']];
 let ms = null;
 function startMenuScene() {
   const cv = $('menuScene'), C = window.MimoCoast;
@@ -6074,7 +6083,7 @@ function menuSceneFit(cw, ch) {
 function gdCamera(cw, s, t, dt) {
   const half = cw / s / 2, want = Math.max(half, Math.min(GD.W - half, gdAt(GD_FOCUS, t)));
   const x = half * 2 >= GD.W ? GD.W / 2 : want;
-  if (ms.cam == null || dt > 0.5) ms.cam = x; else ms.cam += (x - ms.cam) * Math.min(1, dt * 5);
+  if (ms.cam == null || dt > 0.5) ms.cam = x; else ms.cam += (x - ms.cam) * Math.min(1, dt * 1.6);   // soft: the drives are calm
   return ms.cam;
 }
 const gdWho = (who) => ms.cast && ms.cast.find((c) => c.who === who);
@@ -6086,11 +6095,11 @@ function gdHead(c) {
 function gdHand(c, k) { const h = c.p ? c.p.hand(k || 'r', 1) : [0, -26]; return [c.x + h[0], c.y + h[1]]; }
 // the sandbox: how deep the hole is (0..1), how big the pile next to it, how far Caspar stands in it (units his feet are
 // below the sand) and how high the sand is filled in around him (units above the sand, up to his neck)
-const gdHole = (t) => gdAt([[0, 0], [11.4, 0], [14.3, 1, 'lin'], [15.3, 1], [17.4, 0, 'lin'], [30.2, 0], [31.2, 1, 'lin'], [59.8, 1], [60, 0]], t);
-const gdPile = (t) => gdAt([[0, 0.15], [11.4, 0.15], [14.3, 1, 'lin'], [15.3, 1], [17.4, 0.2, 'lin'], [30.2, 0.2], [31.2, 1, 'lin'], [59.8, 1], [60, 0.15]], t);
-const gdSink = (t) => gdAt([[0, 0], [14.7, 0], [15.2, 21], [31.0, 21], [31.7, 0]], t);
-const gdFill = (t) => gdAt([[0, 0], [15.3, 0], [17.4, 12, 'lin'], [30.2, 12], [31.1, 0, 'lin']], t);
-const gdFallen = (t) => (gdIn(t, 44.85, 47.2) ? (t < 45.05 ? (t - 44.85) / 0.2 : t > 46.9 ? (47.2 - t) / 0.3 : 1) : 0);
+const gdHole = (t) => gdAt([[0, 0], [37.0, 0], [41.0, 1, 'lin'], [43.4, 1], [46.6, 0, 'lin'], [93.6, 0], [95.6, 1, 'lin'], [149.8, 1], [150, 0]], t);
+const gdPile = (t) => gdAt([[0, 0.15], [37.0, 0.15], [41.0, 1, 'lin'], [43.4, 1], [46.6, 0.2, 'lin'], [93.6, 0.2], [95.6, 1, 'lin'], [149.8, 1], [150, 0.15]], t);
+const gdSink = (t) => gdAt([[0, 0], [41.7, 0], [42.4, 21], [95.4, 21], [96.2, 0]], t);
+const gdFill = (t) => gdAt([[0, 0], [43.4, 0], [46.6, 12, 'lin'], [93.6, 12], [95.2, 0, 'lin']], t);
+const gdFallen = (t) => (gdIn(t, 124.85, 127.2) ? (t < 125.05 ? (t - 124.85) / 0.2 : t > 126.9 ? (127.2 - t) / 0.3 : 1) : 0);
 function msStep(dt, t) {
   for (const c of ms.cast || []) {
     if (!c.p) { c.p = window.MimoCoast.puppet(c.who, c.seed); if (!c.p) continue; }
@@ -6099,23 +6108,25 @@ function msStep(dt, t) {
     const pose = tap ? null : ps[1], face = ps[3] || 0;
     c.p.fig.expr = ps[4] || null;
     c.p.fig.holdProp = hold && hold[1] ? { name: hold[1], hand: hold[2] || 'r', upright: true } : null;
-    c.p.fig.asleep = c.who === 'professor' && t < 42.2;
-    if (c.who === 'sidepart') { c.y = gdIn(t, 10.9, 33.4) ? GD.SAND - 1 + gdSink(t) : GD_Y.sidepart; c.sunk = gdSink(t) > 0.5 || gdFill(t) > 0; }
+    c.p.fig.asleep = c.who === 'professor' && t < 122.2;
+    if (c.who === 'sidepart') { c.y = gdIn(t, 34.4, 101.8) ? GD.SAND - 1 + gdSink(t) : GD_Y.sidepart; c.sunk = gdSink(t) > 0.5 || gdFill(t) > 0; }
     let look = ms.mimoX - c.x;
-    if (c.who === 'professor' && t < 42.2) look = undefined;
-    if (gdIn(t, 3.3, 11)) look = ms.dogX - c.x;
+    if (c.who === 'professor' && t < 122.2) look = undefined;
+    if (gdIn(t, 10.0, 21)) look = ms.dogX - c.x;
+    // "Wo ist eigentlich Caspar?": everyone looks around
+    if (gdIn(t, 82.0, 85.8) && c.who !== 'sidepart') look = Math.sin((t - 82) * 2.1 + c.seed) * 90;
     c.p.step(dt, c.x, { face, look, pose, poseOpts: { dir: ps[2] || 1 }, idle: !pose && c.who !== 'sidepart', amp: 0.3 });
   }
   const d = ms.dog;
   if (d) {
     const x0 = ms.dogX, x = gdAt(GD_DOG, t), v = (x - x0) / Math.max(dt, 1e-3), moving = Math.abs(v) > 8 && Math.abs(v) < 2000;
     d.setMove(moving ? Math.sign(v) : 0, Math.abs(v) > 140 ? 'run' : 'trot'); if (moving) d.dir = Math.sign(v);
-    if (!moving) { d.dir = 1; d.setPose(t < 3.3 || t > 11 ? 'sit' : 'stand'); d.lookAt = t < 3.3 ? -22 : ms.mimoX - x; }
-    d.carry = gdIn(t, 3.3, 10.2) ? 'sausage' : null;
+    if (!moving) { d.dir = 1; d.setPose(t < 10.05 || t > 20 ? 'sit' : 'stand'); d.lookAt = t < 10.05 ? -22 : ms.mimoX - x; }
+    d.carry = gdIn(t, 10.25, 19.2) ? 'sausage' : null;
     d.carryDraw = d.carry ? (g, cx, cy) => gdSausage(g, cx, cy, 0.2, ms.pal) : null;
-    if (gdIn(t, 3.05, 3.3) && !ms.dogJumped) { ms.dogJumped = true; d.jump(0.9); }
-    if (t < 3) ms.dogJumped = false;
-    if (t > 10.2 && t < 11.5) d.happy(1);
+    if (gdIn(t, 10.05, 10.3) && !ms.dogJumped) { ms.dogJumped = true; d.jump(0.9); }
+    if (t < 10) ms.dogJumped = false;
+    if (t > 19.2 && t < 20.5) d.happy(1);
     d.posX = 0; d.update(dt); d.posX = 0;
     ms.dogX = x;
   }
@@ -6125,7 +6136,7 @@ function menuSceneFrame(now) {
   if (!ms) return;
   if ($('ovMenu').hidden) { ms.raf = 0; return; }
   const dt = Math.min(0.05, Math.max(0, (now - ms.last) / 1000)); ms.last = now; ms.now = now / 1000;
-  const still = reduced(), t = still ? 2.4 : ((now - ms.t0) / 1000) % GD.LOOP;
+  const still = reduced(), t = still ? 26.5 : ((now - ms.t0) / 1000) % GD.LOOP;
   ms.lastT = t;
   if (ms.dogX == null) ms.dogX = gdAt(GD_DOG, t);
   if (ms.mimoX == null) ms.mimoX = gdAt(GD_MIMO, t);
@@ -6194,8 +6205,8 @@ function drawGdWorld(c, t, now, s, ox, oy, cx, canopy) {
   c.fillStyle = pal.woodInk; c.fillRect(T.x - 22, T.y - 18, 3, 18); c.fillRect(T.x + 19, T.y - 18, 3, 18);
   c.fillStyle = pal.cloth; c.fillRect(T.x - 26, T.y - 23, 52, 6);
   c.fillStyle = pal.leaf; c.beginPath(); c.ellipse(T.x - 10, T.y - 24, 8, 4.5, 0, Math.PI, 0); c.fill();
-  if (!gdIn(t, 22, 27.6)) { c.fillStyle = pal.ketchup; c.beginPath(); c.roundRect ? c.roundRect(T.x + 8, T.y - 33, 5, 10, 2) : c.rect(T.x + 8, T.y - 33, 5, 10); c.fill(); }
-  const chairX = GD.CHAIR.x + gdAt([[0, 0], [44.6, 0], [44.85, -22, 'out'], [59.6, -22], [60, 0]], t);
+  if (!gdIn(t, 64, 69.6)) { c.fillStyle = pal.ketchup; c.beginPath(); c.roundRect ? c.roundRect(T.x + 8, T.y - 33, 5, 10, 2) : c.rect(T.x + 8, T.y - 33, 5, 10); c.fill(); }
+  const chairX = GD.CHAIR.x + gdAt([[0, 0], [124.6, 0], [124.85, -22, 'out'], [149.6, -22], [150, 0]], t);
   drawGdChair(c, chairX, GD.CHAIR.y, pal);
   drawGdSandbox(c, pal);
   // everyone, back to front (Caspar in the hole is drawn cut off at the sand, with the sand around him)
@@ -6206,21 +6217,23 @@ function drawGdWorld(c, t, now, s, ox, oy, cx, canopy) {
     if (k.x < X0 - 40 || k.x > X1 + 40) continue;
     if (k.who === 'professor' && gdFallen(t) > 0) { drawGdFallen(c, k, gdFallen(t), pal); continue; }
     if (k.who === 'sidepart' && k.sunk) { drawGdSunk(c, k, t, now, pal); continue; }
-    const hop = k.who === 'striped' && gdIn(t, 51.9, 54.6) ? Math.abs(Math.sin((t - 51.9) * 7)) * 7 : 0;
+    const hop = k.who === 'striped' && gdIn(t, 135.9, 138.6) ? Math.abs(Math.sin((t - 135.9) * 7)) * 7 : 0;
     k.p.draw(c, k.x, k.y - hop, { scale: 1 });
-    if (k.who === 'filmer' && gdIn(t, 35.7, 43)) drawGdDrips(c, k, now, pal, t < 41 ? 1 : (43 - t) / 2);
-    if (k.who === 'reporter' && gdIn(t, 25.35, 31)) drawGdKetchupFace(c, k, pal, t < 29.5 ? 1 : (31 - t) / 1.5);
+    if (k.who === 'filmer' && gdIn(t, 111.5, 119)) drawGdDrips(c, k, now, pal, t < 117 ? 1 : (119 - t) / 2);
+    if (k.who === 'reporter' && gdIn(t, 67.35, 74)) drawGdKetchupFace(c, k, pal, t < 72.5 ? 1 : (74 - t) / 1.5);
   }
   drawGdHole(c, t, now, pal, true);
   // the dog and Mimo in front
   if (ms.dog && ms.dogX > X0 - 40 && ms.dogX < X1 + 40) ms.dog.draw(c, ms.dogX, GD.FRONT + 4, 1);
-  const running = gdIn(t, 4.2, 10.8);
-  const hop = Math.max(running ? Math.abs(Math.sin(t * 9)) * 8 : 0, gdIn(t, 2.9, 3.4) ? Math.sin((t - 2.9) / 0.5 * Math.PI) * 10 : 0, gdIn(t, 53.2, 54.2) ? Math.abs(Math.sin((t - 53.2) * 9)) * 9 : 0, gdIn(t, 56.4, 58) ? Math.abs(Math.sin((t - 56.4) * 8)) * 10 : 0,
+  const mv = gdAt(GD_MIMO, t + 0.05) - ms.mimoX, running = Math.abs(mv) > 0.05 && Math.abs(mv) < 30;
+  const hop = Math.max(running ? Math.abs(Math.sin(t * 9)) * 8 : 0, gdIn(t, 28.4, 28.9) ? Math.sin((t - 28.4) / 0.5 * Math.PI) * 10 : 0, gdIn(t, 89.8, 91.2) ? Math.abs(Math.sin((t - 89.8) * 10)) * 9 : 0,
+    gdIn(t, 137.2, 138.2) ? Math.abs(Math.sin((t - 137.2) * 9)) * 9 : 0, gdIn(t, 142.4, 144) ? Math.abs(Math.sin((t - 142.4) * 8)) * 10 : 0,
     now - ms.mimoHop < 0.5 ? Math.sin((now - ms.mimoHop) / 0.5 * Math.PI) * 16 : 0);
+  ms.mimoFace = running ? Math.sign(mv) : gdIn(t, 89.6, 99) ? 1 : ms.dogX > ms.mimoX && t < 21 ? 1 : -1;
   if (ms.mimoX > X0 - 30 && ms.mimoX < X1 + 30) {
     const saved = ctx; ctx = c;
     c.save(); c.translate(ms.mimoX, GD.FRONT + 4 - hop); c.scale(1.3, 1.3);
-    drawMimo(0, 0, { facing: running || ms.dogX > ms.mimoX ? 1 : -1, mood: hop > 1 || gdIn(t, 25.4, 27) || gdIn(t, 45.1, 46.6) || gdIn(t, 52, 54.6) ? 'happy' : null, sx: hop > 1 ? 0.94 : 1, sy: hop > 1 ? 1.06 : 1,
+    drawMimo(0, 0, { facing: ms.mimoFace, mood: hop > 1 || gdIn(t, 67.4, 69) || gdIn(t, 125.1, 126.6) || gdIn(t, 136, 138.6) || gdIn(t, 96.2, 97.6) ? 'happy' : gdIn(t, 89.6, 92.6) ? 'scared' : null, sx: hop > 1 ? 0.94 : 1, sy: hop > 1 ? 1.06 : 1,
       breathe: Math.sin(now * 3) * 0.025, blink: (now % 3.7) > 3.55 ? 0.12 : 1 });
     c.restore(); ctx = saved;
     c.setTransform(s, 0, 0, s, ox, oy);
@@ -6230,7 +6243,7 @@ function drawGdWorld(c, t, now, s, ox, oy, cx, canopy) {
   drawMsGull(c, GD.POST.x, GD.POST.y, now, false, -1, !!ms.taps.gull && now - ms.taps.gull.at < 0.6);
   // the professor's sleep
   const P = gdWho('professor');
-  if (P && t < 42.2) for (let i = 0; i < 3; i++) { const k = ((now * 0.5 + i / 3) % 1); c.globalAlpha = Math.sin(k * Math.PI); c.fillStyle = pal.z; c.font = '600 ' + (6 + k * 5) + "px 'Fredoka', 'Nunito', system-ui, sans-serif"; c.fillText('z', P.x + 6 + k * 12, P.y - 62 - k * 16); }
+  if (P && t < 122.2) for (let i = 0; i < 3; i++) { const k = ((now * 0.5 + i / 3) % 1); c.globalAlpha = Math.sin(k * Math.PI); c.fillStyle = pal.z; c.font = '600 ' + (6 + k * 5) + "px 'Fredoka', 'Nunito', system-ui, sans-serif"; c.fillText('z', P.x + 6 + k * 12, P.y - 62 - k * 16); }
   c.globalAlpha = 1;
   // a tall screen has sky to spare: leaves of the garden's trees hang in from the top with a string of bunting
   if (canopy && Y0 < 30) drawGdCanopy(c, X0, X1, Y0, now, pal, Math.max(0, 40 - Y0));
@@ -6241,14 +6254,14 @@ function drawGdWorld(c, t, now, s, ox, oy, cx, canopy) {
 function drawGdTalk(c, t, now, xr) {
   const pal = ms.pal, mine = (x) => !xr || (x >= xr[0] && x < xr[1]);
   const pop = { ink: pal.ink, pop: '#FFFFFF' }, newsPop = (cc, text, x, y, k, rot, size, pl) => { if (mine(x)) newsPopBase(cc, text, x, y, k, rot, size * Math.min(1, 2.4 / ms.unitPx), pl); };
-  newsPop(c, 'Plopp!', GD.GRILL.x + 6, GD.GRILL.y - 38, (t - 3.0) / 0.9, -0.12, 13, pop);
-  newsPop(c, 'Mampf!', 150, 160, (t - 10.0) / 1.1, 0.1, 13, pop);
-  newsPop(c, 'SPLATSCH!', 246, 112, (t - 25.3) / 1.0, -0.1, 14, { ink: pal.ink, pop: '#FFB3A8' });
-  newsPop(c, 'Platsch!', 300, 108, (t - 35.7) / 1.0, 0.1, 14, { ink: pal.ink, pop: '#BFE8FA' });
-  newsPop(c, 'Plumps!', 290, 150, (t - 45.0) / 1.2, -0.1, 15, pop);
-  newsPop(c, 'Buddel buddel!', GD.HOLE - 4, 150, (t - 11.6) / 1.6, -0.08, 12, pop);
-  newsPop(c, 'Schipp schipp!', GD.HOLE + 40, 162, (t - 15.6) / 1.4, 0.08, 12, pop);
-  newsPop(c, 'Buddel buddel!', GD.HOLE - 10, 148, (t - 30.2) / 1.2, 0.08, 12, pop);
+  newsPop(c, 'Plopp!', GD.GRILL.x + 6, GD.GRILL.y - 38, (t - 10.0) / 0.9, -0.12, 13, pop);
+  newsPop(c, 'Mampf!', 150, 160, (t - 19.2) / 1.1, 0.1, 13, pop);
+  newsPop(c, 'SPLATSCH!', 246, 112, (t - 67.3) / 1.0, -0.1, 14, { ink: pal.ink, pop: '#FFB3A8' });
+  newsPop(c, 'Platsch!', 300, 108, (t - 111.5) / 1.0, 0.1, 14, { ink: pal.ink, pop: '#BFE8FA' });
+  newsPop(c, 'Plumps!', 290, 150, (t - 125.0) / 1.2, -0.1, 15, pop);
+  newsPop(c, 'Buddel buddel!', GD.HOLE - 4, 150, (t - 37.4) / 1.8, -0.08, 12, pop);
+  newsPop(c, 'Schipp schipp!', GD.HOLE + 40, 162, (t - 43.8) / 1.6, 0.08, 12, pop);
+  newsPop(c, 'Buddel buddel!', GD.HOLE - 10, 148, (t - 93.8) / 1.4, 0.08, 12, pop);
   const flare = now - ms.flare < 1.2 ? 1 - (now - ms.flare) / 1.2 : 0;
   if (flare) newsPop(c, 'Fauch!', GD.GRILL.x - 4, GD.GRILL.y - 46, 1 - flare, -0.1, 13, { ink: pal.ink, pop: '#FFE08F' });
   for (const [a, who, text, dur, quiet] of GD_LINES) if (t >= a && t < a + dur) { if (mine(msAnchor(who)[0])) drawMsBubble(c, who, text, pal, t - a, dur, quiet); }
@@ -6306,7 +6319,7 @@ function drawGdHole(c, t, now, pal, front) {
     c.beginPath(); c.moveTo(px - pw, Y + 2); c.quadraticCurveTo(px - pw * 0.5, Y + 2 - ph * 1.3, px, Y + 2 - ph); c.quadraticCurveTo(px + pw * 0.5, Y + 2 - ph * 1.3, px + pw, Y + 2); c.closePath(); c.fill(); c.stroke();
     c.fillStyle = pal.sandInk; for (let i = 0; i < 4; i++) { c.beginPath(); c.arc(px - pw * 0.5 + i * pw * 0.33, Y - ph * 0.35 + (i % 2), 0.8, 0, Math.PI * 2); c.fill(); }
     // the towel after the rescue: thrown down next to the pile
-    if (t >= 30.9) drawGdTowelFlat(c, X + 58, Y + 3, pal);
+    if (t >= 93.5) drawGdTowelFlat(c, X + 58, Y + 3, pal);
     return;
   }
   // the sand filled in around him: a mound up to his neck
@@ -6317,7 +6330,7 @@ function drawGdHole(c, t, now, pal, front) {
     c.fillStyle = pal.sandInk; for (let i = 0; i < 6; i++) { c.beginPath(); c.arc(X - w + 4 + i * (w * 2 - 8) / 5, Y - fill * (0.3 + 0.25 * (i % 2)), 0.8, 0, Math.PI * 2); c.fill(); }
   }
   // flying sand: out of the hole onto the pile while they dig, back from the pile while Julian fills, out again at the rescue
-  const toPile = gdIn(t, 11.4, 14.3) || gdIn(t, 30.2, 31.2), fromPile = gdIn(t, 15.3, 17.4);
+  const toPile = gdIn(t, 37.0, 41.0) || gdIn(t, 93.6, 95.6), fromPile = gdIn(t, 43.4, 46.6);
   if (toPile || fromPile) {
     c.fillStyle = pal.sandInk;
     for (let i = 0; i < 12; i++) {
@@ -6331,11 +6344,12 @@ function drawGdHole(c, t, now, pal, front) {
   if (!C || !C.p) return;
   const h = gdHead(C), base = Y - fill;
   const calling = GD_LINES.some(([a, who, , d]) => who === 'sidepart' && t >= a && t < a + d) || (ms.taps.sidepart && now - ms.taps.sidepart.at < 1.6);
-  if (gdIn(t, 17.6, 17.9) && J) { const p = gdHand(J, 'r'); gdTowel(c, p[0], p[1] - 3, 12, 7, 0.25, pal); }
-  else if (gdIn(t, 17.9, 18.5)) { const k = gdEase.io((t - 17.9) / 0.6), p = J ? gdHand(J, 'r') : [X - 20, Y - 30]; if (k < 0.85) gdTowel(c, p[0] + (h[0] - p[0]) * k, p[1] + (h[1] - 8 - p[1]) * k - Math.sin(k * Math.PI) * 12, 12 + 16 * k, 7 + 6 * k, 0.25 * (1 - k), pal); else drawGdTowelTent(c, h, base, now, pal, calling, (k - 0.85) / 0.15); }
-  else if (gdIn(t, 18.5, 29.8)) drawGdTowelTent(c, h, base, now, pal, calling, 1);
-  else if (gdIn(t, 29.8, 30.5) && R) { const p = gdHand(R, 'r'); gdTowel(c, p[0], p[1] - 3, 14, 8, 0.4, pal); }
-  else if (gdIn(t, 30.5, 30.9)) { const k = (t - 30.5) / 0.4, p = R ? gdHand(R, 'r') : [X - 20, Y - 30]; gdTowel(c, p[0] + (X + 58 - p[0]) * k, p[1] + (Y + 1 - p[1]) * k - Math.sin(k * Math.PI) * 22, 14 + 6 * k, 8 - 4 * k, 0.4 + k * 5, pal); }
+  // 47.0 Julian holds the towel up, 47.8 he carries it over Caspar, 48.2 it sinks over the head down to the sand
+  if (gdIn(t, 47.0, 47.8) && J) { const p = gdHand(J, 'r'); gdTowel(c, p[0] + 4, p[1] + 4, 22, 13, 0.1, pal); }
+  else if (gdIn(t, 47.8, 48.2)) { const k = gdEase.io((t - 47.8) / 0.4), p = J ? gdHand(J, 'r') : [X - 20, Y - 30]; gdTowel(c, p[0] + 4 + (h[0] - p[0] - 4) * k, p[1] + 4 + (h[1] - 16 - p[1] - 4) * k, 22 + 12 * k, 13 - 9 * k, 0.1 * (1 - k), pal); }
+  else if (gdIn(t, 48.2, 92.6)) drawGdTowelTent(c, h, base, now, pal, calling, gdEase.out(Math.min(1, (t - 48.2) / 0.8)));
+  else if (gdIn(t, 92.6, 93.0) && R) { const p = gdHand(R, 'r'); gdTowel(c, p[0], p[1] - 3, 16, 10, 0.4, pal); }
+  else if (gdIn(t, 93.0, 93.5)) { const k = (t - 93.0) / 0.5, p = R ? gdHand(R, 'r') : [X - 20, Y - 30]; gdTowel(c, p[0] + (X + 58 - p[0]) * k, p[1] + (Y + 1 - p[1]) * k - Math.sin(k * Math.PI) * 22, 16 + 6 * k, 10 - 6 * k, 0.4 + k * 5, pal); }
 }
 // Caspar standing in the hole: only what is above the sand (or above the filled-in sand) shows
 function drawGdSunk(c, k, t, now, pal) {
@@ -6345,14 +6359,21 @@ function drawGdSunk(c, k, t, now, pal) {
   c.restore();
 }
 // the towel over his head: a striped tent from the top of the head down to the sand, it wobbles when he calls
-function drawGdTowelTent(c, h, base, now, pal, calling, a) {
-  const wob = calling ? Math.sin(now * 16) * 1.2 : Math.sin(now * 1.6) * 0.3, top = h[1] - 10 + wob, x = h[0];
-  c.save(); c.globalAlpha = a;
-  c.beginPath(); c.moveTo(x - 15, base + 1); c.quadraticCurveTo(x - 13, top + 6, x - 5, top + 1); c.quadraticCurveTo(x, top - 1, x + 5, top + 1); c.quadraticCurveTo(x + 13, top + 6, x + 15, base + 1);
-  c.quadraticCurveTo(x, base + 3, x - 15, base + 1); c.closePath(); c.save(); c.clip();
-  for (let i = 0; i < 6; i++) { c.fillStyle = pal.towel[i % 2]; c.fillRect(x - 16 + i * 32 / 6, top - 4, 32 / 6 + 0.3, base - top + 8); }
-  c.restore(); c.strokeStyle = pal.ink; c.globalAlpha = 0.3 * a; c.lineWidth = 0.6; c.stroke();
-  c.globalAlpha = 0.18 * a; c.fillStyle = pal.ink; c.beginPath(); c.ellipse(x, base + 1.5, 15, 1.6, 0, 0, Math.PI * 2); c.fill();
+function drawGdTowelTent(c, h, base, now, pal, calling, drop) {
+  const wob = calling ? Math.sin(now * 16) * 1.3 : Math.sin(now * 1.6) * 0.3, top = h[1] - 15 + wob, x = h[0], w = 18;
+  const bot = top + (base + 1 - top) * drop, sw = (calling ? Math.sin(now * 11) * 1.2 : 0);
+  c.save();
+  // the outline: a rounded top over the head, the sides falling straight down to the sand, a wavy hem
+  c.beginPath(); c.moveTo(x - w + sw, bot); c.lineTo(x - w + 2 + sw * 0.5, top + 10); c.quadraticCurveTo(x - w + 3, top + 1, x - 7, top);
+  c.quadraticCurveTo(x, top - 2.5, x + 7, top); c.quadraticCurveTo(x + w - 3, top + 1, x + w - 2 + sw * 0.5, top + 10); c.lineTo(x + w + sw, bot);
+  for (let i = 4; i >= 0; i--) c.quadraticCurveTo(x - w + sw + (i + 0.5) * w * 0.4, bot + (i % 2 ? 1.8 : -0.6), x - w + sw + i * w * 0.4, bot);
+  c.closePath();
+  c.save(); c.clip();
+  for (let i = 0; i < 7; i++) { c.fillStyle = pal.towel[i % 2]; c.fillRect(x - w - 3 + i * (w * 2 + 6) / 7, top - 5, (w * 2 + 6) / 7 + 0.3, bot - top + 9); }
+  c.fillStyle = 'rgba(40,40,80,0.10)'; c.fillRect(x - w - 3, top - 5, 7, bot - top + 9); c.fillRect(x + w - 4, top - 5, 7, bot - top + 9);   // a little shading at the sides
+  c.restore();
+  c.strokeStyle = pal.ink; c.globalAlpha = 0.35; c.lineWidth = 0.7; c.stroke();
+  c.globalAlpha = 0.16; c.fillStyle = pal.ink; c.beginPath(); c.ellipse(x, base + 1.8, w + 2, 1.8, 0, 0, Math.PI * 2); c.fill();
   c.restore();
 }
 function drawGdTowelFlat(c, x, y, pal) {
@@ -6386,25 +6407,25 @@ function drawGdKetchupFace(c, k, pal, a) {
 // the flying things of the pranks: the ketchup jet, the water bomb, the ice cube, the sausage off the grill
 function drawGdThings(c, t, now, pal) {
   const J = gdWho('striped'), K = gdWho('kid'), F = gdWho('filmer'), R = gdWho('reporter');
-  if (gdIn(t, 3.0, 3.3)) { const k = (t - 3) / 0.3; gdSausage(c, GD.GRILL.x + 2 + (ms.dogX + 10 - GD.GRILL.x - 2) * k, GD.GRILL.y - 26 - Math.sin(k * Math.PI) * 26 + k * 16, k * 6, pal); }
-  if (gdIn(t, 25.0, 25.35) && J && R && J.p && R.p) { // the jet: from the bottle to her face
-    const a = gdHand(J, 'r'), b = gdHead(R), k = (t - 25) / 0.35;
+  if (gdIn(t, 10.0, 10.3)) { const k = (t - 10) / 0.3; gdSausage(c, GD.GRILL.x + 2 + (ms.dogX + 10 - GD.GRILL.x - 2) * k, GD.GRILL.y - 26 - Math.sin(k * Math.PI) * 26 + k * 16, k * 6, pal); }
+  if (gdIn(t, 67.0, 67.35) && J && R && J.p && R.p) { // the jet: from the bottle to her face
+    const a = gdHand(J, 'r'), b = gdHead(R), k = (t - 67) / 0.35;
     c.strokeStyle = pal.ketchup; c.lineWidth = 2.2; c.lineCap = 'round'; c.beginPath(); c.moveTo(a[0], a[1]);
     const ex = a[0] + (b[0] - a[0]) * k, ey = a[1] + (b[1] - a[1]) * k - Math.sin(k * Math.PI) * 6; c.quadraticCurveTo((a[0] + ex) / 2, Math.min(a[1], ey) - 8, ex, ey); c.stroke();
   }
-  if (gdIn(t, 22.6, 25) && J && J.p) { const a = gdHand(J, 'r'); c.fillStyle = pal.ink; c.globalAlpha = 0.6; for (const d of [-1, 1]) { c.beginPath(); c.arc(a[0] + d * 7 + Math.sin(now * 30) * 0.8, a[1] - 4, 0.9, 0, Math.PI * 2); c.fill(); } c.globalAlpha = 1; }
-  if (gdIn(t, 35.25, 35.7) && K && F && K.p && F.p) { // the water bomb in an arc
-    const a = gdHand(K, 'r'), b = gdHead(F), k = (t - 35.25) / 0.45, x = a[0] + (b[0] - a[0]) * k, y = a[1] + (b[1] - a[1]) * k - Math.sin(k * Math.PI) * 26;
+  if (gdIn(t, 64.8, 67) && J && J.p) { const a = gdHand(J, 'r'); c.fillStyle = pal.ink; c.globalAlpha = 0.6; for (const d of [-1, 1]) { c.beginPath(); c.arc(a[0] + d * 7 + Math.sin(now * 30) * 0.8, a[1] - 4, 0.9, 0, Math.PI * 2); c.fill(); } c.globalAlpha = 1; }
+  if (gdIn(t, 111.05, 111.5) && K && F && K.p && F.p) { // the water bomb in an arc
+    const a = gdHand(K, 'r'), b = gdHead(F), k = (t - 111.05) / 0.45, x = a[0] + (b[0] - a[0]) * k, y = a[1] + (b[1] - a[1]) * k - Math.sin(k * Math.PI) * 26;
     c.fillStyle = '#7FC7EE'; c.strokeStyle = '#3E87B5'; c.lineWidth = 0.6; c.beginPath(); c.arc(x, y, 3.6, 0, Math.PI * 2); c.fill(); c.stroke();
   }
-  if (gdIn(t, 35.7, 36.3) && F && F.p) { const b = gdHead(F), k = (t - 35.7) / 0.6; c.fillStyle = pal.water; c.globalAlpha = 1 - k; for (let i = 0; i < 12; i++) { const a2 = i / 12 * Math.PI * 2; c.beginPath(); c.arc(b[0] + Math.cos(a2) * (6 + k * 20), b[1] + Math.sin(a2) * (5 + k * 14) + k * k * 14, 1.6, 0, Math.PI * 2); c.fill(); } c.globalAlpha = 1; }
-  if (gdIn(t, 51.5, 51.95) && R && J && R.p && J.p) { // the ice cube into the collar
-    const a = gdHand(R, 'r'), b = gdHead(J), k = (t - 51.5) / 0.45, x = a[0] + (b[0] + 2 - a[0]) * k, y = a[1] + (b[1] + 9 - a[1]) * k - Math.sin(k * Math.PI) * 8;
+  if (gdIn(t, 111.5, 112.1) && F && F.p) { const b = gdHead(F), k = (t - 111.5) / 0.6; c.fillStyle = pal.water; c.globalAlpha = 1 - k; for (let i = 0; i < 12; i++) { const a2 = i / 12 * Math.PI * 2; c.beginPath(); c.arc(b[0] + Math.cos(a2) * (6 + k * 20), b[1] + Math.sin(a2) * (5 + k * 14) + k * k * 14, 1.6, 0, Math.PI * 2); c.fill(); } c.globalAlpha = 1; }
+  if (gdIn(t, 135.5, 135.95) && R && J && R.p && J.p) { // the ice cube into the collar
+    const a = gdHand(R, 'r'), b = gdHead(J), k = (t - 135.5) / 0.45, x = a[0] + (b[0] + 2 - a[0]) * k, y = a[1] + (b[1] + 9 - a[1]) * k - Math.sin(k * Math.PI) * 8;
     c.fillStyle = '#E4F6FD'; c.strokeStyle = '#7FB6D2'; c.lineWidth = 0.5; c.beginPath(); c.rect(x - 2, y - 2, 4, 4); c.fill(); c.stroke();
   }
-  if (gdIn(t, 51.9, 54.6) && J && J.p) { const h = gdHead(J); c.strokeStyle = '#8FD0DE'; c.lineWidth = 0.9; c.globalAlpha = 0.8; for (let i = 0; i < 3; i++) { const a2 = now * 9 + i * 2.1; c.beginPath(); c.moveTo(h[0] + Math.cos(a2) * 12, h[1] + Math.sin(a2) * 5 - 4); c.lineTo(h[0] + Math.cos(a2) * 16, h[1] + Math.sin(a2) * 7 - 6); c.stroke(); } c.globalAlpha = 1; }
+  if (gdIn(t, 135.9, 138.6) && J && J.p) { const h = gdHead(J); c.strokeStyle = '#8FD0DE'; c.lineWidth = 0.9; c.globalAlpha = 0.8; for (let i = 0; i < 3; i++) { const a2 = now * 9 + i * 2.1; c.beginPath(); c.moveTo(h[0] + Math.cos(a2) * 12, h[1] + Math.sin(a2) * 5 - 4); c.lineTo(h[0] + Math.cos(a2) * 16, h[1] + Math.sin(a2) * 7 - 6); c.stroke(); } c.globalAlpha = 1; }
   // Julian's sneaking: little notes over his head on the way back
-  if (gdIn(t, 18.4, 21.6) && J) { c.fillStyle = pal.ink; c.font = "600 9px 'Fredoka', 'Nunito', system-ui, sans-serif"; const h = gdHead(J); for (let i = 0; i < 2; i++) { const k = (now * 0.8 + i / 2) % 1; c.globalAlpha = Math.sin(k * Math.PI); c.fillText('♪', h[0] + 8 + k * 8 + i * 4, h[1] - 12 - k * 14); } c.globalAlpha = 1; }
+  if (gdIn(t, 49.4, 53.6) && J) { c.fillStyle = pal.ink; c.font = "600 9px 'Fredoka', 'Nunito', system-ui, sans-serif"; const h = gdHead(J); for (let i = 0; i < 2; i++) { const k = (now * 0.8 + i / 2) % 1; c.globalAlpha = Math.sin(k * Math.PI); c.fillText('♪', h[0] + 8 + k * 8 + i * 4, h[1] - 12 - k * 14); } c.globalAlpha = 1; }
 }
 function drawGdGrill(c, t, now, pal, flare) {
   const { x, y } = GD.GRILL;
@@ -6413,7 +6434,7 @@ function drawGdGrill(c, t, now, pal, flare) {
   c.fillStyle = pal.grill; c.beginPath(); c.ellipse(x, y - 20, 16, 9, 0, 0, Math.PI); c.fill();
   c.fillStyle = pal.grillHi; c.fillRect(x - 16, y - 21.5, 32, 2);
   c.fillStyle = pal.coal; c.globalAlpha = 0.6 + 0.3 * Math.sin(now * 6); c.fillRect(x - 13, y - 23, 26, 1.4); c.globalAlpha = 1;
-  const n = t >= 3.0 && t < 11.2 ? 2 : 3;
+  const n = t >= 10.0 && t < 21 ? 2 : 3;
   for (let i = 0; i < n; i++) gdSausage(c, x - 8 + i * 8, y - 24.5, 0, pal);
   for (let i = 0; i < 5; i++) { const k = (now * 0.45 + i / 5) % 1, sx = x + Math.sin(k * 5 + i) * 4 + k * 10, sy = y - 26 - k * 40; c.globalAlpha = (1 - k) * 0.45; c.fillStyle = pal.smoke; c.beginPath(); c.arc(sx, sy, 3 + k * 7, 0, Math.PI * 2); c.fill(); }
   if (flare > 0) { c.globalAlpha = flare; for (let i = 0; i < 5; i++) { const fx = x - 10 + i * 5, fh = 8 + flare * 14 * (0.6 + 0.4 * Math.sin(now * 20 + i)); c.fillStyle = i % 2 ? '#FFB35C' : '#FF8A5C'; c.beginPath(); c.moveTo(fx - 3, y - 23); c.quadraticCurveTo(fx, y - 23 - fh * 1.2, fx + 3, y - 23); c.fill(); } }
@@ -6444,7 +6465,9 @@ function msAnchor(who) {
   const h = gdHead(k); return [h[0], h[1] - 14];
 }
 function drawMsBubble(c, who, text, pal, k, dur, quiet) {
-  const [ax, ay] = msAnchor(who), sc = k < 0.12 ? 0.6 + k / 0.12 * 0.4 : 1, a = k > dur - 0.25 ? (dur - k) / 0.25 : 1;
+  const [ax, ay] = msAnchor(who), vw = ms.view || [-1e9, 1e9];
+  if (ax < vw[0] - 6 || ax > vw[1] + 6) return;   // the speaker is not in the picture: no bubble
+  const sc = k < 0.12 ? 0.6 + k / 0.12 * 0.4 : 1, a = k > dur - 0.25 ? (dur - k) / 0.25 : 1;
   const u = Math.min(1.25, 2.1 / (ms.unitPx || 2));   // the same size on every screen (about 15 css px text)
   c.save(); c.font = (quiet ? 'italic 600 ' + 6.5 * u + 'px' : '600 ' + 8.5 * u + 'px') + " 'Nunito', system-ui, sans-serif";
   const w = c.measureText(text).width + (quiet ? 7 : 10) * u, h = (quiet ? 10 : 13) * u, [v0, v1] = ms.view || [4, 396], bx = Math.max(v0, Math.min(v1 - w, ax - w / 2));
