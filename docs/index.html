@@ -881,6 +881,10 @@ input,textarea{-webkit-user-select:text;user-select:text}
 <script src="worlds/coast-boss-draw.js"></script>
 <script src="worlds/coast-boss-bot.js"></script>
 <script src="worlds/coast-closing.js"></script>
+<script src="worlds/garden-base.js"></script>
+<script src="worlds/garden-chase.js"></script>
+<script src="worlds/garden-caspar.js"></script>
+<script src="worlds/garden-pranks.js"></script>
 <!-- world files end -->
 <script>
 (() => {
@@ -5964,103 +5968,69 @@ function drawSplashPhoto(c, k) {
 }
 
 // ---------- Main menu backdrop: the family's garden party ----------
-// A 150 s loop on the real clock behind the menu (decoration, not gameplay), told calmly: one prank at a time, quiet
-// stretches between them in which the party just goes on and the camera drives slowly through the garden. The garden is
-// GD.W units wide; an upright phone sees only part of it, so the camera follows the story. Everyone can run out of the
-// picture and come back in from the other side.
-//    10-22   the chase: the dog snaps a sausage off the grill and runs out on the right, the others after it; all come
-//            back in on the left, the dog first, and the dog eats it ("Mampf!")
-//    34-54   Julian (striped shirt) and Caspar (side parting) dig a hole in the sandbox, Caspar climbs in, Julian fills it
-//            up to his neck, lets a big towel sink over his head and tiptoes off. Then nothing: the party goes on
-//            without Caspar, and his calls are not heard while the camera is elsewhere.
-//    64-73   Julian's ketchup bottle is stuck, he squeezes hard, the ketchup hits the reporter in the face
-//    81-102  "Wo ist eigentlich Caspar?" Everyone looks around, the camera drives to the sandbox, "Hilfe …"; Mimo hops
-//            over and raises the alarm, the redbeard runs over, takes the towel off and digs Caspar out ("Danke!")
-//   107-118  the kid's water bomb hits the filmer; she chases him out, he comes back in on the other side and whistles
-//   122-130  the professor wakes up and wants to sit down, Julian pulls the folding chair away: "Plumps!"
-//   134-140  revenge: the reporter slips an ice cube down Julian's collar, he hops about wildly
-//   142-146  "Die Würstchen sind fertig!": everyone cheers
-// Tapping a figure makes it react (a gesture and a line), tapping the grill makes it flare up.
-const GD = { LOOP: 150, W: 560, BACK: 170, FRONT: 186, GRILL: { x: 112, y: 168 }, TABLE: { x: 205, y: 168 }, CHAIR: { x: 300, y: 176 }, BOX: { x0: 372, x1: 488, y: 192 }, POST: { x: 344, y: 110 }, HOLE: 430, SAND: 189 };
-const gdEase = { lin: (k) => k, io: (k) => k * k * (3 - 2 * k), out: (k) => 1 - (1 - k) * (1 - k), in: (k) => k * k };
-// a value along keys [[t, v, ease?], ...] (eased towards each key), and a held value along keys [[t, v], ...]
-function gdAt(keys, t) {
-  if (t <= keys[0][0]) return keys[0][1];
-  for (let i = 1; i < keys.length; i++) { const [t1, v1, e] = keys[i]; if (t < t1) { const [t0, v0] = keys[i - 1]; return v0 + (v1 - v0) * gdEase[e || 'io']((t - t0) / (t1 - t0)); } }
-  return keys[keys.length - 1][1];
-}
-function gdHold(keys, t) { let v = null; for (const k of keys) { if (t >= k[0]) v = k; else break; } return v; }
-const gdIn = (t, a, b) => t >= a && t < b;
-// where everyone is: x tracks (out of the picture means far beyond the garden: -240 or 800)
-const GD_X = {
-  redbeard: [[0, 88], [10.8, 88], [15.8, 800, 'in'], [15.81, -240], [20.0, 70, 'out'], [21, 88], [90.2, 88], [92.4, GD.HOLE - 20, 'lin'], [99.0, GD.HOLE - 20], [101.4, 88, 'lin']],
-  striped: [[0, 196], [34.0, 196], [36.8, GD.HOLE - 22, 'lin'], [49.4, GD.HOLE - 22], [53.6, 196, 'lin'], [122.4, 196], [124.4, 278, 'lin'], [127.5, 278], [129.5, 198, 'lin'], [135.9, 198],
-    [136.3, 184], [136.7, 206], [137.1, 188], [137.5, 208], [137.9, 190], [138.6, 198], [150, 196]],
-  kid: [[0, 152], [11.0, 152], [16.0, 800, 'in'], [16.01, -240], [20.6, 152, 'out'], [107.4, 152], [110.4, 252, 'lin'], [112.2, 252], [114.0, 800, 'in'], [114.01, -240], [116.2, 152, 'out']],
-  reporter: [[0, 226], [134.2, 226], [135.4, 212, 'lin'], [138.6, 212], [140, 226, 'lin']],
-  filmer: [[0, 302], [112.6, 302], [114.4, 800, 'in'], [114.41, -240], [117.4, 302, 'out']],
-  professor: [[0, 330], [122.8, 330], [124.4, 300, 'lin']],
-  sidepart: [[0, 370], [11.2, 370], [16.4, 800, 'in'], [16.41, -240], [22.5, 370, 'out'], [34.4, 370], [36.0, GD.HOLE + 22, 'lin'], [41.4, GD.HOLE + 22], [42.2, GD.HOLE, 'lin'], [95.4, GD.HOLE], [96.2, GD.HOLE + 22, 'lin'], [99.4, GD.HOLE + 22], [101.8, 370, 'lin']],
-};
-const GD_Y = { redbeard: 170, striped: 168, kid: 182, reporter: 172, filmer: 170, professor: 170, sidepart: 176 };
-// what each one does: [[t, pose, dir, face, expr]] (pose of coast-cast-actions.js, dir for sided poses, face -1|0|1)
-const GD_POSE = {
-  redbeard: [[0, 'pat', 1, 1], [10.2, 'flail', 0, 1], [10.8, null], [20.4, null, 0, 0, null], [21, 'pat', 1, 1], [67.4, 'applaud'], [69.2, 'pat', 1, 1], [90.0, null, 0, 0], [92.6, 'take', 1, 1],
-    [93.0, 'pat', 1, 1], [95.6, null, 0, 0], [96.2, 'hooray', 0, 0], [97.4, null, 0, 0], [101.4, 'pat', 1, 1], [125.1, 'applaud'], [126.6, 'pat', 1, 1], [136.2, 'hooray'], [138, 'pat', 1, 1], [142.4, 'hooray'], [144.2, 'pat', 1, 1]],
-  striped: [[0, null], [37.0, 'pat', 1, 1], [41.0, null, 0, 1], [43.4, 'pat', 1, 1], [46.6, null, 0, 1], [47.0, 'take', 1, 1], [48.8, null, 0, 0], [64.6, 'offer', 1, 1], [67.0, 'flail', 0, 1, 'ouch'],
-    [67.6, 'applaud', 0, 1], [69.6, null], [124.6, 'take', 1, 1], [125.1, 'applaud', 0, 1], [126.8, null], [135.9, 'hop', 0, 0, 'ouch'], [138.6, null, 0, 0, null], [142.4, 'hooray', 0, 0], [144.2, null]],
-  kid: [[0, null], [10.4, 'hooray'], [10.9, null], [20.8, 'hooray'], [21.6, null], [67.4, 'hooray'], [68.6, null], [110.8, 'throw'], [111.4, 'hooray'], [112.1, null], [116.2, null, 0, 1], [136.2, 'hooray'], [137.6, null], [142.4, 'hooray'], [144.2, null]],
-  reporter: [[0, 'mic', 0, 1], [67.0, 'flail', 0, 1, 'daze'], [68.6, 'mic', 0, 1, 'daze'], [72, 'mic', 0, 1, null], [81.0, null, 0, 0], [86.5, 'mic', 0, 1], [134.2, null], [135.5, 'throw'], [136.2, 'applaud'], [138.6, 'mic', 0, 1], [142.4, 'hooray'], [144.2, 'mic', 0, 1]],
-  filmer: [[0, 'cam', 0, -1], [67.4, 'applaud', 0, -1], [69.4, 'cam', 0, -1], [82, null, 0, 0], [86.5, 'cam', 0, -1], [111.5, 'flail', 0, -1, 'daze'], [112.6, null, 0, 0, 'daze'], [117.4, 'cam', 0, -1, 'daze'], [119, 'cam', 0, -1, null],
-    [125.1, 'applaud'], [126.6, 'cam', 0, -1], [136.2, 'applaud'], [138, 'cam', 0, -1], [142.4, 'applaud'], [144.2, 'cam', 0, -1]],
-  professor: [[0, null, 0, 0], [122.2, 'point', -1, -1], [122.8, null], [127.2, 'point', 1, 1, 'serious'], [128.6, null, 0, 0, null], [142.4, 'hooray'], [144.2, null]],
-  sidepart: [[0, null], [37.0, 'pat', -1, -1], [41.0, null, 0, 0], [45.0, null, 0, 0, 'daze'], [46.8, null, 0, 0, null], [96.2, 'hooray', 0, 0], [97.4, null, 0, 0], [125.1, 'applaud'], [126.6, null], [136.2, 'applaud'], [138, null], [142.4, 'hooray'], [144.2, null]],
-};
-// the timed lines: [t, speaker, text, seconds, quiet] (a bubble shows only while its speaker is in the picture)
-const GD_LINES = [
-  [10.2, 'redbeard', 'Mein Würstchen!', 1.8], [17.4, 'kid', 'Da ist er wieder!', 1.6], [21.2, 'redbeard', 'Na gut. Dann eben das nächste.', 2.2],
-  [26.0, 'reporter', 'Mimo, wie gefällt dir die Party?', 2.4], [28.6, 'mimo', 'Piep!', 1.0],
-  [34.2, 'striped', 'Caspar! Wir buddeln ein Loch!', 2.0], [39.0, 'sidepart', 'Noch tiefer?', 1.4], [40.2, 'striped', 'Viel tiefer!', 1.2], [42.6, 'sidepart', 'Passt genau!', 1.4],
-  [45.0, 'sidepart', 'Äh … Julian?', 1.6], [46.8, 'striped', 'Hihi.', 1.0], [49.0, 'striped', 'Psst!', 1.0],
-  [65.0, 'striped', 'Hmpf! Die klemmt.', 1.8], [67.3, 'striped', 'Ups!', 1.0], [68.8, 'reporter', 'Live vom Grillfest … mit Ketchup.', 2.6],
-  [81.0, 'reporter', 'Sagt mal … wo ist eigentlich Caspar?', 2.4], [84.4, 'filmer', 'Keine Ahnung.', 1.4], [85.8, 'sidepart', 'Hilfe … hilfe …', 1.8, true], [88.0, 'sidepart', 'Hilfe …', 1.6, true],
-  [89.8, 'mimo', 'Piep piep piep!', 1.6], [90.0, 'redbeard', 'Caspar?!', 1.2], [96.4, 'sidepart', 'Danke!', 1.4], [97.6, 'redbeard', 'Wer war das denn?', 1.6], [98.6, 'sidepart', 'Ich hab da so eine Ahnung …', 2.0],
-  [108.0, 'kid', 'Pssst …', 1.4], [111.8, 'filmer', 'Na warte!', 1.4], [116.4, 'kid', '♪ Pfeif …', 1.6], [117.6, 'filmer', 'Wo ist er hin?', 1.6],
-  [122.2, 'professor', 'Ich setz mich mal kurz.', 1.6], [125.3, 'striped', 'Hoppla!', 1.2], [127.3, 'professor', 'Sehr witzig, Julian.', 1.8],
-  [136.0, 'striped', 'Iiiih! Kalt!', 1.8], [136.9, 'reporter', 'Rache!', 1.2], [137.2, 'mimo', 'Piep piep!', 1.2],
-  [142.2, 'redbeard', 'Die Würstchen sind fertig!', 1.8], [143.4, 'mimo', 'Piep!', 1.0],
-];
+// The engine of the party behind the menu: the garden, the camera, the people, Lotta and Mimo, speech bubbles, tapping and
+// sounds. What happens (the pranks) lives in acts, one file each (src/worlds/garden-*.js, garden-base.js describes the
+// format); here they are merged into one loop of Garden.LOOP seconds on the real clock (decoration, not gameplay).
+// The garden is GD.W units wide; an upright phone sees only part of it, so the camera follows the focus of the acts and
+// drives slowly through the garden in the quiet parts between them.
+const GARDEN = window.Garden || { acts: [], LOOP: 60, GD: {}, HOME: {}, Y: {}, DEFAULT: {}, at: () => 0, hold: () => null, inn: () => false, ease: {} };
+const GD = GARDEN.GD, gdAt = GARDEN.at, gdHold = GARDEN.hold, gdIn = GARDEN.inn;
+const GD_CAST = ['redbeard', 'striped', 'kid', 'reporter', 'filmer', 'professor', 'sidepart'];
 const GD_SAY = {
   redbeard: ['Wer will noch eins?', 'Medium oder durch?', 'Finger weg vom Grill!'], striped: ['Ich war das nicht!', 'Hihi.', 'Ich hab da eine Idee …'],
   kid: ['Wasserschlacht!', 'Darf ich auch mal grillen?', 'Hihi!'], reporter: ['Live vom Grillfest!', 'Ein Wort für die Zuschauer?', 'Exklusiv!'],
-  filmer: ['Läuft!', 'Nochmal, bitte!', 'Das schneiden wir raus.'], sidepart: ['Hilfe … hilfe …', 'Ist da wer?', 'Mir ist so warm …'], professor: ['Ich bin wach! Ganz wach!', 'Faszinierend.', 'Hm? Was?'],
+  filmer: ['Läuft!', 'Nochmal, bitte!', 'Das schneiden wir raus.'], sidepart: ['Hallo!', 'Schönes Wetter, oder?', 'Hat jemand Julian gesehen?'], professor: ['Ich bin wach! Ganz wach!', 'Faszinierend.', 'Hm? Was?'],
 };
-// the props the hands hold: [[t, name | null, hand]]
-const GD_HOLD = {
-  striped: [[0, null], [34.0, 'spade', 'r'], [46.6, null], [64.0, 'ketchup', 'r'], [69.6, null]],
-  sidepart: [[0, null], [34.4, 'spade', 'r'], [41.0, null]],
-  kid: [[0, null], [107.0, 'balloon', 'r'], [111.05, null]],
-  reporter: [[0, null], [134.2, 'ice', 'r'], [135.8, null]],
-};
-// the camera (upright screens): slow drives through the garden in the quiet parts, to each prank before it starts
-const GD_FOCUS = [[0, 150], [5, 300], [10, 160], [10.6, 160], [14.8, 470, 'lin'], [15.6, 470], [17.2, 110], [21, 160], [26, 230], [31, 300], [34.6, 420], [49.4, 420], [54, 230],
-  [58.5, 120], [63, 215], [73, 215], [77, 310], [81, 230], [85.4, 230], [89.0, 425], [99.0, 425], [102.5, 230], [105, 160], [107.5, 220], [110.4, 260], [112.2, 260], [114.0, 470, 'lin'], [114.6, 470],
-  [116.0, 120], [117.8, 230], [120, 230], [122, 290], [129.5, 290], [133, 210], [140, 210], [142, 190], [146, 190], [150, 150]];
-const GD_DOG = [[0, 134], [10.3, 134], [14.8, 800, 'in'], [14.81, -240], [19.0, 140, 'out'], [20, 134]];
-const GD_MIMO = [[0, 250], [11.4, 250], [16.6, 800, 'in'], [16.61, -240], [21.5, 250, 'out'], [86.4, 250], [89.6, GD.HOLE - 48, 'lin'], [99.0, GD.HOLE - 48], [102.0, 250, 'lin']];
+// all acts merged: one track per figure (x, pose, hold), all lines, the camera, the sounds
+function gdCompile() {
+  if (GARDEN.compiled) return GARDEN.compiled;
+  const L = GARDEN.LOOP, acts = GARDEN.acts, by = (a, b) => a[0] - b[0];
+  const out = { x: {}, pose: {}, hold: {}, lines: [], sounds: [], focus: [] };
+  for (const who of [...GD_CAST, 'dog', 'mimo']) {
+    const home = GARDEN.HOME[who];
+    const xs = [[0, home]];
+    for (const a of acts) if (a.x && a.x[who]) xs.push(...a.x[who]);
+    xs.push([L, home]); out.x[who] = xs.sort(by);
+    if (who === 'dog' || who === 'mimo') continue;
+    const d = GARDEN.DEFAULT[who] || [null, 0, 0], ps = [[0, ...d]], hs = [[0, null]];
+    for (const a of acts) {
+      if (a.pose && a.pose[who]) { ps.push(...a.pose[who]); ps.push([a.span[1], ...d]); }
+      if (a.hold && a.hold[who]) { hs.push(...a.hold[who]); hs.push([a.span[1], null]); }
+    }
+    out.pose[who] = ps.sort(by); out.hold[who] = hs.sort(by);
+  }
+  for (const a of acts) { if (a.lines) out.lines.push(...a.lines); if (a.sounds) out.sounds.push(...a.sounds); }
+  out.lines.sort(by); out.sounds.sort(by);
+  // the camera: the acts' keys, and a slow drive through the garden in every longer gap between them
+  const keys = [];
+  for (const a of acts) if (a.focus) for (const k of a.focus) keys.push([k[0], k[1], k[2] || 'io', a.name]);
+  keys.sort(by);
+  const f = [[0, 160]], tour = [330, 150, 260];
+  let n = 0;
+  for (let i = 0; i < keys.length; i++) {
+    const prev = f[f.length - 1], k = keys[i];
+    if (k[0] - prev[0] > 9 && (i === 0 || keys[i - 1][3] !== k[3])) { f.push([prev[0] + (k[0] - prev[0]) * 0.5, tour[n++ % tour.length]]); }
+    f.push([k[0], k[1], k[2]]);
+  }
+  if (L - f[f.length - 1][0] > 9) f.push([(f[f.length - 1][0] + L) / 2, 300]);
+  f.push([L, 160]);
+  out.focus = f;
+  GARDEN.compiled = out;
+  return out;
+}
 let ms = null;
 function startMenuScene() {
   const cv = $('menuScene'), C = window.MimoCoast;
   if (!cv) return;
-  if (!ms) ms = { t0: performance.now(), last: performance.now(), raf: 0, cast: null, dog: null, taps: {}, mimoHop: -9, flare: -9, view: [0, GD.W], cam: null };
+  if (!ms) ms = { t0: performance.now(), last: performance.now(), raf: 0, cast: null, dog: null, taps: {}, mimoHop: -9, flare: -9, view: [0, GD.W], cam: null, played: -1 };
   cancelAnimationFrame(ms.raf); ms.last = performance.now();
   menuSceneSize();
-  if (C && C.puppet) { if (!ms.cast) ms.cast = Object.keys(GD_X).map((who, i) => ({ who, p: null, seed: 211 + i * 19 })); if (!ms.dog && C.PetFigure) { ms.dog = new C.PetFigure('creamRetriever', 777); ms.dog.dir = 1; } }
+  if (C && C.puppet) { if (!ms.cast) ms.cast = GD_CAST.map((who, i) => ({ who, p: null, seed: 211 + i * 19, x: GARDEN.HOME[who], y: GARDEN.Y[who] })); if (!ms.dog && C.PetFigure) { ms.dog = new C.PetFigure('creamRetriever', 777); ms.dog.dir = 1; } }
   ms.raf = requestAnimationFrame(menuSceneFrame);
 }
 // tests and pictures: jump to second `sec` of the loop
-window.__msSeek = (sec) => { if (ms) { ms.t0 = performance.now() - sec * 1000; ms.cam = null; } };
-window.__msInfo = () => ms && { fit: ms.bands && ms.bands[0], bands: ms.bands, mimoX: ms.mimoX, dogX: ms.dogX, taps: Object.keys(ms.taps), cast: (ms.cast || []).map((c) => [c.who, c.x, c.y]) };
+window.__msSeek = (sec) => { if (ms) { ms.t0 = performance.now() - sec * 1000; ms.cam = null; ms.played = sec - 0.01; } };
+window.__msInfo = () => ms && { fit: ms.bands && ms.bands[0], bands: ms.bands, mimoX: ms.mimoX, dogX: ms.dogX, taps: Object.keys(ms.taps), cast: (ms.cast || []).map((c) => [c.who, c.x, c.y]), t: ms.lastT, loop: GARDEN.LOOP };
 function menuSceneSize() {
   const cv = $('menuScene'); if (!cv) return;
   const dpr = Math.min(2, window.devicePixelRatio || 1), w = Math.max(200, Math.round(cv.clientWidth * dpr)), h = Math.max(100, Math.round(cv.clientHeight * dpr));
@@ -6068,12 +6038,11 @@ function menuSceneSize() {
 }
 window.addEventListener('resize', () => { if (ms && !$('ovMenu').hidden) { menuSceneSize(); if (reduced()) menuSceneFrame(performance.now()); } });
 // the scale and the feet line: the party stands between the title and the play button; an upright phone sees about
-// 150 units of the garden (the figures big), a wide screen up to 480
+// 152 units of the garden (the camera follows what goes on), a wide screen up to 480
 function menuSceneFit(cw, ch) {
   const cv = $('menuScene'), r = cv.getBoundingClientRect(), k = cw / Math.max(1, r.width);
   const hero = document.querySelector('#ovMenu .menu-hero'), cta = document.querySelector('#ovMenu .btn.cta');
   const top = hero ? (hero.getBoundingClientRect().bottom - r.top) * k : ch * 0.12, bot = cta ? (cta.getBoundingClientRect().top - r.top) * k - 10 * k : ch * 0.75;
-  // upright: about 152 units of the garden, the camera follows what goes on; wide: up to 480 units
   const upright = r.width < r.height * 0.8;
   const units = upright ? 152 : Math.max(300, Math.min(480, r.width / 2.2));
   const s = Math.min(cw / units, Math.max(40, bot - top) / 150);
@@ -6081,7 +6050,7 @@ function menuSceneFit(cw, ch) {
 }
 // the camera: centre of the view in garden units (it follows the focus, but never shows beyond the garden's ends)
 function gdCamera(cw, s, t, dt) {
-  const half = cw / s / 2, want = Math.max(half, Math.min(GD.W - half, gdAt(GD_FOCUS, t)));
+  const half = cw / s / 2, want = Math.max(half, Math.min(GD.W - half, gdAt(gdCompile().focus, t)));
   const x = half * 2 >= GD.W ? GD.W / 2 : want;
   if (ms.cam == null || dt > 0.5) ms.cam = x; else ms.cam += (x - ms.cam) * Math.min(1, dt * 1.6);   // soft: the drives are calm
   return ms.cam;
@@ -6093,53 +6062,84 @@ function gdHead(c) {
   const h = R.M.apply(f.frame.head, r.headCenter); return [c.x + h[0] - r.center, c.y + h[1] - r.ground];
 }
 function gdHand(c, k) { const h = c.p ? c.p.hand(k || 'r', 1) : [0, -26]; return [c.x + h[0], c.y + h[1]]; }
-// the sandbox: how deep the hole is (0..1), how big the pile next to it, how far Caspar stands in it (units his feet are
-// below the sand) and how high the sand is filled in around him (units above the sand, up to his neck)
-const gdHole = (t) => gdAt([[0, 0], [37.0, 0], [41.0, 1, 'lin'], [43.4, 1], [46.6, 0, 'lin'], [93.6, 0], [95.6, 1, 'lin'], [149.8, 1], [150, 0]], t);
-const gdPile = (t) => gdAt([[0, 0.15], [37.0, 0.15], [41.0, 1, 'lin'], [43.4, 1], [46.6, 0.2, 'lin'], [93.6, 0.2], [95.6, 1, 'lin'], [149.8, 1], [150, 0.15]], t);
-const gdSink = (t) => gdAt([[0, 0], [41.7, 0], [42.4, 21], [95.4, 21], [96.2, 0]], t);
-const gdFill = (t) => gdAt([[0, 0], [43.4, 0], [46.6, 12, 'lin'], [93.6, 12], [95.2, 0, 'lin']], t);
-const gdFallen = (t) => (gdIn(t, 124.85, 127.2) ? (t < 125.05 ? (t - 124.85) / 0.2 : t > 126.9 ? (127.2 - t) / 0.3 : 1) : 0);
+// the comic sounds of the acts (soft, through the game's effects switch; only once the browser lets the page play sound)
+const GD_SOUNDS = {
+  plopp: () => voice({ type: 'sine', f0: 520, f1: 1100, dur: 0.12, vol: 0.05 }),
+  mampf: () => { noise({ lp: 900, dur: 0.08, vol: 0.05 }); noise({ lp: 900, dur: 0.08, vol: 0.05, delay: 0.16 }); },
+  splat: () => { noise({ lp: 1400, f1: 300, dur: 0.22, vol: 0.08 }); voice({ type: 'triangle', f0: 180, f1: 80, dur: 0.18, vol: 0.05 }); },
+  platsch: () => { noise({ bp: 1800, q: 0.8, f1: 500, dur: 0.35, vol: 0.08 }); },
+  plumps: () => { voice({ type: 'sine', f0: 140, f1: 55, dur: 0.25, vol: 0.09 }); noise({ lp: 500, dur: 0.15, vol: 0.05 }); },
+  buddel: () => { for (let i = 0; i < 3; i++) noise({ bp: 900 + i * 200, q: 1.2, dur: 0.07, vol: 0.035, delay: i * 0.18 }); },
+  whoosh: () => noise({ bp: 600, q: 0.7, f1: 2400, dur: 0.3, vol: 0.04 }),
+  boing: () => voice({ type: 'triangle', f0: 220, f1: 520, dur: 0.22, vol: 0.05 }),
+  piep: () => voice({ type: 'sine', f0: 1320, dur: 0.08, vol: 0.04 }),
+  zisch: () => noise({ hp: 3000, dur: 0.4, vol: 0.03 }),
+  pop: () => voice({ type: 'sine', f0: 900, f1: 300, dur: 0.08, vol: 0.05 }),
+  tada: () => { voice({ type: 'triangle', f0: midi(72), dur: 0.12, vol: 0.04 }); voice({ type: 'triangle', f0: midi(79), dur: 0.25, vol: 0.04, delay: 0.12 }); },
+};
+function gdSound(name) {
+  if (!progress.sfx || !ac || ac.state !== 'running' || $('ovMenu').hidden || !GD_SOUNDS[name]) return;
+  try { GD_SOUNDS[name](); } catch (_) { /* a sound is never worth an error */ }
+}
+// the helpers every act hook gets
+function gdApi(t) {
+  const pal = ms.pal;
+  return {
+    GD, pal, now: ms.now, t, at: gdAt, hold: gdHold, inn: gdIn, ease: GARDEN.ease, view: ms.view, dogX: ms.dogX, mimoX: ms.mimoX, lines: gdCompile().lines,
+    who: gdWho, head: gdHead, hand: gdHand, sound: gdSound, tapped: (who) => !!(ms.taps[who] && ms.now - ms.taps[who].at < 1.6),
+    towel: (c, x, y, w, h, rot) => gdTowel(c, x, y, w, h, rot, pal), sausage: (c, x, y, rot) => gdSausage(c, x, y, rot, pal),
+    pop: (c, text, x, y, k, rot, size, fill) => newsPopBase(c, text, x, y, k, rot, size * Math.min(1, 2.4 / ms.unitPx), { ink: pal.ink, pop: fill || '#FFFFFF' }),
+  };
+}
+// ask every act's hook; the later ones win
+function gdHooks(name, ...args) { const r = []; for (const a of GARDEN.acts) if (a[name]) { const v = a[name](...args); if (v) r.push(v); } return r; }
 function msStep(dt, t) {
+  const P = gdCompile(), A = gdApi(t);
+  ms.mimoX = gdAt(P.x.mimo, t);
   for (const c of ms.cast || []) {
     if (!c.p) { c.p = window.MimoCoast.puppet(c.who, c.seed); if (!c.p) continue; }
-    c.x = gdAt(GD_X[c.who], t); c.y = GD_Y[c.who];
-    const ps = gdHold(GD_POSE[c.who], t) || [0, null], hold = GD_HOLD[c.who] ? gdHold(GD_HOLD[c.who], t) : null, tap = ms.taps[c.who] && ms.now - ms.taps[c.who].at < 1.6;
+    c.x = gdAt(P.x[c.who], t); c.y = GARDEN.Y[c.who];
+    const ps = gdHold(P.pose[c.who], t) || [0, null], hold = gdHold(P.hold[c.who], t), tap = ms.taps[c.who] && ms.now - ms.taps[c.who].at < 1.6;
+    const o = { look: ms.mimoX - c.x, asleep: false, hop: 0 };
+    for (const r of gdHooks('figure', c, t, A)) Object.assign(o, r);
+    if (o.y != null) c.y = o.y;
+    c.hop = o.hop || 0;
     const pose = tap ? null : ps[1], face = ps[3] || 0;
     c.p.fig.expr = ps[4] || null;
     c.p.fig.holdProp = hold && hold[1] ? { name: hold[1], hand: hold[2] || 'r', upright: true } : null;
-    c.p.fig.asleep = c.who === 'professor' && t < 122.2;
-    if (c.who === 'sidepart') { c.y = gdIn(t, 34.4, 101.8) ? GD.SAND - 1 + gdSink(t) : GD_Y.sidepart; c.sunk = gdSink(t) > 0.5 || gdFill(t) > 0; }
-    let look = ms.mimoX - c.x;
-    if (c.who === 'professor' && t < 122.2) look = undefined;
-    if (gdIn(t, 10.0, 21)) look = ms.dogX - c.x;
-    // "Wo ist eigentlich Caspar?": everyone looks around
-    if (gdIn(t, 82.0, 85.8) && c.who !== 'sidepart') look = Math.sin((t - 82) * 2.1 + c.seed) * 90;
-    c.p.step(dt, c.x, { face, look, pose, poseOpts: { dir: ps[2] || 1 }, idle: !pose && c.who !== 'sidepart', amp: 0.3 });
+    c.p.fig.asleep = !!o.asleep;
+    // a one-off gesture ('throw', 'cheer', 'flinch', ...) plays once when its key comes up
+    if (pose && !(window.MimoCoast.castPoses || {})[pose]) { if (c.played !== ps[0]) { c.played = ps[0]; c.p.play(pose); } c.p.step(dt, c.x, { face, look: o.look, pose: null, idle: false, amp: 0.3 }); continue; }
+    c.p.step(dt, c.x, { face, look: o.look, pose, poseOpts: { dir: ps[2] || 1 }, idle: !pose && !o.asleep, amp: 0.3 });
   }
   const d = ms.dog;
   if (d) {
-    const x0 = ms.dogX, x = gdAt(GD_DOG, t), v = (x - x0) / Math.max(dt, 1e-3), moving = Math.abs(v) > 8 && Math.abs(v) < 2000;
+    const x0 = ms.dogX, x = gdAt(P.x.dog, t), v = (x - x0) / Math.max(dt, 1e-3), moving = Math.abs(v) > 8 && Math.abs(v) < 2000;
+    const o = { pose: 'sit', lookAt: ms.mimoX - x };
+    for (const r of gdHooks('dog', t, A)) Object.assign(o, r);
     d.setMove(moving ? Math.sign(v) : 0, Math.abs(v) > 140 ? 'run' : 'trot'); if (moving) d.dir = Math.sign(v);
-    if (!moving) { d.dir = 1; d.setPose(t < 10.05 || t > 20 ? 'sit' : 'stand'); d.lookAt = t < 10.05 ? -22 : ms.mimoX - x; }
-    d.carry = gdIn(t, 10.25, 19.2) ? 'sausage' : null;
-    d.carryDraw = d.carry ? (g, cx, cy) => gdSausage(g, cx, cy, 0.2, ms.pal) : null;
-    if (gdIn(t, 10.05, 10.3) && !ms.dogJumped) { ms.dogJumped = true; d.jump(0.9); }
-    if (t < 10) ms.dogJumped = false;
-    if (t > 19.2 && t < 20.5) d.happy(1);
+    if (!moving) { d.dir = o.dir || 1; d.setPose(o.pose); d.lookAt = o.lookAt; }
+    d.carry = o.carry || null; d.carryDraw = o.carryDraw || null;
+    if (o.jump && !ms.dogJumped) { ms.dogJumped = true; d.jump(o.jump); }
+    if (!o.jump) ms.dogJumped = false;
+    if (o.happy) d.happy(o.happy);
     d.posX = 0; d.update(dt); d.posX = 0;
     ms.dogX = x;
   }
-  ms.mimoX = gdAt(GD_MIMO, t);
+  // the sounds whose time has come since the last frame
+  if (ms.played != null) for (const [at, name] of P.sounds) if (at > ms.played && at <= t) gdSound(name);
+  ms.played = t;
 }
 function menuSceneFrame(now) {
   if (!ms) return;
   if ($('ovMenu').hidden) { ms.raf = 0; return; }
   const dt = Math.min(0.05, Math.max(0, (now - ms.last) / 1000)); ms.last = now; ms.now = now / 1000;
-  const still = reduced(), t = still ? 26.5 : ((now - ms.t0) / 1000) % GD.LOOP;
+  const still = reduced(), t = still ? 26.5 : ((now - ms.t0) / 1000) % GARDEN.LOOP;
+  if (ms.lastT != null && t < ms.lastT) ms.played = -1;   // a new round
   ms.lastT = t;
-  if (ms.dogX == null) ms.dogX = gdAt(GD_DOG, t);
-  if (ms.mimoX == null) ms.mimoX = gdAt(GD_MIMO, t);
+  const P = gdCompile();
+  if (ms.dogX == null) ms.dogX = gdAt(P.x.dog, t);
+  if (ms.mimoX == null) ms.mimoX = gdAt(P.x.mimo, t);
   ms.pal = MS_PAL[darkTheme() ? 'dark' : 'light'];
   if (ms.cast) msStep(still ? 1 / 60 : dt, t);
   drawMenuScene($('menuScene').getContext('2d'), t, ms.now, dt);
@@ -6162,14 +6162,14 @@ function drawMenuScene(c, t, now, dt) {
   c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, cw, ch);
   const cx = gdCamera(cw, s, t, dt), ox = cw / 2 - cx * s, oy = F.feet - 202 * s;
   ms.bands = [{ s, ox, oy, y0: 0, y1: ch }];
-  drawGdWorld(c, t, now, s, ox, oy, cx, true);
+  drawGdWorld(c, t, now, s, ox, oy, cx);
 }
-// the whole garden with the given scale and offset (canopy: the leaves at the top edge on a tall screen)
-function drawGdWorld(c, t, now, s, ox, oy, cx, canopy) {
+function drawGdWorld(c, t, now, s, ox, oy, cx) {
   const pal = ms.pal, cw = c.canvas.width, ch = c.canvas.height;
   const X0 = -ox / s - 1, X1 = (cw - ox) / s + 1, Y0 = -oy / s - 1, Y1 = (ch - oy) / s + 1;
   ms.view = [X0 + 3, X1 - 3];
-  c.setTransform(s, 0, 0, s, ox, oy);
+  const A = gdApi(t), re = () => c.setTransform(s, 0, 0, s, ox, oy);
+  re();
   const g = (y0, y1, a, b) => { const gr = c.createLinearGradient(0, y0, 0, y1); gr.addColorStop(0, a); gr.addColorStop(1, b); return gr; };
   // sky, sun, clouds, hills (the far things move a little slower than the garden: depth when the camera pans)
   c.fillStyle = g(Y0, 130, pal.skyTop, pal.skyBot); c.fillRect(X0, Y0, X1 - X0, 136 - Y0);
@@ -6200,72 +6200,50 @@ function drawGdWorld(c, t, now, s, ox, oy, cx, canopy) {
   c.strokeStyle = pal.blade; c.lineWidth = 0.9; c.lineCap = 'round';
   for (let i = 0; i < 160; i++) { const x = ((i * 97 + 13) % 760) - 100, y = 142 + ((i * 41) % 90); if (x < X0 - 4 || x > X1 + 4) continue; c.beginPath(); c.moveTo(x, y); c.lineTo(x - 1, y - 3); c.moveTo(x + 1.5, y); c.lineTo(x + 2.5, y - 2.6); c.stroke(); }
   for (let i = 0; i < 30; i++) { const x = ((i * 131 + 40) % 760) - 100, y = 196 + ((i * 29) % 30); c.fillStyle = pal.flower[i % 3]; c.beginPath(); c.arc(x, y, 1.6, 0, Math.PI * 2); c.fill(); }
-  // the table with salad and ketchup, the folding chair, the sandbox
+  // the table with the salad, the sandbox, the grill; then what the acts put on the ground
   const T = GD.TABLE;
   c.fillStyle = pal.woodInk; c.fillRect(T.x - 22, T.y - 18, 3, 18); c.fillRect(T.x + 19, T.y - 18, 3, 18);
   c.fillStyle = pal.cloth; c.fillRect(T.x - 26, T.y - 23, 52, 6);
   c.fillStyle = pal.leaf; c.beginPath(); c.ellipse(T.x - 10, T.y - 24, 8, 4.5, 0, Math.PI, 0); c.fill();
-  if (!gdIn(t, 64, 69.6)) { c.fillStyle = pal.ketchup; c.beginPath(); c.roundRect ? c.roundRect(T.x + 8, T.y - 33, 5, 10, 2) : c.rect(T.x + 8, T.y - 33, 5, 10); c.fill(); }
-  const chairX = GD.CHAIR.x + gdAt([[0, 0], [124.6, 0], [124.85, -22, 'out'], [149.6, -22], [150, 0]], t);
-  drawGdChair(c, chairX, GD.CHAIR.y, pal);
   drawGdSandbox(c, pal);
-  // everyone, back to front (Caspar in the hole is drawn cut off at the sand, with the sand around him)
-  drawGdGrill(c, t, now, pal, now - ms.flare < 1.2 ? 1 - (now - ms.flare) / 1.2 : 0);
-  drawGdHole(c, t, now, pal, false);
+  const grilled = gdHooks('grill', t, A);
+  drawGdGrill(c, t, now, pal, now - ms.flare < 1.2 ? 1 - (now - ms.flare) / 1.2 : 0, grilled.length ? grilled[grilled.length - 1] : 3);
+  for (const a of GARDEN.acts) if (a.back) { a.back(c, t, A); re(); }
+  // everyone, back to front; an act may draw a person itself (in a hole, fallen over) or something on top
   const order = [...(ms.cast || [])].filter((k) => k.p).sort((a, b) => a.y - b.y);
   for (const k of order) {
     if (k.x < X0 - 40 || k.x > X1 + 40) continue;
-    if (k.who === 'professor' && gdFallen(t) > 0) { drawGdFallen(c, k, gdFallen(t), pal); continue; }
-    if (k.who === 'sidepart' && k.sunk) { drawGdSunk(c, k, t, now, pal); continue; }
-    const hop = k.who === 'striped' && gdIn(t, 135.9, 138.6) ? Math.abs(Math.sin((t - 135.9) * 7)) * 7 : 0;
-    k.p.draw(c, k.x, k.y - hop, { scale: 1 });
-    if (k.who === 'filmer' && gdIn(t, 111.5, 119)) drawGdDrips(c, k, now, pal, t < 117 ? 1 : (119 - t) / 2);
-    if (k.who === 'reporter' && gdIn(t, 67.35, 74)) drawGdKetchupFace(c, k, pal, t < 72.5 ? 1 : (74 - t) / 1.5);
+    let done = false;
+    for (const a of GARDEN.acts) if (a.person && a.person(c, k, t, A)) { done = true; re(); break; }
+    if (!done) k.p.draw(c, k.x, k.y - (k.hop || 0), { scale: 1 });
+    for (const a of GARDEN.acts) if (a.after) { a.after(c, k, t, A); re(); }
   }
-  drawGdHole(c, t, now, pal, true);
-  // the dog and Mimo in front
+  // Lotta and Mimo in front
   if (ms.dog && ms.dogX > X0 - 40 && ms.dogX < X1 + 40) ms.dog.draw(c, ms.dogX, GD.FRONT + 4, 1);
-  const mv = gdAt(GD_MIMO, t + 0.05) - ms.mimoX, running = Math.abs(mv) > 0.05 && Math.abs(mv) < 30;
-  const hop = Math.max(running ? Math.abs(Math.sin(t * 9)) * 8 : 0, gdIn(t, 28.4, 28.9) ? Math.sin((t - 28.4) / 0.5 * Math.PI) * 10 : 0, gdIn(t, 89.8, 91.2) ? Math.abs(Math.sin((t - 89.8) * 10)) * 9 : 0,
-    gdIn(t, 137.2, 138.2) ? Math.abs(Math.sin((t - 137.2) * 9)) * 9 : 0, gdIn(t, 142.4, 144) ? Math.abs(Math.sin((t - 142.4) * 8)) * 10 : 0,
-    now - ms.mimoHop < 0.5 ? Math.sin((now - ms.mimoHop) / 0.5 * Math.PI) * 16 : 0);
-  ms.mimoFace = running ? Math.sign(mv) : gdIn(t, 89.6, 99) ? 1 : ms.dogX > ms.mimoX && t < 21 ? 1 : -1;
+  const P = gdCompile(), mv = gdAt(P.x.mimo, t + 0.05) - ms.mimoX, running = Math.abs(mv) > 0.05 && Math.abs(mv) < 30;
+  const mo = { hop: 0, mood: null, face: null };
+  for (const r of gdHooks('mimo', t, A)) Object.assign(mo, r);
+  const hop = Math.max(running ? Math.abs(Math.sin(t * 9)) * 8 : 0, mo.hop || 0, now - ms.mimoHop < 0.5 ? Math.sin((now - ms.mimoHop) / 0.5 * Math.PI) * 16 : 0);
+  const face = running ? Math.sign(mv) : mo.face || (ms.dogX > ms.mimoX && t < 21 ? 1 : -1);
   if (ms.mimoX > X0 - 30 && ms.mimoX < X1 + 30) {
     const saved = ctx; ctx = c;
     c.save(); c.translate(ms.mimoX, GD.FRONT + 4 - hop); c.scale(1.3, 1.3);
-    drawMimo(0, 0, { facing: ms.mimoFace, mood: hop > 1 || gdIn(t, 67.4, 69) || gdIn(t, 125.1, 126.6) || gdIn(t, 136, 138.6) || gdIn(t, 96.2, 97.6) ? 'happy' : gdIn(t, 89.6, 92.6) ? 'scared' : null, sx: hop > 1 ? 0.94 : 1, sy: hop > 1 ? 1.06 : 1,
-      breathe: Math.sin(now * 3) * 0.025, blink: (now % 3.7) > 3.55 ? 0.12 : 1 });
+    drawMimo(0, 0, { facing: face, mood: mo.mood || (hop > 1 ? 'happy' : null), sx: hop > 1 ? 0.94 : 1, sy: hop > 1 ? 1.06 : 1, breathe: Math.sin(now * 3) * 0.025, blink: (now % 3.7) > 3.55 ? 0.12 : 1 });
     c.restore(); ctx = saved;
-    c.setTransform(s, 0, 0, s, ox, oy);
+    re();
   }
-  drawGdThings(c, t, now, pal);
+  for (const a of GARDEN.acts) if (a.front) { a.front(c, t, A); re(); }
   // the gull on its post
   drawMsGull(c, GD.POST.x, GD.POST.y, now, false, -1, !!ms.taps.gull && now - ms.taps.gull.at < 0.6);
-  // the professor's sleep
-  const P = gdWho('professor');
-  if (P && t < 122.2) for (let i = 0; i < 3; i++) { const k = ((now * 0.5 + i / 3) % 1); c.globalAlpha = Math.sin(k * Math.PI); c.fillStyle = pal.z; c.font = '600 ' + (6 + k * 5) + "px 'Fredoka', 'Nunito', system-ui, sans-serif"; c.fillText('z', P.x + 6 + k * 12, P.y - 62 - k * 16); }
-  c.globalAlpha = 1;
   // a tall screen has sky to spare: leaves of the garden's trees hang in from the top with a string of bunting
-  if (canopy && Y0 < 30) drawGdCanopy(c, X0, X1, Y0, now, pal, Math.max(0, 40 - Y0));
-  drawGdTalk(c, t, now, null);
-  c.setTransform(1, 0, 0, 1, 0, 0);
-}
-// comic words and speech bubbles; xr: only what belongs to this strip of an upright screen (by its x)
-function drawGdTalk(c, t, now, xr) {
-  const pal = ms.pal, mine = (x) => !xr || (x >= xr[0] && x < xr[1]);
-  const pop = { ink: pal.ink, pop: '#FFFFFF' }, newsPop = (cc, text, x, y, k, rot, size, pl) => { if (mine(x)) newsPopBase(cc, text, x, y, k, rot, size * Math.min(1, 2.4 / ms.unitPx), pl); };
-  newsPop(c, 'Plopp!', GD.GRILL.x + 6, GD.GRILL.y - 38, (t - 10.0) / 0.9, -0.12, 13, pop);
-  newsPop(c, 'Mampf!', 150, 160, (t - 19.2) / 1.1, 0.1, 13, pop);
-  newsPop(c, 'SPLATSCH!', 246, 112, (t - 67.3) / 1.0, -0.1, 14, { ink: pal.ink, pop: '#FFB3A8' });
-  newsPop(c, 'Platsch!', 300, 108, (t - 111.5) / 1.0, 0.1, 14, { ink: pal.ink, pop: '#BFE8FA' });
-  newsPop(c, 'Plumps!', 290, 150, (t - 125.0) / 1.2, -0.1, 15, pop);
-  newsPop(c, 'Buddel buddel!', GD.HOLE - 4, 150, (t - 37.4) / 1.8, -0.08, 12, pop);
-  newsPop(c, 'Schipp schipp!', GD.HOLE + 40, 162, (t - 43.8) / 1.6, 0.08, 12, pop);
-  newsPop(c, 'Buddel buddel!', GD.HOLE - 10, 148, (t - 93.8) / 1.4, 0.08, 12, pop);
+  if (Y0 < 30) drawGdCanopy(c, X0, X1, Y0, now, pal, Math.max(0, 40 - Y0));
+  // comic words and speech bubbles
+  for (const a of GARDEN.acts) if (a.talk) { a.talk(c, t, A); re(); }
   const flare = now - ms.flare < 1.2 ? 1 - (now - ms.flare) / 1.2 : 0;
-  if (flare) newsPop(c, 'Fauch!', GD.GRILL.x - 4, GD.GRILL.y - 46, 1 - flare, -0.1, 13, { ink: pal.ink, pop: '#FFE08F' });
-  for (const [a, who, text, dur, quiet] of GD_LINES) if (t >= a && t < a + dur) { if (mine(msAnchor(who)[0])) drawMsBubble(c, who, text, pal, t - a, dur, quiet); }
-  for (const [who, b] of Object.entries(ms.taps)) if (now - b.at < 1.8) { if (mine(msAnchor(who)[0])) drawMsBubble(c, who, b.text, pal, now - b.at, 1.8); }
+  if (flare) A.pop(c, 'Fauch!', GD.GRILL.x - 4, GD.GRILL.y - 46, 1 - flare, -0.1, 13, '#FFE08F');
+  for (const [a, who, text, dur, quiet] of P.lines) if (t >= a && t < a + dur) drawMsBubble(c, who, text, pal, t - a, dur, quiet);
+  for (const [who, b] of Object.entries(ms.taps)) if (now - b.at < 1.8) drawMsBubble(c, who, b.text, pal, now - b.at, 1.8);
+  c.setTransform(1, 0, 0, 1, 0, 0);
 }
 function drawGdCanopy(c, X0, X1, Y0, now, pal, extra) {
   // extra: how much more sky there is than a wide screen has; the leaves and the bunting come down further then
@@ -6289,11 +6267,6 @@ function drawGdCanopy(c, X0, X1, Y0, now, pal, extra) {
     }
   }
 }
-function drawGdChair(c, x, y, pal) {
-  c.strokeStyle = pal.chair; c.lineWidth = 1.6; c.lineCap = 'round';
-  c.beginPath(); c.moveTo(x - 8, y); c.lineTo(x + 6, y - 14); c.moveTo(x + 8, y); c.lineTo(x - 6, y - 14); c.moveTo(x + 6, y - 14); c.lineTo(x + 8, y - 30); c.stroke();
-  c.fillStyle = pal.chair; c.fillRect(x - 9, y - 16, 16, 3); c.fillRect(x + 4, y - 31, 5, 15);
-}
 function drawGdSandbox(c, pal) {
   const B = GD.BOX;
   c.fillStyle = pal.sand; c.beginPath(); c.moveTo(B.x0 + 4, B.y - 14); c.lineTo(B.x1 - 4, B.y - 14); c.lineTo(B.x1, B.y + 4); c.lineTo(B.x0, B.y + 4); c.closePath(); c.fill();
@@ -6304,141 +6277,22 @@ function drawGdSandbox(c, pal) {
   // a bucket and a little shovel in the corner
   c.fillStyle = '#7FC4E8'; c.beginPath(); c.moveTo(B.x1 - 18, B.y - 10); c.lineTo(B.x1 - 8, B.y - 10); c.lineTo(B.x1 - 9.5, B.y - 2); c.lineTo(B.x1 - 16.5, B.y - 2); c.closePath(); c.fill();
 }
-// the hole in the sandbox and the pile beside it (front: false = the hole and the pile, before the people; true = the
-// sand filled in around Caspar, the towel over his head and the flying sand, after the people)
-function drawGdHole(c, t, now, pal, front) {
-  const X = GD.HOLE, Y = GD.SAND, hole = gdHole(t), pile = gdPile(t), fill = gdFill(t);
-  if (!front) {
-    if (hole > 0.02) { // a dark oval with a lighter rim, deeper and wider while they dig
-      c.fillStyle = pal.sandInk; c.beginPath(); c.ellipse(X, Y, 8 + 10 * hole, 2 + 3 * hole, 0, 0, Math.PI * 2); c.fill();
-      c.fillStyle = 'rgba(80,58,30,0.35)'; c.beginPath(); c.ellipse(X, Y + 0.6 * hole, 6 + 8 * hole, 1.2 + 2.2 * hole, 0, 0, Math.PI * 2); c.fill();
-    }
-    // the pile on the right of the hole (the side away from Julian)
-    const px = X + 34, pw = 6 + 12 * pile, ph = 2 + 9 * pile;
-    c.fillStyle = pal.sand; c.strokeStyle = pal.sandInk; c.lineWidth = 0.7;
-    c.beginPath(); c.moveTo(px - pw, Y + 2); c.quadraticCurveTo(px - pw * 0.5, Y + 2 - ph * 1.3, px, Y + 2 - ph); c.quadraticCurveTo(px + pw * 0.5, Y + 2 - ph * 1.3, px + pw, Y + 2); c.closePath(); c.fill(); c.stroke();
-    c.fillStyle = pal.sandInk; for (let i = 0; i < 4; i++) { c.beginPath(); c.arc(px - pw * 0.5 + i * pw * 0.33, Y - ph * 0.35 + (i % 2), 0.8, 0, Math.PI * 2); c.fill(); }
-    // the towel after the rescue: thrown down next to the pile
-    if (t >= 93.5) drawGdTowelFlat(c, X + 58, Y + 3, pal);
-    return;
-  }
-  // the sand filled in around him: a mound up to his neck
-  if (fill > 0) {
-    c.fillStyle = pal.sand; c.strokeStyle = pal.sandInk; c.lineWidth = 0.8;
-    const w = 13 + fill * 0.6;
-    c.beginPath(); c.moveTo(X - w - 4, Y + 2); c.quadraticCurveTo(X - w, Y - fill, X - 4, Y - fill - 0.5); c.lineTo(X + 4, Y - fill - 0.5); c.quadraticCurveTo(X + w, Y - fill, X + w + 4, Y + 2); c.closePath(); c.fill(); c.stroke();
-    c.fillStyle = pal.sandInk; for (let i = 0; i < 6; i++) { c.beginPath(); c.arc(X - w + 4 + i * (w * 2 - 8) / 5, Y - fill * (0.3 + 0.25 * (i % 2)), 0.8, 0, Math.PI * 2); c.fill(); }
-  }
-  // flying sand: out of the hole onto the pile while they dig, back from the pile while Julian fills, out again at the rescue
-  const toPile = gdIn(t, 37.0, 41.0) || gdIn(t, 93.6, 95.6), fromPile = gdIn(t, 43.4, 46.6);
-  if (toPile || fromPile) {
-    c.fillStyle = pal.sandInk;
-    for (let i = 0; i < 12; i++) {
-      const k = (now * 2.4 + i / 12) % 1, a = toPile ? [X + (i % 2 ? -6 : 6), Y - 2] : [X + 34, Y - 6], b = toPile ? [X + 32 + (i % 3) * 3, Y - 6] : [X + (i % 2 ? -5 : 5), Y - 4];
-      c.globalAlpha = 1 - k * 0.4; c.beginPath(); c.arc(a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k - Math.sin(k * Math.PI) * 16, 1.1 + (i % 2) * 0.4, 0, Math.PI * 2); c.fill();
-    }
-    c.globalAlpha = 1;
-  }
-  // the towel: in Julian's hand, laid over Caspar's head like a little tent, lifted off by the redbeard and thrown away
-  const C = gdWho('sidepart'), J = gdWho('striped'), R = gdWho('redbeard');
-  if (!C || !C.p) return;
-  const h = gdHead(C), base = Y - fill;
-  const calling = GD_LINES.some(([a, who, , d]) => who === 'sidepart' && t >= a && t < a + d) || (ms.taps.sidepart && now - ms.taps.sidepart.at < 1.6);
-  // 47.0 Julian holds the towel up, 47.8 he carries it over Caspar, 48.2 it sinks over the head down to the sand
-  if (gdIn(t, 47.0, 47.8) && J) { const p = gdHand(J, 'r'); gdTowel(c, p[0] + 4, p[1] + 4, 22, 13, 0.1, pal); }
-  else if (gdIn(t, 47.8, 48.2)) { const k = gdEase.io((t - 47.8) / 0.4), p = J ? gdHand(J, 'r') : [X - 20, Y - 30]; gdTowel(c, p[0] + 4 + (h[0] - p[0] - 4) * k, p[1] + 4 + (h[1] - 16 - p[1] - 4) * k, 22 + 12 * k, 13 - 9 * k, 0.1 * (1 - k), pal); }
-  else if (gdIn(t, 48.2, 92.6)) drawGdTowelTent(c, h, base, now, pal, calling, gdEase.out(Math.min(1, (t - 48.2) / 0.8)));
-  else if (gdIn(t, 92.6, 93.0) && R) { const p = gdHand(R, 'r'); gdTowel(c, p[0], p[1] - 3, 16, 10, 0.4, pal); }
-  else if (gdIn(t, 93.0, 93.5)) { const k = (t - 93.0) / 0.5, p = R ? gdHand(R, 'r') : [X - 20, Y - 30]; gdTowel(c, p[0] + (X + 58 - p[0]) * k, p[1] + (Y + 1 - p[1]) * k - Math.sin(k * Math.PI) * 22, 16 + 6 * k, 10 - 6 * k, 0.4 + k * 5, pal); }
-}
-// Caspar standing in the hole: only what is above the sand (or above the filled-in sand) shows
-function drawGdSunk(c, k, t, now, pal) {
-  const cut = GD.SAND - gdFill(t) + 0.5;
-  c.save(); c.beginPath(); c.rect(k.x - 80, cut - 200, 160, 200); c.clip();
-  k.p.draw(c, k.x, k.y + Math.sin(now * 2) * 0.3, { scale: 1, noShadow: true });
-  c.restore();
-}
-// the towel over his head: a striped tent from the top of the head down to the sand, it wobbles when he calls
-function drawGdTowelTent(c, h, base, now, pal, calling, drop) {
-  const wob = calling ? Math.sin(now * 16) * 1.3 : Math.sin(now * 1.6) * 0.3, top = h[1] - 15 + wob, x = h[0], w = 18;
-  const bot = top + (base + 1 - top) * drop, sw = (calling ? Math.sin(now * 11) * 1.2 : 0);
-  c.save();
-  // the outline: a rounded top over the head, the sides falling straight down to the sand, a wavy hem
-  c.beginPath(); c.moveTo(x - w + sw, bot); c.lineTo(x - w + 2 + sw * 0.5, top + 10); c.quadraticCurveTo(x - w + 3, top + 1, x - 7, top);
-  c.quadraticCurveTo(x, top - 2.5, x + 7, top); c.quadraticCurveTo(x + w - 3, top + 1, x + w - 2 + sw * 0.5, top + 10); c.lineTo(x + w + sw, bot);
-  for (let i = 4; i >= 0; i--) c.quadraticCurveTo(x - w + sw + (i + 0.5) * w * 0.4, bot + (i % 2 ? 1.8 : -0.6), x - w + sw + i * w * 0.4, bot);
-  c.closePath();
-  c.save(); c.clip();
-  for (let i = 0; i < 7; i++) { c.fillStyle = pal.towel[i % 2]; c.fillRect(x - w - 3 + i * (w * 2 + 6) / 7, top - 5, (w * 2 + 6) / 7 + 0.3, bot - top + 9); }
-  c.fillStyle = 'rgba(40,40,80,0.10)'; c.fillRect(x - w - 3, top - 5, 7, bot - top + 9); c.fillRect(x + w - 4, top - 5, 7, bot - top + 9);   // a little shading at the sides
-  c.restore();
-  c.strokeStyle = pal.ink; c.globalAlpha = 0.35; c.lineWidth = 0.7; c.stroke();
-  c.globalAlpha = 0.16; c.fillStyle = pal.ink; c.beginPath(); c.ellipse(x, base + 1.8, w + 2, 1.8, 0, 0, Math.PI * 2); c.fill();
-  c.restore();
-}
-function drawGdTowelFlat(c, x, y, pal) {
-  c.save(); c.translate(x, y); c.scale(1, 0.35);
-  for (let i = 0; i < 6; i++) { c.fillStyle = pal.towel[i % 2]; c.fillRect(-14 + i * 28 / 6, -10, 28 / 6 + 0.3, 20); }
-  c.restore();
-}
-function gdTowel(c, x0, y0, w, h, rot, pal) {
-  c.save(); c.translate(x0, y0); c.rotate(rot);
-  for (let i = 0; i < 6; i++) { c.fillStyle = pal.towel[i % 2]; c.fillRect(-w / 2 + i * w / 6, -h / 2, w / 6 + 0.3, h); }
-  c.strokeStyle = pal.ink; c.globalAlpha = 0.25; c.lineWidth = 0.6; c.strokeRect(-w / 2, -h / 2, w, h); c.globalAlpha = 1; c.restore();
-}
-// the professor on his bottom: the figure lower and tipped back, a dust cloud and stars
-function drawGdFallen(c, k, f, pal) {
-  c.save(); c.beginPath(); c.rect(k.x - 60, k.y - 120, 120, 120.5); c.clip();
-  c.translate(k.x, k.y + 16 * f); c.rotate(-0.25 * f); k.p.draw(c, 0, 0, { scale: 1, noShadow: true }); c.restore();
-  c.fillStyle = pal.sand; c.globalAlpha = 0.85 * f; c.beginPath(); c.ellipse(k.x, k.y, 18, 5, 0, Math.PI, 0); c.fill(); c.globalAlpha = 1;
-  const h = gdHead(k), now = ms.now;
-  for (let i = 0; i < 3; i++) { const a = now * 4 + i * 2.1; c.fillStyle = '#FFD36E'; c.save(); c.translate(h[0] + Math.cos(a) * 9, h[1] + 16 * f - 10 + Math.sin(a) * 3); c.rotate(a); c.beginPath(); for (let j = 0; j < 10; j++) { const r = j % 2 ? 1.2 : 3, b = j / 10 * Math.PI * 2; c.lineTo(Math.cos(b) * r, Math.sin(b) * r); } c.closePath(); c.fill(); c.restore(); }
-}
-function drawGdDrips(c, k, now, pal, a) {
-  const h = gdHead(k); c.fillStyle = pal.water; c.globalAlpha = 0.85 * a;
-  for (let i = 0; i < 6; i++) { const q = (now * 1.4 + i / 6) % 1; c.beginPath(); c.ellipse(h[0] - 9 + i * 3.6, h[1] - 2 + q * 40, 1, 1.6, 0, 0, Math.PI * 2); c.fill(); }
-  c.globalAlpha = 0.35 * a; c.beginPath(); c.ellipse(k.x, k.y + 1, 14, 2.5, 0, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1;
-}
-function drawGdKetchupFace(c, k, pal, a) {
-  const h = gdHead(k); c.fillStyle = pal.ketchup; c.globalAlpha = 0.9 * Math.max(0, a);
-  for (const [dx, dy, r] of [[-2, -1, 2.6], [2.5, 1, 2], [0, 3.5, 1.6], [-4, 3, 1.2], [4, -3, 1.3]]) { c.beginPath(); c.arc(h[0] + dx, h[1] + dy, r, 0, Math.PI * 2); c.fill(); }
-  c.fillRect(h[0] - 1, h[1] + 3, 1.4, 5 * Math.min(1, a + 0.3)); c.globalAlpha = 1;
-}
-// the flying things of the pranks: the ketchup jet, the water bomb, the ice cube, the sausage off the grill
-function drawGdThings(c, t, now, pal) {
-  const J = gdWho('striped'), K = gdWho('kid'), F = gdWho('filmer'), R = gdWho('reporter');
-  if (gdIn(t, 10.0, 10.3)) { const k = (t - 10) / 0.3; gdSausage(c, GD.GRILL.x + 2 + (ms.dogX + 10 - GD.GRILL.x - 2) * k, GD.GRILL.y - 26 - Math.sin(k * Math.PI) * 26 + k * 16, k * 6, pal); }
-  if (gdIn(t, 67.0, 67.35) && J && R && J.p && R.p) { // the jet: from the bottle to her face
-    const a = gdHand(J, 'r'), b = gdHead(R), k = (t - 67) / 0.35;
-    c.strokeStyle = pal.ketchup; c.lineWidth = 2.2; c.lineCap = 'round'; c.beginPath(); c.moveTo(a[0], a[1]);
-    const ex = a[0] + (b[0] - a[0]) * k, ey = a[1] + (b[1] - a[1]) * k - Math.sin(k * Math.PI) * 6; c.quadraticCurveTo((a[0] + ex) / 2, Math.min(a[1], ey) - 8, ex, ey); c.stroke();
-  }
-  if (gdIn(t, 64.8, 67) && J && J.p) { const a = gdHand(J, 'r'); c.fillStyle = pal.ink; c.globalAlpha = 0.6; for (const d of [-1, 1]) { c.beginPath(); c.arc(a[0] + d * 7 + Math.sin(now * 30) * 0.8, a[1] - 4, 0.9, 0, Math.PI * 2); c.fill(); } c.globalAlpha = 1; }
-  if (gdIn(t, 111.05, 111.5) && K && F && K.p && F.p) { // the water bomb in an arc
-    const a = gdHand(K, 'r'), b = gdHead(F), k = (t - 111.05) / 0.45, x = a[0] + (b[0] - a[0]) * k, y = a[1] + (b[1] - a[1]) * k - Math.sin(k * Math.PI) * 26;
-    c.fillStyle = '#7FC7EE'; c.strokeStyle = '#3E87B5'; c.lineWidth = 0.6; c.beginPath(); c.arc(x, y, 3.6, 0, Math.PI * 2); c.fill(); c.stroke();
-  }
-  if (gdIn(t, 111.5, 112.1) && F && F.p) { const b = gdHead(F), k = (t - 111.5) / 0.6; c.fillStyle = pal.water; c.globalAlpha = 1 - k; for (let i = 0; i < 12; i++) { const a2 = i / 12 * Math.PI * 2; c.beginPath(); c.arc(b[0] + Math.cos(a2) * (6 + k * 20), b[1] + Math.sin(a2) * (5 + k * 14) + k * k * 14, 1.6, 0, Math.PI * 2); c.fill(); } c.globalAlpha = 1; }
-  if (gdIn(t, 135.5, 135.95) && R && J && R.p && J.p) { // the ice cube into the collar
-    const a = gdHand(R, 'r'), b = gdHead(J), k = (t - 135.5) / 0.45, x = a[0] + (b[0] + 2 - a[0]) * k, y = a[1] + (b[1] + 9 - a[1]) * k - Math.sin(k * Math.PI) * 8;
-    c.fillStyle = '#E4F6FD'; c.strokeStyle = '#7FB6D2'; c.lineWidth = 0.5; c.beginPath(); c.rect(x - 2, y - 2, 4, 4); c.fill(); c.stroke();
-  }
-  if (gdIn(t, 135.9, 138.6) && J && J.p) { const h = gdHead(J); c.strokeStyle = '#8FD0DE'; c.lineWidth = 0.9; c.globalAlpha = 0.8; for (let i = 0; i < 3; i++) { const a2 = now * 9 + i * 2.1; c.beginPath(); c.moveTo(h[0] + Math.cos(a2) * 12, h[1] + Math.sin(a2) * 5 - 4); c.lineTo(h[0] + Math.cos(a2) * 16, h[1] + Math.sin(a2) * 7 - 6); c.stroke(); } c.globalAlpha = 1; }
-  // Julian's sneaking: little notes over his head on the way back
-  if (gdIn(t, 49.4, 53.6) && J) { c.fillStyle = pal.ink; c.font = "600 9px 'Fredoka', 'Nunito', system-ui, sans-serif"; const h = gdHead(J); for (let i = 0; i < 2; i++) { const k = (now * 0.8 + i / 2) % 1; c.globalAlpha = Math.sin(k * Math.PI); c.fillText('♪', h[0] + 8 + k * 8 + i * 4, h[1] - 12 - k * 14); } c.globalAlpha = 1; }
-}
-function drawGdGrill(c, t, now, pal, flare) {
+function drawGdGrill(c, t, now, pal, flare, n) {
   const { x, y } = GD.GRILL;
   c.strokeStyle = pal.grill; c.lineWidth = 1.6; c.lineCap = 'round';
   c.beginPath(); c.moveTo(x - 10, y - 14); c.lineTo(x - 13, y); c.moveTo(x + 10, y - 14); c.lineTo(x + 13, y); c.moveTo(x, y - 12); c.lineTo(x, y - 1); c.stroke();
   c.fillStyle = pal.grill; c.beginPath(); c.ellipse(x, y - 20, 16, 9, 0, 0, Math.PI); c.fill();
   c.fillStyle = pal.grillHi; c.fillRect(x - 16, y - 21.5, 32, 2);
   c.fillStyle = pal.coal; c.globalAlpha = 0.6 + 0.3 * Math.sin(now * 6); c.fillRect(x - 13, y - 23, 26, 1.4); c.globalAlpha = 1;
-  const n = t >= 10.0 && t < 21 ? 2 : 3;
   for (let i = 0; i < n; i++) gdSausage(c, x - 8 + i * 8, y - 24.5, 0, pal);
   for (let i = 0; i < 5; i++) { const k = (now * 0.45 + i / 5) % 1, sx = x + Math.sin(k * 5 + i) * 4 + k * 10, sy = y - 26 - k * 40; c.globalAlpha = (1 - k) * 0.45; c.fillStyle = pal.smoke; c.beginPath(); c.arc(sx, sy, 3 + k * 7, 0, Math.PI * 2); c.fill(); }
   if (flare > 0) { c.globalAlpha = flare; for (let i = 0; i < 5; i++) { const fx = x - 10 + i * 5, fh = 8 + flare * 14 * (0.6 + 0.4 * Math.sin(now * 20 + i)); c.fillStyle = i % 2 ? '#FFB35C' : '#FF8A5C'; c.beginPath(); c.moveTo(fx - 3, y - 23); c.quadraticCurveTo(fx, y - 23 - fh * 1.2, fx + 3, y - 23); c.fill(); } }
   c.globalAlpha = 1;
+}
+function gdTowel(c, x0, y0, w, h, rot, pal) {
+  c.save(); c.translate(x0, y0); c.rotate(rot);
+  for (let i = 0; i < 6; i++) { c.fillStyle = pal.towel[i % 2]; c.fillRect(-w / 2 + i * w / 6, -h / 2, w / 6 + 0.3, h); }
+  c.strokeStyle = pal.ink; c.globalAlpha = 0.25; c.lineWidth = 0.6; c.strokeRect(-w / 2, -h / 2, w, h); c.globalAlpha = 1; c.restore();
 }
 function gdSausage(c, x, y, rot, pal) {
   pal = pal || MS_PAL.light;
