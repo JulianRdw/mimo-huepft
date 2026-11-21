@@ -31,6 +31,20 @@
     + '<path d="M-2.2 -8.2 Q-1.2 -9.6 0.6 -9.8" fill="none" stroke="#FFFFFF" stroke-width="0.8" stroke-linecap="round"/></g>');
   // the side parting's scarf is the found one of level 35 (red and white like its icon), so it is the one he waves from then on
   if (R.sidepart && R.sidepart.colors) R.sidepart.colors = { ...R.sidepart.colors, scarf: ['#F28C82', '#FFFFFF'] };
+  // the start screen's barbecue (src/index.html, drawMenuScene): Julian's spade and ketchup bottle, the kid's water bomb,
+  // the reporter's ice cube
+  add('striped', 'spade',
+    '<g><path d="M0 4 L0 -5.6" stroke="#B98B61" stroke-width="1" stroke-linecap="round"/><path d="M-1.4 4 L1.4 4" stroke="#B98B61" stroke-width="1" stroke-linecap="round"/>'
+    + '<path d="M-2.6 -5 C-3 -8.2 -1.3 -10 0 -10.2 C1.3 -10 3 -8.2 2.6 -5 Z" fill="#8FB7D9" stroke="#4E7598" stroke-width="0.5" stroke-linejoin="round"/></g>');
+  add('striped', 'ketchup',
+    '<g transform="rotate(180 0 -3)"><rect x="-2.2" y="-8.4" width="4.4" height="9" rx="1.6" fill="#E2483D" stroke="#9E2A23" stroke-width="0.5"/>'
+    + '<rect x="-1.5" y="-5.8" width="3" height="2.4" rx="0.5" fill="#FFF3D6"/><path d="M-1 -8.4 L-0.6 -10.4 L0.6 -10.4 L1 -8.4 Z" fill="#F7F3EA" stroke="#9E2A23" stroke-width="0.4"/></g>');
+  add('kid', 'balloon',
+    '<g><circle cx="0" cy="-3.6" r="3.4" fill="#7FC7EE" stroke="#3E87B5" stroke-width="0.5"/><path d="M-0.5 -0.3 L0 0.8 L0.5 -0.3 Z" fill="#3E87B5"/>'
+    + '<path d="M-1.6 -5.2 Q-0.8 -6.3 0.4 -6.4" fill="none" stroke="#FFFFFF" stroke-width="0.7" stroke-linecap="round"/></g>');
+  add('reporter', 'ice',
+    '<g transform="rotate(14 0 -2)"><rect x="-2" y="-4.6" width="4" height="4" rx="0.9" fill="#E4F6FD" fill-opacity="0.92" stroke="#7FB6D2" stroke-width="0.5"/>'
+    + '<path d="M-1.1 -3.6 L0.4 -3.6" stroke="#FFFFFF" stroke-width="0.6" stroke-linecap="round"/></g>');
   // a small red spade (the kid's), held by the handle
   add('kid', 'spade',
     '<g><path d="M0 3.4 L0 -5.2" stroke="#B98B61" stroke-width="0.9" stroke-linecap="round"/><path d="M-1.2 3.4 L1.2 3.4" stroke="#B98B61" stroke-width="0.9" stroke-linecap="round"/>'

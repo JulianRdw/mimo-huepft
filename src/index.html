@@ -547,35 +547,66 @@ input,textarea{-webkit-user-select:text;user-select:text}
   .shop-preview{width:132px;height:132px}
   .items{grid-template-columns:repeat(auto-fill,minmax(88px,1fr))}
 }
-/* main menu: the barbecue scene fills the screen, the menu is a bar at the bottom */
-#ovMenu{background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none;padding:0;overflow:hidden;display:block}
+/* main menu: the garden party fills the screen; the title floats over the sky, a big play button and a slim
+   navigation bar float over the lawn (the scene keeps the party between them, see menuSceneFit) */
+#ovMenu{--nav-h:62px;background:var(--bg);backdrop-filter:none;-webkit-backdrop-filter:none;padding:0;overflow:hidden;display:block}
 #menuScene{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:manipulation;cursor:pointer}
-#ovMenu .card.menu{position:absolute;left:50%;bottom:calc(10px + var(--sa-b));transform:translateX(-50%);margin:0;width:min(860px,calc(100% - 20px - var(--sa-l) - var(--sa-r)));max-width:none;
-  display:grid;grid-template-columns:auto minmax(200px,1fr);grid-template-areas:"hero cta" "tiles tiles";grid-template-rows:auto auto;column-gap:16px;row-gap:10px;align-items:center;
-  padding:12px 14px;border-radius:22px;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 14px 40px rgba(40,30,60,.18);animation:none}
-#ovMenu .menu-mimo,#ovMenu .menu-keys{display:none}
-#ovMenu .menu-hero{grid-area:hero;flex-direction:column;align-items:flex-start;gap:0;text-align:left}
-#ovMenu .menu-title h1{font-size:28px;text-align:left;line-height:1.05}
-#ovMenu .menu-title p{font-size:12.5px;margin-top:3px;max-width:300px}
-#ovMenu .btn.cta{grid-area:cta;width:100%}
-#ovMenu .tiles{grid-area:tiles;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));grid-template-rows:none;gap:8px;align-self:auto}
-#ovMenu .tiles .tile{min-height:0;display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;column-gap:9px;row-gap:0;align-items:center;padding:8px 11px}
+#ovMenu .card.menu{position:absolute;inset:0;margin:0;width:auto;max-width:none;padding:0;border:0;border-radius:0;background:none;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;display:block;pointer-events:none;animation:none}
+#ovMenu .menu-mimo,#ovMenu .menu-keys,#ovMenu .menu-tip{display:none}
+#ovMenu .menu-hero{position:absolute;top:calc(14px + var(--sa-t));left:calc(18px + var(--sa-l));right:calc(18px + var(--sa-r));display:block;text-align:left}
+#ovMenu .menu-title h1{font-size:clamp(30px,7.5vw,44px);line-height:1;letter-spacing:-.01em;color:var(--fg);text-align:left;
+  text-shadow:0 2px 0 rgba(255,255,255,.75),0 0 22px rgba(255,255,255,.9)}
+#ovMenu .menu-title p{display:inline-block;margin-top:8px;padding:5px 11px;border-radius:999px;font-size:12.5px;font-weight:700;color:var(--fg);max-width:none;
+  background:color-mix(in srgb,var(--card) 70%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+/* the play button: a pill floating above the bar */
+#ovMenu .btn.cta{position:absolute;left:50%;bottom:calc(var(--nav-h) + 26px + var(--sa-b));transform:translateX(-50%);width:min(340px,calc(100% - 56px));pointer-events:auto;
+  display:grid;grid-template-columns:auto 1fr;grid-template-areas:"ic main" "ic sub";column-gap:14px;align-items:center;justify-items:start;text-align:left;
+  padding:9px 24px 9px 9px;border-radius:999px;border:3px solid rgba(255,255,255,.85);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 80%,#fff 20%),var(--accent));color:var(--accent-ink);
+  box-shadow:0 10px 26px rgba(40,30,60,.28),0 4px 0 color-mix(in srgb,var(--accent) 60%,#000 25%);transition:transform .12s ease,box-shadow .12s ease}
+#ovMenu .btn.cta::before{content:"";grid-area:ic;width:50px;height:50px;border-radius:50%;background:var(--accent-ink) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M9 6.5v11l9-5.5z' fill='%23fff'/%3E%3C/svg%3E") center/26px no-repeat}
+#ovMenu .btn.cta:hover{transform:translateX(-50%) translateY(-1px)}
+#ovMenu .btn.cta:active{transform:translateX(-50%) translateY(3px);box-shadow:0 6px 16px rgba(40,30,60,.25),0 1px 0 color-mix(in srgb,var(--accent) 60%,#000 25%)}
+#ovMenu .cta-main{grid-area:main;font-size:22px;line-height:1.05}
+#ovMenu .cta-sub{grid-area:sub;font-size:13px;opacity:.78}
+/* the navigation bar: four equal places, an icon and a short name each */
+#ovMenu .tiles{position:absolute;left:50%;bottom:calc(12px + var(--sa-b));transform:translateX(-50%);width:min(520px,calc(100% - 24px - var(--sa-l) - var(--sa-r)));height:var(--nav-h);
+  display:grid;grid-auto-flow:column;grid-auto-columns:1fr;grid-template-columns:none;grid-template-rows:none;gap:2px;padding:5px;pointer-events:auto;
+  border-radius:22px;background:color-mix(in srgb,var(--card) 84%,transparent);backdrop-filter:blur(16px) saturate(1.2);-webkit-backdrop-filter:blur(16px) saturate(1.2);
+  box-shadow:0 10px 30px rgba(40,30,60,.18),inset 0 0 0 1px color-mix(in srgb,var(--line) 80%,transparent)}
+#ovMenu .tiles .tile{--tc:var(--mimo-lav);min-height:0;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:4px 2px;border:0;border-radius:17px;background:none;box-shadow:none;text-align:center;transition:background .15s ease,transform .12s ease}
 #ovMenu .tiles .tile[hidden]{display:none}
-#ovMenu .tiles .tile svg{grid-row:1 / 3;width:22px;height:22px;margin:0}
-#ovMenu .tiles .tile small{grid-column:2}
-@media (max-width:600px){
-  #ovMenu .card.menu{grid-template-columns:1fr;grid-template-areas:"hero" "cta" "tiles";row-gap:8px}
-  #ovMenu .menu-hero{align-items:center;text-align:center}#ovMenu .menu-title h1{text-align:center;font-size:26px}#ovMenu .menu-title p{display:none}
-  #ovMenu .tiles{grid-template-columns:1fr 1fr}
+#ovMenu .tiles .tile:hover{background:color-mix(in srgb,var(--tc) 22%,transparent)}
+#ovMenu .tiles .tile:active{transform:scale(.94);background:color-mix(in srgb,var(--tc) 32%,transparent)}
+#ovMenu .tiles .tile svg{width:25px;height:25px;margin:0;padding:0;border-radius:0;background:none;color:color-mix(in srgb,var(--tc) 45%,var(--fg) 55%)}
+#ovMenu .tiles .tile b{font-size:11.5px;font-weight:800;line-height:1.1;white-space:nowrap}
+#ovMenu .tiles .tile small{display:none}
+#btnLevels{--tc:var(--mimo-mint)!important}#btnWardrobe{--tc:var(--mimo-rose)!important}#btnAch{--tc:var(--mimo-sun)!important}#btnSettings{--tc:var(--mimo-lav)!important}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) #ovMenu .menu-title h1{text-shadow:0 2px 0 rgba(0,0,0,.35),0 0 20px rgba(0,0,0,.45)}}
+:root[data-theme="dark"] #ovMenu .menu-title h1{text-shadow:0 2px 0 rgba(0,0,0,.35),0 0 20px rgba(0,0,0,.45)}
+/* upright: a bigger play button and a taller bar with the short status under each name */
+@media (orientation: portrait){
+  #ovMenu{--nav-h:84px}
+  #ovMenu .btn.cta{width:min(400px,calc(100% - 32px));bottom:calc(var(--nav-h) + 24px + var(--sa-b));padding:11px 26px 11px 11px;column-gap:16px}
+  #ovMenu .btn.cta::before{width:60px;height:60px;background-size:30px}
+  #ovMenu .cta-main{font-size:26px}#ovMenu .cta-sub{font-size:14px}
+  #ovMenu .tiles{width:calc(100% - 24px - var(--sa-l) - var(--sa-r));max-width:520px;border-radius:26px;padding:6px}
+  #ovMenu .tiles .tile{gap:2px;border-radius:20px}
+  #ovMenu .tiles .tile svg{width:30px;height:30px;margin-bottom:2px}
+  #ovMenu .tiles .tile b{font-size:13px}
+  #ovMenu .tiles .tile small{display:block;font-size:10.5px;line-height:1.15;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 }
+/* sideways on a phone: the play button sits next to the bar, both at the bottom */
 @media (orientation: landscape) and (max-height: 540px){
-  #ovMenu .card.menu{grid-template-columns:auto minmax(150px,1fr) auto;grid-template-areas:"hero cta tiles";padding:8px 10px;column-gap:10px;bottom:calc(8px + var(--sa-b))}
-  #ovMenu .menu-title h1{font-size:21px}#ovMenu .menu-title p{display:none}
-  #ovMenu .btn.cta{padding:7px 14px}
-  #ovMenu .tiles{grid-template-columns:none;grid-auto-flow:column;gap:6px}
-  #ovMenu .tiles .tile{grid-template-columns:auto;grid-template-rows:auto auto;justify-items:center;padding:5px 8px;row-gap:1px}
-  #ovMenu .tiles .tile svg{grid-row:auto;width:18px;height:18px}
-  #ovMenu .tiles .tile b{font-size:12px}#ovMenu .tiles .tile small{display:none}
+  #ovMenu{--nav-h:52px}
+  #ovMenu .menu-hero{top:calc(10px + var(--sa-t))}
+  #ovMenu .menu-title h1{font-size:26px}#ovMenu .menu-title p{display:none}
+  #ovMenu .btn.cta{left:auto;right:calc(12px + var(--sa-r));transform:none;bottom:calc(12px + var(--sa-b));width:auto;min-width:220px;height:var(--nav-h);padding:4px 22px 4px 5px;column-gap:10px}
+  #ovMenu .btn.cta::before{width:38px;height:38px;background-size:20px}
+  #ovMenu .btn.cta:hover{transform:translateY(-1px)}#ovMenu .btn.cta:active{transform:translateY(2px)}
+  #ovMenu .cta-main{font-size:18px}#ovMenu .cta-sub{font-size:11.5px}
+  #ovMenu .tiles{left:calc(12px + var(--sa-l));transform:none;width:min(380px,calc(100% - 290px - var(--sa-l) - var(--sa-r)))}
+  #ovMenu .tiles .tile svg{width:21px;height:21px}#ovMenu .tiles .tile b{font-size:10.5px}
 }
 </style>
 
@@ -645,6 +676,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
           <button class="tile" id="btnSettings" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><b>Einstellungen</b><small id="tileSettings"></small></button>
           <button class="tile" id="btnBonus" type="button" hidden><b>Sternenbahn <span class="new-badge" id="bonusNew" hidden>Neu</span></b><small id="tileBonus"></small></button>
         </div>
+        <p class="menu-tip">Psst: Tippe auf die Gäste im Garten.</p>
         <p class="menu-keys" id="menuKeys"><b>← →</b> laufen · <b>Leertaste</b> springen · <b>↓</b> durch Bretter · <b>E</b> piepen · <b>Esc</b> Pause</p>
       </div>
     </div>
@@ -5638,6 +5670,7 @@ function newsArm(c, tip, k, pal, t) {
   return e;
 }
 // a comic word: white letters with an ink outline, popping in
+const newsPopBase = (...a) => newsPop(...a);
 function newsPop(c, text, x, y, k, rot, size, pal) {
   if (k <= 0 || k >= 1) return;
   const sc = k < 0.15 ? 0.5 + k / 0.15 * 0.6 : k < 0.25 ? 1.1 - (k - 0.15) : 1, a = k > 0.8 ? (1 - k) / 0.2 : 1;
@@ -5954,234 +5987,418 @@ function drawSplashPhoto(c, k) {
   if (!reduced() && k < 0.4) { c.fillStyle = 'rgba(255,255,255,' + (1 - k / 0.4) + ')'; c.fillRect(0, 0, cw, ch); }
 }
 
-// ---------- Main menu backdrop: the family's barbecue in the garden ----------
-// A 20 s loop on the real clock behind the menu (decoration, not gameplay), drawn into #menuScene above the menu bar:
-//   0-6   the redbeard grills, the striped one fans the smoke, the reporter interviews Mimo ("Piep!"), the professor dozes
-//         standing up, the dog sits at the grill and begs, the gull waits on the fence
-//   6     a sausage jumps off the grill ("Plopp!"), the dog races after it, but the gull is quicker and flies off with it
-//   9-11  the dog trots back, the others laugh; 12 the kid puts the grill out with the garden hose and soaks the fanner
-//   15    the professor wakes up and has missed everything; 16.5 a new sausage, 17 the gull is back on the fence
+// ---------- Main menu backdrop: the family's garden party ----------
+// A 60 s loop on the real clock behind the menu (decoration, not gameplay). The garden is GD.W units wide; a phone held
+// upright sees only part of it, so the camera follows whatever prank is going on. Everyone can run out of the picture
+// and come back in from the other side.
+//   0-11   the chase: the dog snaps a sausage off the grill and runs out on the right, the redbeard, the kid and Mimo
+//          after it; all of them come back in on the left, the dog first, and the dog eats it ("Mampf!")
+//   11-22  Julian (striped shirt) buries Caspar (side parting), who sleeps in the sandbox, lays a towel over him and
+//          tiptoes off whistling; from under the towel, now and then: "Hilfe … hilfe …"
+//   22-32  Julian's ketchup bottle is stuck, he squeezes hard, the ketchup hits the reporter in the face
+//   32-42  the kid sneaks up with a water bomb and hits the filmer; she chases him out, he comes back in on the other
+//          side and whistles, she comes back dripping and does not find him
+//   42-50  the professor wakes up and wants to sit down, Julian pulls the folding chair away: "Plumps!"
+//   28-32  the dog runs to the sandbox, pulls the towel off and digs Caspar out ("Danke, guter Hund!"); from then on
+//          Caspar joins in everything, runs along in the next chase and lies down for a nap again at 11
+//   50-56  revenge: the reporter slips an ice cube down Julian's collar, he hops about wildly
+//   56-60  "Die Würstchen sind fertig!": everyone cheers
 // Tapping a figure makes it react (a gesture and a line), tapping the grill makes it flare up.
-// The scene units are 400 x 200 like the news card; the garden reaches on to the canvas edges.
-const MS = { LOOP: 20, GRILL: { x: 96, y: 158 }, FENCE: 120, GULL_POST: { x: 202, y: 112 }, DOG_HOME: 116, DOG_Y: 182, MIMO: { x: 222, y: 182 } };
-const MS_CAST = [
-  { who: 'redbeard', x: 70, y: 168 }, { who: 'striped', x: 128, y: 166 }, { who: 'kid', x: 166, y: 176 },
-  { who: 'reporter', x: 254, y: 174 }, { who: 'filmer', x: 292, y: 170 }, { who: 'sidepart', x: 324, y: 168 }, { who: 'professor', x: 362, y: 166 },
-];
-const MS_SAY = {
-  redbeard: ['Wer will noch eins?', 'Medium oder durch?', 'Finger weg vom Grill!'],
-  striped: ['Puh, ist das heiß hier!', 'Der Rauch verfolgt mich!', 'Ich fächle, ich fächle!'],
-  kid: ['Wasserschlacht!', 'Darf ich auch mal grillen?', 'Hihi!'],
-  reporter: ['Live vom Grillfest!', 'Ein Wort für die Zuschauer?', 'Exklusiv!'],
-  filmer: ['Läuft!', 'Nochmal, bitte!', 'Das schneiden wir raus.'],
-  sidepart: ['Super Party!', 'Wer hat den Ketchup?', 'Ich hol mal Salat.'],
-  professor: ['Ich bin wach! Ganz wach!', 'Faszinierend.', 'Hm? Was?'],
+const GD = { LOOP: 60, W: 560, BACK: 170, FRONT: 186, GRILL: { x: 112, y: 168 }, TABLE: { x: 205, y: 168 }, CHAIR: { x: 300, y: 176 }, BOX: { x0: 372, x1: 488, y: 192 }, POST: { x: 344, y: 110 }, CASPAR: 430 };
+const gdEase = { lin: (k) => k, io: (k) => k * k * (3 - 2 * k), out: (k) => 1 - (1 - k) * (1 - k), in: (k) => k * k };
+// a value along keys [[t, v, ease?], ...] (eased towards each key), and a held value along keys [[t, v], ...]
+function gdAt(keys, t) {
+  if (t <= keys[0][0]) return keys[0][1];
+  for (let i = 1; i < keys.length; i++) { const [t1, v1, e] = keys[i]; if (t < t1) { const [t0, v0] = keys[i - 1]; return v0 + (v1 - v0) * gdEase[e || 'io']((t - t0) / (t1 - t0)); } }
+  return keys[keys.length - 1][1];
+}
+function gdHold(keys, t) { let v = null; for (const k of keys) { if (t >= k[0]) v = k; else break; } return v; }
+const gdIn = (t, a, b) => t >= a && t < b;
+// where everyone is: x tracks (out of the picture means far beyond the garden: -240 or 800)
+const GD_X = {
+  redbeard: [[0, 88], [3.8, 88], [7.2, 800, 'in'], [7.21, -240], [10.2, 70, 'out'], [11.2, 88]],
+  striped: [[0, 196], [11.2, 196], [13.6, 418, 'lin'], [18.4, 418], [21.6, 192, 'lin'], [42.4, 192], [44.4, 278, 'lin'], [47.4, 278], [49.4, 198, 'lin'], [52, 198],
+    [52.4, 182], [52.8, 204], [53.2, 186], [53.6, 206], [54, 190], [54.6, 198], [60, 196]],
+  kid: [[0, 152], [4.0, 152], [7.4, 800, 'in'], [7.41, -240], [10.4, 152, 'out'], [32.3, 152], [34.8, 252, 'lin'], [36.4, 252], [38.2, 800, 'in'], [38.21, -240], [40.4, 152, 'out']],
+  reporter: [[0, 226], [50.2, 226], [51.4, 212, 'lin'], [54.6, 212], [56, 226, 'lin']],
+  filmer: [[0, 302], [36.8, 302], [38.8, 800, 'in'], [38.81, -240], [41.6, 302, 'out']],
+  professor: [[0, 330], [42.8, 330], [44.4, 300, 'lin']],
+  sidepart: [[0, 350], [4.4, 350], [7.8, 800, 'in'], [7.81, -240], [10.9, GD.CASPAR, 'out'], [31.2, GD.CASPAR], [33.6, 396, 'lin'], [59.6, 396], [60, 350]],
 };
-// the timed lines of the loop: [second, speaker, text, seconds]
-const MS_LINES = [[1.0, 'reporter', 'Mimo, wie schmeckt das Grillfest?', 2.2], [3.3, 'mimo', 'Piep!', 1.2], [4.6, 'redbeard', 'Gleich fertig!', 1.4],
-  [6.2, 'redbeard', 'Mein Würstchen!', 1.6], [7.4, 'gull', 'Danke!', 1.4], [9.4, 'sidepart', 'Hahaha!', 1.4],
-  [12.5, 'striped', 'Heee! Ich bin nass!', 1.8], [15.1, 'professor', 'Hm? Hab ich was verpasst?', 2.2], [18.2, 'gull', 'Lecker!', 1.2]];
+const GD_Y = { redbeard: 170, striped: 168, kid: 182, reporter: 172, filmer: 170, professor: 170, sidepart: 176 };
+// what each one does: [[t, pose, dir, face, expr]] (pose of coast-cast-actions.js, dir for sided poses, face -1|0|1)
+const GD_POSE = {
+  redbeard: [[0, 'pat', 1, 1], [3.3, 'flail', 0, 1], [3.8, null], [10.4, null, 0, 0, null], [11.2, 'pat', 1, 1], [25.4, 'applaud'], [27.2, 'pat', 1, 1], [45.1, 'applaud'], [46.6, 'pat', 1, 1], [52.2, 'hooray'], [54, 'pat', 1, 1], [56.2, 'hooray'], [58.2, 'pat', 1, 1]],
+  striped: [[0, null], [13.8, 'pat', 1, 0], [16.4, null, 0, 0], [16.8, 'take', 1, 0], [17.8, null, 0, 0], [22, 'offer', 1, 1], [25.0, 'flail', 0, 1, 'ouch'], [25.6, 'applaud', 0, 1], [27.6, null],
+    [44.6, 'take', 1, 1], [45.1, 'applaud', 0, 1], [46.8, null], [51.9, 'hop', 0, 0, 'ouch'], [54.6, null, 0, 0, null], [56.4, 'hooray', 0, 0], [58.2, null]],
+  kid: [[0, null], [3.5, 'hooray'], [3.9, null], [10.6, 'hooray'], [11.4, null], [25.4, 'hooray'], [26.6, null], [35.0, 'throw'], [35.6, 'hooray'], [36.3, null], [40.4, null, 0, 1], [52.1, 'hooray'], [53.6, null], [56.4, 'hooray'], [58.2, null]],
+  reporter: [[0, 'mic', 0, 1], [25.0, 'flail', 0, 1, 'daze'], [26.6, 'mic', 0, 1, 'daze'], [30, 'mic', 0, 1, null], [50.2, null], [51.5, 'throw'], [52.2, 'applaud'], [54.6, 'mic', 0, 1], [56.4, 'hooray'], [58.2, 'mic', 0, 1]],
+  filmer: [[0, 'cam', 0, -1], [25.4, 'applaud', 0, -1], [27.4, 'cam', 0, -1], [35.7, 'flail', 0, -1, 'daze'], [36.8, null, 0, 0, 'daze'], [41.6, 'cam', 0, -1, 'daze'], [43, 'cam', 0, -1, null], [45.1, 'applaud'], [46.6, 'cam', 0, -1], [52.2, 'applaud'], [54, 'cam', 0, -1], [56.4, 'applaud'], [58.2, 'cam', 0, -1]],
+  professor: [[0, null, 0, 0], [42.2, 'point', -1, -1], [42.8, null], [47.2, 'point', 1, 1, 'serious'], [48.6, null, 0, 0, null], [56.4, 'hooray'], [58.2, null]],
+  sidepart: [[0, null], [31.2, 'hooray', 0, 0, 'daze'], [32.2, null, 0, 0, null], [45.1, 'applaud'], [46.6, null], [52.2, 'applaud'], [54, null], [56.4, 'hooray'], [58.2, null]],
+};
+// the timed lines: [t, speaker, text, seconds, quiet]
+const GD_LINES = [
+  [1.0, 'reporter', 'Mimo, wie gefällt dir die Party?', 2.0], [3.0, 'mimo', 'Piep!', 1.0], [3.4, 'redbeard', 'Mein Würstchen!', 1.6], [8.4, 'kid', 'Da ist er wieder!', 1.4], [10.4, 'redbeard', 'Na gut. Dann eben das nächste.', 2.0], [10.9, 'sidepart', 'Puh. Kurz hinlegen …', 1.4],
+  [12.0, 'striped', 'Psst! Caspar schläft.', 1.8], [17.9, 'striped', 'Hihi. Psst!', 1.4], [19.4, 'sidepart', 'Hilfe … hilfe …', 1.6, true], [23.2, 'sidepart', 'Hilfe …', 1.4, true],
+  [22.8, 'striped', 'Hmpf! Die klemmt.', 1.6], [25.3, 'striped', 'Ups!', 1.0], [26.8, 'reporter', 'Live vom Grillfest … mit Ketchup.', 2.4],
+  [27.4, 'sidepart', 'Hilfe … hilfe …', 1.6, true], [29.9, 'dog', 'Wuff!', 1.0], [31.4, 'sidepart', 'Danke, guter Hund!', 1.6], [33.4, 'kid', 'Pssst …', 1.4], [36.0, 'filmer', 'Na warte!', 1.4], [40.6, 'kid', '♪ Pfeif …', 1.6], [41.7, 'filmer', 'Wo ist er hin?', 1.6],
+  [42.2, 'professor', 'Ich setz mich mal kurz.', 1.6], [45.3, 'striped', 'Hoppla!', 1.2], [47.3, 'professor', 'Sehr witzig, Julian.', 1.8],
+  [52.0, 'striped', 'Iiiih! Kalt!', 1.8], [52.9, 'reporter', 'Rache!', 1.2], [53.2, 'mimo', 'Piep piep!', 1.2],
+  [56.2, 'redbeard', 'Die Würstchen sind fertig!', 1.8], [57.4, 'mimo', 'Piep!', 1.0],
+];
+const GD_SAY = {
+  redbeard: ['Wer will noch eins?', 'Medium oder durch?', 'Finger weg vom Grill!'], striped: ['Ich war das nicht!', 'Hihi.', 'Ich hab da eine Idee …'],
+  kid: ['Wasserschlacht!', 'Darf ich auch mal grillen?', 'Hihi!'], reporter: ['Live vom Grillfest!', 'Ein Wort für die Zuschauer?', 'Exklusiv!'],
+  filmer: ['Läuft!', 'Nochmal, bitte!', 'Das schneiden wir raus.'], sidepart: ['Hilfe … hilfe …', 'Ist da wer?', 'Mir ist so warm …'], professor: ['Ich bin wach! Ganz wach!', 'Faszinierend.', 'Hm? Was?'],
+};
+// the props the hands hold: [[t, name | null, hand]]
+const GD_HOLD = {
+  striped: [[0, null], [11.2, 'spade', 'r'], [16.6, null], [22, 'ketchup', 'r'], [27.6, null]],
+  kid: [[0, null], [32.2, 'balloon', 'r'], [35.25, null]],
+  reporter: [[0, null], [50.2, 'ice', 'r'], [51.8, null], [54.6, null]],
+};
+const GD_FOCUS = [[0, 150], [3.4, 150], [6.6, 470, 'lin'], [6.9, 470], [7.5, 110, 'out'], [10.5, 150], [11.4, 160], [13.8, 425], [18.6, 425], [21.6, 210], [27.6, 215], [29.2, 425], [31.8, 425], [32.8, 230], [34.6, 260], [36.6, 280],
+  [38.2, 470, 'lin'], [38.5, 470], [39.2, 120, 'out'], [41.2, 230], [42.2, 290], [49.6, 280], [50.6, 210], [55.6, 220], [59, 200], [60, 150]];
+const GD_DOG = [[0, 134], [3.3, 134], [6.6, 800, 'in'], [6.61, -240], [9.6, 140, 'out'], [11, 134], [28.2, 134], [29.6, 400, 'lin'], [31.8, 400], [34.4, 134, 'lin']];
+const GD_MIMO = [[0, 250], [4.2, 250], [7.6, 800, 'in'], [7.61, -240], [10.8, 250, 'out']];
 let ms = null;
-const msClamp01 = (k) => Math.max(0, Math.min(1, k)), msEase = (k) => { k = msClamp01(k); return k * k * (3 - 2 * k); };
-const msSeg = (t, a, b) => msClamp01((t - a) / (b - a));
 function startMenuScene() {
   const cv = $('menuScene'), C = window.MimoCoast;
   if (!cv) return;
-  if (!ms) ms = { t0: performance.now(), last: performance.now(), raf: 0, cast: null, dog: null, said: [], taps: {}, mimoHop: -9, flare: -9, cv };
+  if (!ms) ms = { t0: performance.now(), last: performance.now(), raf: 0, cast: null, dog: null, taps: {}, mimoHop: -9, flare: -9, view: [0, GD.W], cam: null };
   cancelAnimationFrame(ms.raf); ms.last = performance.now();
   menuSceneSize();
-  if (C && C.puppet) { if (!ms.cast) ms.cast = MS_CAST.map((c, i) => ({ ...c, p: null, seed: 211 + i * 19 })); if (!ms.dog && C.PetFigure) { ms.dog = new C.PetFigure('creamRetriever', 777); ms.dog.dir = 1; } }
+  if (C && C.puppet) { if (!ms.cast) ms.cast = Object.keys(GD_X).map((who, i) => ({ who, p: null, seed: 211 + i * 19 })); if (!ms.dog && C.PetFigure) { ms.dog = new C.PetFigure('creamRetriever', 777); ms.dog.dir = 1; } }
   ms.raf = requestAnimationFrame(menuSceneFrame);
 }
 // tests and pictures: jump to second `sec` of the loop
-window.__msSeek = (sec) => { if (ms) ms.t0 = performance.now() - sec * 1000; };
+window.__msSeek = (sec) => { if (ms) { ms.t0 = performance.now() - sec * 1000; ms.cam = null; } };
+window.__msInfo = () => ms && { fit: ms.bands && ms.bands[0], bands: ms.bands, mimoX: ms.mimoX, dogX: ms.dogX, taps: Object.keys(ms.taps), cast: (ms.cast || []).map((c) => [c.who, c.x, c.y]) };
 function menuSceneSize() {
   const cv = $('menuScene'); if (!cv) return;
   const dpr = Math.min(2, window.devicePixelRatio || 1), w = Math.max(200, Math.round(cv.clientWidth * dpr)), h = Math.max(100, Math.round(cv.clientHeight * dpr));
   if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
 }
 window.addEventListener('resize', () => { if (ms && !$('ovMenu').hidden) { menuSceneSize(); if (reduced()) menuSceneFrame(performance.now()); } });
-// how the scene sits on the canvas: the action above the menu bar, the garden around it
+// the scale and the feet line: the party stands between the title and the play button; an upright phone sees about
+// 150 units of the garden (the figures big), a wide screen up to 480
 function menuSceneFit(cw, ch) {
-  const card = document.querySelector('#ovMenu .card.menu'), cv = $('menuScene');
-  const k = cw / Math.max(1, cv.clientWidth), bar = card ? Math.max(0, cv.getBoundingClientRect().bottom - card.getBoundingClientRect().top) * k : ch * 0.35;
-  const room = Math.max(ch * 0.3, ch - bar);
-  // a tall screen (a phone held upright) shows the middle of the garden a little closer
-  const s = Math.min(cw / (cw < room ? 320 : 370), room / 156), ox = cw / 2 - (cw < room ? 214 : 206) * s, oy = room - 186 * s;
-  return { s, ox, oy };
+  const cv = $('menuScene'), r = cv.getBoundingClientRect(), k = cw / Math.max(1, r.width);
+  const hero = document.querySelector('#ovMenu .menu-hero'), cta = document.querySelector('#ovMenu .btn.cta');
+  const top = hero ? (hero.getBoundingClientRect().bottom - r.top) * k : ch * 0.12, bot = cta ? (cta.getBoundingClientRect().top - r.top) * k - 10 * k : ch * 0.75;
+  // upright: about 152 units of the garden, the camera follows what goes on; wide: up to 480 units
+  const upright = r.width < r.height * 0.8;
+  const units = upright ? 152 : Math.max(300, Math.min(480, r.width / 2.2));
+  const s = Math.min(cw / units, Math.max(40, bot - top) / 150);
+  return { s, feet: bot, k, top };
 }
-// ---------- where things are at loop second t ----------
-function msSausage(t) {
-  const g = MS.GRILL;
-  if (t < 6 || t >= 16.5) return { x: g.x + 2, y: g.y - 10, on: true, rot: 0 };
-  if (t < 7) { const k = (t - 6) / 1; return { x: g.x + (300 - g.x) * k, y: g.y - 10 + (183 - g.y + 10) * k - Math.sin(k * Math.PI) * 62, on: true, rot: k * 9 }; }
-  if (t < 7.3) return { x: 300, y: 183, on: true, rot: 0.3 };
-  if (t < 8.8) { const b = msGull(t); return { x: b.x + 9, y: b.y - 13, on: true, rot: 0.2 }; }
-  return { on: false };
+// the camera: centre of the view in garden units (it follows the focus, but never shows beyond the garden's ends)
+function gdCamera(cw, s, t, dt) {
+  const half = cw / s / 2, want = Math.max(half, Math.min(GD.W - half, gdAt(GD_FOCUS, t)));
+  const x = half * 2 >= GD.W ? GD.W / 2 : want;
+  if (ms.cam == null || dt > 0.5) ms.cam = x; else ms.cam += (x - ms.cam) * Math.min(1, dt * 5);
+  return ms.cam;
 }
-function msGull(t) {
-  const P = MS.GULL_POST;
-  if (t < 7) return { x: P.x, y: P.y, fly: false, face: -1 };
-  if (t < 7.3) { const k = msEase((t - 7) / 0.3); return { x: P.x + (296 - P.x) * k, y: P.y + (178 - P.y) * k, fly: true, face: 1 }; }
-  if (t < 8.8) { const k = msSeg(t, 7.3, 8.8); return { x: 296 + 190 * k, y: 178 - 175 * k * (2 - k), fly: true, face: 1 }; }
-  if (t < 16.6) return null;
-  if (t < 18) { const k = msEase(msSeg(t, 16.6, 18)); return { x: -40 + (P.x + 40) * k, y: 18 + (P.y - 18) * k - Math.sin(k * Math.PI) * 10, fly: true, face: 1 }; }
-  return { x: P.x, y: P.y, fly: false, face: -1 };
+const gdWho = (who) => ms.cast && ms.cast.find((c) => c.who === who);
+function gdHead(c) {
+  const R = window.MimoCoast.RigMath, f = c.p && c.p.fig, r = c.p && c.p.rig;
+  if (!f || !f.frame || !R) return [c.x, c.y - 50];
+  const h = R.M.apply(f.frame.head, r.headCenter); return [c.x + h[0] - r.center, c.y + h[1] - r.ground];
 }
-function msDog(t) { // x, moving direction, gait
-  const H = MS.DOG_HOME;
-  if (t < 6.3) return { x: H, dir: 0 };
-  if (t < 7.5) return { x: H + (292 - H) * msEase(msSeg(t, 6.3, 7.5)), dir: 1, gait: 'run' };
-  if (t < 8.6) return { x: 292, dir: 0 };
-  if (t < 10.4) return { x: 292 + (H - 292) * msSeg(t, 8.6, 10.4), dir: -1, gait: 'trot' };
-  return { x: H, dir: 0 };
-}
-function msWho(who) { return ms.cast && ms.cast.find((c) => c.who === who); }
+function gdHand(c, k) { const h = c.p ? c.p.hand(k || 'r', 1) : [0, -26]; return [c.x + h[0], c.y + h[1]]; }
+const gdLying = (t) => t >= 11.2 && t < 31.2;   // Caspar lies in the sandbox (the dog digs him out at 31.2)
+const gdFallen = (t) => (gdIn(t, 44.85, 47.2) ? (t < 45.05 ? (t - 44.85) / 0.2 : t > 46.9 ? (47.2 - t) / 0.3 : 1) : 0);
 function msStep(dt, t) {
-  const sz = msSausage(t), gl = msGull(t), chase = t > 6 && t < 9;
-  const tap = (who) => ms.taps[who] && ms.now - ms.taps[who].at < 1.6;
   for (const c of ms.cast || []) {
     if (!c.p) { c.p = window.MimoCoast.puppet(c.who, c.seed); if (!c.p) continue; }
-    let pose = null, face = 0, expr = null, idle = false, look;
-    if (chase && sz.on) look = sz.x - c.x; else if (chase && gl) look = gl.x - c.x; else look = MS.MIMO.x - c.x;
-    switch (c.who) {
-      case 'redbeard': pose = t > 6 && t < 7.6 ? 'flail' : t > 7.6 && t < 9 ? 'point' : 'pat'; face = 1; if (!chase) look = MS.GRILL.x - c.x; break;
-      case 'striped': pose = t > 12.4 && t < 14.2 ? 'flail' : 'fan'; expr = t > 12.4 && t < 14.6 ? 'ouch' : null; if (!chase) look = MS.GRILL.x - c.x; break;
-      case 'kid': pose = t > 11.8 && t < 13.6 ? 'point' : t > 9.2 && t < 10.6 ? 'hooray' : null; face = t > 11.8 && t < 13.6 ? -1 : 0; expr = t > 6 && t < 9 ? 'wow' : null; if (t > 11.8 && t < 13.6) look = -40; idle = !pose; break;
-      case 'reporter': pose = chase ? null : 'mic'; face = -1; break;
-      case 'filmer': pose = 'cam'; face = -1; break;
-      case 'sidepart': pose = t > 9.2 && t < 10.8 ? 'applaud' : null; idle = !pose; break;
-      case 'professor': expr = t < 15 ? 'daze' : null; pose = t > 15 && t < 16.4 ? 'point' : null; face = t > 15 && t < 16.4 ? -1 : 0; if (t < 15) look = undefined; break;
-    }
-    if (tap(c.who)) { pose = null; }
-    c.p.fig.expr = expr;
-    c.p.step(dt, c.x, { face, look, pose, poseOpts: pose === 'point' || pose === 'pat' ? { dir: face || 1 } : {}, idle, amp: 0.3 });
+    c.x = gdAt(GD_X[c.who], t); c.y = GD_Y[c.who];
+    const ps = gdHold(GD_POSE[c.who], t) || [0, null], hold = GD_HOLD[c.who] ? gdHold(GD_HOLD[c.who], t) : null, tap = ms.taps[c.who] && ms.now - ms.taps[c.who].at < 1.6;
+    const pose = tap ? null : ps[1], face = ps[3] || 0;
+    c.p.fig.expr = ps[4] || null;
+    c.p.fig.holdProp = hold && hold[1] ? { name: hold[1], hand: hold[2] || 'r', upright: true } : null;
+    c.p.fig.asleep = (c.who === 'sidepart' && gdLying(t)) || (c.who === 'professor' && t < 42.2);
+    let look = ms.mimoX - c.x;
+    if (c.who === 'professor' && t < 42.2) look = undefined;
+    if (gdIn(t, 3.3, 11)) look = ms.dogX - c.x;
+    c.p.step(dt, c.who === 'sidepart' && gdLying(t) ? GD.CASPAR : c.x, { face, look, pose, poseOpts: { dir: ps[2] || 1 }, idle: !pose && c.who !== 'sidepart', amp: 0.3 });
   }
   const d = ms.dog;
   if (d) {
-    const m = msDog(t);
-    d.setMove(m.dir, m.gait || 'walk'); if (m.dir) d.dir = m.dir;
-    if (!m.dir) { d.dir = 1; d.setPose(t < 6.3 || t > 10.6 ? 'sit' : 'stand'); d.lookAt = t < 6.3 ? 40 : t < 9 && gl ? gl.x - m.x : null; }
-    if (t > 7.38 && t < 7.5 && !ms.dogJumped) { ms.dogJumped = true; d.jump(1.15); }
-    if (t < 7) ms.dogJumped = false;
-    if (t < 6.3) d.happy(0.6);
+    const x0 = ms.dogX, x = gdAt(GD_DOG, t), v = (x - x0) / Math.max(dt, 1e-3), moving = Math.abs(v) > 8 && Math.abs(v) < 2000;
+    d.setMove(moving ? Math.sign(v) : 0, Math.abs(v) > 140 ? 'run' : 'trot'); if (moving) d.dir = Math.sign(v);
+    const digging = gdIn(t, 29.6, 31.2); d.dig = digging;
+    if (!moving) { d.dir = 1; d.setPose(digging ? 'dig' : t > 31.2 && t < 34.4 ? 'stand' : t < 3.3 || t > 11 ? 'sit' : 'stand'); d.lookAt = t < 3.3 ? -22 : digging ? 30 : ms.mimoX - x; }
+    d.carry = gdIn(t, 3.3, 10.2) ? 'sausage' : gdIn(t, 29.85, 32.8) ? 'towel' : null;
+    d.carryDraw = d.carry === 'sausage' ? (g, cx, cy) => gdSausage(g, cx, cy, 0.2, ms.pal) : d.carry === 'towel' ? (g, cx, cy) => gdTowel(g, cx, cy + 5, 9, 12, 0.15, ms.pal) : null;
+    if (gdIn(t, 31.0, 32.8)) d.happy(1);
+    if (gdIn(t, 3.05, 3.3) && !ms.dogJumped) { ms.dogJumped = true; d.jump(0.9); }
+    if (t < 3) ms.dogJumped = false;
+    if (t > 10.2 && t < 11.5) d.happy(1);
     d.posX = 0; d.update(dt); d.posX = 0;
+    ms.dogX = x;
   }
+  ms.mimoX = gdAt(GD_MIMO, t);
 }
 function menuSceneFrame(now) {
   if (!ms) return;
-  const ov = $('ovMenu');
-  if (ov.hidden) { ms.raf = 0; return; }
+  if ($('ovMenu').hidden) { ms.raf = 0; return; }
   const dt = Math.min(0.05, Math.max(0, (now - ms.last) / 1000)); ms.last = now; ms.now = now / 1000;
-  const still = reduced(), t = still ? 3.4 : ((now - ms.t0) / 1000) % MS.LOOP;
-  if (ms.lastT != null && t < ms.lastT) ms.said = [];
+  const still = reduced(), t = still ? 2.4 : ((now - ms.t0) / 1000) % GD.LOOP;
   ms.lastT = t;
+  if (ms.dogX == null) ms.dogX = gdAt(GD_DOG, t);
+  if (ms.mimoX == null) ms.mimoX = gdAt(GD_MIMO, t);
+  ms.pal = MS_PAL[darkTheme() ? 'dark' : 'light'];
   if (ms.cast) msStep(still ? 1 / 60 : dt, t);
-  drawMenuScene($('menuScene').getContext('2d'), t, ms.now);
+  drawMenuScene($('menuScene').getContext('2d'), t, ms.now, dt);
   if (!still || (ms.cast && ms.cast.some((c) => !c.p))) ms.raf = requestAnimationFrame(menuSceneFrame);
 }
 // ---------- drawing ----------
 const MS_PAL = {
   light: { skyTop: '#BFE3F2', skyBot: '#FFF1E0', sun: '#FFE29A', cloud: '#FFFFFF', hill: '#CDE8C6', hill2: '#B7DDB2', fence: '#E9D2B0', fenceInk: '#C8A980', lawn: '#A9D79A', lawnLow: '#93CB86', blade: '#86BF79',
     trunk: '#B88B66', leaf: '#8CCB8E', leaf2: '#74B97A', grill: '#4A4A5C', grillHi: '#6E6E82', coal: '#F59A6B', sausage: '#D9826A', sausageHi: '#F2A88E', smoke: '#FFFFFF',
-    bulbs: ['#FFD36E', '#F59AAE', '#8FD0DE', '#B8E39A'], wire: '#6B6478', hose: '#5DBB7A', water: '#8ED4F0', bubble: '#FFFFFF', ink: '#3B3560', table: '#F3DDB0', cloth: '#F59AAE', z: '#8F86B0' },
+    bulbs: ['#FFD36E', '#F59AAE', '#8FD0DE', '#B8E39A'], wire: '#6B6478', water: '#8ED4F0', bubble: '#FFFFFF', ink: '#3B3560', wood: '#D9B48A', woodInk: '#A9825C', sand: '#F3DDB0', sandInk: '#DDBD84',
+    cloth: '#F59AAE', towel: ['#8FD0DE', '#FFFFFF'], ketchup: '#E2483D', chair: '#7FB6D2', z: '#8F86B0', flower: ['#F59AAE', '#FFD36E', '#FFFFFF'] },
   dark: { skyTop: '#1F2A45', skyBot: '#4A3F5E', sun: '#F3D38A', cloud: '#454B66', hill: '#3E5A4A', hill2: '#36503F', fence: '#8C7A62', fenceInk: '#6E5E4A', lawn: '#4E7A52', lawnLow: '#456D48', blade: '#5E8E60',
     trunk: '#7A5E48', leaf: '#4F7E58', leaf2: '#44704C', grill: '#2E2E3A', grillHi: '#4B4B5E', coal: '#F08A5A', sausage: '#C77560', sausageHi: '#DE937C', smoke: '#D8DCE8',
-    bulbs: ['#FFD36E', '#F59AAE', '#8FD0DE', '#B8E39A'], wire: '#A79FBA', hose: '#4FA46A', water: '#7FC4E0', bubble: '#FBF7FF', ink: '#1F1E2C', table: '#A8936F', cloth: '#C77A8E', z: '#B9B0DA' },
+    bulbs: ['#FFD36E', '#F59AAE', '#8FD0DE', '#B8E39A'], wire: '#A79FBA', water: '#7FC4E0', bubble: '#FBF7FF', ink: '#1F1E2C', wood: '#8C6E52', woodInk: '#6A523C', sand: '#A8936F', sandInk: '#83714F',
+    cloth: '#C77A8E', towel: ['#5E9DB8', '#D8DCE8'], ketchup: '#C9433A', chair: '#5A8AA6', z: '#B9B0DA', flower: ['#D9849A', '#E8C766', '#D8DCE8'] },
 };
-function drawMenuScene(c, t, now) {
-  const pal = MS_PAL[darkTheme() ? 'dark' : 'light'], cw = c.canvas.width, ch = c.canvas.height, { s, ox, oy } = menuSceneFit(cw, ch);
+function drawMenuScene(c, t, now, dt) {
+  const cw = c.canvas.width, ch = c.canvas.height, F = menuSceneFit(cw, ch), s = F.s;
+  ms.unitPx = s / F.k;   // css px per garden unit: bubbles and comic words keep a steady size on screen
+  c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, cw, ch);
+  const cx = gdCamera(cw, s, t, dt), ox = cw / 2 - cx * s, oy = F.feet - 202 * s;
+  ms.bands = [{ s, ox, oy, y0: 0, y1: ch }];
+  drawGdWorld(c, t, now, s, ox, oy, cx, true);
+}
+// the whole garden with the given scale and offset (canopy: the leaves at the top edge on a tall screen)
+function drawGdWorld(c, t, now, s, ox, oy, cx, canopy) {
+  const pal = ms.pal, cw = c.canvas.width, ch = c.canvas.height;
   const X0 = -ox / s - 1, X1 = (cw - ox) / s + 1, Y0 = -oy / s - 1, Y1 = (ch - oy) / s + 1;
   ms.view = [X0 + 3, X1 - 3];
-  c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, cw, ch);
   c.setTransform(s, 0, 0, s, ox, oy);
   const g = (y0, y1, a, b) => { const gr = c.createLinearGradient(0, y0, 0, y1); gr.addColorStop(0, a); gr.addColorStop(1, b); return gr; };
-  c.fillStyle = g(Y0, 120, pal.skyTop, pal.skyBot); c.fillRect(X0, Y0, X1 - X0, 130 - Y0);
-  c.fillStyle = pal.sun; c.globalAlpha = 0.45; c.beginPath(); c.arc(330, 34, 24, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1;
-  c.beginPath(); c.arc(330, 34, 15, 0, Math.PI * 2); c.fill();
+  // sky, sun, clouds, hills (the far things move a little slower than the garden: depth when the camera pans)
+  c.fillStyle = g(Y0, 130, pal.skyTop, pal.skyBot); c.fillRect(X0, Y0, X1 - X0, 136 - Y0);
+  const par = (f) => (cx - GD.W / 2) * f;
+  c.fillStyle = pal.sun; c.globalAlpha = 0.45; c.beginPath(); c.arc(430 + par(0.7), 40, 26, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1;
+  c.beginPath(); c.arc(430 + par(0.7), 40, 16, 0, Math.PI * 2); c.fill();
   c.fillStyle = pal.cloud; c.globalAlpha = 0.9;
-  for (const [x0, y, r] of [[30, 30, 9], [180, 16, 7], [420, 50, 8]]) { const x = ((x0 + now * 2.5) % (X1 - X0 + 80)) + X0 - 40; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.arc(x + r * 1.2, y - r * 0.5, r * 1.1, 0, Math.PI * 2); c.arc(x + r * 2.4, y, r * 0.9, 0, Math.PI * 2); c.rect(x, y, r * 2.4, r * 0.9); c.fill(); }
+  for (const [x0, y, r] of [[30, 34, 9], [200, 18, 7], [360, 56, 8], [520, 26, 9]]) { const x = x0 + par(0.5) + ((now * 2.5) % 600) - 60; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.arc(x + r * 1.2, y - r * 0.5, r * 1.1, 0, Math.PI * 2); c.arc(x + r * 2.4, y, r * 0.9, 0, Math.PI * 2); c.rect(x, y, r * 2.4, r * 0.9); c.fill(); }
   c.globalAlpha = 1;
-  // hills, then the fence
-  c.fillStyle = pal.hill2; c.beginPath(); c.moveTo(X0, 130); for (let x = Math.floor(X0); x <= X1 + 6; x += 6) c.lineTo(x, 96 + Math.sin(x * 0.018) * 8 + Math.sin(x * 0.05) * 3); c.lineTo(X1, 130); c.fill();
-  c.fillStyle = pal.hill; c.beginPath(); c.moveTo(X0, 130); for (let x = Math.floor(X0); x <= X1 + 6; x += 6) c.lineTo(x, 108 + Math.sin(x * 0.026 + 1) * 6); c.lineTo(X1, 130); c.fill();
+  c.fillStyle = pal.hill2; c.beginPath(); c.moveTo(X0, 136); for (let x = Math.floor(X0); x <= X1 + 6; x += 6) { const u = x - par(0.4); c.lineTo(x, 98 + Math.sin(u * 0.018) * 8 + Math.sin(u * 0.05) * 3); } c.lineTo(X1, 136); c.fill();
+  c.fillStyle = pal.hill; c.beginPath(); c.moveTo(X0, 136); for (let x = Math.floor(X0); x <= X1 + 6; x += 6) { const u = x - par(0.2); c.lineTo(x, 110 + Math.sin(u * 0.026 + 1) * 6); } c.lineTo(X1, 136); c.fill();
+  // the fence, the tree, the string of lights
+  const FY = 124;
   c.fillStyle = pal.fence; c.strokeStyle = pal.fenceInk; c.lineWidth = 0.8;
-  c.fillRect(X0, MS.FENCE - 6, X1 - X0, 4); c.fillRect(X0, MS.FENCE + 6, X1 - X0, 4);
-  for (let x = Math.floor((X0 - 10) / 14) * 14; x < X1 + 14; x += 14) { c.beginPath(); c.moveTo(x - 4, MS.FENCE + 22); c.lineTo(x - 4, MS.FENCE - 10); c.lineTo(x, MS.FENCE - 14); c.lineTo(x + 4, MS.FENCE - 10); c.lineTo(x + 4, MS.FENCE + 22); c.closePath(); c.fill(); c.stroke(); }
-  // the tree on the left and the string of lights from it across the garden
-  c.fillStyle = pal.trunk; c.fillRect(20, 70, 9, 80);
-  c.fillStyle = pal.leaf2; for (const [x, y, r] of [[10, 66, 20], [38, 62, 20], [24, 46, 22]]) { c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill(); }
-  c.fillStyle = pal.leaf; for (const [x, y, r] of [[16, 58, 15], [36, 52, 14], [26, 38, 14]]) { c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill(); }
+  c.fillRect(X0, FY - 6, X1 - X0, 4); c.fillRect(X0, FY + 6, X1 - X0, 4);
+  for (let x = Math.floor((X0 - 10) / 14) * 14; x < X1 + 14; x += 14) { c.beginPath(); c.moveTo(x - 4, FY + 22); c.lineTo(x - 4, FY - 10); c.lineTo(x, FY - 14); c.lineTo(x + 4, FY - 10); c.lineTo(x + 4, FY + 22); c.closePath(); c.fill(); c.stroke(); }
+  c.fillStyle = pal.trunk; c.fillRect(20, 66, 10, 90);
+  c.fillStyle = pal.leaf2; for (const [x, y, r] of [[8, 62, 22], [42, 58, 22], [25, 40, 24]]) { c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill(); }
+  c.fillStyle = pal.leaf; for (const [x, y, r] of [[14, 54, 16], [38, 46, 15], [26, 32, 15]]) { c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill(); }
   c.strokeStyle = pal.wire; c.lineWidth = 0.7; c.beginPath();
-  const lamp = (k) => [34 + (X1 - 34) * k, 62 + Math.sin(k * Math.PI * 3) * 10 + k * 8];
-  for (let i = 0; i <= 40; i++) { const [x, y] = lamp(i / 40); if (!i) c.moveTo(x, y); else c.lineTo(x, y); }
+  const lamp = (k) => [36 + (GD.W + 40 - 36) * k, 64 + Math.sin(k * Math.PI * 4) * 9 + k * 6];
+  for (let i = 0; i <= 60; i++) { const [x, y] = lamp(i / 60); if (!i) c.moveTo(x, y); else c.lineTo(x, y); }
   c.stroke();
-  for (let i = 1; i < 24; i++) { const [x, y] = lamp(i / 24); c.fillStyle = pal.bulbs[i % 4]; c.globalAlpha = 0.75 + 0.25 * Math.sin(now * 3 + i); c.beginPath(); c.ellipse(x, y + 3, 2, 2.6, 0, 0, Math.PI * 2); c.fill(); }
+  for (let i = 1; i < 36; i++) { const [x, y] = lamp(i / 36); c.fillStyle = pal.bulbs[i % 4]; c.globalAlpha = 0.75 + 0.25 * Math.sin(now * 3 + i); c.beginPath(); c.ellipse(x, y + 3, 2, 2.6, 0, 0, Math.PI * 2); c.fill(); }
   c.globalAlpha = 1;
-  // the lawn
-  c.fillStyle = g(132, Y1, pal.lawn, pal.lawnLow); c.fillRect(X0, 132, X1 - X0, Y1 - 132);
+  // the lawn with flowers
+  c.fillStyle = g(138, Y1, pal.lawn, pal.lawnLow); c.fillRect(X0, 138, X1 - X0, Y1 - 138);
   c.strokeStyle = pal.blade; c.lineWidth = 0.9; c.lineCap = 'round';
-  for (let i = 0; i < 90; i++) { const x = X0 + ((i * 97 + 13) % Math.max(1, Math.round(X1 - X0))), y = 140 + ((i * 41) % Math.max(20, Math.round(Y1 - 140))); c.beginPath(); c.moveTo(x, y); c.lineTo(x - 1, y - 3); c.moveTo(x + 1.5, y); c.lineTo(x + 2.5, y - 2.6); c.stroke(); }
-  // the table with the salad behind the right group
-  c.fillStyle = pal.cloth; c.fillRect(296, 140, 44, 6); c.fillStyle = pal.table; c.fillRect(298, 146, 3, 14); c.fillRect(335, 146, 3, 14);
-  c.fillStyle = pal.leaf; c.beginPath(); c.ellipse(312, 139, 7, 4, 0, Math.PI, 0); c.fill(); c.fillStyle = pal.bulbs[0]; c.beginPath(); c.ellipse(328, 138, 5, 3, 0, 0, Math.PI * 2); c.fill();
-  // the garden hose from the fence tap to the kid
-  const kid = msWho('kid');
-  c.strokeStyle = pal.hose; c.lineWidth = 1.6; c.beginPath(); c.moveTo(186, MS.FENCE + 10); c.quadraticCurveTo(196, 178, 175, 178);
-  const kh = kid && kid.p ? kid.p.hand('l', 1) : [-6, -18];
-  c.quadraticCurveTo(kid ? kid.x + kh[0] + 4 : 160, 182, kid ? kid.x + kh[0] : 160, kid ? kid.y + kh[1] : 158); c.stroke();
-  // people (back to front by their feet), the grill, the dog, Mimo
-  const flare = now - ms.flare < 1.2 ? 1 - (now - ms.flare) / 1.2 : 0;
-  drawMsGrill(c, t, now, pal, flare);
-  if (ms.cast) for (const k of [...ms.cast].sort((a, b) => a.y - b.y)) if (k.p) k.p.draw(c, k.x, k.y, { scale: 1 });
-  const sz = msSausage(t);
-  if (sz.on && (t >= 6 && t < 16.5)) drawMsSausage(c, sz.x, sz.y, sz.rot, pal);
-  if (ms.dog) { const m = msDog(t); ms.dog.draw(c, m.x, MS.DOG_Y, 1); }
-  const hop = Math.max(t > 3.2 && t < 3.7 ? Math.sin((t - 3.2) / 0.5 * Math.PI) * 10 : 0, t > 7.3 && t < 7.8 ? Math.sin((t - 7.3) / 0.5 * Math.PI) * 8 : 0, now - ms.mimoHop < 0.5 ? Math.sin((now - ms.mimoHop) / 0.5 * Math.PI) * 16 : 0);
-  const saved = ctx; ctx = c;
-  c.save(); c.translate(MS.MIMO.x, MS.MIMO.y - hop); c.scale(1.5, 1.5);
-  drawMimo(0, 0, { facing: 1, mood: hop > 1 || (t > 9 && t < 10.6) ? 'happy' : null, sx: hop > 1 ? 0.94 : 1, sy: hop > 1 ? 1.06 : 1, breathe: Math.sin(now * 3) * 0.025, blink: (now % 3.7) > 3.55 ? 0.12 : 1 });
-  c.restore(); ctx = saved;
-  c.setTransform(s, 0, 0, s, ox, oy);
-  // water from the hose, steam from the grill
-  if (t > 11.9 && t < 13.6 && kid && kid.p) {
-    const h = kid.p.hand('l', 1), hx = kid.x + h[0], hy = kid.y + h[1];
-    c.fillStyle = pal.water;
-    for (let i = 0; i < 14; i++) { const k = ((now * 2.2 + i / 14) % 1), x = hx + (MS.GRILL.x + 22 - hx) * k, y = hy - Math.sin(k * Math.PI) * 16 + k * (MS.GRILL.y - 22 - hy); c.globalAlpha = 0.85; c.beginPath(); c.arc(x, y, 1.3 + (i % 2) * 0.5, 0, Math.PI * 2); c.fill(); }
-    c.globalAlpha = 1;
+  for (let i = 0; i < 160; i++) { const x = ((i * 97 + 13) % 760) - 100, y = 142 + ((i * 41) % 90); if (x < X0 - 4 || x > X1 + 4) continue; c.beginPath(); c.moveTo(x, y); c.lineTo(x - 1, y - 3); c.moveTo(x + 1.5, y); c.lineTo(x + 2.5, y - 2.6); c.stroke(); }
+  for (let i = 0; i < 30; i++) { const x = ((i * 131 + 40) % 760) - 100, y = 196 + ((i * 29) % 30); c.fillStyle = pal.flower[i % 3]; c.beginPath(); c.arc(x, y, 1.6, 0, Math.PI * 2); c.fill(); }
+  // the table with salad and ketchup, the folding chair, the sandbox
+  const T = GD.TABLE;
+  c.fillStyle = pal.woodInk; c.fillRect(T.x - 22, T.y - 18, 3, 18); c.fillRect(T.x + 19, T.y - 18, 3, 18);
+  c.fillStyle = pal.cloth; c.fillRect(T.x - 26, T.y - 23, 52, 6);
+  c.fillStyle = pal.leaf; c.beginPath(); c.ellipse(T.x - 10, T.y - 24, 8, 4.5, 0, Math.PI, 0); c.fill();
+  if (!gdIn(t, 22, 27.6)) { c.fillStyle = pal.ketchup; c.beginPath(); c.roundRect ? c.roundRect(T.x + 8, T.y - 33, 5, 10, 2) : c.rect(T.x + 8, T.y - 33, 5, 10); c.fill(); }
+  const chairX = GD.CHAIR.x + gdAt([[0, 0], [44.6, 0], [44.85, -22, 'out'], [59.6, -22], [60, 0]], t);
+  drawGdChair(c, chairX, GD.CHAIR.y, pal);
+  drawGdSandbox(c, pal);
+  // everyone, back to front; Caspar lying in the sandbox is drawn with the sandbox things
+  drawGdGrill(c, t, now, pal, now - ms.flare < 1.2 ? 1 - (now - ms.flare) / 1.2 : 0);
+  const order = [...(ms.cast || [])].filter((k) => k.p && !(k.who === 'sidepart' && gdLying(t))).sort((a, b) => a.y - b.y);
+  for (const k of order) {
+    if (k.x < X0 - 40 || k.x > X1 + 40) continue;
+    if (k.who === 'professor' && gdFallen(t) > 0) { drawGdFallen(c, k, gdFallen(t), pal); continue; }
+    const hop = k.who === 'striped' && gdIn(t, 51.9, 54.6) ? Math.abs(Math.sin((t - 51.9) * 7)) * 7 : 0;
+    k.p.draw(c, k.x, k.y - hop, { scale: 1 });
+    if (k.who === 'filmer' && gdIn(t, 35.7, 43)) drawGdDrips(c, k, now, pal, t < 41 ? 1 : (43 - t) / 2);
+    if (k.who === 'reporter' && gdIn(t, 25.35, 31)) drawGdKetchupFace(c, k, pal, t < 29.5 ? 1 : (31 - t) / 1.5);
   }
-  // the gull and the professor's sleep
-  const gl = msGull(t);
-  if (gl) drawMsGull(c, gl.x, gl.y, now, gl.fly, gl.face, !!ms.taps.gull && now - ms.taps.gull.at < 0.6);
-  if (t < 15) { const P = msWho('professor'); if (P) for (let i = 0; i < 3; i++) { const k = ((now * 0.5 + i / 3) % 1); c.globalAlpha = Math.sin(k * Math.PI); c.fillStyle = pal.z; c.font = '600 ' + (6 + k * 5) + "px 'Fredoka', 'Nunito', system-ui, sans-serif"; c.fillText('z', P.x + 6 + k * 12, P.y - 62 - k * 16); } c.globalAlpha = 1; }
-  // comic words and speech bubbles
-  newsPop(c, 'Plopp!', MS.GRILL.x + 6, MS.GRILL.y - 34, (t - 6) / 0.9, -0.12, 13, { ink: pal.ink, pop: '#FFFFFF' });
-  newsPop(c, 'Wuff!', 300, 150, (t - 7.4) / 0.9, 0.1, 13, { ink: pal.ink, pop: '#FFFFFF' });
-  newsPop(c, 'Zisch!', MS.GRILL.x, MS.GRILL.y - 40, (t - 12.3) / 1.1, 0.1, 13, { ink: pal.ink, pop: '#FFFFFF' });
-  if (flare) newsPop(c, 'Fauch!', MS.GRILL.x - 4, MS.GRILL.y - 44, 1 - flare, -0.1, 13, { ink: pal.ink, pop: '#FFE08F' });
-  for (const [a, who, text, dur] of MS_LINES) if (t >= a && t < a + dur) drawMsBubble(c, who, text, pal, t - a, dur);
-  for (const [who, b] of Object.entries(ms.taps)) if (now - b.at < 1.8) drawMsBubble(c, who, b.text, pal, now - b.at, 1.8);
+  const cas = gdWho('sidepart');
+  if (cas && cas.p && gdLying(t)) drawGdCaspar(c, cas, t, now, pal);
+  // the dog and Mimo in front
+  if (ms.dog && ms.dogX > X0 - 40 && ms.dogX < X1 + 40) ms.dog.draw(c, ms.dogX, GD.FRONT + 4, 1);
+  const running = gdIn(t, 4.2, 10.8);
+  const hop = Math.max(running ? Math.abs(Math.sin(t * 9)) * 8 : 0, gdIn(t, 2.9, 3.4) ? Math.sin((t - 2.9) / 0.5 * Math.PI) * 10 : 0, gdIn(t, 53.2, 54.2) ? Math.abs(Math.sin((t - 53.2) * 9)) * 9 : 0, gdIn(t, 56.4, 58) ? Math.abs(Math.sin((t - 56.4) * 8)) * 10 : 0,
+    now - ms.mimoHop < 0.5 ? Math.sin((now - ms.mimoHop) / 0.5 * Math.PI) * 16 : 0);
+  if (ms.mimoX > X0 - 30 && ms.mimoX < X1 + 30) {
+    const saved = ctx; ctx = c;
+    c.save(); c.translate(ms.mimoX, GD.FRONT + 4 - hop); c.scale(1.3, 1.3);
+    drawMimo(0, 0, { facing: running || ms.dogX > ms.mimoX ? 1 : -1, mood: hop > 1 || gdIn(t, 25.4, 27) || gdIn(t, 45.1, 46.6) || gdIn(t, 52, 54.6) ? 'happy' : null, sx: hop > 1 ? 0.94 : 1, sy: hop > 1 ? 1.06 : 1,
+      breathe: Math.sin(now * 3) * 0.025, blink: (now % 3.7) > 3.55 ? 0.12 : 1 });
+    c.restore(); ctx = saved;
+    c.setTransform(s, 0, 0, s, ox, oy);
+  }
+  drawGdThings(c, t, now, pal);
+  // the gull on its post
+  drawMsGull(c, GD.POST.x, GD.POST.y, now, false, -1, !!ms.taps.gull && now - ms.taps.gull.at < 0.6);
+  // the professor's sleep
+  const P = gdWho('professor');
+  if (P && t < 42.2) for (let i = 0; i < 3; i++) { const k = ((now * 0.5 + i / 3) % 1); c.globalAlpha = Math.sin(k * Math.PI); c.fillStyle = pal.z; c.font = '600 ' + (6 + k * 5) + "px 'Fredoka', 'Nunito', system-ui, sans-serif"; c.fillText('z', P.x + 6 + k * 12, P.y - 62 - k * 16); }
+  c.globalAlpha = 1;
+  // a tall screen has sky to spare: leaves of the garden's trees hang in from the top with a string of bunting
+  if (canopy && Y0 < 30) drawGdCanopy(c, X0, X1, Y0, now, pal, Math.max(0, 40 - Y0));
+  drawGdTalk(c, t, now, null);
   c.setTransform(1, 0, 0, 1, 0, 0);
 }
-function drawMsGrill(c, t, now, pal, flare) {
-  const { x, y } = MS.GRILL, wet = t > 12.3 && t < 15.5;
+// comic words and speech bubbles; xr: only what belongs to this strip of an upright screen (by its x)
+function drawGdTalk(c, t, now, xr) {
+  const pal = ms.pal, mine = (x) => !xr || (x >= xr[0] && x < xr[1]);
+  const pop = { ink: pal.ink, pop: '#FFFFFF' }, newsPop = (cc, text, x, y, k, rot, size, pl) => { if (mine(x)) newsPopBase(cc, text, x, y, k, rot, size * Math.min(1, 2.4 / ms.unitPx), pl); };
+  newsPop(c, 'Plopp!', GD.GRILL.x + 6, GD.GRILL.y - 38, (t - 3.0) / 0.9, -0.12, 13, pop);
+  newsPop(c, 'Mampf!', 150, 160, (t - 10.0) / 1.1, 0.1, 13, pop);
+  newsPop(c, 'SPLATSCH!', 246, 112, (t - 25.3) / 1.0, -0.1, 14, { ink: pal.ink, pop: '#FFB3A8' });
+  newsPop(c, 'Platsch!', 300, 108, (t - 35.7) / 1.0, 0.1, 14, { ink: pal.ink, pop: '#BFE8FA' });
+  newsPop(c, 'Plumps!', 290, 150, (t - 45.0) / 1.2, -0.1, 15, pop);
+  newsPop(c, 'Buddel buddel!', 400, 160, (t - 29.7) / 1.4, 0.08, 12, pop);
+  const flare = now - ms.flare < 1.2 ? 1 - (now - ms.flare) / 1.2 : 0;
+  if (flare) newsPop(c, 'Fauch!', GD.GRILL.x - 4, GD.GRILL.y - 46, 1 - flare, -0.1, 13, { ink: pal.ink, pop: '#FFE08F' });
+  for (const [a, who, text, dur, quiet] of GD_LINES) if (t >= a && t < a + dur) { if (mine(msAnchor(who)[0])) drawMsBubble(c, who, text, pal, t - a, dur, quiet); }
+  for (const [who, b] of Object.entries(ms.taps)) if (now - b.at < 1.8) { if (mine(msAnchor(who)[0])) drawMsBubble(c, who, b.text, pal, now - b.at, 1.8); }
+}
+function drawGdCanopy(c, X0, X1, Y0, now, pal, extra) {
+  // extra: how much more sky there is than a wide screen has; the leaves and the bunting come down further then
+  const top = Y0 - 4 + Math.min(extra, 110) * 0.7;
+  c.fillStyle = pal.leaf2; c.fillRect(X0, Y0 - 2, X1 - X0, top - Y0 + 16);
+  for (const [col, dy, r0] of [[pal.leaf2, 14, 20], [pal.leaf, 6, 15]]) {
+    c.fillStyle = col;
+    for (let x = Math.floor(X0 / 22) * 22 - 22; x < X1 + 30; x += 22) {
+      const k = Math.abs(Math.sin(x * 0.37)), r = r0 + k * 9, y = top + dy + k * 10 + Math.sin(now * 0.8 + x) * 0.8;
+      c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill();
+    }
+  }
+  // the bunting: two swinging strings of little flags
+  for (const [y0, sag, off] of [[top + 38, 10, 0], [top + 50, 7, 11]]) {
+    const pts = [];
+    for (let x = Math.floor(X0 / 66) * 66 - 66 + off; x < X1 + 66; x += 66) pts.push(x);
+    c.strokeStyle = pal.wire; c.lineWidth = 0.6;
+    for (const x of pts) {
+      c.beginPath(); for (let i = 0; i <= 10; i++) { const u = x + i * 6.6, y = y0 + Math.sin(i / 10 * Math.PI) * sag + Math.sin(now * 1.2 + x) * 0.6; if (!i) c.moveTo(u, y); else c.lineTo(u, y); } c.stroke();
+      for (let i = 1; i < 10; i += 1.5) { const u = x + i * 6.6, y = y0 + Math.sin(i / 10 * Math.PI) * sag, sw = Math.sin(now * 2 + u) * 0.12; c.fillStyle = pal.bulbs[Math.floor(i * 2 + x) % 4]; c.save(); c.translate(u, y); c.rotate(sw); c.beginPath(); c.moveTo(-2.6, 0); c.lineTo(2.6, 0); c.lineTo(0, 6); c.closePath(); c.fill(); c.restore(); }
+    }
+  }
+}
+function drawGdChair(c, x, y, pal) {
+  c.strokeStyle = pal.chair; c.lineWidth = 1.6; c.lineCap = 'round';
+  c.beginPath(); c.moveTo(x - 8, y); c.lineTo(x + 6, y - 14); c.moveTo(x + 8, y); c.lineTo(x - 6, y - 14); c.moveTo(x + 6, y - 14); c.lineTo(x + 8, y - 30); c.stroke();
+  c.fillStyle = pal.chair; c.fillRect(x - 9, y - 16, 16, 3); c.fillRect(x + 4, y - 31, 5, 15);
+}
+function drawGdSandbox(c, pal) {
+  const B = GD.BOX;
+  c.fillStyle = pal.sand; c.beginPath(); c.moveTo(B.x0 + 4, B.y - 14); c.lineTo(B.x1 - 4, B.y - 14); c.lineTo(B.x1, B.y + 4); c.lineTo(B.x0, B.y + 4); c.closePath(); c.fill();
+  c.fillStyle = pal.sandInk; for (let i = 0; i < 18; i++) { c.beginPath(); c.arc(B.x0 + 8 + ((i * 37) % (B.x1 - B.x0 - 16)), B.y - 10 + ((i * 13) % 12), 0.8, 0, Math.PI * 2); c.fill(); }
+  c.fillStyle = pal.wood; c.strokeStyle = pal.woodInk; c.lineWidth = 0.7;
+  c.beginPath(); c.rect(B.x0 - 2, B.y + 2, B.x1 - B.x0 + 4, 6); c.fill(); c.stroke();
+  c.beginPath(); c.rect(B.x0 + 2, B.y - 17, B.x1 - B.x0 - 4, 3); c.fill(); c.stroke();
+  // a bucket and a little shovel in the corner
+  c.fillStyle = '#7FC4E8'; c.beginPath(); c.moveTo(B.x1 - 18, B.y - 10); c.lineTo(B.x1 - 8, B.y - 10); c.lineTo(B.x1 - 9.5, B.y - 2); c.lineTo(B.x1 - 16.5, B.y - 2); c.closePath(); c.fill();
+}
+// Caspar asleep in the sandbox: lying, then buried up to the neck, then under the towel; at 56 he is up
+function drawGdCaspar(c, k, t, now, pal) {
+  const x = GD.CASPAR, y = GD.BOX.y - 4, f = k.p.fig;
+  c.save(); c.translate(x + 30, y); c.rotate(-Math.PI / 2); c.scale(0.66 * (1 + Math.sin(now * 1.6) * 0.04), 1);
+  f.asleep = true; k.p.draw(c, 0, 0, { scale: 1, noShadow: true }); c.restore();
+  // the sand Julian shovels: a mound over the body that grows (head stays free)
+  const bury = gdAt([[0, 0], [13.8, 0], [16.4, 1, 'lin'], [29.9, 1], [31.1, 0, 'lin']], t);
+  if (bury > 0) {
+    c.fillStyle = pal.sand; c.strokeStyle = pal.sandInk; c.lineWidth = 0.8;
+    // from the feet up to the neck: at the end only the head looks out
+    const x1 = x + 40, x0 = x + 40 - 64 * bury, mh = 6 + 7 * bury;
+    c.beginPath(); c.moveTo(x0 - 3, y + 1); c.quadraticCurveTo(x0, y - mh * 1.1, x0 + 10, y - mh); c.lineTo(x1 - 8, y - mh); c.quadraticCurveTo(x1, y - mh * 1.05, x1 + 3, y + 1); c.closePath(); c.fill(); c.stroke();
+    c.fillStyle = pal.sandInk; for (let i = 0; i < 9; i++) { const sx = x0 + 4 + i * (x1 - x0 - 8) / 8; c.beginPath(); c.arc(sx, y - mh * (0.4 + 0.4 * ((i * 7) % 3) / 2), 0.9, 0, Math.PI * 2); c.fill(); }
+  }
+  // flying sand while Julian buries him (and while the dog digs him out)
+  if (gdIn(t, 13.8, 16.4) || gdIn(t, 29.9, 31.1)) {
+    c.fillStyle = pal.sandInk;
+    for (let i = 0; i < 10; i++) { const k2 = (now * 2.6 + i / 10) % 1, sx = x + 22 - k2 * 30 + (i % 3) * 4, sy = y - 26 + k2 * 22 - Math.sin(k2 * Math.PI) * 10; c.globalAlpha = 1 - k2 * 0.5; c.beginPath(); c.arc(sx, sy, 1.2, 0, Math.PI * 2); c.fill(); }
+    c.globalAlpha = 1;
+  }
+  // the towel: in Julian's hands, flying over, lying on Caspar (head and all), thrown off at 56
+  const J = gdWho('striped'), towel = (x0, y0, w, h, rot) => gdTowel(c, x0, y0, w, h, rot, pal);
+  if (gdIn(t, 16.6, 17.4) && J) { const h = gdHand(J, 'r'); towel(h[0], h[1] - 2, 14, 8, 0.2); }
+  else if (gdIn(t, 17.4, 17.9)) { const k2 = gdEase.io((t - 17.4) / 0.5), h = J ? gdHand(J, 'r') : [x, y - 30]; towel(h[0] + (x + 2 - h[0]) * k2, h[1] + (y - 10 - h[1]) * k2 - Math.sin(k2 * Math.PI) * 14, 14 + 46 * k2, 8 + 6 * k2, 0.2 - 0.2 * k2); }
+  else if (gdIn(t, 17.9, 29.85)) {
+    towel(x + 2, y - 10, 60, 14, 0);
+    // the towel breathes, and moves a little when he calls
+    const call = GD_LINES.some(([a, who, , d]) => who === 'sidepart' && t >= a && t < a + d) ? Math.sin(now * 14) * 0.8 : 0;
+    c.fillStyle = pal.towel[0]; c.beginPath(); c.ellipse(x - 22, y - 16 + call, 9, 6 + Math.sin(now * 1.6) * 0.6, 0, Math.PI, 0); c.fill();
+  }
+}
+function gdTowel(c, x0, y0, w, h, rot, pal) {
+  c.save(); c.translate(x0, y0); c.rotate(rot);
+  for (let i = 0; i < 6; i++) { c.fillStyle = pal.towel[i % 2]; c.fillRect(-w / 2 + i * w / 6, -h / 2, w / 6 + 0.3, h); }
+  c.strokeStyle = pal.ink; c.globalAlpha = 0.25; c.lineWidth = 0.6; c.strokeRect(-w / 2, -h / 2, w, h); c.globalAlpha = 1; c.restore();
+}
+// the professor on his bottom: the figure lower and tipped back, a dust cloud and stars
+function drawGdFallen(c, k, f, pal) {
+  c.save(); c.beginPath(); c.rect(k.x - 60, k.y - 120, 120, 120.5); c.clip();
+  c.translate(k.x, k.y + 16 * f); c.rotate(-0.25 * f); k.p.draw(c, 0, 0, { scale: 1, noShadow: true }); c.restore();
+  c.fillStyle = pal.sand; c.globalAlpha = 0.85 * f; c.beginPath(); c.ellipse(k.x, k.y, 18, 5, 0, Math.PI, 0); c.fill(); c.globalAlpha = 1;
+  const h = gdHead(k), now = ms.now;
+  for (let i = 0; i < 3; i++) { const a = now * 4 + i * 2.1; c.fillStyle = '#FFD36E'; c.save(); c.translate(h[0] + Math.cos(a) * 9, h[1] + 16 * f - 10 + Math.sin(a) * 3); c.rotate(a); c.beginPath(); for (let j = 0; j < 10; j++) { const r = j % 2 ? 1.2 : 3, b = j / 10 * Math.PI * 2; c.lineTo(Math.cos(b) * r, Math.sin(b) * r); } c.closePath(); c.fill(); c.restore(); }
+}
+function drawGdDrips(c, k, now, pal, a) {
+  const h = gdHead(k); c.fillStyle = pal.water; c.globalAlpha = 0.85 * a;
+  for (let i = 0; i < 6; i++) { const q = (now * 1.4 + i / 6) % 1; c.beginPath(); c.ellipse(h[0] - 9 + i * 3.6, h[1] - 2 + q * 40, 1, 1.6, 0, 0, Math.PI * 2); c.fill(); }
+  c.globalAlpha = 0.35 * a; c.beginPath(); c.ellipse(k.x, k.y + 1, 14, 2.5, 0, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1;
+}
+function drawGdKetchupFace(c, k, pal, a) {
+  const h = gdHead(k); c.fillStyle = pal.ketchup; c.globalAlpha = 0.9 * Math.max(0, a);
+  for (const [dx, dy, r] of [[-2, -1, 2.6], [2.5, 1, 2], [0, 3.5, 1.6], [-4, 3, 1.2], [4, -3, 1.3]]) { c.beginPath(); c.arc(h[0] + dx, h[1] + dy, r, 0, Math.PI * 2); c.fill(); }
+  c.fillRect(h[0] - 1, h[1] + 3, 1.4, 5 * Math.min(1, a + 0.3)); c.globalAlpha = 1;
+}
+// the flying things of the pranks: the ketchup jet, the water bomb, the ice cube, the sausage off the grill
+function drawGdThings(c, t, now, pal) {
+  const J = gdWho('striped'), K = gdWho('kid'), F = gdWho('filmer'), R = gdWho('reporter');
+  if (gdIn(t, 3.0, 3.3)) { const k = (t - 3) / 0.3; gdSausage(c, GD.GRILL.x + 2 + (ms.dogX + 10 - GD.GRILL.x - 2) * k, GD.GRILL.y - 26 - Math.sin(k * Math.PI) * 26 + k * 16, k * 6, pal); }
+  if (gdIn(t, 25.0, 25.35) && J && R && J.p && R.p) { // the jet: from the bottle to her face
+    const a = gdHand(J, 'r'), b = gdHead(R), k = (t - 25) / 0.35;
+    c.strokeStyle = pal.ketchup; c.lineWidth = 2.2; c.lineCap = 'round'; c.beginPath(); c.moveTo(a[0], a[1]);
+    const ex = a[0] + (b[0] - a[0]) * k, ey = a[1] + (b[1] - a[1]) * k - Math.sin(k * Math.PI) * 6; c.quadraticCurveTo((a[0] + ex) / 2, Math.min(a[1], ey) - 8, ex, ey); c.stroke();
+  }
+  if (gdIn(t, 22.6, 25) && J && J.p) { const a = gdHand(J, 'r'); c.fillStyle = pal.ink; c.globalAlpha = 0.6; for (const d of [-1, 1]) { c.beginPath(); c.arc(a[0] + d * 7 + Math.sin(now * 30) * 0.8, a[1] - 4, 0.9, 0, Math.PI * 2); c.fill(); } c.globalAlpha = 1; }
+  if (gdIn(t, 35.25, 35.7) && K && F && K.p && F.p) { // the water bomb in an arc
+    const a = gdHand(K, 'r'), b = gdHead(F), k = (t - 35.25) / 0.45, x = a[0] + (b[0] - a[0]) * k, y = a[1] + (b[1] - a[1]) * k - Math.sin(k * Math.PI) * 26;
+    c.fillStyle = '#7FC7EE'; c.strokeStyle = '#3E87B5'; c.lineWidth = 0.6; c.beginPath(); c.arc(x, y, 3.6, 0, Math.PI * 2); c.fill(); c.stroke();
+  }
+  if (gdIn(t, 35.7, 36.3) && F && F.p) { const b = gdHead(F), k = (t - 35.7) / 0.6; c.fillStyle = pal.water; c.globalAlpha = 1 - k; for (let i = 0; i < 12; i++) { const a2 = i / 12 * Math.PI * 2; c.beginPath(); c.arc(b[0] + Math.cos(a2) * (6 + k * 20), b[1] + Math.sin(a2) * (5 + k * 14) + k * k * 14, 1.6, 0, Math.PI * 2); c.fill(); } c.globalAlpha = 1; }
+  if (gdIn(t, 51.5, 51.95) && R && J && R.p && J.p) { // the ice cube into the collar
+    const a = gdHand(R, 'r'), b = gdHead(J), k = (t - 51.5) / 0.45, x = a[0] + (b[0] + 2 - a[0]) * k, y = a[1] + (b[1] + 9 - a[1]) * k - Math.sin(k * Math.PI) * 8;
+    c.fillStyle = '#E4F6FD'; c.strokeStyle = '#7FB6D2'; c.lineWidth = 0.5; c.beginPath(); c.rect(x - 2, y - 2, 4, 4); c.fill(); c.stroke();
+  }
+  if (gdIn(t, 51.9, 54.6) && J && J.p) { const h = gdHead(J); c.strokeStyle = '#8FD0DE'; c.lineWidth = 0.9; c.globalAlpha = 0.8; for (let i = 0; i < 3; i++) { const a2 = now * 9 + i * 2.1; c.beginPath(); c.moveTo(h[0] + Math.cos(a2) * 12, h[1] + Math.sin(a2) * 5 - 4); c.lineTo(h[0] + Math.cos(a2) * 16, h[1] + Math.sin(a2) * 7 - 6); c.stroke(); } c.globalAlpha = 1; }
+  // Julian's sneaking: little notes over his head on the way back
+  if (gdIn(t, 18.4, 21.6) && J) { c.fillStyle = pal.ink; c.font = "600 9px 'Fredoka', 'Nunito', system-ui, sans-serif"; const h = gdHead(J); for (let i = 0; i < 2; i++) { const k = (now * 0.8 + i / 2) % 1; c.globalAlpha = Math.sin(k * Math.PI); c.fillText('♪', h[0] + 8 + k * 8 + i * 4, h[1] - 12 - k * 14); } c.globalAlpha = 1; }
+}
+function drawGdGrill(c, t, now, pal, flare) {
+  const { x, y } = GD.GRILL;
   c.strokeStyle = pal.grill; c.lineWidth = 1.6; c.lineCap = 'round';
   c.beginPath(); c.moveTo(x - 10, y - 14); c.lineTo(x - 13, y); c.moveTo(x + 10, y - 14); c.lineTo(x + 13, y); c.moveTo(x, y - 12); c.lineTo(x, y - 1); c.stroke();
   c.fillStyle = pal.grill; c.beginPath(); c.ellipse(x, y - 20, 16, 9, 0, 0, Math.PI); c.fill();
   c.fillStyle = pal.grillHi; c.fillRect(x - 16, y - 21.5, 32, 2);
-  if (!wet) { c.fillStyle = pal.coal; c.globalAlpha = 0.6 + 0.3 * Math.sin(now * 6); c.fillRect(x - 13, y - 23, 26, 1.4); c.globalAlpha = 1; }
-  // the sausages on the grill: one less while the stolen one is away
-  const n = t >= 6 && t < 16.5 ? 2 : 3;
-  for (let i = 0; i < n; i++) drawMsSausage(c, x - 8 + i * 8, y - 24.5, 0, pal);
-  // smoke (steam after the hose), more when the grill flares up
-  for (let i = 0; i < 5; i++) {
-    const k = (now * 0.45 + i / 5) % 1, sx = x + Math.sin(k * 5 + i) * 4 + k * 10, sy = y - 26 - k * 40;
-    c.globalAlpha = (1 - k) * (wet ? 0.8 : 0.45); c.fillStyle = pal.smoke; c.beginPath(); c.arc(sx, sy, 3 + k * 7, 0, Math.PI * 2); c.fill();
-  }
+  c.fillStyle = pal.coal; c.globalAlpha = 0.6 + 0.3 * Math.sin(now * 6); c.fillRect(x - 13, y - 23, 26, 1.4); c.globalAlpha = 1;
+  const n = t >= 3.0 && t < 11.2 ? 2 : 3;
+  for (let i = 0; i < n; i++) gdSausage(c, x - 8 + i * 8, y - 24.5, 0, pal);
+  for (let i = 0; i < 5; i++) { const k = (now * 0.45 + i / 5) % 1, sx = x + Math.sin(k * 5 + i) * 4 + k * 10, sy = y - 26 - k * 40; c.globalAlpha = (1 - k) * 0.45; c.fillStyle = pal.smoke; c.beginPath(); c.arc(sx, sy, 3 + k * 7, 0, Math.PI * 2); c.fill(); }
   if (flare > 0) { c.globalAlpha = flare; for (let i = 0; i < 5; i++) { const fx = x - 10 + i * 5, fh = 8 + flare * 14 * (0.6 + 0.4 * Math.sin(now * 20 + i)); c.fillStyle = i % 2 ? '#FFB35C' : '#FF8A5C'; c.beginPath(); c.moveTo(fx - 3, y - 23); c.quadraticCurveTo(fx, y - 23 - fh * 1.2, fx + 3, y - 23); c.fill(); } }
   c.globalAlpha = 1;
 }
-function drawMsSausage(c, x, y, rot, pal) {
+function gdSausage(c, x, y, rot, pal) {
+  pal = pal || MS_PAL.light;
   c.save(); c.translate(x, y); c.rotate(rot);
   c.fillStyle = pal.sausage; c.beginPath(); c.ellipse(0, 0, 4.6, 1.8, 0, 0, Math.PI * 2); c.fill();
   c.fillStyle = pal.sausageHi; c.beginPath(); c.ellipse(-0.6, -0.6, 2.8, 0.6, 0, 0, Math.PI * 2); c.fill();
@@ -6194,44 +6411,52 @@ function drawMsGull(c, x, y, now, fly, face, startled) {
   SD.gull(c, now, { face, hop: startled ? Math.abs(Math.sin(now * 14)) * 4 : 0 });
   c.restore();
 }
-// a speech bubble over the speaker's head; it pops in and fades out
+// a speech bubble over the speaker's head; quiet ones (Caspar under the towel) are small and pale
 function msAnchor(who) {
-  if (who === 'mimo') return [MS.MIMO.x, MS.MIMO.y - 52];
-  if (who === 'gull') { const g = msGull(ms.lastT || 0); return g ? [g.x, g.y - 22] : [MS.GULL_POST.x, MS.GULL_POST.y - 22]; }
-  if (who === 'dog') return [msDog(ms.lastT || 0).x, MS.DOG_Y - 34];
-  if (who === 'grill') return [MS.GRILL.x, MS.GRILL.y - 50];
-  const k = msWho(who); return k ? [k.x, k.y - 68] : [200, 100];
+  const t = ms.lastT || 0;
+  if (who === 'mimo') return [ms.mimoX, GD.FRONT - 44];
+  if (who === 'gull') return [GD.POST.x, GD.POST.y - 18];
+  if (who === 'dog') return [ms.dogX, GD.FRONT - 26];
+  if (who === 'grill') return [GD.GRILL.x, GD.GRILL.y - 50];
+  if (who === 'sidepart' && gdLying(t)) return [GD.CASPAR - 22, GD.BOX.y - 26];
+  const k = gdWho(who); if (!k) return [200, 100];
+  const h = gdHead(k); return [h[0], h[1] - 14];
 }
-function drawMsBubble(c, who, text, pal, k, dur) {
+function drawMsBubble(c, who, text, pal, k, dur, quiet) {
   const [ax, ay] = msAnchor(who), sc = k < 0.12 ? 0.6 + k / 0.12 * 0.4 : 1, a = k > dur - 0.25 ? (dur - k) / 0.25 : 1;
-  c.save(); c.font = "600 8.5px 'Nunito', system-ui, sans-serif";
-  const w = c.measureText(text).width + 10, h = 13, [v0, v1] = ms.view || [4, 396], bx = Math.max(v0, Math.min(v1 - w, ax - w / 2));
-  c.globalAlpha = Math.max(0, a); c.translate(ax, ay); c.scale(sc, sc); c.translate(-ax, -ay);
-  c.fillStyle = pal.bubble; c.strokeStyle = pal.ink; c.lineWidth = 0.8;
-  c.beginPath(); c.roundRect ? c.roundRect(bx, ay - h - 5, w, h, 6) : c.rect(bx, ay - h - 5, w, h); c.fill(); c.stroke();
-  c.beginPath(); c.moveTo(ax - 3, ay - 5.4); c.lineTo(ax, ay); c.lineTo(ax + 3, ay - 5.4); c.closePath(); c.fill();
-  c.beginPath(); c.moveTo(ax - 3, ay - 5); c.lineTo(ax, ay); c.lineTo(ax + 3, ay - 5); c.stroke();
-  c.fillStyle = pal.ink; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text, bx + w / 2, ay - 5 - h / 2 + 0.5);
+  const u = Math.min(1.25, 2.1 / (ms.unitPx || 2));   // the same size on every screen (about 15 css px text)
+  c.save(); c.font = (quiet ? 'italic 600 ' + 6.5 * u + 'px' : '600 ' + 8.5 * u + 'px') + " 'Nunito', system-ui, sans-serif";
+  const w = c.measureText(text).width + (quiet ? 7 : 10) * u, h = (quiet ? 10 : 13) * u, [v0, v1] = ms.view || [4, 396], bx = Math.max(v0, Math.min(v1 - w, ax - w / 2));
+  c.globalAlpha = Math.max(0, a) * (quiet ? 0.85 : 1); c.translate(ax, ay); c.scale(sc, sc); c.translate(-ax, -ay);
+  c.fillStyle = pal.bubble; c.strokeStyle = pal.ink; c.lineWidth = quiet ? 0.5 : 0.8;
+  if (quiet) c.setLineDash([1.5, 1.2]);
+  c.beginPath(); c.roundRect ? c.roundRect(bx, ay - h - 5, w, h, h / 2) : c.rect(bx, ay - h - 5, w, h); c.fill(); c.stroke();
+  c.setLineDash([]);
+  const tx = Math.max(bx + 6, Math.min(bx + w - 6, ax));
+  c.beginPath(); c.moveTo(tx - 3, ay - 5.4); c.lineTo(tx, ay); c.lineTo(tx + 3, ay - 5.4); c.closePath(); c.fill();
+  c.beginPath(); c.moveTo(tx - 3, ay - 5); c.lineTo(tx, ay); c.lineTo(tx + 3, ay - 5); c.stroke();
+  c.fillStyle = quiet ? pal.z : pal.ink; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(text, bx + w / 2, ay - 5 - h / 2 + 0.5);
   c.restore();
 }
 // ---------- tapping the scene ----------
 function menuSceneTap(e) {
-  if (!ms) return;
-  const cv = $('menuScene'), r = cv.getBoundingClientRect(), k = cv.width / Math.max(1, r.width);
-  const { s, ox, oy } = menuSceneFit(cv.width, cv.height);
+  if (!ms || !ms.bands) return;
+  const cv = $('menuScene'), r = cv.getBoundingClientRect(), k = cv.width / Math.max(1, r.width), py = (e.clientY - r.top) * k;
+  const band = (ms.bands || []).find((b) => py >= b.y0 && py < b.y1); if (!band) return;
+  const { s, ox, oy } = band;
   const x = ((e.clientX - r.left) * k - ox) / s, y = ((e.clientY - r.top) * k - oy) / s, t = ms.lastT || 0, now = performance.now() / 1000;
   const pick = (who, text) => { ms.taps[who] = { at: now, text }; };
   const near = (cx, top, bot, half) => Math.abs(x - cx) < half && y > top && y < bot;
-  const say = (who) => { const l = MS_SAY[who]; return l[Math.floor(Math.random() * l.length)]; };
-  if (near(MS.MIMO.x, MS.MIMO.y - 46, MS.MIMO.y + 4, 18)) { ms.mimoHop = now; pick('mimo', 'Piep!'); SFX.hup(); setTimeout(() => SFX.yay(), 250); return; }
-  const dg = msDog(t);
-  if (near(dg.x, MS.DOG_Y - 30, MS.DOG_Y + 4, 20)) { if (ms.dog && !dg.dir) ms.dog.jump(1); pick('dog', 'Wuff!'); SFX.hup(); return; }
-  const gl = msGull(t);
-  if (gl && near(gl.x, gl.y - 24, gl.y + 4, 14)) { pick('gull', 'Kreisch!'); return; }
-  if (near(MS.GRILL.x, MS.GRILL.y - 30, MS.GRILL.y + 2, 18)) { ms.flare = now; pick('grill', 'Achtung, heiß!'); return; }
+  const say = (who) => { const l = GD_SAY[who]; return l[Math.floor(Math.random() * l.length)]; };
+  if (near(ms.mimoX, GD.FRONT - 40, GD.FRONT + 6, 18)) { ms.mimoHop = now; pick('mimo', 'Piep!'); SFX.hup(); setTimeout(() => SFX.yay(), 250); return; }
+  if (near(ms.dogX, GD.FRONT - 26, GD.FRONT + 6, 20)) { if (ms.dog) ms.dog.jump(1); pick('dog', 'Wuff!'); SFX.hup(); return; }
+  if (near(GD.POST.x, GD.POST.y - 20, GD.POST.y + 4, 14)) { pick('gull', 'Kreisch!'); return; }
+  if (near(GD.GRILL.x, GD.GRILL.y - 30, GD.GRILL.y + 2, 18)) { ms.flare = now; pick('grill', 'Achtung, heiß!'); return; }
+  if (gdLying(t) && near(GD.CASPAR, GD.BOX.y - 24, GD.BOX.y + 6, 34)) { pick('sidepart', say('sidepart')); return; }
   for (const c of [...(ms.cast || [])].sort((a, b) => b.y - a.y)) {
+    if (!c.p || (c.who === 'sidepart' && gdLying(t))) continue;
     const top = c.who === 'kid' ? 48 : 62;
-    if (c.p && near(c.x, c.y - top, c.y + 2, 11)) { c.p.play(Math.random() < 0.5 ? 'hooray' : 'cheer'); pick(c.who, say(c.who)); SFX.ui(); return; }
+    if (near(c.x, c.y - top, c.y + 2, 11)) { c.p.play(Math.random() < 0.5 ? 'hooray' : 'cheer'); pick(c.who, say(c.who)); SFX.ui(); return; }
   }
 }
 
