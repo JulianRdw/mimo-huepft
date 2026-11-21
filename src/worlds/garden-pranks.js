@@ -520,7 +520,7 @@
       sidepart: [[127.1, 'applaud'], [128.3, null]],
       reporter: [[127.1, 'applaud', 0, 1], [128.2, 'mic', 0, 1]],
     },
-    lines: [[122.35, 'professor', 'Hm? Ich bin wach!', 2.25], [124.65, 'professor', 'Ein Päuschen …', 2.1], [128.0, 'striped', 'Bitte schön!', 2.0], [129.95, 'professor', 'Ich steh lieber.', 2.05]],
+    lines: [[122.35, 'professor', 'Hm? Ich bin wach!', 2.25], [124.65, 'professor', 'Ein Päuschen …', 2.1], [128.0, 'striped', 'Bitte schön!', 1.9], [129.95, 'professor', 'Ich steh lieber.', 2.05]],
     focus: [[121, 298], [131.6, 298]],
     sounds: [[CC.wake, 'pop'], [CC.yank[0], 'whoosh'], [CC.fall + 0.1, 'plumps']],
     figure(k, t, A) {

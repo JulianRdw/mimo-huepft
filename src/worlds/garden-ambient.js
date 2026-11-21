@@ -167,7 +167,7 @@
       redbeard: [[0.8, 'take', 1, 1], [1.7, 'peer', -1, 0], [2.9, 'pat', 1, 1]],
       kid: [[4.2, 'hooray'], [4.9, null]],
     },
-    lines: [[1.4, 'redbeard', 'Puh, heiß heute!', 2.2], [3.4, 'kid', 'Ein Schmetterling!', 2.4]],
+    lines: [[1.4, 'redbeard', 'Puh, heiß heute!', 2.2], [3.65, 'kid', 'Ein Schmetterling!', 2.3]],
     focus: [[2.0, 148], [6.5, 148]],
     sounds: [[1.0, 'zisch']],
     figure(k, t, A) { return k.who === 'kid' && G.inn(t, 2.6, 6) ? { look: butterfly1(t, A).x - k.x } : null; },
@@ -193,12 +193,12 @@
   // ---- 56-62: the butterfly on the flower bed ----
   G.act({
     name: 'flowers', span: [56, 62],
-    x: { mimo: [[57.0, H.mimo], [57.9, 264], [60.9, 264], [61.8, H.mimo]] },
-    lines: [[58.2, 'filmer', 'Psst … ein Schmetterling.', 2.6], [60.2, 'mimo', 'Piep?', 1.4]],
+    x: { mimo: [[57.0, H.mimo], [57.9, 264], [61.3, 264], [62.0, H.mimo]] },
+    lines: [[58.2, 'filmer', 'Psst … ein Schmetterling.', 2.6], [60.85, 'mimo', 'Piep?', 1.4]],
     focus: [[55.6, 236], [57.6, 272], [61.2, 272]],
-    sounds: [[60.2, 'piep']],
+    sounds: [[60.85, 'piep']],
     figure(k, t, A) { return k.who === 'filmer' && G.inn(t, 56.4, 62) ? { look: butterfly1(t, A).x - k.x } : null; },
-    mimo(t) { return G.inn(t, 57.9, 60.9) ? { face: 1, mood: G.inn(t, 58.2, 60.2) ? 'happy' : null } : null; },
+    mimo(t) { return G.inn(t, 57.9, 61.3) ? { face: 1, mood: G.inn(t, 58.2, 60.2) ? 'happy' : null } : null; },
   });
 
   // ---- 75-80: the butterfly on Lotta's head ----
