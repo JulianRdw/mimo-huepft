@@ -6450,7 +6450,21 @@ window.__mimo = { startSky, sim: { hold(on) { simHold = !!on; }, step(n) { for (
 
 <script>
 if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
-  window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch((e) => console.warn('Offline-Speicher nicht verfügbar', e)); });
+  // A new version takes over in the background (skipWaiting + claim). Then reload once, so a release shows up on the
+  // first start: right away while still on the start screen (first 15 s), otherwise the next time the app comes back.
+  const hadOld = !!navigator.serviceWorker.controller, bootAt = Date.now();
+  let pending = false;
+  const reloadOnce = () => { try { if (sessionStorage.getItem('mimo.swReload')) return; sessionStorage.setItem('mimo.swReload', '1'); } catch (_) { /* storage may be unavailable */ } location.reload(); };
+  navigator.serviceWorker.addEventListener('controllerchange', () => { if (!hadOld) return; if (Date.now() - bootAt < 15000) reloadOnce(); else pending = true; });
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState !== 'visible') return;
+    if (pending) { reloadOnce(); return; }
+    navigator.serviceWorker.getRegistration().then((r) => r && r.update()).catch(() => {});
+  });
+  window.addEventListener('load', () => {
+    setTimeout(() => { try { sessionStorage.removeItem('mimo.swReload'); } catch (_) { /* storage may be unavailable */ } }, 20000);
+    navigator.serviceWorker.register('sw.js').catch((e) => console.warn('Offline-Speicher nicht verfügbar', e));
+  });
 }
 </script>
 </body></html>
