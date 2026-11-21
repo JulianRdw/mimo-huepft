@@ -39,6 +39,9 @@
   add('striped', 'ketchup',
     '<g transform="rotate(180 0 -3)"><rect x="-2.2" y="-8.4" width="4.4" height="9" rx="1.6" fill="#E2483D" stroke="#9E2A23" stroke-width="0.5"/>'
     + '<rect x="-1.5" y="-5.8" width="3" height="2.4" rx="0.5" fill="#FFF3D6"/><path d="M-1 -8.4 L-0.6 -10.4 L0.6 -10.4 L1 -8.4 Z" fill="#F7F3EA" stroke="#9E2A23" stroke-width="0.4"/></g>');
+  add('sidepart', 'spade',
+    '<g><path d="M0 4 L0 -5.6" stroke="#B98B61" stroke-width="1" stroke-linecap="round"/><path d="M-1.4 4 L1.4 4" stroke="#B98B61" stroke-width="1" stroke-linecap="round"/>'
+    + '<path d="M-2.6 -5 C-3 -8.2 -1.3 -10 0 -10.2 C1.3 -10 3 -8.2 2.6 -5 Z" fill="#F2B36E" stroke="#B5763A" stroke-width="0.5" stroke-linejoin="round"/></g>');
   add('kid', 'balloon',
     '<g><circle cx="0" cy="-3.6" r="3.4" fill="#7FC7EE" stroke="#3E87B5" stroke-width="0.5"/><path d="M-0.5 -0.3 L0 0.8 L0.5 -0.3 Z" fill="#3E87B5"/>'
     + '<path d="M-1.6 -5.2 Q-0.8 -6.3 0.4 -6.4" fill="none" stroke="#FFFFFF" stroke-width="0.7" stroke-linecap="round"/></g>');
