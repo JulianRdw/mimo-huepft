@@ -6157,7 +6157,7 @@ function msStep(dt, t) {
     c.p.fig.asleep = !!o.asleep;
     // a one-off gesture ('throw', 'cheer', 'flinch', ...) plays once when its key comes up
     if (pose && !(window.MimoCoast.castPoses || {})[pose]) { if (c.played !== ps[0]) { c.played = ps[0]; c.p.play(pose); } c.p.step(dt, c.x, { face, look: o.look, pose: null, idle: false, amp: 0.3 }); continue; }
-    c.p.step(dt, c.x, { face, look: o.look, pose, poseOpts: { dir: ps[2] || 1 }, idle: !pose && !o.asleep, amp: 0.3 });
+    c.p.step(dt, c.x, { face, look: o.look, pose, poseOpts: { dir: ps[2] || 1 }, idle: !pose && !o.asleep && o.idle !== false, amp: 0.3 });
   }
   const d = ms.dog;
   if (d) {
@@ -6295,7 +6295,7 @@ function drawGdWorld(c, t, now, s, ox, oy, cx) {
   if (ms.mimoX > X0 - 30 && ms.mimoX < X1 + 30) {
     const saved = ctx; ctx = c;
     c.save(); c.translate(ms.mimoX, GD.FRONT + 4 - hop); c.scale(1.3, 1.3);
-    drawMimo(0, 0, { facing: face, mood: mo.mood || (hop > 1 ? 'happy' : null), sx: hop > 1 ? 0.94 : 1, sy: hop > 1 ? 1.06 : 1, breathe: Math.sin(now * 3) * 0.025, blink: (now % 3.7) > 3.55 ? 0.12 : 1 });
+    drawMimo(0, 0, { facing: face, mood: mo.mood === 'neutral' ? null : mo.mood || (hop > 1 ? 'happy' : null), sx: hop > 1 ? 0.94 : 1, sy: hop > 1 ? 1.06 : 1, breathe: Math.sin(now * 3) * 0.025, blink: (now % 3.7) > 3.55 ? 0.12 : 1 });
     c.restore(); ctx = saved;
     re();
   }
