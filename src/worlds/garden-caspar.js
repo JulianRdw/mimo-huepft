@@ -146,7 +146,7 @@
 
   // the end of the loop (to become Caspar's revenge)
   G.act({
-    name: 'finale', span: [148, 156],
+    name: 'finale', span: [146, 160],
     pose: {
       redbeard: [[150.4, 'hooray']], striped: [[150.4, 'hooray', 0, 0]], kid: [[150.4, 'hooray']], reporter: [[150.4, 'hooray']],
       filmer: [[150.4, 'applaud']], professor: [[150.4, 'hooray']], sidepart: [[150.4, 'hooray']],

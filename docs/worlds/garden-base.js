@@ -35,7 +35,7 @@
   'use strict';
   const G = window.Garden = window.Garden || {};
   G.acts = G.acts || [];
-  G.LOOP = 160;
+  G.LOOP = 160;   // windows: chase 6-26, bury 32-56, ketchup 62-75, rescue 80-103, water bomb 106-120, chair 121-132, ice 133-141, revenge 146-160; quiet parts between
   // the garden: GD.W units wide; feet of the back row at about 170, the front row at 186
   G.GD = { W: 560, BACK: 170, FRONT: 186, GRILL: { x: 112, y: 168 }, TABLE: { x: 205, y: 168 }, CHAIR: { x: 300, y: 176 }, BOX: { x0: 372, x1: 488, y: 192 }, POST: { x: 344, y: 110 }, HOLE: 430, SAND: 189 };
   G.HOME = { redbeard: 88, striped: 196, kid: 152, reporter: 226, filmer: 302, professor: 330, sidepart: 370, dog: 134, mimo: 250 };
