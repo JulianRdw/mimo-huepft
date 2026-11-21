@@ -5779,16 +5779,22 @@ const SPLASH_DOG = { x0: 440, x1: 252, y: 189, t0: 1.05, t1: 1.85, jump: 2.72 };
 const SPLASH_GULL = { t0: 1.55, t1: 2.2 };
 let sp = null;
 function hideSplash() { splashEl.hidden = true; splashEl.classList.remove('out'); }
+// While the start screen covers the menu, the menu's garden party does not run behind it (two scenes a frame made both
+// stutter on phones): its figures are made and their pictures warmed up in quiet frames of the still photo, and its
+// loop clock starts at 0 when the start screen fades out (menuSceneHeld, menuSceneWarm, menuSceneRelease).
+const splashCovers = () => !!(sp && !sp.out);
 function startSplash() {
   const C = window.MimoCoast;
   if ((navigator.webdriver && !window.__mimoSplash) || !C || !C.puppet || !C.PetFigure) { hideSplash(); return; }
-  sp = { t: 0, waited: 0, last: performance.now(), raf: 0, cast: null, dog: null, photo: null, shot: false, out: false };
+  sp = { t: 0, waited: 0, last: performance.now(), raf: 0, cast: null, dog: null, photo: null, shot: false, out: false, warm: 0 };
   splashEl.hidden = false; splashEl.classList.remove('out');
+  menuSceneHold();
   splashSize(); sp.raf = requestAnimationFrame(splashFrame);
 }
 function endSplash() {
   if (!sp || sp.out) return;
   sp.out = true; splashEl.classList.add('out');
+  menuSceneRelease();
   setTimeout(() => { if (sp) cancelAnimationFrame(sp.raf); sp = null; hideSplash(); }, 470);
 }
 splashEl.addEventListener('pointerdown', (e) => { e.preventDefault(); endSplash(); });
@@ -5853,6 +5859,8 @@ function splashFrame(now) {
     if (!sp.shot) { drawSplash(splashCv.getContext('2d'), sp.t); return; }
   }
   sp.t += dt;
+  // the still photo is cheap to show: the menu's party gets ready behind it, one small piece a frame
+  if (sp.t - sp.shotT > 0.25 && sp.warm >= 0) sp.warm = menuSceneWarm(sp.warm);
   if (!sp.photo) { const pc = document.createElement('canvas'); pc.width = splashCv.width; pc.height = splashCv.height; drawSplash(pc.getContext('2d'), SPLASH_SHOT, true); sp.photo = pc; }
   drawSplashPhoto(splashCv.getContext('2d'), sp.t - sp.shotT);
   if (sp.t - sp.shotT > SPLASH_END - SPLASH_SHOT + (reduced() ? 0.6 : 0)) endSplash();
@@ -6026,12 +6034,32 @@ function startMenuScene() {
   if (!ms) ms = { t0: performance.now(), last: performance.now(), raf: 0, cast: null, dog: null, taps: {}, mimoHop: -9, flare: -9, view: [0, GD.W], cam: null, played: -1 };
   cancelAnimationFrame(ms.raf); ms.last = performance.now();
   menuSceneSize();
-  if (C && C.puppet) { if (!ms.cast) ms.cast = GD_CAST.map((who, i) => ({ who, p: null, seed: 211 + i * 19, x: GARDEN.HOME[who], y: GARDEN.Y[who] })); if (!ms.dog && C.PetFigure) { ms.dog = new C.PetFigure('creamRetriever', 777); ms.dog.dir = 1; } }
-  ms.raf = requestAnimationFrame(menuSceneFrame);
+  if (C && C.puppet) { if (!ms.cast) ms.cast = GD_CAST.map((who, i) => ({ who, p: null, seed: 211 + i * 19, x: GARDEN.HOME[who], y: GARDEN.Y[who] })); if (!ms.dog && C.PetFigure) { ms.dog = new C.PetFigure('creamRetriever', 777); ms.dog.dir = 1; ms.dog.sp = { ...ms.dog.sp, speeds: { ...ms.dog.sp.speeds, track: 0 } }; } }
+  ms.raf = splashCovers() ? 0 : requestAnimationFrame(menuSceneFrame);
+}
+// the start screen covers the menu: no frames behind it (see startSplash)
+function menuSceneHold() { if (ms) { cancelAnimationFrame(ms.raf); ms.raf = 0; } }
+// one small piece of getting ready a call (from quiet frames of the start screen's photo): i = 0 makes the figures, then
+// the pictures of one person a call (all layers, faces and hand props at the raster scale of the puppets' draw: 1 x 3),
+// last one frame of the party at second 0 on the covered canvas. Returns the next i, -1 when done.
+function menuSceneWarm(i) {
+  if (!ms || !ms.cast) return -1;
+  if (i === 0) { for (const c of ms.cast) if (!c.p) c.p = window.MimoCoast.puppet(c.who, c.seed); return ms.cast.every((c) => c.p) ? 1 : 0; }
+  const c = ms.cast[i - 1];
+  if (c) { try { for (const name of Object.keys(c.p.fig.images || {})) c.p.fig.layerCanvas(name, 3); } catch (_) { /* warming is only a head start */ } return i + 1; }
+  ms.t0 = performance.now(); ms.last = ms.t0; ms.cam = null; ms.lastT = null;
+  menuSceneRender(ms.t0, 0, 1 / 60);
+  return -1;
+}
+// the start screen fades out: the party starts at its second 0
+function menuSceneRelease() {
+  if (!ms) return;
+  ms.t0 = performance.now(); ms.last = ms.t0; ms.cam = null; ms.lastT = null; ms.played = -1; ms.dogX = null; ms.mimoX = null;
+  if (!$('ovMenu').hidden) startMenuScene();
 }
 // tests and pictures: jump to second `sec` of the loop
 window.__msSeek = (sec) => { if (ms) { ms.t0 = performance.now() - sec * 1000; ms.cam = null; ms.played = sec - 0.01; } };
-window.__msInfo = () => ms && { fit: ms.bands && ms.bands[0], bands: ms.bands, mimoX: ms.mimoX, dogX: ms.dogX, taps: Object.keys(ms.taps), cast: (ms.cast || []).map((c) => [c.who, c.x, c.y]), t: ms.lastT, loop: GARDEN.LOOP };
+window.__msInfo = () => ms && { fit: ms.bands && ms.bands[0], bands: ms.bands, mimoX: ms.mimoX, dogX: ms.dogX, dogY: ms.dogY, dogRear: ms.dogRear, dogMouth: ms.dog && gdDogMouth(), cam: ms.cam, taps: Object.keys(ms.taps), cast: (ms.cast || []).map((c) => [c.who, c.x, c.y]), t: ms.lastT, loop: GARDEN.LOOP };
 function menuSceneSize() {
   const cv = $('menuScene'); if (!cv) return;
   const dpr = Math.min(2, window.devicePixelRatio || 1), w = Math.max(200, Math.round(cv.clientWidth * dpr)), h = Math.max(100, Math.round(cv.clientHeight * dpr));
@@ -6062,11 +6090,29 @@ function gdHead(c) {
   if (!f || !f.frame || !R) return [c.x, c.y - 50];
   const h = R.M.apply(f.frame.head, r.headCenter); return [c.x + h[0] - r.center, c.y + h[1] - r.ground];
 }
+// Lotta up on her hind legs: the turning point behind her (her hind paws) and the angle (her head goes up)
+function gdDogRear() { const d = ms.dog; return [ms.dogX - d.dir * 8, -d.dir * GD_REAR * (ms.dogRear || 0)]; }
+const GD_REAR = 0.62;   // rear 1: her body turned this far up (radians)
+// where Lotta's mouth is in the garden (what she carries sits there)
+function gdDogMouth() {
+  const d = ms.dog; if (!d || !d.f) return [ms.dogX || 0, GD.FRONT - 10];
+  const m = d.mouthLocal(), fx = Math.abs(d.face) < 0.3 ? 0.3 * Math.sign(d.face || 1) : d.face, dy = ms.dogY == null ? GD.FRONT + 4 : ms.dogY;
+  let x = ms.dogX + m[0] * fx, y = dy + m[1] * (1 + 0.05 * (1 - Math.abs(d.face)));
+  if (ms.dogRear) { const [px, a] = gdDogRear(), cs = Math.cos(a), sn = Math.sin(a), rx = x - px, ry = y - dy; x = px + rx * cs - ry * sn; y = dy + rx * sn + ry * cs; }
+  return [x, y];
+}
 function gdHand(c, k) { const h = c.p ? c.p.hand(k || 'r', 1) : [0, -26]; return [c.x + h[0], c.y + h[1]]; }
 // the comic sounds of the acts (soft, through the game's effects switch; only once the browser lets the page play sound)
 const GD_SOUNDS = {
   plopp: () => voice({ type: 'sine', f0: 520, f1: 1100, dur: 0.12, vol: 0.05 }),
-  mampf: () => { noise({ lp: 900, dur: 0.08, vol: 0.05 }); noise({ lp: 900, dur: 0.08, vol: 0.05, delay: 0.16 }); },
+  mampf: () => { for (let i = 0; i < 2; i++) { noise({ lp: 800, dur: 0.07, vol: 0.045, delay: i * 0.17 }); voice({ type: 'sine', f0: 170, f1: 120, dur: 0.07, vol: 0.03, delay: i * 0.17 }); } },
+  schluck: () => voice({ type: 'sine', f0: 380, f1: 150, dur: 0.14, vol: 0.05 }),
+  schnapp: () => { voice({ type: 'triangle', f0: 760, f1: 420, dur: 0.06, vol: 0.05 }); noise({ bp: 2200, q: 1.4, dur: 0.04, vol: 0.04 }); },
+  tapp: () => voice({ type: 'triangle', f0: midi(64), dur: 0.09, vol: 0.035, lp: 1800 }),
+  tapp2: () => voice({ type: 'triangle', f0: midi(67), dur: 0.09, vol: 0.035, lp: 1800 }),
+  pfeif: () => { voice({ type: 'sine', f0: midi(84), f1: midi(88), dur: 0.16, slide: 0.1, vol: 0.025 }); voice({ type: 'sine', f0: midi(86), f1: midi(81), dur: 0.22, vol: 0.025, delay: 0.24 }); },
+  huch: () => voice({ type: 'sine', f0: 380, f1: 1250, dur: 0.22, vol: 0.04 }),
+  hechel: () => { for (let i = 0; i < 4; i++) noise({ bp: 1300, q: 0.9, dur: 0.09, vol: 0.022, delay: i * 0.21 }); },
   splat: () => { noise({ lp: 1400, f1: 300, dur: 0.22, vol: 0.08 }); voice({ type: 'triangle', f0: 180, f1: 80, dur: 0.18, vol: 0.05 }); },
   platsch: () => { noise({ bp: 1800, q: 0.8, f1: 500, dur: 0.35, vol: 0.08 }); },
   plumps: () => { voice({ type: 'sine', f0: 140, f1: 55, dur: 0.25, vol: 0.09 }); noise({ lp: 500, dur: 0.15, vol: 0.05 }); },
@@ -6086,7 +6132,7 @@ function gdSound(name) {
 function gdApi(t) {
   const pal = ms.pal;
   return {
-    GD, pal, now: ms.now, t, at: gdAt, hold: gdHold, inn: gdIn, ease: GARDEN.ease, view: ms.view, dogX: ms.dogX, mimoX: ms.mimoX, lines: gdCompile().lines,
+    GD, pal, now: ms.now, t, at: gdAt, hold: gdHold, inn: gdIn, ease: GARDEN.ease, view: ms.view, dogX: ms.dogX, dogY: ms.dogY == null ? GD.FRONT + 4 : ms.dogY, mimoX: ms.mimoX, lines: gdCompile().lines, dogMouth: gdDogMouth, REAR: GD_REAR,
     who: gdWho, head: gdHead, hand: gdHand, sound: gdSound, tapped: (who) => !!(ms.taps[who] && ms.now - ms.taps[who].at < 1.6),
     towel: (c, x, y, w, h, rot) => gdTowel(c, x, y, w, h, rot, pal), sausage: (c, x, y, rot) => gdSausage(c, x, y, rot, pal),
     pop: (c, text, x, y, k, rot, size, fill) => newsPopBase(c, text, x, y, k, rot, size * Math.min(1, 2.4 / ms.unitPx), { ink: pal.ink, pop: fill || '#FFFFFF' }),
@@ -6115,17 +6161,26 @@ function msStep(dt, t) {
   }
   const d = ms.dog;
   if (d) {
-    const x0 = ms.dogX, x = gdAt(P.x.dog, t), v = (x - x0) / Math.max(dt, 1e-3), moving = Math.abs(v) > 8 && Math.abs(v) < 2000;
-    const o = { pose: 'sit', lookAt: ms.mimoX - x };
+    // Lotta walks where her x track says; an act may also move her into the depth (y: her feet), let her rear up
+    // (rear 0..1: up on her hind legs), choose her pose and where she looks. Her legs step at the speed she really moves
+    // (no sliding feet when she sneaks); 'grab' is her low, sniffing pose and stays on while she walks.
+    const o = { pose: 'sit', lookAt: null };
     for (const r of gdHooks('dog', t, A)) Object.assign(o, r);
-    d.setMove(moving ? Math.sign(v) : 0, Math.abs(v) > 140 ? 'run' : 'trot'); if (moving) d.dir = Math.sign(v);
-    if (!moving) { d.dir = o.dir || 1; d.setPose(o.pose); d.lookAt = o.lookAt; }
+    const x0 = ms.dogX, x = gdAt(P.x.dog, t), y0 = ms.dogY == null ? GD.FRONT + 4 : ms.dogY, y = o.y == null ? GD.FRONT + 4 : o.y;
+    const ddt = Math.max(dt, 1e-3), vx = (x - x0) / ddt, sp = Math.hypot(vx, (y - y0) / ddt), moving = sp > 6 && sp < 2000;
+    if (o.lookAt == null) o.lookAt = ms.mimoX - x;
+    if (d.sp.speeds.track != null) d.sp.speeds.track = Math.min(260, sp);
+    const dir = Math.abs(vx) > 3 ? Math.sign(vx) : o.dir || d.dir || 1;
+    d.setMove(moving ? dir : 0, d.sp.speeds.track != null ? 'track' : sp > 140 ? 'run' : 'trot');
+    if (moving) d.dir = dir; else d.dir = o.dir || 1;
+    if (!moving || o.pose === 'grab') d.setPose(o.pose);
+    d.lookAt = o.lookAt;
     d.carry = o.carry || null; d.carryDraw = o.carryDraw || null;
     if (o.jump && !ms.dogJumped) { ms.dogJumped = true; d.jump(o.jump); }
     if (!o.jump) ms.dogJumped = false;
     if (o.happy) d.happy(o.happy);
     d.posX = 0; d.update(dt); d.posX = 0;
-    ms.dogX = x;
+    ms.dogX = x; ms.dogY = y; ms.dogRear = Math.max(0, Math.min(1, o.rear || 0));
   }
   // the sounds whose time has come since the last frame
   if (ms.played != null) for (const [at, name] of P.sounds) if (at > ms.played && at <= t) gdSound(name);
@@ -6133,18 +6188,21 @@ function msStep(dt, t) {
 }
 function menuSceneFrame(now) {
   if (!ms) return;
-  if ($('ovMenu').hidden) { ms.raf = 0; return; }
-  const dt = Math.min(0.05, Math.max(0, (now - ms.last) / 1000)); ms.last = now; ms.now = now / 1000;
+  if ($('ovMenu').hidden || splashCovers()) { ms.raf = 0; return; }
+  const dt = Math.min(0.05, Math.max(0, (now - ms.last) / 1000)); ms.last = now;
   const still = reduced(), t = still ? 26.5 : ((now - ms.t0) / 1000) % GARDEN.LOOP;
   if (ms.lastT != null && t < ms.lastT) ms.played = -1;   // a new round
-  ms.lastT = t;
+  menuSceneRender(now, t, dt, still ? 1 / 60 : dt);
+  if (!still || (ms.cast && ms.cast.some((c) => !c.p))) ms.raf = requestAnimationFrame(menuSceneFrame);
+}
+function menuSceneRender(now, t, dt, stepDt) {
+  ms.now = now / 1000; ms.lastT = t;
   const P = gdCompile();
   if (ms.dogX == null) ms.dogX = gdAt(P.x.dog, t);
   if (ms.mimoX == null) ms.mimoX = gdAt(P.x.mimo, t);
   ms.pal = MS_PAL[darkTheme() ? 'dark' : 'light'];
-  if (ms.cast) msStep(still ? 1 / 60 : dt, t);
+  if (ms.cast) msStep(stepDt || dt, t);
   drawMenuScene($('menuScene').getContext('2d'), t, ms.now, dt);
-  if (!still || (ms.cast && ms.cast.some((c) => !c.p))) ms.raf = requestAnimationFrame(menuSceneFrame);
 }
 // ---------- drawing ----------
 const MS_PAL = {
@@ -6212,20 +6270,28 @@ function drawGdWorld(c, t, now, s, ox, oy, cx) {
   for (const a of GARDEN.acts) if (a.back) { a.back(c, t, A); re(); }
   // everyone, back to front; an act may draw a person itself (in a hole, fallen over) or something on top
   const order = [...(ms.cast || [])].filter((k) => k.p).sort((a, b) => a.y - b.y);
+  // Lotta is drawn in front of everyone, unless an act has walked her into the lawn behind someone
+  const dogY = ms.dogY == null ? GD.FRONT + 4 : ms.dogY, drawDog = () => {
+    if (!ms.dog || ms.dogX < X0 - 40 || ms.dogX > X1 + 40) return;
+    if (ms.dogRear) { const [px, a] = gdDogRear(); c.translate(px, dogY); c.rotate(a); c.translate(-px, -dogY); }
+    ms.dog.draw(c, ms.dogX, dogY, 1); re();
+  };
+  let dogDone = false;
   for (const k of order) {
+    if (!dogDone && k.y > dogY) { dogDone = true; drawDog(); }
     if (k.x < X0 - 40 || k.x > X1 + 40) continue;
     let done = false;
     for (const a of GARDEN.acts) if (a.person && a.person(c, k, t, A)) { done = true; re(); break; }
     if (!done) k.p.draw(c, k.x, k.y - (k.hop || 0), { scale: 1 });
     for (const a of GARDEN.acts) if (a.after) { a.after(c, k, t, A); re(); }
   }
-  // Lotta and Mimo in front
-  if (ms.dog && ms.dogX > X0 - 40 && ms.dogX < X1 + 40) ms.dog.draw(c, ms.dogX, GD.FRONT + 4, 1);
+  // Lotta (unless she was drawn among the people) and Mimo in front
+  if (!dogDone) drawDog();
   const P = gdCompile(), mv = gdAt(P.x.mimo, t + 0.05) - ms.mimoX, running = Math.abs(mv) > 0.05 && Math.abs(mv) < 30;
   const mo = { hop: 0, mood: null, face: null };
   for (const r of gdHooks('mimo', t, A)) Object.assign(mo, r);
   const hop = Math.max(running ? Math.abs(Math.sin(t * 9)) * 8 : 0, mo.hop || 0, now - ms.mimoHop < 0.5 ? Math.sin((now - ms.mimoHop) / 0.5 * Math.PI) * 16 : 0);
-  const face = running ? Math.sign(mv) : mo.face || (ms.dogX > ms.mimoX && t < 21 ? 1 : -1);
+  const face = running ? Math.sign(mv) : mo.face || -1;
   if (ms.mimoX > X0 - 30 && ms.mimoX < X1 + 30) {
     const saved = ctx; ctx = c;
     c.save(); c.translate(ms.mimoX, GD.FRONT + 4 - hop); c.scale(1.3, 1.3);
@@ -6314,7 +6380,7 @@ function msAnchor(who) {
   const t = ms.lastT || 0;
   if (who === 'mimo') return [ms.mimoX, GD.FRONT - 44];
   if (who === 'gull') return [GD.POST.x, GD.POST.y - 18];
-  if (who === 'dog') return [ms.dogX, GD.FRONT - 26];
+  if (who === 'dog') return [ms.dogX, (ms.dogY == null ? GD.FRONT + 4 : ms.dogY) - 30];
   if (who === 'grill') return [GD.GRILL.x, GD.GRILL.y - 50];
   const k = gdWho(who); if (!k) return [200, 100];
   const h = gdHead(k); return [h[0], h[1] - 14];
@@ -6348,7 +6414,7 @@ function menuSceneTap(e) {
   const near = (cx, top, bot, half) => Math.abs(x - cx) < half && y > top && y < bot;
   const say = (who) => { const l = GD_SAY[who]; return l[Math.floor(Math.random() * l.length)]; };
   if (near(ms.mimoX, GD.FRONT - 40, GD.FRONT + 6, 18)) { ms.mimoHop = now; pick('mimo', 'Piep!'); SFX.hup(); setTimeout(() => SFX.yay(), 250); return; }
-  if (near(ms.dogX, GD.FRONT - 26, GD.FRONT + 6, 20)) { if (ms.dog) ms.dog.jump(1); pick('dog', 'Wuff!'); SFX.hup(); return; }
+  if (near(ms.dogX, (ms.dogY == null ? GD.FRONT + 4 : ms.dogY) - 30, (ms.dogY == null ? GD.FRONT + 4 : ms.dogY) + 2, 20)) { if (ms.dog) ms.dog.jump(1); pick('dog', 'Wuff!'); SFX.hup(); return; }
   if (near(GD.POST.x, GD.POST.y - 20, GD.POST.y + 4, 14)) { pick('gull', 'Kreisch!'); return; }
   if (near(GD.GRILL.x, GD.GRILL.y - 30, GD.GRILL.y + 2, 18)) { ms.flare = now; pick('grill', 'Achtung, heiß!'); return; }
   for (const c of [...(ms.cast || [])].sort((a, b) => b.y - a.y)) {
