@@ -12,7 +12,7 @@
 //             redbeard turns: "Wo ist der Bollerwagen?"
 //   Mimo      the camera pans to Mimo, he turns to us, blinks twice: he saw it. The level begins on the spot.
 // Built on the live family figures (coast-cast.js) and the arm of coast-thief.js. Every motion is a function of the game
-// time since the scene began. The scene plays once (flag in the browser's storage), jumping skips it, never under test
+// time since the scene began. The scene plays on every start of the level (not on restarts or respawns), jumping skips it, never under test
 // automation (navigator.webdriver) unless MimoCoast.forceOpening is set. A level asks for it with `opening: true`.
 // Geometry: everything is measured from L0, 940 px left of Mimo's start; the map of the level has the sea shelf and the
 // beach plateau there (coast-levels.js, "Sandburg": 28 columns added on the left, plateau from column 11).
@@ -45,7 +45,7 @@
     if (!def.opening || info.boss || !L.start) return;
     const S = (L.start.x + 0.5) * T;
     op = { S, L0: S - BACK, pending: false, on: false, t: 0, after: false, cast: null, lines: {} };
-    if (info.reason === 'load' && !sessionSeen && !seen() && !(navigator.webdriver && !C().forceOpening)) {
+    if (info.reason === 'load' && !(navigator.webdriver && !C().forceOpening)) {
       op.pending = true;
       // the level hint of a phone pops up after the scene, not over it (it pops when its text changes)
       const h = typeof document !== 'undefined' && document.getElementById('hint');
