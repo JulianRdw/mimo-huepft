@@ -66,6 +66,7 @@
   color-scheme:dark;
 }
 html,body{height:100%}
+html{height:var(--app-h,100%)}   /* see fitAppHeight */
 body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:15px;line-height:1.45}
 *{box-sizing:border-box}
 .app{max-width:760px;margin:0 auto;padding-inline:16px;padding-block:14px 24px;display:flex;flex-direction:column;gap:12px}
@@ -264,7 +265,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size
 @media (prefers-reduced-motion: reduce){.cine-title.on{animation-duration:2.4s;animation-name:titleFade}@keyframes titleFade{0%,100%{opacity:0}15%,80%{opacity:1}}.cine-say{animation:none}}
 .stick{position:absolute;width:96px;height:96px;margin:-48px 0 0 -48px;border-radius:50%;border:2px solid color-mix(in srgb,var(--fg) 25%,transparent);background:color-mix(in srgb,var(--bg) 35%,transparent);pointer-events:none}
 .stick i{position:absolute;left:50%;top:50%;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;background:color-mix(in srgb,var(--accent) 70%,transparent)}
-.overlay{position:fixed;inset:0;z-index:5;display:flex;align-items:flex-start;justify-content:center;padding:calc(12px + var(--sa-t)) 12px calc(12px + var(--sa-b));overflow-y:auto;background:color-mix(in srgb,var(--bg) 55%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.overlay{position:fixed;inset:0;bottom:auto;height:var(--app-h,100%);z-index:5;display:flex;align-items:flex-start;justify-content:center;padding:calc(12px + var(--sa-t)) 12px calc(12px + var(--sa-b));overflow-y:auto;background:color-mix(in srgb,var(--bg) 55%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .overlay.light{background:color-mix(in srgb,var(--bg) 25%,transparent)}
 /* result of a Sternenbahn run: the card sits at the bottom and the scene stays clear, so Mimo's show is visible */
 .overlay.scene{background:linear-gradient(to top,color-mix(in srgb,var(--bg) 55%,transparent),transparent 45%);backdrop-filter:none;-webkit-backdrop-filter:none;align-items:flex-end}
@@ -399,7 +400,7 @@ body{-webkit-text-size-adjust:100%;touch-action:manipulation}
 body{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 input,textarea{-webkit-user-select:text;user-select:text}
 /* asks to turn the phone while a 2D level runs upright */
-.rotate-hint{position:fixed;inset:0;z-index:20;display:flex;align-items:center;justify-content:center;padding:24px;background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.rotate-hint{position:fixed;inset:0;bottom:auto;height:var(--app-h,100%);z-index:20;display:flex;align-items:center;justify-content:center;padding:24px;background:color-mix(in srgb,var(--bg) 72%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
 .rotate-hint .card{max-width:320px}
 .rotate-hint svg{width:64px;height:64px;margin:0 auto;color:var(--accent)}
 @media (prefers-reduced-motion:no-preference){.rotate-hint svg{animation:turnPhone 2.4s ease-in-out infinite}}
@@ -408,7 +409,8 @@ input,textarea{-webkit-user-select:text;user-select:text}
 /* Phone held sideways: the stage fills the whole screen, the HUD floats on top, the hint shows for a few seconds */
 @media (orientation: landscape) and (max-height: 540px){
   html,body{height:100%;overflow:hidden}
-  .app{position:fixed;inset:0;max-width:none;padding:0;gap:0;display:block}
+  html{height:var(--app-h,100%)}
+  .app{position:fixed;inset:0;bottom:auto;height:var(--app-h,100%);max-width:none;padding:0;gap:0;display:block}
   .stage{position:absolute;inset:0;width:100%;height:100%;max-width:none;aspect-ratio:auto;border-radius:0;box-shadow:none}
   .hud{position:absolute;z-index:4;top:calc(6px + var(--sa-t));left:calc(10px + var(--sa-l));right:calc(10px + var(--sa-r));justify-content:flex-end;flex-wrap:nowrap;pointer-events:none}
   .hud-title{display:none}
@@ -445,7 +447,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
 }
 /* ---------- "Neu!" card: a new world is out (shown once, over the menu) ---------- */
 /* start screen: the family photo (drawn on a canvas), above everything, fades into the menu */
-.splash{position:fixed;inset:0;z-index:40;background:var(--bg);transition:opacity .45s ease;cursor:pointer;touch-action:manipulation}
+.splash{position:fixed;inset:0;bottom:auto;height:var(--app-h,100%);z-index:40;background:var(--bg);transition:opacity .45s ease;cursor:pointer;touch-action:manipulation}
 .splash.out{opacity:0;pointer-events:none}
 .splash canvas{display:block;width:100%;height:100%}
 .overlay.news{z-index:7;align-items:center;background:color-mix(in srgb,var(--coast-sea) 30%,transparent)}
@@ -612,6 +614,27 @@ input,textarea{-webkit-user-select:text;user-select:text}
   #ovMenu .tiles .tile svg{width:21px;height:21px}#ovMenu .tiles .tile b{font-size:10.5px}
 }
 </style>
+<script>
+// iPhone home-screen app with the see-through status bar: WebKit lays the page out one status bar shorter than the screen
+// but draws it from the very top, so everything that should fill the screen ends some 47 px above the bottom edge (a strip
+// of page background shows there). Such an app always fills the whole screen, so its height is the screen's height in the
+// current orientation; --app-h carries it to the page and the full-screen layers. Everywhere else it is the window height.
+(function () {
+  function fitAppHeight() {
+    var h = window.innerHeight, w = window.innerWidth;
+    var ios = navigator.standalone === true, sw = Math.min(screen.width, screen.height), sh = Math.max(screen.width, screen.height);
+    if (ios) {
+      var portrait = window.matchMedia('(orientation: portrait)').matches, full = portrait ? sh : sw, wide = portrait ? sw : sh;
+      if (Math.abs(w - wide) < 2 && full > h) h = full;   // only a full-screen app (not an iPad window beside another app)
+    }
+    document.documentElement.style.setProperty('--app-h', h + 'px');
+  }
+  fitAppHeight();
+  window.addEventListener('resize', fitAppHeight);
+  window.addEventListener('orientationchange', function () { fitAppHeight(); setTimeout(fitAppHeight, 350); setTimeout(fitAppHeight, 900); });
+  window.fitAppHeight = fitAppHeight;
+})();
+</script>
 
 <div class="app">
   <div class="toast" id="toast" hidden role="status" aria-live="polite"><b></b><span></span></div>
