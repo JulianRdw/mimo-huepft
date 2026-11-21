@@ -582,6 +582,6 @@
     ctx.drawImage(box.cv, x - BOX.ox, foot - BOX.oy, BOX.w, BOX.h);
   }
 
-  Object.assign(window.MimoCoast, { dogUpdate, dogDraw });
+  Object.assign(window.MimoCoast, { dogUpdate, dogDraw, PetFigure }); // PetFigure: the start screen's photo uses a free dog
   window.MimoWorlds.register({ world: 4, setup() {} });
 })();

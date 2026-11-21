@@ -444,6 +444,10 @@ input,textarea{-webkit-user-select:text;user-select:text}
   .overlay.scene .card{max-width:min(560px,100%)}
 }
 /* ---------- "Neu!" card: a new world is out (shown once, over the menu) ---------- */
+/* start screen: the family photo (drawn on a canvas), above everything, fades into the menu */
+.splash{position:fixed;inset:0;z-index:40;background:var(--bg);transition:opacity .45s ease;cursor:pointer;touch-action:manipulation}
+.splash.out{opacity:0;pointer-events:none}
+.splash canvas{display:block;width:100%;height:100%}
 .overlay.news{z-index:7;align-items:center;background:color-mix(in srgb,var(--coast-sea) 30%,transparent)}
 .news-body h2 span{white-space:nowrap}
 .card.news:focus{outline:none}
@@ -757,6 +761,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
         </div>
       </div>
     </div>
+    <div class="splash" id="splash" aria-hidden="true"><canvas id="splashCv" width="400" height="200"></canvas></div>
     <div class="overlay news" id="ovNews" hidden role="dialog" aria-modal="true" aria-labelledby="newsTitle" aria-describedby="newsLead">
       <div class="card news" id="newsCard" tabindex="-1">
         <div class="news-scene"><canvas id="newsScene" width="400" height="200" aria-hidden="true"></canvas><span class="news-badge">Neu!</span></div>
@@ -5707,6 +5712,263 @@ function drawNewsScene(c, t, still) {
   c.setTransform(1, 0, 0, 1, 0, 0);
 }
 
+// ---------- Start screen: the family photo ----------
+// Every start of the game: the beach family (world 4's live figures) lines up for a group photo, the viewer is the camera.
+// "3": the kid waves. "2": the dog runs in. "1": the gull lands on a head. Then Mimo jumps into the picture just as the
+// shutter clicks: flash, the picture freezes into a photo with "Mimo hüpft" under it, and fades into the menu. About
+// 4.5 s on the real clock (decoration, not gameplay); a tap or a key skips it. It waits up to SPLASH_WAIT s for the
+// family's pictures; whoever is not ready by then is simply not in the photo. Reduced motion shows the photo still.
+// Never under test automation (navigator.webdriver) unless window.__mimoSplash is set.
+const splashEl = $('splash'), splashCv = $('splashCv');
+const SPLASH_WAIT = 2.5, SPLASH_SHOT = 2.95, SPLASH_END = 4.45;
+// the people of the photo: back row, then the kid in front (x, feet y in scene units; the scene is 400 x 200 like the news card)
+const SPLASH_CAST = [
+  { who: 'redbeard', x: 106, y: 165 }, { who: 'striped', x: 136, y: 163 }, { who: 'professor', x: 166, y: 165 },
+  { who: 'reporter', x: 234, y: 165 }, { who: 'filmer', x: 263, y: 163 }, { who: 'sidepart', x: 293, y: 165 },
+  { who: 'kid', x: 146, y: 185 },
+];
+// what each one does for the photo (from scene second 2.5 on): a pose of coast-cast-actions.js and a face
+const SPLASH_POSE = { redbeard: ['hooray'], professor: ['thumb', 'sure'], reporter: ['mic'], filmer: ['cam'], sidepart: ['wave'], kid: ['hooray', 'wow'] };
+const SPLASH_MIMO = { x0: -24, x1: 200, y: 190, t0: 2.3, t1: 3.05, peak: 86 };
+const SPLASH_DOG = { x0: 440, x1: 252, y: 189, t0: 1.05, t1: 1.85, jump: 2.72 };
+const SPLASH_GULL = { t0: 1.55, t1: 2.2 };
+let sp = null;
+function hideSplash() { splashEl.hidden = true; splashEl.classList.remove('out'); }
+function startSplash() {
+  const C = window.MimoCoast;
+  if ((navigator.webdriver && !window.__mimoSplash) || !C || !C.puppet || !C.PetFigure) { hideSplash(); return; }
+  sp = { t: 0, waited: 0, last: performance.now(), raf: 0, cast: null, dog: null, photo: null, shot: false, out: false };
+  splashEl.hidden = false; splashEl.classList.remove('out');
+  splashSize(); sp.raf = requestAnimationFrame(splashFrame);
+}
+function endSplash() {
+  if (!sp || sp.out) return;
+  sp.out = true; splashEl.classList.add('out');
+  setTimeout(() => { if (sp) cancelAnimationFrame(sp.raf); sp = null; hideSplash(); }, 470);
+}
+splashEl.addEventListener('pointerdown', (e) => { e.preventDefault(); endSplash(); });
+window.addEventListener('keydown', (e) => { if (!sp || splashEl.hidden) return; e.stopImmediatePropagation(); e.preventDefault(); endSplash(); }, true);
+function splashSize() {
+  const dpr = Math.min(2, window.devicePixelRatio || 1), w = Math.max(200, Math.round(splashEl.clientWidth * dpr)), h = Math.max(100, Math.round(splashEl.clientHeight * dpr));
+  if (splashCv.width !== w || splashCv.height !== h) { splashCv.width = w; splashCv.height = h; if (sp) sp.photo = null; }
+}
+window.addEventListener('resize', () => { if (sp) splashSize(); });
+// the figures, as soon as their pictures are there (null until then)
+function splashCast() {
+  const C = window.MimoCoast;
+  if (!sp.cast) sp.cast = SPLASH_CAST.map((c, i) => ({ ...c, p: null, seed: 31 + i * 17 }));
+  for (const c of sp.cast) if (!c.p) c.p = C.puppet(c.who, c.seed);
+  if (!sp.dog) { sp.dog = new C.PetFigure('creamRetriever', 4242); sp.dog.posX = 0; sp.dog.dir = -1; }
+  return sp.cast.every((c) => c.p);
+}
+// where things are at scene second t
+function splashMimo(t) {
+  const m = SPLASH_MIMO, k = Math.max(0, Math.min(1, (t - m.t0) / (m.t1 - m.t0)));
+  return { x: m.x0 + (m.x1 - m.x0) * k, y: m.y - Math.sin(k * Math.PI) * m.peak, k, on: t > m.t0 };
+}
+function splashDogX(t) { const d = SPLASH_DOG, k = Math.max(0, Math.min(1, (t - d.t0) / (d.t1 - d.t0))); return d.x0 + (d.x1 - d.x0) * (1 - (1 - k) * (1 - k)); }
+function splashHead(c) {
+  const R = window.MimoCoast.RigMath, f = c.p && c.p.fig, r = c.p && c.p.rig;
+  if (!f || !f.frame || !R) return [c.x, c.y - 52];
+  const h = R.M.apply(f.frame.head, r.headCenter); return [c.x + h[0] - r.center, c.y + h[1] - r.ground];
+}
+function splashStep(dt) {
+  const t = sp.t, m = splashMimo(t), d = sp.dog, dx = splashDogX(t);
+  for (const c of sp.cast) {
+    if (!c.p) continue;
+    const want = t > 2.5 ? SPLASH_POSE[c.who] : null;
+    let pose = want ? want[0] : null;
+    if (c.who === 'kid' && t > 0.35 && t < 2.3) pose = 'wave';
+    if (c.who === 'striped' && t > SPLASH_GULL.t1) pose = 'flail';
+    c.p.fig.expr = c.who === 'striped' && t > SPLASH_GULL.t1 ? 'ouch' : want && want[1] ? want[1] : null;
+    c.p.step(dt, c.x, { face: 0, look: m.on ? m.x - c.x : (t > SPLASH_DOG.t0 && t < 2.2 ? dx - c.x : undefined), pose, idle: false, amp: 0.3 });
+  }
+  const running = t > SPLASH_DOG.t0 && t < SPLASH_DOG.t1;
+  d.setMove(running ? -1 : 0, 'run');
+  if (!running && t > SPLASH_DOG.t1) { d.setPose(t < SPLASH_DOG.jump ? 'sit' : 'stand'); d.lookAt = m.on ? m.x - dx : -40; d.happy(1); }
+  if (t >= SPLASH_DOG.jump && !sp.dogJumped) { sp.dogJumped = true; d.jump(1.1); }
+  d.posX = 0; d.update(dt); d.posX = 0; // the scene moves the dog itself
+}
+function splashFrame(now) {
+  if (!sp) return;
+  const dt = Math.min(0.05, (now - sp.last) / 1000); sp.last = now;
+  sp.raf = requestAnimationFrame(splashFrame);
+  if (!sp.shot) {
+    const ready = splashCast();
+    if (!ready && sp.waited < SPLASH_WAIT) { sp.waited += dt; drawSplash(splashCv.getContext('2d'), 0); return; }
+    if (reduced()) { // the photo without the show: run the scene to the shutter in quiet steps
+      for (let i = 0; sp.t < SPLASH_SHOT && i < 400; i++) { sp.t += 1 / 60; splashStep(1 / 60); }
+    } else { sp.t += dt; splashStep(dt); }
+    if (sp.t >= SPLASH_SHOT) { // the shutter: keep the picture
+      sp.shot = true; sp.shotT = reduced() ? sp.t - 1 : sp.t;
+      const pc = document.createElement('canvas'); pc.width = splashCv.width; pc.height = splashCv.height;
+      drawSplash(pc.getContext('2d'), sp.t, true); sp.photo = pc;
+    }
+    if (!sp.shot) { drawSplash(splashCv.getContext('2d'), sp.t); return; }
+  }
+  sp.t += dt;
+  if (!sp.photo) { const pc = document.createElement('canvas'); pc.width = splashCv.width; pc.height = splashCv.height; drawSplash(pc.getContext('2d'), SPLASH_SHOT, true); sp.photo = pc; }
+  drawSplashPhoto(splashCv.getContext('2d'), sp.t - sp.shotT);
+  if (sp.t - sp.shotT > SPLASH_END - SPLASH_SHOT + (reduced() ? 0.6 : 0)) endSplash();
+}
+// the scene: 400 x 200 units, the group fitted into the middle, sky, sea and sand reach on to the canvas edges
+function splashFit(cw, ch) { const s = Math.min(cw / 290, ch / 190); return { s, ox: cw / 2 - 200 * s, oy: ch / 2 - 112 * s }; }
+function drawSplash(c, t, photo) {
+  const pal = NEWS_PAL[darkTheme() ? 'dark' : 'light'], cw = c.canvas.width, ch = c.canvas.height, { s, ox, oy } = splashFit(cw, ch);
+  const X0 = -ox / s - 1, X1 = (cw - ox) / s + 1, Y0 = -oy / s - 1, Y1 = (ch - oy) / s + 1, HZ = 118;
+  c.setTransform(s, 0, 0, s, ox, oy);
+  const sky = c.createLinearGradient(0, Y0, 0, HZ); sky.addColorStop(0, pal.skyTop); sky.addColorStop(1, pal.skyBot);
+  c.fillStyle = sky; c.fillRect(X0, Y0, X1 - X0, HZ - Y0 + 2);
+  c.fillStyle = pal.sun; c.globalAlpha = 0.45; c.beginPath(); c.arc(318, 46, 30, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1;
+  c.fillStyle = pal.sunCore; c.beginPath(); c.arc(318, 46, 19, 0, Math.PI * 2); c.fill();
+  c.fillStyle = pal.cloud; c.globalAlpha = 0.9;
+  for (const [x0, y, r] of [[40, 40, 10], [210, 22, 8], [380, 62, 9]]) { const x = x0 + t * 3; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.arc(x + r * 1.2, y - r * 0.5, r * 1.1, 0, Math.PI * 2); c.arc(x + r * 2.4, y, r * 0.9, 0, Math.PI * 2); c.rect(x, y, r * 2.4, r * 0.9); c.fill(); }
+  c.globalAlpha = 1;
+  const sea = c.createLinearGradient(0, HZ, 0, 150); sea.addColorStop(0, pal.seaDeep); sea.addColorStop(1, pal.seaTop);
+  c.fillStyle = sea; c.fillRect(X0, HZ, X1 - X0, 40);
+  c.strokeStyle = pal.glint; c.lineCap = 'round'; c.lineWidth = 1.4;
+  for (let i = 0; i < 16; i++) { const gx = ((i * 71 + 23) % 460) - 30 + Math.sin(t * 0.7 + i) * 4, gy = HZ + 4 + ((i * 37) % 22); c.globalAlpha = 0.25 + 0.3 * (0.5 + 0.5 * Math.sin(t * 2.2 + i * 1.7)); c.beginPath(); c.moveTo(gx, gy); c.lineTo(gx + 6 + (i % 3) * 3, gy); c.stroke(); }
+  c.globalAlpha = 1;
+  const shore = (x) => newsShore(x, t) + 12;
+  c.fillStyle = pal.sand; c.beginPath(); c.moveTo(X0, Y1);
+  for (let x = Math.floor(X0); x <= X1 + 4; x += 4) c.lineTo(x, shore(x));
+  c.lineTo(X1, Y1); c.closePath(); c.fill();
+  const low = c.createLinearGradient(0, 170, 0, 215); low.addColorStop(0, pal.sand); low.addColorStop(1, pal.sandLow);
+  c.fillStyle = low; c.fillRect(X0, 170, X1 - X0, Y1 - 170);
+  c.strokeStyle = pal.foam; c.lineWidth = 2.2; c.globalAlpha = 0.85; c.beginPath();
+  for (let x = Math.floor(X0); x <= X1 + 4; x += 4) { const y = shore(x) + 0.5; if (x <= X0) c.moveTo(x, y); else c.lineTo(x, y); }
+  c.stroke(); c.globalAlpha = 1;
+  c.fillStyle = pal.sandDot;
+  for (let i = 0; i < 60; i++) { const x = ((i * 89 + 11) % 520) - 60, y = 152 + ((i * 53) % 60); c.beginPath(); c.arc(x, y, 0.8 + (i % 3) * 0.35, 0, Math.PI * 2); c.fill(); }
+  // a beach umbrella behind the group on the left, the sandcastle on the right
+  c.strokeStyle = pal.castleInk; c.lineWidth = 2; c.beginPath(); c.moveTo(62, 168); c.lineTo(70, 104); c.stroke();
+  for (let i = 0; i < 6; i++) { c.fillStyle = i % 2 ? pal.hatTop : pal.coral; c.beginPath(); c.moveTo(70, 100); const a0 = Math.PI + 0.12 + i * (Math.PI - 0.24) / 6, a1 = a0 + (Math.PI - 0.24) / 6; c.arc(70, 112, 34, a0, a1); c.closePath(); c.fill(); }
+  c.fillStyle = pal.castle; c.fillRect(326, 160, 34, 20); c.fillRect(333, 147, 20, 15);
+  for (const x of [326, 335, 344, 353]) c.fillRect(x, 155, 6, 6);
+  c.strokeStyle = pal.castleInk; c.lineWidth = 1.4; c.beginPath(); c.moveTo(343, 147); c.lineTo(343, 130); c.stroke();
+  c.fillStyle = pal.flag; c.beginPath(); c.moveTo(343, 130); c.lineTo(356 + Math.sin(t * 5) * 1.5, 134); c.lineTo(343, 138); c.closePath(); c.fill();
+  // the people, the dog, Mimo, the gull
+  if (sp.cast) for (const k of sp.cast) if (k.p) k.p.draw(c, k.x, k.y, { scale: 1 });
+  const dx = splashDogX(t);
+  if (sp.dog && t > SPLASH_DOG.t0) sp.dog.draw(c, dx, SPLASH_DOG.y, 1);
+  const m = splashMimo(t);
+  if (m.on) {
+    const land = m.k >= 1 ? Math.max(0, 1 - (t - SPLASH_MIMO.t1) / 0.25) : 0, air = m.k > 0 && m.k < 1;
+    const saved = ctx; ctx = c;
+    c.save(); c.translate(m.x, m.y); c.scale(1.7, 1.7); if (air) c.rotate((m.k - 0.5) * 0.5);
+    drawMimo(0, 0, { facing: 1, mood: 'happy', sx: air ? 0.92 : 1 + land * 0.18, sy: air ? 1.1 : 1 - land * 0.16, blink: 1 });
+    c.restore(); ctx = saved;
+    c.setTransform(s, 0, 0, s, ox, oy);
+  }
+  drawSplashGull(c, t);
+  if (photo) { c.setTransform(1, 0, 0, 1, 0, 0); return; }
+  // the countdown of the camera, comic words, and the viewfinder over everything
+  const g = SPLASH_GULL;
+  for (const [n, a] of [['3', 0.3], ['2', 1.1], ['1', 1.9]]) splashCount(c, n, (t - a) / 0.8, pal);
+  newsPop(c, 'Wuff!', 296, 140, (t - 1.75) / 0.9, 0.12, 15, pal);
+  newsPop(c, 'He!', 122, 84, (t - g.t1) / 0.8, -0.15, 15, pal);
+  newsPop(c, 'Piep!', 200, 108, (t - 2.45) / 0.6, -0.08, 18, pal);
+  c.setTransform(1, 0, 0, 1, 0, 0);
+  const u = Math.min(cw, ch), L = u * 0.07, I = u * 0.05;
+  c.strokeStyle = 'rgba(255,255,255,0.9)'; c.lineWidth = Math.max(2, u * 0.008); c.lineCap = 'round';
+  c.beginPath();
+  for (const [x, y, sx, sy] of [[I, I, 1, 1], [cw - I, I, -1, 1], [I, ch - I, 1, -1], [cw - I, ch - I, -1, -1]]) { c.moveTo(x, y + sy * L); c.lineTo(x, y); c.lineTo(x + sx * L, y); }
+  c.stroke();
+  if ((t % 1) < 0.6) { c.fillStyle = '#F0607A'; c.beginPath(); c.arc(I + u * 0.03, I + u * 0.035, u * 0.011, 0, Math.PI * 2); c.fill(); }
+}
+// the gull glides in from the top left and lands on the head of the striped one
+function drawSplashGull(c, t) {
+  const g = SPLASH_GULL, SD = window.MimoCoast.sdraw; if (!SD || t < g.t0 || !sp.cast) return;
+  const host = sp.cast[1], head = splashHead(host), k = Math.min(1, (t - g.t0) / (g.t1 - g.t0)), e = k * k * (3 - 2 * k);
+  const x = -30 + (head[0] - 2 + 30) * e, y = 20 + (head[1] - 9 - 20) * e - Math.sin(e * Math.PI) * 18;
+  c.save(); c.translate(x, y); c.scale(0.9, 0.9);
+  if (k < 1) { // flapping wings while it flies
+    const fl = Math.sin(t * 28) * 0.9;
+    c.fillStyle = '#C9CDD8'; for (const side of [-1, 1]) { c.save(); c.translate(-1, -11); c.rotate(-Math.PI / 2 + side * 0.35 + fl * side * 0.5); c.beginPath(); c.ellipse(0, -9, 3.5, 10, 0, 0, Math.PI * 2); c.fill(); c.restore(); }
+  }
+  SD.gull(c, t, { face: 1, hop: k < 1 ? 0 : Math.max(0, Math.sin((t - g.t1) * 9)) * 2 * Math.max(0, 1 - (t - g.t1)) });
+  c.restore();
+}
+function splashCount(c, n, k, pal) {
+  if (k <= 0 || k >= 1) return;
+  const sc = k < 0.18 ? 0.4 + k / 0.18 * 0.75 : k < 0.3 ? 1.15 - (k - 0.18) * 1.25 : 1, a = k > 0.75 ? (1 - k) / 0.25 : 1;
+  c.save(); c.translate(200, 52); c.scale(sc, sc); c.globalAlpha = a;
+  c.fillStyle = pal.pop; c.strokeStyle = pal.ink; c.lineWidth = 3;
+  c.beginPath(); c.arc(0, 0, 20, 0, Math.PI * 2); c.fill(); c.stroke();
+  c.fillStyle = pal.ink; c.font = '600 28px ' + "'Fredoka', 'Nunito', system-ui, sans-serif"; c.textAlign = 'center'; c.textBaseline = 'middle';
+  c.fillText(n, 0, 2); c.restore();
+}
+// after the click: a white flash, then the group's part of the picture shrinks into a photo with a white frame and the
+// name of the game under it, slightly tilted, on the menu's background
+function drawSplashPhoto(c, k) {
+  const cw = c.canvas.width, ch = c.canvas.height, u = Math.min(cw, ch), { s, ox, oy } = splashFit(cw, ch);
+  c.setTransform(1, 0, 0, 1, 0, 0);
+  c.fillStyle = darkTheme() ? '#26232F' : '#F5F0F9'; c.fillRect(0, 0, cw, ch);
+  // the crop: the group's 290 x 190 units, as far as they are on the canvas
+  const sx = Math.max(0, ox + 55 * s), sy = Math.max(0, oy + 17 * s), sw = Math.min(cw, ox + 345 * s) - sx, sh = Math.min(ch, oy + 207 * s) - sy;
+  const e = reduced() ? 1 : 1 - Math.pow(1 - Math.min(1, k / 0.6), 3);
+  const fin = Math.min(cw * 0.8 / sw, ch * 0.6 / sh), sc = 1 + (fin - 1) * e;
+  const pw = sw * sc, ph = sh * sc, border = Math.min(pw, ph) * 0.045 * e, foot = Math.min(pw, ph) * 0.2 * e;
+  c.save(); c.translate(cw / 2, ch / 2 - foot / 2); c.rotate(-0.04 * e);
+  c.fillStyle = 'rgba(31,28,43,' + (0.2 * e) + ')'; c.fillRect(-pw / 2 - border + u * 0.01, -ph / 2 - border + u * 0.016, pw + border * 2, ph + border * 2 + foot);
+  c.fillStyle = '#FFFDF8'; c.fillRect(-pw / 2 - border, -ph / 2 - border, pw + border * 2, ph + border * 2 + foot);
+  c.drawImage(sp.photo, sx, sy, sw, sh, -pw / 2, -ph / 2, pw, ph);
+  if (e > 0.4) {
+    c.globalAlpha = Math.min(1, (e - 0.4) / 0.4); c.fillStyle = '#3B3560'; c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.font = '600 ' + Math.round(foot * 0.55) + 'px ' + "'Fredoka', 'Nunito', system-ui, sans-serif";
+    c.fillText('Mimo hüpft', 0, ph / 2 + border + foot * 0.5); c.globalAlpha = 1;
+  }
+  c.restore();
+  if (!reduced() && k < 0.4) { c.fillStyle = 'rgba(255,255,255,' + (1 - k / 0.4) + ')'; c.fillRect(0, 0, cw, ch); }
+}
+
+// ---------- The app icon (tools/icons.mjs draws it from here) ----------
+// Mimo big in front, the family close behind him cheering, the gull on his leaf: the start screen's photo as a square.
+// appIconPrepare() makes the figures and steps them into their poses (false while their pictures still load);
+// drawAppIcon(c, N, safe) draws N x N px, safe shrinks everything into the safe circle of a maskable icon.
+const ICON_CAST = [
+  { who: 'redbeard', x: 13, y: 76, pose: 'hooray' }, { who: 'reporter', x: 31, y: 72, pose: 'wave' },
+  { who: 'filmer', x: 69, y: 72, pose: 'cam' }, { who: 'sidepart', x: 87, y: 76, pose: 'thumb' },
+];
+let iconCast = null;
+function appIconPrepare() {
+  const C = window.MimoCoast; if (!C || !C.puppet) return false;
+  if (!iconCast) iconCast = ICON_CAST.map((c, i) => ({ ...c, p: null, seed: 101 + i * 13 }));
+  for (const c of iconCast) if (!c.p) c.p = C.puppet(c.who, c.seed);
+  if (!iconCast.every((c) => c.p)) return false;
+  for (let i = 0; i < 100; i++) for (const c of iconCast) c.p.step(1 / 60, c.x, { face: 0, look: 50 - c.x, pose: c.pose, idle: false, amp: 0.3 });
+  return true;
+}
+function drawAppIcon(c, N, safe) {
+  const pal = NEWS_PAL.light, k = safe ? 0.8 : 1, s = N / 100 * k, o = N * (1 - k) / 2;
+  c.setTransform(1, 0, 0, 1, 0, 0);
+  const fill = (y0, y1, a, b) => { const g = c.createLinearGradient(0, y0, 0, y1); g.addColorStop(0, a); g.addColorStop(1, b); return g; };
+  // background over the whole square (also outside the safe zone): sky, sun, sea, sand
+  c.setTransform(s, 0, 0, s, o, o);
+  const L = -o / s - 1, R = (N - o) / s + 1;
+  c.fillStyle = fill(L, 56, pal.skyTop, pal.skyBot); c.fillRect(L, L, R - L, 56 - L);
+  c.fillStyle = pal.sun; c.globalAlpha = 0.5; c.beginPath(); c.arc(80, 20, 15, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1;
+  c.fillStyle = pal.sunCore; c.beginPath(); c.arc(80, 20, 9.5, 0, Math.PI * 2); c.fill();
+  c.fillStyle = fill(56, 70, pal.seaDeep, pal.seaTop); c.fillRect(L, 56, R - L, 16);
+  c.fillStyle = pal.sand; c.beginPath(); c.moveTo(L, R);
+  for (let x = Math.floor(L); x <= R + 2; x += 2) c.lineTo(x, 68 + Math.sin(x * 0.12) * 0.8);
+  c.lineTo(R, R); c.closePath(); c.fill();
+  c.strokeStyle = pal.foam; c.lineWidth = 1.2; c.beginPath();
+  for (let x = Math.floor(L); x <= R + 2; x += 2) { const y = 68.4 + Math.sin(x * 0.12) * 0.8; if (x <= L) c.moveTo(x, y); else c.lineTo(x, y); }
+  c.stroke();
+  // the family, slightly bigger than in the game
+  if (iconCast) for (const f of iconCast) if (f.p) f.p.draw(c, f.x, f.y, { scale: 0.74 });
+  c.setTransform(s, 0, 0, s, o, o);
+  // Mimo, with the gull on his leaf
+  const saved = ctx; ctx = c;
+  c.save(); c.translate(50, 95); c.scale(1.85, 1.85);
+  drawMimo(0, 0, { facing: 1, blink: 1, outfit: { ...DEFAULT_OUTFIT } });
+  c.restore(); ctx = saved;
+  const SD = window.MimoCoast && window.MimoCoast.sdraw;
+  if (SD) { c.setTransform(s, 0, 0, s, o, o); c.translate(51.5, 41); c.scale(0.55, 0.55); SD.gull(c, 0, { face: -1 }); }
+  c.setTransform(1, 0, 0, 1, 0, 0);
+}
+
 // ---------- Level select ----------
 function buildLevelGrid() {
   const grid = $('levelGrid'); grid.innerHTML = '';
@@ -6459,14 +6721,14 @@ for (const w of WORLD_MODS) for (const f of w.hooks.setup) f(worldApi);
 function boot(data) {
   const d = data || {};
   if (typeof d.levelIndex === 'number' && d.levelIndex >= 0 && d.levelIndex < LEVELS.length) {
-    hideOverlays(); loadLevel(d.levelIndex); G.attempts = d.attempts || 1; updateHud();
-  } else { hudLevel.textContent = 'Hauptmenü'; showOverlay('menu'); }
+    hideSplash(); hideOverlays(); loadLevel(d.levelIndex); G.attempts = d.attempts || 1; updateHud();
+  } else { hudLevel.textContent = 'Hauptmenü'; showOverlay('menu'); startSplash(); }
 }
 if (window.claude && window.claude.hot && window.claude.hot.snapshot) {
   window.claude.hot.snapshot(() => (G.L && !G.overlay ? { levelIndex: G.levelIndex, attempts: G.attempts } : {}));
 }
 if (window.claude && window.claude.hot && window.claude.hot.ready) window.claude.hot.ready(boot); else boot(window.claude && window.claude.hot ? window.claude.hot.data : null);
-window.__mimo = { startSky, sim: { hold(on) { simHold = !!on; }, step(n) { for (let i = 0; i < n; i++) update(STEP); }, STEP }, startBoss, BOSSES, boss: () => G.boss, aud: () => ({ ac, masterGain, Music, audioStuck, btn: btnUnlock.textContent }), piep, bubble, unlock, startGag, CODES, ACHIEVEMENTS, progress, G, LEVELS, MEDALS, WORLDS, MAIN, COSTUMES, worldApi, song: () => songForState(), mainOpen, levelOpen, continueLevel, nextMain, input, load: (i) => { hideOverlays(); loadLevel(i); }, setKey, startBonus, startDash, restartDash, openRunMenu, ph: (tx, ty) => (G.time / TT_PERIOD + (G.L.tgroup.get(tx + ',' + ty) || 0)) % 1, audioState: () => ({ state: ac && ac.state, music: musGain && musGain.gain.value, master: masterGain && masterGain.gain.value, running: Music.running, musicOn: progress.music, sfxOn: progress.sfx }),
+window.__mimo = { appIcon: { prepare: appIconPrepare, draw: drawAppIcon }, startSky, sim: { hold(on) { simHold = !!on; }, step(n) { for (let i = 0; i < n; i++) update(STEP); }, STEP }, startBoss, BOSSES, boss: () => G.boss, aud: () => ({ ac, masterGain, Music, audioStuck, btn: btnUnlock.textContent }), piep, bubble, unlock, startGag, CODES, ACHIEVEMENTS, progress, G, LEVELS, MEDALS, WORLDS, MAIN, COSTUMES, worldApi, song: () => songForState(), mainOpen, levelOpen, continueLevel, nextMain, input, load: (i) => { hideOverlays(); loadLevel(i); }, setKey, startBonus, startDash, restartDash, openRunMenu, ph: (tx, ty) => (G.time / TT_PERIOD + (G.L.tgroup.get(tx + ',' + ty) || 0)) % 1, audioState: () => ({ state: ac && ac.state, music: musGain && musGain.gain.value, master: masterGain && masterGain.gain.value, running: Music.running, musicOn: progress.music, sfxOn: progress.sfx }),
   meter: (ms) => new Promise((res) => { if (!ac) return res(null); const an = ac.createAnalyser(); an.fftSize = 2048; masterGain.connect(an); const buf = new Float32Array(an.fftSize); let peak = 0; const t0 = performance.now(); const tick = () => { an.getFloatTimeDomainData(buf); for (const v of buf) peak = Math.max(peak, Math.abs(v)); if (performance.now() - t0 < ms) requestAnimationFrame(tick); else { masterGain.disconnect(an); res(peak); } }; tick(); }) };
 })();
 </script>
