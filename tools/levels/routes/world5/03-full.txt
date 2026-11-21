@@ -1,0 +1,18 @@
+# Geysirfeld, all stars
+R until x>=5.3; RJ 0.25; R until grounded max 2
+R until x>=11.4 max 2; W until y<=59.1 max 5; R until x>=13 max 1
+R until x>=13.4 max 1; RJ 0.3; R until grounded max 2
+R until x>=20.4 max 2; W until y<=54.1 max 6; RJ 0.3; R until x>=22.3 max 1; W until grounded max 2
+R until x>=23.4 max 1; W until y<=48.1 max 5; RJ 0.4; R until x>=29.6 max 2; W until body max 2; W until y<=48.1 max 4
+RJ 0.3; R until grounded max 2
+# the geyser by the high ledge: jump left onto the sinter shelf with the star, then the long jump to the next terrace
+R until x>=40.4 max 2; W until y<=42.1 max 5; W 0.05; LJ 0.4; L until x<=36.6 max 1; W until grounded max 2
+L until x<=35.6 max 1; R until x>=37.6 max 1; RJ 0.4; R until grounded max 2
+R until x>=47.4 max 2; W until y<=34.1 max 5; RJ 0.25; R until x>=52.4 max 2
+W until y<=29.1 max 5; RJ 0.3; R until x>=56.6 max 1; W until grounded max 2
+R until x>=57.3 max 1; W until y<=25.1 max 5; RJ 0.3; R until x>=60.6 max 1; W until grounded max 2
+R until x>=61.3 max 1; W until y<=21.1 max 5; RJ 0.25; R until grounded max 2
+R until x>=72.4 max 2; W until y<=15.1 max 5; R until x>=74 max 1; R until x>=77.5 max 1; RJ 0.3; R until grounded max 2
+R until x>=79.4 max 1; RJ 0.35; R until grounded max 2
+# the lonely geyser by the door: up to the ledge in the sky
+R until x>=84.3 max 2; W until y<=4.1 max 6; W 0.05; RJ 0.4; R until x>=86.4 max 1; W until grounded max 2; L until x<=85.3 max 1; L 0.15; W until grounded max 3; R until x>=87.3 max 2

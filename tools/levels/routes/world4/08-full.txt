@@ -1,0 +1,35 @@
+W 11.5  # the arm takes the camera, the filmer cries out: let it be seen
+R until x>=6 max 2
+R until water max 2
+D until y>=13.2 max 2
+R until x>=14.5 max 2
+RJ until x>=38.6 max 5
+D until y>=15.5 max 1
+RJ 0.35
+R until x>=44 max 2
+R until x>=50.4 max 2
+J until y<=12.6 max 1
+R until x>=56.5 max 5
+W until grounded max 2
+L until x<=56.7 max 1
+RJ 0.45
+R until x>=63.2 max 5
+R until x>=66 max 2
+RJ until y<=9.4 max 2
+R until x>=74.5 max 3
+W until x>=77.9 max 2
+J until surface max 2
+W 0.03
+J 0.3
+W until water max 2
+D until y>=8.8 max 1
+R until x>=85.2 max 3
+W until y<=6.6 max 3
+RJ until surface max 2
+W 0.03
+RJ 0.3
+R until x>=93 max 3
+W 6.5  # the filmer watches her footage
+R until x>=97 max 3
+W 17  # hand-over: Mimo walks to the owner and waits for the gag
+R until x>=100 max 3

@@ -1,0 +1,13 @@
+# Erdaufgang, fast
+R until x>=19.6 max 4; RJ until falling; R until grounded max 2
+R until x>=25.4 max 1; RJ until orbit max 1.5
+R until ang>=100 and ang<=106 max 3; J 0.05; R until grounded max 3
+R until x>=45.5 max 2; RJ until falling; R until x>=50 max 1; W until body max 2
+R until x>=51.2 max 1; RJ until falling; R until x>=55.5 max 1; W until body max 2
+R until x>=56.3 max 1; RJ until falling; R until grounded max 2
+R until x>=69 max 2; W until x>=82 max 6; R until grounded max 2
+R until x>=94.8 max 3; J until y<=17 max 1; RJ until y<=12 max 2; R until grounded max 2
+R until x>=121.6 max 4; RJ until orbit max 1.5
+R until ang>=96 and ang<=104 max 3; J 0.05; R until grounded max 3
+R until x>=152.6 max 3; RJ 0.2; R until x>=155.5 max 1; W until body max 2
+R until x>=157.6 max 1; RJ until falling; R until grounded max 2; R until x>=171.5 max 3; W 0.2

@@ -1,0 +1,19 @@
+# Schwerelos, all stars: the needle star out right (back over a small stone), the star over the drifting stone, the hidden star past the door
+R until x>=10.5 max 2; RJ until falling; R until grounded max 3
+L until x<=24 max 1; LJ until falling; L until grounded max 3
+R until x>=14.5 max 1; RJ until falling; R until grounded max 3
+R until x>=23.5 max 1; RJ until falling; R until grounded max 3
+R until grounded max 2; R until x>=33.3 max 1; RJ 0.25; R until x>=37.6 max 1; W until grounded max 3
+L until x<=37.4 max 1; LJ until x<=31.4 max 1; J until falling max 2; W until body max 2
+L until x<=29.6 max 1; LJ 0.2; L until grounded max 2; L until x<=21 max 1
+R until x>=23.6 max 1; W until time>=13.05 max 4; L until x<=21 max 1; LJ until falling; L until body max 3
+W until x>=11 max 3; J until y<=36.4 max 2; LJ until grounded max 2
+R until x>=7.5 max 1; RJ 0.2; R until body max 2
+R until x>=17.2 max 2; RJ until falling; R until grounded max 3
+R until x>=30.5 max 2; RJ until x>=33.7 max 1; J until falling max 2; W until grounded max 3
+L until x<=33.6 max 1; LJ until falling; L until grounded max 3
+L until x<=22.6 max 1; LJ 0.15; L until x<=15.4 max 2; W until body max 2; W until stars>=2 max 2
+R until x>=15.8 max 1; J until falling max 2; R until x>=16 max 1; W until body max 2
+L until x<=15.6 max 1; LJ until x<=11.5 max 1; J until falling max 2; W until grounded max 3
+R until x>=12.5 max 1; RJ until x>=21.3 max 2; J until falling max 2; W until body max 2
+LJ until falling max 2; L until grounded max 3; L until x<=10.5 max 1; W 0.2

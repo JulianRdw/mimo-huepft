@@ -1,0 +1,33 @@
+# 05 Sternschnuppen, fast: under the roof, over the dip, up the mesa, bowl to bowl, through the meteor field, over the old meteor, shooting star to the door
+R until x>=29.3
+RJ until falling
+R until grounded max 3
+R until x>=41.8
+RJ until falling
+R until grounded max 3
+R until x>=47.3
+RJ until falling
+R until grounded max 3
+R until x>=57.5
+R until grounded max 3
+R 0.05
+RJ until falling
+R until grounded max 3
+R 0.05
+RJ until falling
+R until grounded max 3
+R 0.05
+RJ until falling
+R until grounded max 3
+R until x>=105.3
+RJ until falling
+R until grounded max 3
+R until x>=110.6
+RJ until falling
+R until grounded max 3
+R until x>=124.3
+RJ until falling
+R until grounded max 3
+R until x>=132.3
+J until falling
+R until x>=137.5 max 4

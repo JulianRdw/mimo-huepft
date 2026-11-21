@@ -1,0 +1,53 @@
+# Sandburg fast
+R until x>=36.5 max 3
+RJ 0.25
+R until x>=46.2 max 3
+W until time>=2.9 max 2
+R until body max 1
+W until x>=50.4 max 5
+RJ 0.3
+R until x>=55.3 max 3
+RJ 0.3
+R until grounded max 1
+RJ 0.3
+R until x>=65.4 max 3
+RJ 0.2
+R until x>=71.4 max 3
+RJ 0.2
+R until x>=82.3 max 3
+RJ 0.2
+R until grounded max 1
+RJ 0.2
+R until grounded max 1
+RJ 0.2
+R until grounded max 1
+RJ 0.2
+R until x>=110.6 max 4
+J 0.2
+W until grounded max 1
+J 0.3
+W until grounded max 1
+R until x>=111.6 max 1
+RJ 0.3
+R until grounded max 1
+RJ 0.3
+R until grounded max 1
+RJ 0.2
+R until x>=126.3 max 3
+W until time>=18.25 max 3
+R until body max 1
+W until x>=131.8 max 4
+RJ 0.3
+R until grounded max 1
+W until time>=20.6 max 2
+RJ 0.12
+R until x>=137.3 max 1
+W until body max 1
+W until x>=139.4 max 4
+RJ 0.3
+R until x>=151.8 max 3
+RJ 0.2
+R until grounded max 1
+R until x>=156.6 max 3
+RJ 0.3
+R until x>=168 max 3

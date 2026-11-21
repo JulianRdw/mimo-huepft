@@ -1,0 +1,18 @@
+# Käsekeller, all stars: the roof star from the middle column, the burrow under the crumbly floor of the hollow (hidden), the star over the bobbing stone
+R until x>=12.6 max 2; W until grounded max 2
+R until x>=17.4 max 2; RJ 0.12; R until grounded max 2
+R until x>=23.4 max 2; RJ 0.12; R until grounded max 2
+R until x>=40.6 max 3; RJ until falling; R until grounded max 2
+R until x>=47.4 max 2; RJ until falling; R until x>=52 max 1; W until grounded max 2
+W 0.05; J until falling max 2; W until grounded max 2
+R until x>=53.4 max 2; RJ 0.15; R until x>=58.3 max 1; W until grounded max 2
+R until x>=59.4 max 2; RJ until falling; R until grounded max 2
+R until x>=71.6 max 3; RJ until falling; W until grounded max 2; R until x>=78.3 max 1; W until y>=22 max 3; W until grounded max 2
+R until x>=85.5 max 3; R until x>=92.5 max 2; J until y<=19.9 max 1.2; W until grounded max 1
+R until x>=107.6 max 6; RJ 0.2; R until x>=112 max 1; W until body max 2
+R until x>=113.2 max 1; W until time>=21.55 max 4; RJ 0.3; R until x>=119.9 max 1; W until body max 2
+W 0.1; J until falling max 2; W until body max 2
+R until x>=120.4 max 1; RJ until falling; W until grounded max 2
+R until x>=128.8 max 2; J until y<=11.9 max 2; RJ until grounded max 2
+L until x<=130.6 max 1; LJ until x<=127.6 max 1; J until falling max 1; W until grounded max 2
+R until x>=127.6 max 1; RJ until falling; R until grounded max 2; R until x>=150.5 max 4

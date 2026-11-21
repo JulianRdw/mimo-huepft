@@ -1,0 +1,19 @@
+# Dampfkessel, all three stars: rest on the boiler cover (hidden star inside), the middle valve lifts into the pocket, the tall vent in the firebox
+R until x>=16.4 max 3; R until grounded max 2
+R until x>=26.5 max 2; W until grounded max 2; R until x>=27.4 max 1; R until y<=11.2 max 4; R until grounded max 2
+R until x>=31.4 max 1; R until y<=7.2 max 4; R until grounded max 2
+# hop across the hot boiler
+R until x>=34.5 max 1; RJ 0.3; R until x>=38.5 max 1; W until grounded max 2
+# rest on the cover (the only cool spot on the lid): it gives way, into the boiler
+RJ 0.2; R until x>=42.9 max 1; W until grounded max 2; W until y>=13.9 max 3
+L until x<=40.5 max 1; R until x>=52.3 max 2; W until grounded max 2
+# the valve corridor: the middle vent may blow, it lifts into the pocket with the star
+R until x>=57 max 2; W until time>=14.15 max 3; R until x>=61.5 max 1; W until time>=16.4 max 3
+R until x>=63.4 max 1; W until stars>=2 max 3; W until grounded max 3
+R until x>=65.5 max 1; W until time>=19.05 max 3; R until x>=71 max 2
+# the firebox: hop the stubs while they rest, ride the tall one to the star
+R until x>=71.4 max 1; W until time>=20.35 max 2; RJ 0.25; R until x>=74.6 max 1; W until grounded max 2
+R until x>=75.5 max 1; RJ 0.2; R until x>=78.6 max 1; W until grounded max 2
+R until x>=79.5 max 1; RJ 0.2; R until x>=82.6 max 1; W until grounded max 2
+W until stars>=3 max 3; W until time>=23.9 max 2; R until x>=86.4 max 2; R until y<=10.3 max 3; R until grounded max 2
+R until x>=98.4 max 3; W until time>=28.8 max 3; R until y<=5.2 max 4; R until grounded max 2; R until x>=107 max 2

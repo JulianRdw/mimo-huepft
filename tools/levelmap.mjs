@@ -3,11 +3,12 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { chromium } from './pw.mjs';
-import { loadLevels, pickLevel, parseArgs } from './levels-lib.mjs';
+import { loadLevels, pickLevel, parseArgs, srcWorlds, worldChars } from './levels-lib.mjs';
 
 const args = parseArgs(process.argv.slice(2));
 if (!args.out) { console.error('usage: node tools/levelmap.mjs --out dir [--from file.js] [--level name|index]'); process.exit(2); }
 const all = await loadLevels(args.from);
+const { worlds } = srcWorlds();
 const list = args.level ? [pickLevel(all, args.level)] : all.map((def, index) => ({ def, index }));
 const out = path.resolve(String(args.out));
 fs.mkdirSync(out, { recursive: true });
@@ -16,7 +17,9 @@ const browser = await chromium.launch();
 const page = await browser.newPage();
 try {
   for (const { def, index } of list) {
-    const url = await page.evaluate((def) => {
+    // map characters of a world module: their colour from lint.color, else the character itself in grey
+    const own = worldChars(worlds, def.world || 1);
+    const url = await page.evaluate(([def, own]) => {
       const S = 20, PAD = 22, rows = def.map, h = rows.length, w = Math.max(...rows.map((r) => r.length));
       const c = document.createElement('canvas'); c.width = w * S + PAD; c.height = h * S + PAD + 18;
       const g = c.getContext('2d');
@@ -46,6 +49,7 @@ try {
         else if (ch === '<') mid('←', '#4A5AB8');
         else if (ch === 'A') mid('↑', '#2A8EA6');
         else if (ch === 'c') mid('·', '#8A6A3A');
+        else if (own[ch]) { if (own[ch].color) { g.fillStyle = own[ch].color; g.fillRect(X, Y, S, S); } mid(ch, '#555', 11); }
       }
       for (const m of def.movers || []) {
         g.strokeStyle = '#1F6FEB'; g.lineWidth = 2; g.strokeRect(m.x * S, m.y * S, m.w * S, 6);
@@ -59,7 +63,7 @@ try {
       for (let x = 0; x < w; x += 5) g.fillText(String(x), x * S + S / 2, -8);
       g.textAlign = 'right'; for (let y = 0; y < h; y += 2) g.fillText(String(y), -4, y * S + S / 2);
       return c.toDataURL('image/png');
-    }, def);
+    }, [def, own]);
     const file = path.join(out, String(index + 1).padStart(2, '0') + '-' + def.name.replace(/[^\wäöüÄÖÜß-]+/g, '_') + '.png');
     fs.writeFileSync(file, Buffer.from(url.split(',')[1], 'base64'));
     console.log(file);

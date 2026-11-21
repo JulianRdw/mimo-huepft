@@ -1,0 +1,24 @@
+# Kraterhüpfen fast
+R until x>=5.0 max 1
+R until x>=8.6 max 1; W until grounded max 2
+R until x>=10.6 max 1; RJ 0.4; R until grounded max 3
+R until x>=21.4 max 2; RJ 0.3; R until grounded max 2
+R until x>=24.4 max 1; RJ 0.3; R until grounded max 2
+# the star high over the second rim: stop, full jump
+R until x>=30.2 max 1; W 0.15; J 0.55; W until grounded max 2
+# down onto the safe rock in the bowl (star), the shooting star throws Mimo out onto the next rim
+R until x>=35.3 max 2; W until grounded max 2
+W 0.1; RJ 0.4; R until grounded max 3
+R until x>=41.4 max 1; RJ 0.3; R until grounded max 2
+R until x>=49.4 max 2; RJ 0.1; R until grounded max 2
+R until x>=56.4 max 1; RJ 0.3; R until grounded max 3
+R until x>=68.4 max 2; RJ 0.2; R until grounded max 2
+R until x>=75.6 max 2; W until grounded max 2
+R until x>=82.4 max 1; RJ 0.4; R until grounded max 3
+# the central peak: the shooting star on its top throws Mimo high above it (hidden star)
+R until x>=91.8 max 1; W 0.2; J 0.4; W until grounded max 3
+R until x>=95.4 max 1; RJ 0.3; R until grounded max 2
+R until x>=104.4 max 1; RJ 0.4; R until grounded max 3
+R until x>=116.4 max 2; RJ 0.3; R until grounded max 3
+R until x>=126.8 max 2; W 0.05; R until grounded max 3
+R until x>=146.5 max 3

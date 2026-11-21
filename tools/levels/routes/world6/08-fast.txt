@@ -1,0 +1,41 @@
+R until x>=5.4
+RJ until falling
+R until grounded max 3
+R until x>=13.3
+RJ until falling
+R until grounded max 3
+R until x>=35.2
+RJ until falling
+R until grounded max 3
+R 0.05
+RJ until falling
+R until grounded max 3
+RJ until falling
+R until grounded max 3
+RJ until falling
+R until grounded max 3
+R until x>=50.6
+RJ until falling
+R until grounded max 3
+R until x>=66.2
+RJ until falling
+R until grounded max 3
+R until x>=71.4
+RJ until falling
+R until grounded max 3
+R until x>=86.5
+R until grounded max 3
+R until x>=105.5
+W 0.1
+J until y<=14.6
+RJ until falling
+W until grounded max 3
+R until x>=108.4
+RJ until falling
+R until grounded max 3
+R 0.05
+RJ until falling
+R until grounded max 3
+R until x>=131.3
+RJ until falling
+R until x>=136.3 max 3

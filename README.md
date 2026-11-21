@@ -34,8 +34,13 @@ node tools/levellint.mjs                         # Unsinn finden: vergrabene Dor
 node tools/levelmap.mjs --out /tmp/karten        # jedes Level als Bild mit Koordinaten
 node tools/levelbot.mjs --level Lawine --route "R 1; RJ 0.3"   # ein Level Bild für Bild nachspielen
 node tools/levelcheck.mjs [--medals]             # alle Level mit ihren Testwegen (tools/levels/routes) prüfen
-node tools/bosscheck.mjs [--boss n]              # die drei Endgegner: Bot-Sieg, Nichtstun, schludriges Spiel
+node tools/bosscheck.mjs [--boss n]              # alle Endgegner: Bot-Sieg, Nichtstun, schludriges Spiel
+node tools/worldapi-test.mjs                     # die Welt-API mit einer Testwelt (Laden, Durchspielen, Spielstände, Endgegner)
+node tools/refshots.mjs --out dir [--compare ref] # feste Bilder von Leveln und Endgegnern, pixelgenau vergleichen
+node tools/serve.mjs [--port 8650] [--lan]       # src/ im WLAN fürs iPhone anbieten; ?offen an der Adresse öffnet alles
 ```
+
+Welten ab 4 liegen als eigene Dateien in `src/worlds/` (Anleitung: `src/worlds/README.md`). Ihre Level hängen hinter dem Nachtpfad, die Level 1 bis 29 behalten ihre Nummern und Spielstände.
 
 Jedes Level hat zwei Testwege: `full` sammelt alle Sterne, `fast` ist der schnellste saubere Weg und ergibt die Medaillenzeiten (×1,3 / ×2 / ×3). Werden Level umgebaut, `LEVELS_VERSION` erhöhen: dann verwirft das Spiel alte Zeiten, Sterne und Geister einmal.
 

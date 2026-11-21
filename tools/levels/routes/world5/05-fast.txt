@@ -1,0 +1,24 @@
+# Glutbrücke, quickest clean way: the lower way across the lake on plates
+R until x>=3.6; RJ 0.2; R until x>=7.5 max 2; RJ 0.15; R until x>=10 max 1; W until grounded max 2
+RJ 0.15; R until x>=13.5 max 1; W until grounded max 2; R until x>=15.3 max 2
+# the bay: the first plate comes back hot, then turns dark
+W until time>=3.0 max 3; R until x>=15.8 max 1; W until time>=3.35 max 3; RJ 0.15; R until x>=18.6 max 1; W until grounded max 2
+RJ 0.2; R until x>=22.5 max 1; W until grounded max 2; R until x>=24.3 max 1; W until time>=4.35 max 2
+RJ 0.15; R until x>=27.3 max 1; W until grounded max 2; R until x>=28.5 max 1; RJ 0.3; R until grounded max 2
+# lower way: through the gate, plate, past the hopper, the hot strip under the Brückenstube
+R until x>=42.4 max 2; RJ 0.15; R until x>=45.4 max 1; W until grounded max 2
+R until x>=46.6 max 1; RJ 0.3; R until grounded max 2
+R until x>=60.4 max 3
+RJ 0.15; R until x>=63.4 max 1; W until grounded max 2
+R until x>=64.6 max 1; RJ 0.25; R until grounded max 2
+# the middle tower gate, the ferry
+R until x>=77.3 max 3; RJ 0.2; R until x>=81.2 max 1; W until grounded max 2
+W until time>=14.7 max 3; R until x>=83.6 max 1; W until time>=15.35 max 3; R until x>=85.8 max 1; RJ 0.3; R until x>=89.5 max 1; W until grounded max 2
+W until time>=16.4 max 2; R until x>=90.5 max 1; RJ 0.2; R until x>=93.4 max 1; R until grounded max 2
+R until x>=94.6 max 1; RJ 0.2; R until x>=97.2 max 1; R until grounded max 2
+R until x>=98.6 max 1; RJ 0.25; R until grounded max 2
+# the far tower gate, the last pool
+R until x>=113.4 max 3
+RJ 0.15; R until x>=115.6 max 1; W until grounded max 2
+R until x>=116.6 max 1; RJ 0.15; R until x>=118.6 max 1; W until grounded max 2
+R until x>=119.6 max 1; RJ 0.25; R until grounded max 2; R until x>=125 max 2

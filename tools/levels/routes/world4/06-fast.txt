@@ -1,0 +1,29 @@
+R until x>=13.5 max 3
+R until x>=30.6 max 4
+RJ 0.35
+R until x>=33.3 max 1
+W until grounded max 2
+J 0.4
+W until grounded max 2
+R until x>=37.3 max 2
+RJ until surface and time>=7.0 max 4
+W 0.03
+RJ 0.25
+R until x>=41.4 max 1
+RJ 0.2
+R until x>=48.5 max 2
+RJ until x>=60.7 max 6
+W until grounded max 4
+R until x>=61.4 max 1
+RJ 0.3
+R until grounded max 2
+R until x>=66.4 max 1
+R until water max 2
+RJ until x>=78.3 max 4
+W until surface max 1
+W until body max 3
+W until y<=13.3 max 3
+RJ 0.35
+R until grounded max 2
+RJ 0.25
+R until x>=91 max 3

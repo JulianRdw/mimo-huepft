@@ -17,6 +17,7 @@
   --mimo:#A8C8EC; --mimo-ink:#3A3850; --blush:#F4B4C0; --dust:#FFFFFF; --leaf:#9CCDB0; --sun:#FBEBB6;
   --mimo-mint:#A9DCC3; --mimo-peach:#F6BFA6; --mimo-lav:#C9B8EA; --mimo-sun:#F3D98B; --mimo-rose:#F2B3C6;
   --night-sky-top:#33305A; --night-sky-bot:#6C5C86; --night-cloud:#716B98; --night-hill-far:#4C4A74; --night-hill-near:#3C5A52; --night-sun:#C9C2E8;
+  --coast-sea:#5FB4C8; --coast-sea-ink:#2D7488; --coast-coral:#F59AAE; --coast-coral-ink:#4A1E2A; --coast-sand:#F3DDB0;
   --w3-sky-top:#D8E6F5; --w3-sky-bot:#F7F1F5; --w3-hill-far:#C3D6EA; --w3-hill-near:#E6EEF7; --w3-ground:#EDF3FA; --w3-ground-edge:#FFFFFF; --w3-ground-dot:#D5E0EC; --w3-cloud:#FFFFFF; --w3-snow:#FFFFFF;
   --w2-sky-top:#6B6798; --w2-sky-bot:#E9B6A4; --w2-hill-far:#6F8C86; --w2-hill-near:#4A6B61; --w2-tree:#5C7D74; --w2-ground:#6A9A86; --w2-ground-edge:#95C7A8; --w2-ground-dot:#7FAE97; --w2-cloud:#A39BC9; --w2-ice:#CFE6EE; --w2-ice-ink:#8FB7C6; --w2-snail:#F0C9A2; --w2-snail-ink:#B98A5E;
   --font-display:'Fredoka','Nunito',system-ui,sans-serif;
@@ -39,6 +40,7 @@
     --mimo:#8EB4E0; --mimo-ink:#1F1E2C; --blush:#D98A9A; --dust:#D9D2E6; --leaf:#7FB497; --sun:#B9B0DA;
   --mimo-mint:#7FBF9E; --mimo-peach:#D99A80; --mimo-lav:#A491CF; --mimo-sun:#D9BC62; --mimo-rose:#D98DA6;
   --night-sky-top:#1C1A30; --night-sky-bot:#3A3150; --night-cloud:#3C3858; --night-hill-far:#2A2A45; --night-hill-near:#1F332E; --night-sun:#8F89B8;
+  --coast-sea:#3E8197; --coast-sea-ink:#8FD0DE; --coast-coral:#E48DA2; --coast-coral-ink:#3A1420; --coast-sand:#9C8A6A;
   --w3-sky-top:#2A3348; --w3-sky-bot:#4B4D68; --w3-hill-far:#3B4B64; --w3-hill-near:#56657B; --w3-ground:#8894A8; --w3-ground-edge:#B8C4D5; --w3-ground-dot:#75839A; --w3-cloud:#5B6782; --w3-snow:#DCE4F0;
   --w2-sky-top:#2C2A47; --w2-sky-bot:#7A5262; --w2-hill-far:#33504A; --w2-hill-near:#223B35; --w2-tree:#2B4740; --w2-ground:#3F6D5B; --w2-ground-edge:#6CA48C; --w2-ground-dot:#528A75; --w2-cloud:#4D4875; --w2-ice:#9DBECB; --w2-ice-ink:#6E95A4; --w2-snail:#C9A47E; --w2-snail-ink:#8E6A48;
     color-scheme:dark;
@@ -58,6 +60,7 @@
   --mimo:#8EB4E0; --mimo-ink:#1F1E2C; --blush:#D98A9A; --dust:#D9D2E6; --leaf:#7FB497; --sun:#B9B0DA;
   --mimo-mint:#7FBF9E; --mimo-peach:#D99A80; --mimo-lav:#A491CF; --mimo-sun:#D9BC62; --mimo-rose:#D98DA6;
   --night-sky-top:#1C1A30; --night-sky-bot:#3A3150; --night-cloud:#3C3858; --night-hill-far:#2A2A45; --night-hill-near:#1F332E; --night-sun:#8F89B8;
+  --coast-sea:#3E8197; --coast-sea-ink:#8FD0DE; --coast-coral:#E48DA2; --coast-coral-ink:#3A1420; --coast-sand:#9C8A6A;
   --w3-sky-top:#2A3348; --w3-sky-bot:#4B4D68; --w3-hill-far:#3B4B64; --w3-hill-near:#56657B; --w3-ground:#8894A8; --w3-ground-edge:#B8C4D5; --w3-ground-dot:#75839A; --w3-cloud:#5B6782; --w3-snow:#DCE4F0;
   --w2-sky-top:#2C2A47; --w2-sky-bot:#7A5262; --w2-hill-far:#33504A; --w2-hill-near:#223B35; --w2-tree:#2B4740; --w2-ground:#3F6D5B; --w2-ground-edge:#6CA48C; --w2-ground-dot:#528A75; --w2-cloud:#4D4875; --w2-ice:#9DBECB; --w2-ice-ink:#6E95A4; --w2-snail:#C9A47E; --w2-snail-ink:#8E6A48;
   color-scheme:dark;
@@ -342,6 +345,8 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size
 .lvl-card .meta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
 .lvl-card .meta .st{color:var(--star);letter-spacing:.05em}
 .lvl-card.locked{opacity:.45;cursor:default}
+.lvl-soon{grid-column:1/-1;margin:2px 0 4px;padding:10px 14px;border:1.5px dashed color-mix(in srgb,var(--muted) 45%,var(--line));border-radius:14px;color:var(--muted);font-size:13px;line-height:1.4;text-align:left}
+.lvl-soon b{color:var(--fg);font-family:var(--font-display);font-weight:600;font-size:15px;margin-right:4px}
 .lvl-card.current{background:var(--accent-soft);border-color:var(--accent)}
 .lvl-card.current .num{color:var(--accent-ink)}
 .lvl-card:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
@@ -437,6 +442,39 @@ input,textarea{-webkit-user-select:text;user-select:text}
   .tile.wide svg{width:22px;height:22px}
   .lvl-grid,.ach-grid{grid-template-columns:repeat(3,1fr)}
   .overlay.scene .card{max-width:min(560px,100%)}
+}
+/* ---------- "Neu!" card: a new world is out (shown once, over the menu) ---------- */
+.overlay.news{z-index:7;align-items:center;background:color-mix(in srgb,var(--coast-sea) 30%,transparent)}
+.news-body h2 span{white-space:nowrap}
+.card.news:focus{outline:none}
+.card.news{max-width:400px;padding:0;gap:0;overflow:hidden;text-align:left;border:none;box-shadow:0 24px 60px rgba(25,45,70,.30),0 0 0 1px color-mix(in srgb,var(--coast-sea) 25%,transparent)}
+.news-scene{position:relative;background:var(--coast-sand);line-height:0}
+.news-scene canvas{display:block;width:100%;height:auto;aspect-ratio:2/1;cursor:pointer;touch-action:manipulation}
+.news-badge{position:absolute;top:12px;left:12px;transform:rotate(-9deg);background:var(--star);color:#4A3A10;font-family:var(--font-display);font-weight:600;font-size:18px;line-height:1;padding:6px 13px 7px;border-radius:999px;box-shadow:0 3px 0 rgba(120,80,10,.25),0 6px 14px rgba(40,30,10,.18);letter-spacing:.02em}
+@media (prefers-reduced-motion:no-preference){.news-badge{animation:newsBadge 2.8s ease-in-out infinite}}
+@keyframes newsBadge{0%,70%,100%{transform:rotate(-9deg) scale(1)}78%{transform:rotate(-3deg) scale(1.1)}86%{transform:rotate(-12deg) scale(1)}}
+.news-body{padding:16px 20px 18px;display:flex;flex-direction:column;gap:8px;background:color-mix(in srgb,var(--coast-sand) 14%,var(--card))}
+.news-body .news-kicker{margin:0;font-weight:800;font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--coast-sea-ink)}
+.card.news h2{font-size:27px;line-height:1.08}
+.news-body p{line-height:1.45}
+.news-body .news-lead{color:var(--fg);font-weight:600}
+.news-body .actions{justify-content:flex-end;margin-top:6px}
+.btn.primary.coast{background:var(--coast-coral);color:var(--coast-coral-ink);box-shadow:0 3px 0 color-mix(in srgb,var(--coast-coral) 55%,#000 22%)}
+.btn.primary.coast:focus-visible{outline-color:var(--coast-sea)}
+@media (max-width: 380px){
+  .news-body{padding:14px 16px 16px;gap:7px}
+  .card.news h2{font-size:23px}
+  .news-body p{font-size:14px;line-height:1.4}
+  .news-body .actions{flex-wrap:nowrap;gap:8px}
+  .news-body .actions .btn{padding-inline:14px}
+}
+@media (orientation: landscape) and (max-height: 540px){
+  .card.news{max-width:min(720px,100%);display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);align-items:stretch}
+  .news-scene{min-height:210px}
+  .news-scene canvas{position:absolute;inset:0;width:100%;height:100%;aspect-ratio:auto}
+  .news-body{padding:14px 18px 14px;gap:6px;justify-content:center}
+  .card.news h2{font-size:23px}
+  .news-body p{font-size:14px;line-height:1.38}
 }
 /* ---------- Release polish: menus made for thumbs ---------- */
 .menu .tiles .tile{min-height:64px;justify-content:center}
@@ -719,6 +757,18 @@ input,textarea{-webkit-user-select:text;user-select:text}
         </div>
       </div>
     </div>
+    <div class="overlay news" id="ovNews" hidden role="dialog" aria-modal="true" aria-labelledby="newsTitle" aria-describedby="newsLead">
+      <div class="card news" id="newsCard" tabindex="-1">
+        <div class="news-scene"><canvas id="newsScene" width="400" height="200" aria-hidden="true"></canvas><span class="news-badge">Neu!</span></div>
+        <div class="news-body">
+          <p class="news-kicker">Welt 4 ist da</p>
+          <h2 id="newsTitle">Neue Welt: <span>Die Korallenküste!</span></h2>
+          <p class="news-lead" id="newsLead">Mimo macht Urlaub am Meer. Doch Käpt’n Krake klaut heimlich den ganzen Strand leer, vom Eimer bis zum letzten Würstchen.</p>
+          <p id="newsMore"></p>
+          <div class="actions"><button class="btn" id="btnNewsLater" type="button">Später</button><button class="btn primary coast" id="btnNewsGo" type="button">Ab an den Strand!</button></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <p class="hint" id="hint"></p>
@@ -732,6 +782,62 @@ input,textarea{-webkit-user-select:text;user-select:text}
   </div>
 </div>
 
+<!-- Worlds 4 and up (src/worlds/README.md): the registry first, then one line per world file, in world order -->
+<script src="worlds/registry.js"></script>
+<script src="worlds/coast.js"></script>
+<script src="worlds/coast-look.js"></script>
+<script src="worlds/coast-things.js"></script>
+<script src="worlds/coast-levels.js"></script>
+<script src="worlds/coast-rig-core.js"></script>
+<script src="worlds/coast-rig-actions.js"></script>
+<script src="worlds/coast-rig.js"></script>
+<script src="worlds/coast-rig-draw.js"></script>
+<script src="worlds/coast-rig-data.js"></script>
+<script src="worlds/coast-rig-props.js"></script>
+<script src="worlds/coast-cast-actions.js"></script>
+<script src="worlds/coast-cast.js"></script>
+<script src="worlds/coast-cast-draw.js"></script>
+<script src="worlds/coast-story-draw.js"></script>
+<script src="worlds/coast-story-draw2.js"></script>
+<script src="worlds/coast-story-draw3.js"></script>
+<script src="worlds/coast-story.js"></script>
+<script src="worlds/coast-director.js"></script>
+<script src="worlds/coast-handover-gags.js"></script>
+<script src="worlds/coast-handover.js"></script>
+<script src="worlds/coast-dog.js"></script>
+<script src="worlds/coast-story-acts.js"></script>
+<script src="worlds/coast-thief.js"></script>
+<script src="worlds/coast-story-acts2.js"></script>
+<script src="worlds/coast-opening.js"></script>
+<script src="worlds/coast-boss-arms.js"></script>
+<script src="worlds/coast-boss.js"></script>
+<script src="worlds/coast-boss-draw.js"></script>
+<script src="worlds/coast-boss-bot.js"></script>
+<script src="worlds/coast-closing.js"></script>
+<script src="worlds/volcano.js"></script>
+<script src="worlds/volcano-things.js"></script>
+<script src="worlds/volcano-things-draw.js"></script>
+<script src="worlds/volcano-look.js"></script>
+<script src="worlds/volcano-levels.js"></script>
+<script src="worlds/volcano-boss-shape.js"></script>
+<script src="worlds/volcano-boss.js"></script>
+<script src="worlds/volcano-boss-scenes.js"></script>
+<script src="worlds/volcano-boss-draw.js"></script>
+<script src="worlds/volcano-boss-look.js"></script>
+<script src="worlds/volcano-boss-bot.js"></script>
+<script src="worlds/moon.js"></script>
+<script src="worlds/moon-things.js"></script>
+<script src="worlds/moon-things-draw.js"></script>
+<script src="worlds/moon-look.js"></script>
+<script src="worlds/moon-decor.js"></script>
+<script src="worlds/moon-levels.js"></script>
+<script src="worlds/moon-boss-shape.js"></script>
+<script src="worlds/moon-boss.js"></script>
+<script src="worlds/moon-boss-scenes.js"></script>
+<script src="worlds/moon-boss-draw.js"></script>
+<script src="worlds/moon-boss-look.js"></script>
+<script src="worlds/moon-boss-bot.js"></script>
+<!-- world files end -->
 <script>
 (() => {
 'use strict';
@@ -740,6 +846,9 @@ const GRAV = 2000, MAX_FALL = 850, RUN = 210, ACCEL = 2400, AIR_ACCEL = 1600;
 const JUMP = 690, BOUNCE = 1000, COYOTE = 0.10, BUFFER = 0.12, JUMP_CUT = 0.45;
 const CRUMBLE_HOLD = 0.55, CRUMBLE_FALL = 0.5, CRUMBLE_BACK = 2.5;
 const DEATH_TIME = 0.8, WIN_TIME = 1.1, INTRO_TIME = 1.9, WIPE_TIME = 0.7, HITSTOP = 0.09;
+// a boss may take longer before the win card shows (Käsebert's rocket lifts off first)
+// a world may hold the card of a level back a little while its people still talk at the door (G.L.winAfter, world 4)
+const winTime = () => (G.mode === 'boss' && G.boss && G.boss.def.winAfter) || (G.mode === 'level' && G.L && G.L.winAfter) || WIN_TIME;
 const STEP = 1 / 120;
 // longest frame the 3D runner catches up on; a longer hitch (a phone turning) slows the run instead of jumping ahead
 const DASH_MAX_DT = 0.05;
@@ -748,14 +857,36 @@ const DEV = false;
 // Test switch: true opens every level, boss and bonus. Only the doors open, saved progress stays as it is,
 // so switching it back off returns to the normal unlocking with everyone's real progress.
 const OPEN_ALL = false;
+// The same for one visit: the address parameter ?offen opens everything without touching the save.
+// Never on the published app (github.io), so a shared link cannot spoil the game for anyone.
+const OPEN_URL = /[?&]offen(=|&|$)/.test(location.search) && !/github\.io$/.test(location.hostname);
+const OPEN = OPEN_ALL || OPEN_URL;
 // The Sternenbahn (music run, adventure, endless track, course of the day) is not polished enough for the release:
 // its code stays, but nothing in the game leads to it and the app build leaves its files out.
 const STARWAY = false;
+// Worlds that are built (src/worlds/) but not released yet. They stay out of the game: no levels, no boss, no costumes,
+// no songs, and the app build leaves their files out. They come after the released worlds, so holding them back moves
+// no saved index. To release a world, take its number out of this list (always the lowest one first: a world whose
+// predecessor is still held does not load, its firstLevel would not fit).
+const UNRELEASED_WORLDS = [5, 6];
+// Look at the held worlds anyway: the developer build, or the address parameter ?vorschau for one visit (it changes
+// nothing in the save and, like ?offen, never works on the published app). The level tools load the game with it.
+const PREVIEW_URL = /[?&]vorschau(=|&|$)/.test(location.search) && !/github\.io$/.test(location.hostname);
+const HELD_WORLDS = DEV || PREVIEW_URL ? [] : UNRELEASED_WORLDS;
 const SAVE_KEY = DEV ? 'mimo-progress-dev' : 'mimo-progress-v2';
 const GHOST_DT = 0.05;
 // medal targets in seconds: [gold, silver, bronze]
 const MEDALS = [[11, 17, 25], [18.5, 28, 43], [31, 47, 71], [17.5, 27, 40], [16, 24, 36], [18.5, 28, 42], [28.5, 44, 66], [51, 78, 117], [35.5, 54, 81], [32, 49, 73], [7, 11, 16], [19, 29, 43], [21, 32, 48], [18.5, 28, 42], [14, 21, 32], [16, 25, 37], [20, 30, 45], [29, 44, 66], [23, 35, 52], [34, 52, 78], [18, 28, 41], [16, 24, 37], [38.5, 59, 88], [16.5, 25, 37], [18.5, 28, 42], [22, 34, 50], [37, 56, 85], [29, 44, 66], [16.5, 25, 38]];
-const WORLDS = [null, { name: 'Wiese' }, { name: 'Abendwald' }, { name: 'Verschneite Höhen' }];
+// The worlds: 1-3 live here, 4 and up come from src/worlds/ (installWorlds below) in the same shape.
+// Everything that differs between worlds is read from here: colours (tokens = prefix of the CSS colour tokens, or
+// palette = light/dark values), how far the clock darkens the sky (nightBlend), song, ambient particles, thorns, start lines.
+const WORLDS = [null,
+  { world: 1, name: 'Wiese', song: 'meadow', particles: 'dust', hooks: {} },
+  { world: 2, name: 'Abendwald', song: 'forest', tokens: 'w2', nightBlend: 0.5, particles: 'fire', hooks: {}, betweenHills: (floor) => drawTrees(floor - 110 - G.cam.y * 0.65, 0.58) },
+  { world: 3, name: 'Verschneite Höhen', song: 'snow', tokens: 'w3', particles: 'snow', hooks: {}, droppers: true, nohit: true,
+    drawThorn: (tx, ty, x, y, dir) => (dir > 0 ? drawIceSpikes(tx, ty, x, y) : drawIcicleTile(tx, ty, x, y)) },
+];
+const worldOf = (n) => WORLDS[n] || WORLDS[1];
 const MEDAL_NAMES = { gold: 'Gold', silver: 'Silber', bronze: 'Bronze' };
 // Everything in the wardrobe is for looks only. "price" is paid in collected stars; "boss", "ach" and "streak" items are rewards.
 const COSTUMES = [
@@ -1487,15 +1618,66 @@ const LEVELS = [
       '#################################################################################',
     ], movers: [] },
 ];
-const LAST_MAIN = LEVELS.findIndex((l) => l.night) - 1;
 // index of the last main level of a world (the boss, the 3D level and the companion open after it)
-const worldEnd = (w) => LEVELS.reduce((last, l, i) => (!l.night && (l.world || 1) === w ? i : last), -1);
+const worldEnd = (w) => LEVELS.reduce((last, l, i) => (!l.night && !l.bonus && (l.world || 1) === w ? i : last), -1);
 // bump when levels are rebuilt: times, medals, ghosts and stars of the old levels no longer fit and are cleared
 const LEVELS_VERSION = 3;
 
 const EMPTY = 0, SOLID = 1, ONEWAY = 2, THORN_UP = 3, THORN_DOWN = 4, TOG_A = 5, TOG_B = 6, CRUMBLE = 7, LOCK = 8, WIND_R = 9, WIND_L = 10, UPDRAFT = 11, ICE = 12, TTHORN = 13, GLOW = 14;
 const GLOW_RADIUS = 4.5;
 const WIND_MAX = 360, WIND_GROUND = 70, UP_ACC = 2900, UP_MAX = -230, ICE_ACCEL = 420, TT_PERIOD = 2.4, SNAIL_SPEED = 38, SNAIL_STUN = 3.2, STOMP = 560;
+
+// ---------- Worlds 4 and up (src/worlds/, see the README there) ----------
+// src/worlds/registry.js puts the registered parts together; here they join the game. Their levels are appended
+// after the night path, so the indices of worlds 1-3 never move and every save stays valid.
+// Map characters of a world become tiles with ids from TILE_EXT on; TILE_DEFS holds what such a tile does.
+const TILE_EXT = 32, TILE_DEFS = [];
+// a broken hook of a world is reported once and the game keeps running
+const worldFailed = new Set();
+function worldFail(label, e) { const key = label + ':' + (e && e.message); if (worldFailed.has(key)) return; worldFailed.add(key); console.error('Welt: Fehler in ' + label, e); }
+const safeHook = (label, fn) => (typeof fn !== 'function' ? fn : function (...a) { try { return fn.apply(this, a); } catch (e) { worldFail(label, e); return undefined; } });
+const WORLD_FNS = ['headNote', 'song', 'drawBackground', 'drawAmbient', 'drawThorn', 'drawMushroom', 'drawChase'];
+function installWorlds() {
+  const reg = window.MimoWorlds;
+  if (!reg || typeof reg.assemble !== 'function') return [];
+  const { worlds, errors } = reg.assemble(LEVELS.length, { hold: HELD_WORLDS });
+  for (const e of errors) console.error('Welt: ' + e);
+  for (const w of worlds) {
+    const at = 'Welt ' + w.world;
+    for (const k of WORLD_FNS) w[k] = safeHook(at + ' ' + k, w[k]);
+    for (const k of Object.keys(w.hooks)) w.hooks[k] = w.hooks[k].map((f) => safeHook(at + ' ' + k, f));
+    w.tileIds = {};
+    for (const [ch, def] of Object.entries(w.tiles)) {
+      const id = TILE_EXT + TILE_DEFS.length;
+      if (id > 255) { console.error('Welt: zu viele eigene Felder (' + at + ')'); break; }
+      TILE_DEFS.push({ ...def, id, world: w.world, solid: safeHook(at + ' Feld ' + ch, def.solid), draw: safeHook(at + ' Feld ' + ch, def.draw) });
+      w.tileIds[ch] = id;
+    }
+    for (const def of Object.values(w.spawns)) def.spawn = safeHook(at + ' spawn', def.spawn);
+    for (const lv of w.levels) { MEDALS[LEVELS.length] = Array.isArray(lv.medals) && lv.medals.length === 3 ? lv.medals : [0, 0, 0]; LEVELS.push(lv); }
+    for (const c of w.costumes) {
+      if (COSTUMES.some((x) => x.id === c.id)) { console.error('Welt: Kostüm ' + c.id + ' gibt es schon (' + at + ')'); continue; }
+      COSTUMES.push({ price: 0, ...c, draw: safeHook(at + ' Kostüm ' + c.id, c.draw), own: safeHook(at + ' Kostüm ' + c.id, c.own), how: safeHook(at + ' Kostüm ' + c.id, c.how) });
+    }
+    WORLDS[w.world] = w;
+  }
+  return worlds;
+}
+const WORLD_MODS = installWorlds();
+const tileDef = (t) => (t >= TILE_EXT ? TILE_DEFS[t - TILE_EXT] : null);
+// the hooks of the world that is being played, all called in file order; the first answer that is not null counts.
+// A world without hooks costs nothing.
+function wcall(name, a, b, c, d) {
+  const list = G.L && worldOf(G.L.world).hooks[name]; if (!list || !list.length) return undefined;
+  let out;
+  for (const f of list) { const r = f(a, b, c, d); if (out == null) out = r; }
+  return out;
+}
+// Main order: every level except the bonus ones (the night path), in index order. Unlocking, "Weiter spielen", the daily run
+// and the leaderboard count positions in this order. For the levels 0-27 position and index are the same, so old saves fit.
+const MAIN = LEVELS.map((l, i) => (l.night || l.bonus ? -1 : i)).filter((i) => i >= 0);
+const mainPos = (i) => MAIN.indexOf(i);
+const nextMain = (i) => { const k = mainPos(i); return k >= 0 && k + 1 < MAIN.length ? MAIN[k + 1] : null; };
 
 // ---------- DOM ----------
 const $ = (id) => document.getElementById(id);
@@ -1525,14 +1707,22 @@ function nightness() {
   const d = new Date(), h = d.getHours() + d.getMinutes() / 60;
   if (h >= 7 && h < 18) return 0; if (h >= 21 || h < 5) return 1; if (h >= 18) return (h - 18) / 3; return 1 - (h - 5) / 2;
 }
+// the theme the page shows (the same rule as the CSS: data-theme wins, else the system setting)
+// one MediaQueryList for the whole session: world drawing asks this per tile, a new matchMedia per call is slow on old iPhones
+const darkMQ = window.matchMedia('(prefers-color-scheme: dark)');
+const darkTheme = () => { const t = document.documentElement.dataset.theme; return t === 'dark' || (t !== 'light' && darkMQ.matches); };
+const WORLD_KEYS = ['skyTop', 'skyBot', 'hillFar', 'hillNear', 'cloud', 'ground', 'groundEdge', 'groundDot'];
 function applyWorldPalette() {
-  const world = G.L ? G.L.world : 1;
+  const def = worldOf(G.L ? G.L.world : 1), pal = def.palette, theme = darkTheme() ? 'dark' : 'light';
   W = { ...P };
-  if (world === 2) Object.assign(W, { skyTop: P.w2SkyTop, skyBot: P.w2SkyBot, hillFar: P.w2HillFar, hillNear: P.w2HillNear, cloud: P.w2Cloud, ground: P.w2Ground, groundEdge: P.w2GroundEdge, groundDot: P.w2GroundDot });
-  if (world === 3) Object.assign(W, { skyTop: P.w3SkyTop, skyBot: P.w3SkyBot, hillFar: P.w3HillFar, hillNear: P.w3HillNear, cloud: P.w3Cloud, ground: P.w3Ground, groundEdge: P.w3GroundEdge, groundDot: P.w3GroundDot });
-  const n = G.L && G.L.night ? 1 : nightness() * (world === 2 ? 0.5 : 1);
+  // worlds 2 and 3 take their colours from CSS tokens (--w2-sky-top ...), a world module gives them in JS
+  if (def.tokens) for (const k of WORLD_KEYS) W[k] = P[def.tokens + k[0].toUpperCase() + k.slice(1)];
+  if (pal) Object.assign(W, pal[theme]);
+  const n = G.L && G.L.night ? 1 : nightness() * (def.nightBlend == null ? 1 : def.nightBlend);
   W.night = n;
-  if (n > 0) Object.assign(W, { skyTop: mixHex(W.skyTop, P.nightSkyTop, n), skyBot: mixHex(W.skyBot, P.nightSkyBot, n), cloud: mixHex(W.cloud, P.nightCloud, n), hillFar: mixHex(W.hillFar, P.nightHillFar, n), hillNear: mixHex(W.hillNear, P.nightHillNear, n), sun: mixHex(P.sun, P.nightSun, n) });
+  // the sky goes towards these colours at night; a world may bring its own night colours
+  const nt = { ...P, ...(pal && pal.night && pal.night[theme]) };
+  if (n > 0) Object.assign(W, { skyTop: mixHex(W.skyTop, nt.nightSkyTop, n), skyBot: mixHex(W.skyBot, nt.nightSkyBot, n), cloud: mixHex(W.cloud, nt.nightCloud, n), hillFar: mixHex(W.hillFar, nt.nightHillFar, n), hillNear: mixHex(W.hillNear, nt.nightHillNear, n), sun: mixHex(W.sun, nt.nightSun, n) });
 }
 setInterval(applyWorldPalette, 60000);
 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readPalette);
@@ -1632,7 +1822,15 @@ function saveProgress() {
 }
 const progress = loadProgress();
 if (DEV) progress.unlocked = LEVELS.length;
-const continueLevel = () => (DEV ? 0 : Math.min(LAST_MAIN, progress.unlocked - 1));
+// How many levels of the main order are open: the saved count, and beyond it the next one whenever the last open one
+// is finished. A save from before a new world was added has the old maximum stored; the new world opens by itself.
+function mainOpen() {
+  let n = Math.max(1, Math.min(progress.unlocked, MAIN.length));
+  while (n < MAIN.length && progress.best[MAIN[n - 1]] != null) n++;
+  return n;
+}
+const levelOpen = (i) => { const k = mainPos(i); return k >= 0 && k < mainOpen(); };
+const continueLevel = () => (DEV ? 0 : MAIN[mainOpen() - 1]);
 const starsTotal = () => LEVELS.reduce((a, _, i) => a + (progress.stars[i] || 0), 0) + Object.keys(progress.hidden).length * 2 + (STARWAY && progress.bonus ? progress.bonus.stars : 0) + (STARWAY && progress.dash ? progress.dash.stars : 0) + (progress.sky ? (progress.sky.stars || 0) + (progress.sky.gold ? SKY_GOLD_VALUE : 0) : 0);
 const BONUS_UNLOCK = 20, BONUS_STARS = 10;
 // 3D level Himmelsinseln: six stars plus a treasure worth three, medal times in seconds [gold, silver, bronze]
@@ -1645,9 +1843,10 @@ const hiddenTotal = () => LEVELS.filter((l) => l.map.some((r) => r.includes('h')
 const assistOn = () => progress.slow || progress.invincible || !!progress.fun.moon;
 const funScale = () => (progress.fun.big ? 1.6 : progress.fun.mini ? 0.62 : 1);
 const dayIndex = () => Math.floor(Date.now() / 86400000);
-const dailyLevel = () => (dayIndex() * 7 + 3) % Math.max(1, Math.min(progress.unlocked, LAST_MAIN + 1));
-const isReward = (c) => !!(c.boss || c.streak || c.ach);
-const isOwned = (c) => (c.boss ? !!progress.bosses[c.boss] : c.price === 0 && !isReward(c)) || progress.owned.includes(c.id);
+const dailyLevel = () => MAIN[(dayIndex() * 7 + 3) % mainOpen()];
+const isReward = (c) => !!(c.boss || c.streak || c.ach || c.own);
+// c.own (a world's costume) is a function that says when the piece has been earned
+const isOwned = (c) => (c.own ? !!c.own() : c.boss ? !!progress.bosses[c.boss] : c.price === 0 && !isReward(c)) || progress.owned.includes(c.id);
 const starsSpent = () => COSTUMES.reduce((a, c) => a + (progress.owned.includes(c.id) ? c.price : 0), 0);
 const wallet = () => Math.max(0, starsTotal() - starsSpent());
 function medalFor(i, t) {
@@ -1810,6 +2009,7 @@ const SFX = {
   best: fx(() => { [86, 90, 93, 98].forEach((n, i) => voice({ type: 'sine', f0: midi(n), dur: 0.35, vol: 0.05, delay: 0.5 + i * 0.08 })); noise({ hp: 6000, dur: 0.6, vol: 0.02, delay: 0.6 }); }),
   // talking: one babble syllable per call, low and grumpy for Brummel, high and squeaky for Mimo
   talk: fx((who) => {
+    if (TALK_VOICES[who]) { TALK_VOICES[who](); return; }
     if (who === 'mampf') { const f = 250 + Math.random() * 170; voice({ type: 'triangle', f0: f, f1: f * 1.18, slide: 0.05, dur: 0.08, vol: 0.042, lp: 1800 }); return; }
     if (who === 'huhu') { const f = 400 + Math.random() * 150; voice({ type: 'sine', f0: f * 1.1, f1: f * 0.85, slide: 0.1, attack: 0.02, dur: 0.11, vol: 0.05 }); return; }
     if (who === 'yeti') { const f = 78 + Math.random() * 50; voice({ type: 'sawtooth', f0: f, f1: f * 0.75, slide: 0.1, attack: 0.012, dur: 0.12, vol: 0.06, lp: 480 }); voice({ type: 'sine', f0: f * 2, dur: 0.08, vol: 0.025 }); return; }
@@ -2149,15 +2349,34 @@ const Music = (() => {
   function detach() { const id = running && cur ? cur.id : null; if (cur) { cur.dead = true; clearTimeout(cur.timer); } cur = null; return id; }
   function attach(id) { if (running && id && progress.music) { cur = makeInst(id); if (!SONGS[id].external) tick(cur); applyLevel(0.8); } }
   const ext = () => (cur && !cur.dead && cur.def.external ? { g: cur.g, echo: cur.echo } : null);
-  return { start, stop, duck, refresh, realign, detach, attach, ext, INST, BASS, DRUM, PAD, setZen: (v) => { zen = v; }, setIntensity: (v) => { intensity = v; }, get running() { return running; }, get song() { return cur ? cur.id : null; }, SONGS };
+  return { start, stop, duck, refresh, realign, detach, attach, ext, INST, BASS, DRUM, PAD, setZen: (v) => { zen = v; }, setIntensity: (v) => { intensity = v; if (cur && cur.lay && cur.def.live && v > 0) cur.lay.arp = true; }, get running() { return running; }, get song() { return cur ? cur.id : null; }, SONGS };
 })();
 function songForState() {
   if (G.mode === 'sky') return skyMusic || 'sky';
   if (G.mode === 'bonus') return 'starway';
   if (G.mode === 'dash') return 'run';
-  if (G.mode === 'boss') return G.boss && G.boss.music ? G.boss.music : G.boss && G.boss.done ? ['meadow', 'meadow', 'forest', 'snow'][G.bossW] : 'none';
-  if (G.L) { const lv = LEVELS[G.levelIndex]; return lv && lv.night ? 'night' : G.L.chase ? 'chase' : ['meadow', 'meadow', 'forest', 'snow'][G.L.world] || 'meadow'; }
+  if (G.mode === 'boss') return G.boss && G.boss.music ? G.boss.music : G.boss && G.boss.done ? worldSong(worldOf(G.bossW)) : 'none';
+  if (G.L) {
+    const lv = LEVELS[G.levelIndex], def = worldOf(G.L.world);
+    // a world may choose per level (song(levelDef, L) -> id), otherwise the night path, the chase and the world song
+    if (typeof def.song === 'function') { const s = def.song(lv, G.L); if (s && Music.SONGS[s]) return s; }
+    return lv && lv.night ? 'night' : G.L.chase ? 'chase' : worldSong(def);
+  }
   return 'menu';
+}
+const worldSong = (def) => { const s = typeof def.song === 'function' ? def.song(null, G.L) : def.song; return s && Music.SONGS[s] ? s : 'meadow'; };
+// songs of the world modules join the music engine (same data format as the songs above)
+// a song naming an instrument the engine does not have would fail on every beat, so it is checked once here
+function songProblem(s) {
+  const inst = [s.lead, s.counter, s.arp, ...Object.values(s.sec).map((x) => x && x.lead)].filter(Boolean);
+  const bad = inst.find((k) => !Music.INST[k]) || (s.pad && !Music.PAD[s.pad] && s.pad) || Object.values(s.kits || {}).flatMap(Object.keys).find((k) => !Music.DRUM[k]);
+  if (bad) return 'kennt "' + bad + '" nicht';
+  if (s.form.some((k) => !s.sec[k] || !Array.isArray(s.sec[k].ch) || !s.sec[k].bars)) return 'hat einen Teil ohne ch oder bars';
+  return '';
+}
+for (const w of WORLD_MODS) for (const [id, song] of Object.entries(w.songs)) {
+  const why = Music.SONGS[id] ? 'gibt es schon' : songProblem(song);
+  if (why) console.error('Welt: Musikstück ' + id + ' ' + why + ' (Welt ' + w.world + ')'); else Music.SONGS[id] = song;
 }
 
 // Ambience: little sounds of the place, now and then (birds, owls, wind)
@@ -2224,7 +2443,7 @@ btnUnlock.addEventListener('click', () => {
 });
 
 // ---------- Input ----------
-const input = { left: false, right: false, up: false, down: false, dropT: 0, ax: 0, ay: 0, jumpHeld: false, jumpQueued: false, actions: [] };
+const input = { left: false, right: false, up: false, down: false, dive: false, dropT: 0, ax: 0, ay: 0, jumpHeld: false, jumpQueued: false, actions: [] };
 // Sternenbahn Abenteuer: each key press or swipe is one action (lane left or right, jump, slide)
 const RUN_KEYS = { ArrowLeft: 'left', KeyA: 'left', ArrowRight: 'right', KeyD: 'right', ArrowUp: 'jump', KeyW: 'jump', Space: 'jump', ArrowDown: 'down', KeyS: 'down' };
 function runAction(a) { if (input.actions.length < 6) input.actions.push(a); if (a === 'jump') input.jumpQueued = true; }
@@ -2238,7 +2457,7 @@ function setKey(name, down) {
     input.jumpHeld = down;
   } else input[name] = down;
 }
-function releaseAll() { input.left = input.right = input.up = input.down = false; input.dropT = 0; input.ax = input.ay = 0; input.actions.length = 0; setKey('jump', false); touches.clear(); if (pad.id !== null) padEnd(); }
+function releaseAll() { input.left = input.right = input.up = input.down = input.dive = false; input.dropT = 0; input.ax = input.ay = 0; input.actions.length = 0; setKey('jump', false); touches.clear(); if (pad.id !== null) padEnd(); }
 window.addEventListener('keydown', (e) => {
   if (e.code === 'Escape' || e.code === 'KeyP') { if (G.overlay === 'shop' || G.overlay === 'levels' || G.overlay === 'settings' || G.overlay === 'board' || G.overlay === 'ach' || G.overlay === 'run') { overlayBack(); e.preventDefault(); return; } if (inGame() && (!G.overlay || G.overlay === 'pause')) { togglePause(); e.preventDefault(); } return; }
   if (DEV && (e.code === 'KeyN' || e.code === 'KeyB') && G.L && G.mode === 'level' && !G.overlay) { const n = LEVELS.length; startLevel((G.levelIndex + (e.code === 'KeyN' ? 1 : n - 1)) % n); e.preventDefault(); return; }
@@ -2261,7 +2480,7 @@ window.addEventListener('blur', releaseAll);
 // With "buttons" chosen in the settings fixed buttons take the stick's place.
 const touches = new Map();
 let touchSeen = false;
-const STICK2D_DEAD = 12, STICK2D_HOLD = 7, STICK2D_REACH = 34, STICK2D_KNOB = 22;
+const STICK2D_DEAD = 12, STICK2D_HOLD = 7, STICK2D_REACH = 34, STICK2D_KNOB = 22, STICK2D_DIVE = 16;
 const FLICK_DY = 32, FLICK_MS = 160, FLICK_REARM = 8, DROP_TIME = 0.22;
 const pad = { id: null, ox: 0, oy: 0, dir: 0, hist: [], flicked: false, el: $('pad') };
 const tbtns = $('tbtns');
@@ -2290,6 +2509,8 @@ function padMove(e) {
   if (dx > (pad.dir > 0 ? STICK2D_HOLD : STICK2D_DEAD)) pad.dir = 1;
   else if (dx < -(pad.dir < 0 ? STICK2D_HOLD : STICK2D_DEAD)) pad.dir = -1;
   else pad.dir = 0;
+  // thumb held clearly below the centre and more down than sideways: a world may use it (diving under water); land ignores it
+  const dy = y - pad.oy; input.dive = dy > STICK2D_DIVE && dy > Math.abs(dx);
   padFlick(x, y);
   padShow(x, y);
 }
@@ -2297,7 +2518,7 @@ function padStart(e) {
   pad.id = e.pointerId; pad.ox = e.clientX; pad.oy = e.clientY; pad.dir = 0; pad.hist = []; pad.flicked = false;
   pad.el.hidden = false; padMove(e);
 }
-function padEnd() { pad.id = null; pad.dir = 0; pad.hist = []; pad.flicked = false; pad.el.hidden = true; }
+function padEnd() { pad.id = null; pad.dir = 0; pad.hist = []; pad.flicked = false; pad.el.hidden = true; input.dive = false; }
 function applyTouches() {
   const zones = [...touches.values()];
   input.left = pad.dir < 0 || zones.includes('left'); input.right = pad.dir > 0 || zones.includes('right');
@@ -2406,7 +2627,8 @@ readPalette();
 function parseLevel(def) {
   const rows = def.map, h = rows.length, w = Math.max(...rows.map((r) => r.length));
   const L = { w, h, tiles: [], stars: [], switches: [], checkpoints: [], mushrooms: [], crumbles: new Map(), key: null, door: null,
-    start: { x: 1, y: 1 }, movers: [], name: def.name, world: def.world || 1, needsKey: false, clouds: [], pollen: [], snails: [], tgroup: new Map(), hidden: null, chase: def.chase ? { x: -9 * T, speed: def.chase.speed, roll: 0 } : null };
+    start: { x: 1, y: 1 }, movers: [], name: def.name, world: def.world || 1, needsKey: false, clouds: [], pollen: [], snails: [], tgroup: new Map(), hidden: null, chase: def.chase ? { x: -9 * T, speed: def.chase.speed, roll: 0 } : null, bodies: [] };
+  const wd = worldOf(L.world), spawns = [];
   for (let y = 0; y < h; y++) {
     const row = new Uint8Array(w); L.tiles.push(row);
     for (let x = 0; x < w; x++) {
@@ -2436,6 +2658,8 @@ function parseLevel(def) {
         case 's': L.switches.push({ x, y, touching: false, press: 0 }); break;
         case 'f': L.checkpoints.push({ x, y, active: false, wave: 0 }); break;
         case 'u': L.mushrooms.push({ x, y, squash: 0 }); break;
+        // characters of the level's world: a tile of its own, or an object it makes (after the map is read)
+        default: if (wd.tileIds && wd.tileIds[ch]) row[x] = wd.tileIds[ch]; else if (wd.spawns && wd.spawns[ch]) spawns.push([wd.spawns[ch], x, y]);
       }
     }
   }
@@ -2448,6 +2672,7 @@ function parseLevel(def) {
   const pn = Math.round((w * h) / 28);
   for (let i = 0; i < pn; i++) L.pollen.push({ x: rnd() * w * T, y: rnd() * h * T, ph: rnd() * 6.28, r: 1.5 + rnd() * 1.8, sp: 6 + rnd() * 10 });
   makeDroppers(L);
+  for (const [def, x, y] of spawns) def.spawn(L, x, y);
   return L;
 }
 
@@ -2477,8 +2702,10 @@ function loadLevel(i, keepAttempts) {
   if (!keepAttempts) G.attempts = 1;
   snapCamera();
   updateHud();
-  hintEl.innerHTML = (isTouchDevice() && LEVELS[i].touchHint) || LEVELS[i].hint;
-  if (!keepAttempts && Math.random() < 0.45) bubble(pick(LEVELS[i].night ? LINES.night : LINES.world[L.world] || LINES.world[1]), 'player', 1.9, 'say', 0.9);
+  // a level without a hint shows an empty line, never the word "undefined"
+  hintEl.innerHTML = (isTouchDevice() && LEVELS[i].touchHint) || LEVELS[i].hint || '';
+  if (!keepAttempts && Math.random() < 0.45) bubble(pick(LEVELS[i].night ? LINES.night : worldOf(L.world).lines || LINES.world[L.world] || LINES.world[1]), 'player', 1.9, 'say', 0.9);
+  wcall('init', L, { reason: keepAttempts ? 'restart' : 'load', def: LEVELS[i], boss: false });
   SFX.intro();
   Music.start(); Music.duck(false);
 }
@@ -2498,6 +2725,7 @@ function respawn() {
   if (G.L.chase) G.L.chase.x = G.respawn.x - 9 * T;
   if (G.mode === 'boss') bossRespawn();
   resetDroppers();
+  wcall('init', G.L, { reason: 'respawn', def: G.mode === 'boss' ? G.boss.def : LEVELS[G.levelIndex], boss: G.mode === 'boss' });
   G.attempts++;
   updateHud();
   bubble(G.attempts % 5 === 0 ? pick(LINES.cheer) : pick(LINES.death), 'player', 1.8, 'say', 0.25);
@@ -2535,7 +2763,7 @@ function isSolid(tx, ty) {
     case LOCK: return !G.keyGot;
     case ICE: return true;
     case GLOW: { const p = G.p; if (!p) return false; return Math.hypot(p.x + p.w / 2 - (tx + 0.5) * T, p.y + p.h / 2 - (ty + 0.5) * T) < GLOW_RADIUS * T; }
-    default: return false;
+    default: { const d = tileDef(t); return !!d && (typeof d.solid === 'function' ? !!d.solid(tx, ty) : !!d.solid); }
   }
 }
 function thornExt(tx, ty) {
@@ -2574,6 +2802,13 @@ function moverPos(m, t) {
   const ease = tri * tri * (3 - 2 * tri);
   return m.dist * T * ease;
 }
+// bodies of a world: it moves them in update(); here each one learns how far it went since the last step, like a mover
+function stepBodies() {
+  for (const b of G.L.bodies) {
+    if (b.lx == null) { b.lx = b.x; b.ly = b.y; }
+    b.dx = b.x - b.lx; b.dy = b.y - b.ly; b.prevY = b.ly; b.lx = b.x; b.ly = b.y;
+  }
+}
 function updateMovers() {
   for (const m of G.L.movers) {
     m.prevY = m.y; const px = m.x;
@@ -2605,7 +2840,8 @@ function win() {
   const L = G.L, d = L.door;
   burst(d.x * T + T / 2, d.y * T + 4, 36, CONFETTI(), 190, { grav: 260, rect: true, life: 0.8 });
   SFX.door();
-  if (G.levelIndex <= LAST_MAIN) progress.unlocked = Math.max(progress.unlocked, Math.min(LAST_MAIN + 1, G.levelIndex + 2));
+  const pos = mainPos(G.levelIndex);
+  if (pos >= 0) progress.unlocked = Math.max(progress.unlocked, Math.min(MAIN.length, pos + 2));
   const t = Math.round(G.levelTime * 10) / 10;
   if (!progress.zen) {
     progress.stars[G.levelIndex] = Math.max(progress.stars[G.levelIndex] || 0, G.starsGot);
@@ -2617,7 +2853,7 @@ function win() {
     G.medal = medalFor(G.levelIndex, t);
     if (L.stars.length && G.starsGot === L.stars.length) unlock('allstars');
     if (G.medal === 'gold' && !assistOn()) unlock('gold');
-    if (L.world === 3 && G.attempts === 1 && !LEVELS[G.levelIndex].night) unlock('nohit');
+    if (worldOf(L.world).nohit && G.attempts === 1 && !LEVELS[G.levelIndex].night) unlock('nohit');
     pushCloud();
     if (G.daily) { const d = progress.daily || {}; if (d.day !== dayIndex() || d.time == null || t < d.time) progress.daily = { day: dayIndex(), level: G.levelIndex, time: t, medal: G.medal, assist: assistOn() }; progress.dailyLog = { ...progress.dailyLog, [dayIndex()]: true };
       if (streak() >= 7 && !progress.owned.includes('a_lantern')) { progress.owned = [...progress.owned, 'a_lantern']; setTimeout(() => floater(G.p.x + 11, G.p.y - 30, 'Laterne freigeschaltet!', P.key), 400); } }
@@ -2654,11 +2890,14 @@ function updatePlayer(dt) {
   if (p.idleT > 30) unlock('lazy');
   if (p.carried) {
     const m = p.carried;
-    if (p.x + p.w - 2 > m.x - m.dx && p.x + 2 < m.x - m.dx + m.w) { p.x += m.dx; p.y = m.y - p.h; }
+    if (!m.off && p.x + p.w - 2 > m.x - m.dx && p.x + 2 < m.x - m.dx + m.w) { p.x += m.dx; p.y = m.y - p.h; }
     p.carried = null;
   }
   p.wasGrounded = p.grounded;
   p.grounded = false;
+  // a world may change the rules while Mimo is in a region of it (swimming): gravity, speeds, what the jump button does
+  const mod = wcall('physics', p);
+  const run = mod && mod.run != null ? mod.run : RUN, grav = mod && mod.gravity != null ? mod.gravity : GRAV, maxFall = mod && mod.maxFall != null ? mod.maxFall : MAX_FALL;
 
   const dir = (input.right ? 1 : 0) - (input.left ? 1 : 0);
   const footTile = tileAt(Math.floor((p.x + p.w / 2) / T), Math.floor((p.y + p.h + 1) / T));
@@ -2666,8 +2905,8 @@ function updatePlayer(dt) {
   // wind and updraft zones, sampled at head, centre and feet
   const zx = Math.floor((p.x + p.w / 2) / T), zts = [tileAt(zx, Math.floor((p.y + 3) / T)), tileAt(zx, Math.floor((p.y + p.h / 2) / T)), tileAt(zx, Math.floor((p.y + p.h - 2) / T))];
   p.inWind = zts.includes(WIND_R) ? 1 : zts.includes(WIND_L) ? -1 : 0; p.inUp = zts[1] === UPDRAFT || zts[2] === UPDRAFT;
-  const target = dir * RUN + p.inWind * (p.wasGrounded ? WIND_GROUND : WIND_MAX - RUN);
-  const acc = p.onIce ? ICE_ACCEL : p.wasGrounded ? ACCEL : AIR_ACCEL;
+  const target = dir * run + p.inWind * (mod && mod.wind != null ? mod.wind : p.wasGrounded ? WIND_GROUND : WIND_MAX - RUN);
+  const acc = p.onIce ? ICE_ACCEL : mod && mod.accel != null ? mod.accel : p.wasGrounded ? ACCEL : AIR_ACCEL;
   if (p.vx < target) p.vx = Math.min(target, p.vx + acc * dt);
   else if (p.vx > target) p.vx = Math.max(target, p.vx - acc * dt);
   if (dir !== 0) p.facing = dir;
@@ -2689,6 +2928,9 @@ function updatePlayer(dt) {
   // through boards: holding down (keys, pad) or a short drop after a flick of the thumb
   const drop = input.down || input.dropT > 0; input.dropT = Math.max(0, input.dropT - dt);
   p.coyote = p.wasGrounded ? COYOTE : Math.max(0, p.coyote - dt);
+  // the world's jump: returns true when it used the press (a swim stroke), then the normal jump does not happen
+  // world physics callbacks are guarded like the hooks: an error must never stop the game loop
+  if (mod && mod.jump && p.jumpBuf > 0) { try { if (mod.jump(p) === true) p.jumpBuf = 0; } catch (e) { worldFail('Welt physics jump', e); } }
   if (p.jumpBuf > 0 && p.coyote > 0) {
     p.vy = -JUMP; p.coyote = 0; p.jumpBuf = 0; p.canCut = true;
     p.sx = 0.82; p.sy = 1.2; p.carried = null;
@@ -2697,8 +2939,12 @@ function updatePlayer(dt) {
   if (!input.jumpHeld && p.canCut && p.vy < 0) { p.vy *= JUMP_CUT; p.canCut = false; }
   if (p.vy >= 0) p.canCut = false;
 
+  // the world's hold: called every step while the jump button is held (rising steadily under water)
+  if (mod && mod.hold && input.jumpHeld) { try { mod.hold(p, dt); } catch (e) { worldFail('Welt physics hold', e); } }
+
   p.prevBottom = p.y + p.h;
-  p.vy = Math.min(MAX_FALL * (progress.fun.moon ? 0.7 : 1), p.vy + GRAV * (progress.fun.moon ? 0.5 : 1) * dt);
+  p.vy = Math.min(maxFall * (progress.fun.moon ? 0.7 : 1), p.vy + grav * (progress.fun.moon ? 0.5 : 1) * dt);
+  if (mod && mod.maxRise != null && p.vy < -mod.maxRise) p.vy = -mod.maxRise;
   if (p.inUp) { p.vy -= UP_ACC * dt; if (p.vy < UP_MAX) p.vy = UP_MAX; p.canCut = false; if (!reduced() && Math.random() < 0.3) G.particles.push({ x: p.x + Math.random() * p.w, y: p.y + p.h, vx: (Math.random() - 0.5) * 30, vy: -120, life: 0, max: 0.5, r: 1.5, color: P.dust, grav: 0, rect: false, rot: 0 }); }
   p.y += p.vy * dt;
   const x0 = Math.floor((p.x + 2) / T), x1 = Math.floor((p.x + p.w - 2 - 0.01) / T);
@@ -2706,7 +2952,7 @@ function updatePlayer(dt) {
     const ty = Math.floor((p.y + p.h - 0.01) / T);
     for (let tx = x0; tx <= x1; tx++) {
       const t = tileAt(tx, ty);
-      const solid = isSolid(tx, ty) || (t === ONEWAY && !drop && p.prevBottom <= ty * T + 0.5);
+      const solid = isSolid(tx, ty) || ((t === ONEWAY || (t >= TILE_EXT && tileDef(t).oneway)) && !drop && p.prevBottom <= ty * T + 0.5);
       if (solid) {
         p.y = ty * T - p.h; p.vy = 0; p.grounded = true;
         if (t === CRUMBLE) { const c = L.crumbles.get(tx + ',' + ty); if (c.state === 0) { c.state = 1; c.t = 0; SFX.crumble(); } }
@@ -2720,6 +2966,13 @@ function updatePlayer(dt) {
 
   for (const m of L.movers) {
     if (p.vy < 0 || drop) continue;
+    if (p.x + p.w - 2 > m.x && p.x + 2 < m.x + m.w && p.prevBottom <= m.prevY + 8 && p.y + p.h >= m.y) {
+      p.y = m.y - p.h; p.vy = 0; p.grounded = true; p.carried = m;
+    }
+  }
+  // bodies of a world (a crab, a bubble, a raft) carry Mimo exactly like the movers
+  for (const m of L.bodies) {
+    if (p.vy < 0 || drop || m.off) continue;
     if (p.x + p.w - 2 > m.x && p.x + 2 < m.x + m.w && p.prevBottom <= m.prevY + 8 && p.y + p.h >= m.y) {
       p.y = m.y - p.h; p.vy = 0; p.grounded = true; p.carried = m;
     }
@@ -2847,7 +3100,7 @@ function updateWorld(dt) {
   if (L && L.chase) {
     const c = L.chase;
     if (G.state === 'play') { c.x += c.speed * dt; c.roll += c.speed * dt / 40; }
-    if (!reduced() && G.state === 'play') {
+    if (!reduced() && G.state === 'play' && !worldOf(L.world).drawChase) {
       if (Math.random() < 0.7) G.particles.push({ x: c.x - Math.random() * 60, y: (L.h - 4) * T - 40 - Math.random() * 90, vx: 160 + Math.random() * 220, vy: -120 - Math.random() * 220, life: 0, max: 0.9, r: 2.5 + Math.random() * 4, color: P.w3Snow, grav: 520, rect: Math.random() < 0.4, rot: Math.random() * 6 });
       if (Math.random() < 0.4) G.particles.push({ x: c.x - 80 - Math.random() * 200, y: (L.h - 4) * T - 120 - Math.random() * 60, vx: 20 + Math.random() * 40, vy: -40 - Math.random() * 60, life: 0, max: 1.2, r: 4 + Math.random() * 5, color: P.w3Snow, grav: -10, rect: false, rot: 0 });
     }
@@ -2897,6 +3150,8 @@ function update(dt) {
   G.intro += dt; G.wipe += dt; G.touchHint = Math.max(0, G.touchHint - dt);
   G.shake = Math.max(0, G.shake - dt * 3);
   updateMovers();
+  // the world moves its own things first, so a body that carries Mimo has moved before he does (like the movers)
+  wcall('update', dt); stepBodies();
   if (G.state === 'play') {
     // the clock (and the ghost recording) starts with the first step or jump, not when the level appears
     if (!G.clockOn && (input.left || input.right || input.jumpQueued || input.jumpHeld)) G.clockOn = true;
@@ -2914,7 +3169,7 @@ function update(dt) {
   else {
     G.stateT += dt;
     if (G.state === 'dead' && G.stateT >= DEATH_TIME) respawn();
-    if (G.state === 'win' && G.stateT >= WIN_TIME && !G.overlay) showWin();
+    if (G.state === 'win' && G.stateT >= winTime() && !G.overlay) showWin();
   }
   updateWorld(dt);
   if (G.mode === 'boss') updateBoss(dt);
@@ -3395,7 +3650,20 @@ const BOSSES = [null,
       phase: ['Jetzt wird es glatt!', 'SCHNEESTURM! Na gut, Schneegestöber.'], stun: ['Wer stellt denn da Eis hin?', 'Aua. Ich sehe Sterne.', 'Das war doch eben noch frei!'], beaten: 'Okay, okay. Willst du einen Kakao?', piep: ['Piep? PIEP? Grrr.', 'Lass das, ich bin gefährlich!'] },
     map: BOSS_ARENA(BOSS_EMPTY_ROW) },
 ];
-const bossUnlocked = (w) => DEV || OPEN_ALL || progress.best[BOSSES[w].after] != null;
+// Bosses of the world modules: BOSSES[world]. What they do comes from the boss part of the world (def.hooks);
+// speech box, life bar, cutscene, shots list, hits and phases, slow motion and the respawn safety stay shared here.
+const BOSS_HOOKS = ['make', 'arena', 'respawn', 'enter', 'ai', 'box', 'phase', 'defeat', 'afterDefeat', 'door', 'shot', 'drawShot', 'draw', 'drawFront', 'camera', 'voice'];
+const TALK_VOICES = {};
+function installBoss(w) {
+  const b = w.boss, at = 'Endgegner Welt ' + w.world, hooks = {};
+  for (const k of BOSS_HOOKS) if (typeof b[k] === 'function') hooks[k] = safeHook(at + ' ' + k, b[k]);
+  const kind = b.kind || 'boss' + w.world;
+  BOSSES[w.world] = { lines: {}, ...b, kind, world: w.world, after: worldEnd(w.world), hooks };
+  if (hooks.voice) TALK_VOICES[kind] = hooks.voice;
+}
+for (const w of WORLD_MODS) if (w.boss) installBoss(w);
+const BOSS_NONE = { l: 0, r: 0, top: 0, bottom: 0, soft: false, harmless: true };
+const bossUnlocked = (w) => DEV || OPEN || progress.best[BOSSES[w].after] != null;
 const bossBeatenBefore = (w) => !!(progress.bosses && progress.bosses[w]);
 const bossAfterLevel = (i) => BOSSES.findIndex((b) => b && b.after === i);
 // phase 0, 1, 2: how many phase starts the life has already dropped to
@@ -3438,6 +3706,7 @@ function makeBoss(def) {
   if (def.kind === 'mampf') B.y = -140;
   if (def.kind === 'huhu') { B.x = 21 * T; B.y = -40; }
   if (def.kind === 'yeti') B.x = 22 * T;
+  if (def.hooks && def.hooks.make) def.hooks.make(B);
   return B;
 }
 function startBoss(w) { hideOverlays(); loadBoss(w); G.daily = false; }
@@ -3445,6 +3714,7 @@ function loadBoss(w, keepAttempts) {
   const def = BOSSES[w];
   leaveBoss(); stopRun(); stopSky(); stopDash();
   G.mode = 'boss'; G.bossW = w; G.bonus = null; Rumble.level(0);
+  G.rewardHat = null;
   G.L = parseLevel(def); G.L.night = !!def.night;
   applyWorldPalette();
   const L = G.L;
@@ -3457,6 +3727,8 @@ function loadBoss(w, keepAttempts) {
   G.intro = 99; G.wipe = 0; G.freeze = 0; G.shake = 0; G.newBest = false; G.medal = null;
   G.rec = []; G.recT = 0; G.replay = null; G.touchHint = touchHelpStart();
   if (!keepAttempts) G.attempts = 1;
+  // the world sets up its own state for the arena first (water, things), so make() and arena() can use it
+  wcall('init', L, { reason: keepAttempts ? 'restart' : 'load', def, boss: true });
   G.boss = makeBoss(def);
   bossArena(G.boss);
   snapCamera(); updateHud();
@@ -3467,6 +3739,7 @@ function loadBoss(w, keepAttempts) {
 // builds the arena for the current phase: puddles, ice floor, ice pillars
 function bossArena(B) {
   const ph = bossPhase(B), L = G.L;
+  if (B.def.hooks) { if (B.def.hooks.arena) B.def.hooks.arena(B, ph); return; }
   // later phases leave one puddle only, on the far side from Mimo: he has to cross the meadow under the king's hops
   if (B.kind === 'mampf') B.puddles = (ph === 0 ? [4.5, 10, 15.5] : [G.p.x + G.p.w / 2 < 10 * T ? 15.5 : 4.5]).map((c) => ({ x: c * T, wet: 1 }));
   if (B.kind === 'huhu') { B.windDir = 0; B.windT = 0; }
@@ -3483,8 +3756,8 @@ function bossRespawn() {
   B.shots.length = 0; B.slide = false; B.vx = 0; B.vy = 0; B.hopY = 0; B.sink = 0; B.chain = 0; B.cyc = 0; B.drops = 0; B.dropT = 1.6; B.spin = 0; B.puffed = false;
   B.hp = B.def.phases[bossPhase(B)]; bossBarNow(B);
   bossArena(B);
-  B.x = B.kind === 'yeti' ? 16 * T : Math.max(B.x, 13 * T);
-  B.y = B.kind === 'huhu' ? BOSS_HOVER : BOSS_FLOOR;
+  if (B.def.hooks) { if (B.def.hooks.respawn) B.def.hooks.respawn(B); }
+  else { B.x = B.kind === 'yeti' ? 16 * T : Math.max(B.x, 13 * T); B.y = B.kind === 'huhu' ? BOSS_HOVER : BOSS_FLOOR; }
   bossSet(B, 'idle'); B.t = -1.1;
   G.p.invT = BOSS_RESPAWN_SAFE;
 }
@@ -3498,6 +3771,8 @@ function startBossCine(B, full) {
 function stepBossCine(B, dt) {
   const c = B.cine; c.t += dt;
   if (input.jumpQueued) { input.jumpQueued = false; if (c.t > 0.15) { endBossCine(B); return; } }
+  // a short scene of a world boss (phase change): no lines of its own, it only ends (the boss draws and says what happens)
+  if (c.scene) { if (c.t > c.scene) endBossCine(B); return; }
   const L = B.def.lines, who = B.def.name, v = B.kind;
   if (c.full) {
     onceAt(c, 'l1', 1.5, () => bossSay(who, L.intro[0], 2.1, v));
@@ -3511,6 +3786,8 @@ function stepBossCine(B, dt) {
     if (c.t > 2.4) endBossCine(B);
   }
 }
+// a world boss starts a short skippable scene mid-fight (bars, Mimo waits); its enter() hook runs at the end, like after the intro
+function bossScene(B, seconds) { startBossCine(B, false); B.cine.scene = Math.max(0.3, seconds || 2.5); }
 function endBossCine(B) {
   B.cine = null; onCine({ bars: false, skip: false });
   G.state = 'play'; G.stateT = 0; input.jumpQueued = false;
@@ -3518,6 +3795,7 @@ function endBossCine(B) {
   if (B.kind === 'mampf') { B.y = BOSS_FLOOR; B.vy = 0; }
   if (B.kind === 'huhu') { B.x = 14 * T; B.y = BOSS_HOVER; }
   if (B.kind === 'yeti') { B.x = 16 * T; B.y = BOSS_FLOOR; B.hopY = 0; }
+  if (B.def.hooks && B.def.hooks.enter) B.def.hooks.enter(B);
   bossBarNow(B);
   bossSet(B, 'idle'); B.t = -0.4;
 }
@@ -3743,6 +4021,7 @@ const BOSS_AI = {
 const BOSS_SOFT = { mampf: 'stuck', huhu: 'dazed', yeti: 'dizzy' };
 const BOSS_HARMLESS = ['enter', 'wait', 'hurt', 'beaten', 'stuck', 'pop', 'stunned', 'dazed', 'dizzy', 'bonk'];
 function bossBox(B) {
+  if (B.def.hooks) return B.def.hooks.box(B) || BOSS_NONE;
   const s = B.state, soft = s === BOSS_SOFT[B.kind], harmless = BOSS_HARMLESS.includes(s) || (s === 'takeoff' && B.t < 0.45);
   // König Mampf only hurts while he comes down: boss 1 forgives bumping into him
   if (B.kind === 'mampf') return { l: B.x - 36, r: B.x + 36, top: B.y - 74 * B.sq + B.sink * MAMPF_SINK, bottom: B.y, soft, harmless: !(s === 'flop' && B.n === 3) };
@@ -3763,10 +4042,12 @@ function bossTickle(B) {
   SFX.bounce(); ring(B.x, bx.top, P.dust);
   if (B.tickleT <= 0) { B.tickleT = 3.5; bossSay(B.def.name, pick(B.def.lines.tickle), 1.6, B.kind); }
 }
-function bossHit(B) {
+// remote: the hit comes from elsewhere (a world boss, api.boss.hit), so Mimo is not bounced off the boss
+function bossHit(B, remote) {
   const p = G.p, bx = bossBox(B), before = bossPhase(B), last = B.hp <= 1;
   B.hp--; B.flash = 1; B.sq = 0.55; G.freeze = last ? 0.3 : 0.16; G.flash = last ? 0.7 : 0.35; shake(last ? 1.4 : 1);
-  p.vy = -STOMP * 1.15; p.y = bx.top - p.h; p.canCut = false; p.sx = 0.8; p.sy = 1.25; setMood('happy', 1);
+  if (!remote) { p.vy = -STOMP * 1.15; p.y = bx.top - p.h; p.canCut = false; p.sx = 0.8; p.sy = 1.25; }
+  setMood('happy', 1);
   SFX.bounce(); SFX.stomp(); SFX.yay();
   burst(B.x, bx.top, last ? 40 : 26, [P.star, P.card, P.mush, P.mimoLav], 220, { grav: 320, rect: true }); ring(B.x, bx.top, P.star);
   floater(B.x, bx.top - 18, last ? 'Gewonnen!' : 'Treffer!', P.star);
@@ -3783,6 +4064,7 @@ function bossPhaseStart(B, ph) {
   B.pulse = 1.2; B.puffed = false; SFX.sting(); shake(0.8);
   bossSay(B.def.name, B.def.lines.phase[ph - 1], 2.2, B.kind);
   if (B.kind === 'mampf') for (const q of B.puddles) burst(q.x, BOSS_FLOOR - 2, 12, [BOSS_MUD_HI, P.dust], 130, { grav: 300 });
+  if (B.def.hooks && B.def.hooks.phase) B.def.hooks.phase(B, ph);
   if (B.kind === 'yeti') { for (const q of [...B.pillars]) pillarBreak(B, q.c, true); if (ph === 1) { for (let c = 1; c <= 18; c += 2) burst(c * T + T, BOSS_FLOOR + 2, 3, [P.w2Ice, P.card], 120, { grav: 300, vy: -80 }); SFX.ice(); } }
   bossArena(B);
 }
@@ -3790,6 +4072,7 @@ function bossDefeat(B) {
   bossSet(B, 'beaten'); B.done = true;
   if (B.kind === 'huhu') B.y = Math.min(B.y, BOSS_FLOOR);
   if (B.kind === 'yeti') for (const q of [...B.pillars]) pillarBreak(B, q.c, true);
+  if (B.def.hooks && B.def.hooks.defeat) B.def.hooks.defeat(B);
   if (B.kind === 'mampf') B.crown = { x: B.x, y: B.y - 80 + B.sink * MAMPF_SINK, x0: B.x, y0: B.y - 80 + B.sink * MAMPF_SINK, t: 0, on: false };
   B.windDir = 0;
   burst(B.x, B.y - 40, 40, CONFETTI(), 260, { grav: 260, rect: true, life: 1 });
@@ -3798,20 +4081,22 @@ function bossDefeat(B) {
 }
 function bossAfterDefeat(B, dt) {
   B.sink += (0 - B.sink) * Math.min(1, dt * 3);
-  if (B.y < BOSS_FLOOR) { if (B.kind === 'huhu') B.y = Math.min(BOSS_FLOOR, B.y + 220 * dt); else { B.vy += BOSS_GRAV * dt; B.y = Math.min(BOSS_FLOOR, B.y + B.vy * dt); } }
+  if (B.def.hooks) { if (B.def.hooks.afterDefeat) B.def.hooks.afterDefeat(B, dt); }
+  else if (B.y < BOSS_FLOOR) { if (B.kind === 'huhu') B.y = Math.min(BOSS_FLOOR, B.y + 220 * dt); else { B.vy += BOSS_GRAV * dt; B.y = Math.min(BOSS_FLOOR, B.y + B.vy * dt); } }
   // Kronenklau: the crown sails over and lands on Mimo
   const cr = B.crown;
   if (cr && !cr.on) {
     cr.t += dt; const k = Math.min(1, cr.t / 1.1), e = ease2(k), tx = G.p.x + G.p.w / 2, ty = G.p.y - 3;
     cr.x = cr.x0 + (tx - cr.x0) * e; cr.y = cr.y0 + (ty - cr.y0) * e - Math.sin(k * Math.PI) * 90;
-    if (k >= 1) { cr.on = true; SFX.key(); ring(tx, ty, P.key); burst(tx, ty, 10, P.key, 110, { grav: 200 }); setMood('happy', 1.5); }
+    if (k >= 1) { cr.on = true; wearRewardHat(); SFX.key(); ring(tx, ty, P.key); burst(tx, ty, 10, P.key, 110, { grav: 200 }); setMood('happy', 1.5); }
   }
-  if (B.t > 1.6 && !G.L.door) {
-    const left = G.p.x + G.p.w / 2 < 10 * T, dx = left ? 17 : 2;
-    G.L.door = { x: Math.abs(dx * T - B.x) < 2 * T ? (left ? 15 : 4) : dx, y: 9, open: 0, rise: 0 };
+  // a boss with a longer finale (the last one) opens the door only after it, so nobody runs past the ending
+  if (B.t > (B.def.doorAfter || 1.6) && !G.L.door) {
+    const left = G.p.x + G.p.w / 2 < 10 * T, dx = left ? 17 : 2, spot = B.def.hooks && B.def.hooks.door ? B.def.hooks.door(B) : null;
+    G.L.door = spot ? { x: spot.x, y: spot.y, open: 0, rise: 0 } : { x: Math.abs(dx * T - B.x) < 2 * T ? (left ? 15 : 4) : dx, y: 9, open: 0, rise: 0 };
     SFX.open(); bossBar(null); B.music = null; Music.start();
     hintEl.innerHTML = 'Die Tür ist offen. Lauf hinein.';
-    burst(G.L.door.x * T + T / 2, 9 * T + 8, 20, [P.doorGlow, P.star], 140, { grav: 120 });
+    burst(G.L.door.x * T + T / 2, G.L.door.y * T + 8, 20, [P.doorGlow, P.star], 140, { grav: 120 });
   }
   if (G.L.door && G.L.door.rise < 1) G.L.door.rise = Math.min(1, G.L.door.rise + dt * 1.6);
 }
@@ -3872,6 +4157,8 @@ function updateShots(B, dt) {
           }
         }
         break;
+      // a shot of a world boss: its shot() moves it and answers { dead, danger }; dangerous shots hit with the shared test (s.r)
+      default: { const r = B.def.hooks && B.def.hooks.shot ? B.def.hooks.shot(B, s, dt, play) : null; dead = !!(r && r.dead); danger = !!(r && r.danger); }
     }
     if (!dead && danger && play && shotHits(s, p)) { hurt(); if (s.type !== 'wave') dead = true; }
     if (dead) B.shots.splice(i, 1);
@@ -3897,7 +4184,7 @@ function updateBoss(dt) {
   if (B.kind === 'huhu') { const to = B.done ? 0 : ([0, 0.76, 0.5][bossPhase(B)] * (['stunned', 'dazed'].includes(B.state) ? 0.45 : 1)); B.dark += (to - B.dark) * Math.min(1, dt * 1.6); }
   if (G.p.invT > 0) G.p.invT = Math.max(0, G.p.invT - dt);
   if (B.cine) stepBossCine(B, dt);
-  if (B.done) bossAfterDefeat(B, dt); else BOSS_AI[B.kind](B, dt);
+  if (B.done) bossAfterDefeat(B, dt); else (B.def.hooks ? B.def.hooks.ai : BOSS_AI[B.kind])(B, dt);
   updateShots(B, dt);
   if (G.state === 'play' && !B.cine) {
     bossCollide(B);
@@ -3919,9 +4206,13 @@ function showBossWin() {
   $('winTries').parentElement.hidden = false; $('winTries').textContent = String(G.attempts); $('winTries').nextElementSibling.textContent = 'Versuche';
   $('winBest').textContent = fmtTime(rec.best) + (rec.assisted ? ' · mit Hilfe' : ''); $('winBest').nextElementSibling.textContent = 'Bestzeit';
   $('winNewBest').hidden = !G.newBest; if (G.newBest) SFX.best();
-  $('btnNext').textContent = w < 3 ? 'Weiter' : 'Zum Ende'; $('btnReplay').hidden = true; $('btnWinMenu').hidden = false;
+  $('btnNext').textContent = nextMain(BOSSES[w].after) != null ? 'Weiter' : 'Zum Ende'; $('btnReplay').hidden = true; $('btnWinMenu').hidden = false;
   showOverlay('win');
 }
+// the hat a boss gives back lands on Mimo: from then on he really wears it (it squashes, tilts and shrinks into the door
+// with him), and after the win it stays on as his hat, which the wardrobe can change like any other
+const rewardHatOf = (w) => { const c = COSTUMES.find((x) => x.boss === w && x.kind === 'hat'); return c ? c.id : null; };
+function wearRewardHat() { if (G.mode === 'boss') G.rewardHat = rewardHatOf(G.bossW); }
 function winBoss() {
   G.state = 'win'; G.stateT = 0;
   const d = G.L.door, w = G.bossW, t = Math.round(G.levelTime * 10) / 10, prev = progress.bosses[w];
@@ -3932,15 +4223,16 @@ function winBoss() {
   progress.bosses = { ...progress.bosses, [w]: { best, assisted: best === t ? assistOn() : !!(prev && prev.assisted) } };
   unlock('boss'); if ([1, 2, 3].every((k) => progress.bosses[k])) unlock('allboss');
   // each boss leaves a piece for the wardrobe behind
-  if (!prev) for (const c of COSTUMES) if (c.boss === w) toast(c.name + ' freigeschaltet!', 'Das Teil liegt jetzt im Kleiderschrank.');
+  if (G.rewardHat) progress.outfit = { ...progress.outfit, hat: G.rewardHat };
+  if (!prev) for (const c of COSTUMES) if (c.boss === w) toast(c.name + ' freigeschaltet!', c.id === G.rewardHat ? 'Mimo trägt das Teil jetzt. Im Kleiderschrank kannst du es wechseln.' : 'Das Teil liegt jetzt im Kleiderschrank.');
   saveProgress();
 }
 
 // ---------- drawing ----------
 const bossCol = (B, c) => (B.flash > 0 ? mixHex(c, '#FFFFFF', Math.min(1, B.flash) * 0.85) : c);
 function bossShadow(B, w) {
-  const hgt = Math.max(0, BOSS_FLOOR - B.y), k = Math.max(0.35, 1 - hgt / 260);
-  ctx.fillStyle = P.mimoInk; ctx.globalAlpha = 0.16 * k; ctx.beginPath(); ctx.ellipse(B.x, BOSS_FLOOR, w * k, 5 * k, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
+  const floor = B.floor || BOSS_FLOOR, hgt = Math.max(0, floor - B.y), k = Math.max(0.35, 1 - hgt / 260);
+  ctx.fillStyle = P.mimoInk; ctx.globalAlpha = 0.16 * k; ctx.beginPath(); ctx.ellipse(B.x, floor, w * k, 5 * k, 0, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
 }
 function bossEyes(B, ex, ey, r, look, mode) {
   // mode: open, closed, swirl, cross (squeezed shut), wide
@@ -4140,25 +4432,27 @@ function drawShots(B) {
         if (s.t < s.warn) ctx.translate(Math.sin(s.t * 46) * 1.6 * (s.t / s.warn), len - 4);
         ctx.fillStyle = P.w2Ice || '#BFE3F4'; ctx.beginPath(); ctx.moveTo(-hw, -len); ctx.lineTo(hw, -len); ctx.lineTo(0, 2); ctx.closePath(); ctx.fill(); ctx.fillStyle = '#FFFFFF'; ctx.globalAlpha = 0.6; ctx.beginPath(); ctx.moveTo(-hw * 0.45, -len + 2); ctx.lineTo(0, -len + 2); ctx.lineTo(-1, -len * 0.3); ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1; break;
       }
+      // a world boss draws its own shots, the picture is moved to the shot's position
+      default: if (B.def.hooks && B.def.hooks.drawShot) B.def.hooks.drawShot(B, s, ctx);
     }
     ctx.restore();
   }
 }
 function drawBoss() {
   const B = G.boss; if (!B) return;
-  if (B.kind === 'mampf') drawMampf(B); else if (B.kind === 'huhu') drawHuhu(B); else drawYeti(B);
+  if (B.def.hooks) B.def.hooks.draw(B, ctx); else if (B.kind === 'mampf') drawMampf(B); else if (B.kind === 'huhu') drawHuhu(B); else drawYeti(B);
   drawShots(B);
 }
 // zoom on the boss for the last hit; render() calls this right after it moved the picture to the camera
 function bossView() {
   const B = G.boss; if (!B || B.zoom < 1.003) return;
-  const fx = (B.x + G.p.x + G.p.w / 2) / 2, fy = Math.min(B.y, BOSS_FLOOR) - 44;
+  const fx = (B.x + G.p.x + G.p.w / 2) / 2, fy = Math.min(B.y, B.floor || BOSS_FLOOR) - 44;
   ctx.translate(fx, fy); ctx.scale(B.zoom, B.zoom); ctx.translate(-fx, -fy);
 }
-// everything that lies over Mimo: Frau Huhu's darkness with what still glows in it, the stolen crown
+// everything that lies over Mimo: Frau Huhu's darkness with what still glows in it
 function drawBossFront() {
   const B = G.boss; if (!B) return;
-  if (B.kind === 'mampf' && B.crown && B.crown.on && G.state !== 'dead') { const p = G.p; drawCrown(p.x + p.w / 2, p.y + 3 + (1 - p.sy) * 10, -0.12, 0.72, P.key); }
+  if (B.def.hooks) { if (B.def.hooks.drawFront) B.def.hooks.drawFront(B, ctx); return; }
   if (B.kind !== 'huhu') return;
   const p = G.p, cx = p.x + p.w / 2, cy = p.y + p.h / 2;
   if (B.dark > 0.01) {
@@ -4186,7 +4480,7 @@ function drawBossFront() {
 const ICICLE_WOBBLE = 0.6, ICICLE_REGROW = 3, ICICLE_TRIGGER = 2.6 * T, ICICLE_REACH = 7 * T, ICICLE_GRAV = 1800, ICICLE_EVERY = 3;
 function makeDroppers(L) {
   L.droppers = []; L.dropMap = new Map();
-  if (L.world !== 3) return;
+  if (!worldOf(L.world).droppers) return;
   for (let y = 0; y < L.h - 1; y++) for (let x = 0; x < L.w; x++) {
     if (L.tiles[y][x] !== THORN_DOWN || L.tiles[y + 1][x] !== EMPTY || (x * 2 + y) % ICICLE_EVERY !== 0) continue;
     const d = { x, y, state: 'hang', t: 0, fy: y * T, vy: 0, cool: 0, grow: 1 };
@@ -4264,25 +4558,44 @@ function camTarget() {
   const safeW = VIEW_W - SAFE_L - SAFE_R, lo = -SAFE_L, hi = wW - VIEW_W + SAFE_R;
   let tx = p.x + p.w / 2 - SAFE_L - safeW / 2 + p.facing * 30;
   let ty = p.y + p.h / 2 - VIEW_H * 0.56;
+  // a world boss may look elsewhere (up to a head above the screen); the level edges still hold the camera
+  const B = G.mode === 'boss' && G.boss, look = B && B.def.hooks && B.def.hooks.camera ? B.def.hooks.camera(B, { x: tx, y: ty }) : null;
+  if (look) { tx = look.x; ty = look.y; }
   tx = hi <= lo ? (lo + hi) / 2 : Math.max(lo, Math.min(hi, tx));
   ty = wH <= VIEW_H ? (wH - VIEW_H) / 2 : Math.max(0, Math.min(wH - VIEW_H, ty));
   return { x: tx, y: ty };
 }
+// the zoom of a world scene (api.cine.camera), 1 otherwise
+const camZoom = () => (G.state === 'cine' && G.cineCam && G.cineCam.zoom) || 1;
 function snapCamera() { const t = camTarget(); G.cam.x = t.x; G.cam.y = t.y; }
 function updateCamera(dt) {
+  // a world scene (api.cine.camera) holds the camera itself, also beyond the level edges
+  if (G.state === 'cine' && G.cineCam) { G.cam.x = G.cineCam.x; G.cam.y = G.cineCam.y; return; }
   const t = camTarget(); const k = 1 - Math.exp(-6 * dt);
   G.cam.x += (t.x - G.cam.x) * k; G.cam.y += (t.y - G.cam.y) * k;
 }
 
 // ---------- Render ----------
 function rr(x, y, w, h, r) {
-  const rad = Math.min(r, w / 2, h / 2);
+  // a shape that is shrinking to nothing (a geyser column sinking) must not throw on a negative radius
+  const rad = Math.max(0, Math.min(r, w / 2, h / 2));
   ctx.beginPath(); ctx.moveTo(x + rad, y); ctx.arcTo(x + w, y, x + w, y + h, rad); ctx.arcTo(x + w, y + h, x, y + h, rad);
   ctx.arcTo(x, y + h, x, y, rad); ctx.arcTo(x, y, x + w, y, rad); ctx.closePath();
 }
 function hash(x, y) { let h = (x * 374761393 + y * 668265263) | 0; h = (h ^ (h >> 13)) * 1274126177; return ((h ^ (h >> 16)) >>> 0) / 4294967295; }
 
+// a world may paint its whole background itself (it can still use drawSky and drawHills for parts of it)
 function drawBackground() {
+  const def = worldOf(G.L.world);
+  if (def.drawBackground) { def.drawBackground(ctx); return; }
+  drawSky();
+  const floor = G.L.h * T, cam = G.cam;
+  drawHills(W.hillFar, floor - 150 - cam.y * 0.55, 0.45, 70, 0.012, 0);
+  if (def.betweenHills) def.betweenHills(floor);
+  drawHills(W.hillNear, floor - 90 - cam.y * 0.75, 0.7, 50, 0.02, 40);
+}
+// sky gradient, sun, stars at night, drifting clouds
+function drawSky() {
   const L = G.L, cam = G.cam;
   const g = ctx.createLinearGradient(0, 0, 0, VIEW_H); g.addColorStop(0, W.skyTop); g.addColorStop(1, W.skyBot);
   ctx.fillStyle = g; ctx.fillRect(0, 0, VIEW_W, VIEW_H);
@@ -4306,10 +4619,6 @@ function drawBackground() {
     ctx.beginPath(); ctx.arc(x, y, c.r, 0, Math.PI * 2); ctx.arc(x + c.r * 0.9, y + 4, c.r * 0.8, 0, Math.PI * 2); ctx.arc(x - c.r * 0.9, y + 6, c.r * 0.7, 0, Math.PI * 2); ctx.fill();
   }
   ctx.globalAlpha = 1;
-  const floor = L.h * T;
-  drawHills(W.hillFar, floor - 150 - cam.y * 0.55, 0.45, 70, 0.012, 0);
-  if (L.world === 2) drawTrees(floor - 110 - cam.y * 0.65, 0.58);
-  drawHills(W.hillNear, floor - 90 - cam.y * 0.75, 0.7, 50, 0.02, 40);
 }
 function drawHills(color, baseY, par, amp, freq, seed) {
   const cam = G.cam; ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(0, VIEW_H);
@@ -4332,7 +4641,9 @@ function drawTrees(baseY, par) {
 }
 function drawPollen() {
   if (reduced()) return;
-  const L = G.L, cam = G.cam, t = G.time, H = L.h * T, fire = L.world === 2, snow = L.world === 3;
+  const def = worldOf(G.L.world);
+  if (def.drawAmbient) { def.drawAmbient(ctx); return; }
+  const L = G.L, cam = G.cam, t = G.time, H = L.h * T, fire = def.particles === 'fire', snow = def.particles === 'snow';
   ctx.fillStyle = fire ? P.star : snow ? P.w3Snow : P.dust;
   for (const q of L.pollen) {
     if (fire && q.ph > 4) continue;
@@ -4349,17 +4660,18 @@ function drawPollen() {
 }
 
 function drawTiles() {
-  const L = G.L, cam = G.cam;
+  const L = G.L, cam = G.cam, def = worldOf(L.world), own = def.hooks.drawTile && def.hooks.drawTile.length ? def.hooks.drawTile : null;
   const x0 = Math.max(0, Math.floor(cam.x / T)), x1 = Math.min(L.w - 1, Math.floor((cam.x + VIEW_W) / T));
   const y0 = Math.max(0, Math.floor(cam.y / T)), y1 = Math.min(L.h - 1, Math.floor((cam.y + VIEW_H) / T));
   for (let ty = y0; ty <= y1; ty++) for (let tx = x0; tx <= x1; tx++) {
     const t = L.tiles[ty][tx]; if (t === EMPTY) continue;
     const x = tx * T, y = ty * T;
+    if (own && own.some((f) => f(t, tx, ty, x, y, ctx) === true)) continue;
     switch (t) {
       case SOLID: drawGround(tx, ty, x, y); break;
       case ONEWAY: drawOneway(tx, ty, x, y); break;
-      case THORN_UP: if (L.world === 3) drawIceSpikes(tx, ty, x, y); else drawThorns(x, y, 1); break;
-      case THORN_DOWN: if (L.world === 3) drawIcicleTile(tx, ty, x, y); else drawThorns(x, y, -1); break;
+      case THORN_UP: if (def.drawThorn) def.drawThorn(tx, ty, x, y, 1); else drawThorns(x, y, 1); break;
+      case THORN_DOWN: if (def.drawThorn) def.drawThorn(tx, ty, x, y, -1); else drawThorns(x, y, -1); break;
       case TOG_A: drawToggle(x, y, P.toggleA, !G.switchOn); break;
       case TOG_B: drawToggle(x, y, P.toggleB, G.switchOn); break;
       case CRUMBLE: drawCrumble(L.crumbles.get(tx + ',' + ty), x, y); break;
@@ -4370,6 +4682,7 @@ function drawTiles() {
       case ICE: drawIce(tx, ty, x, y); break;
       case TTHORN: drawTThorn(tx, ty, x, y); break;
       case GLOW: drawGlow(tx, ty, x, y); break;
+      default: { const d = tileDef(t); if (d && d.draw) d.draw(tx, ty, x, y, ctx); }
     }
   }
 }
@@ -4448,6 +4761,8 @@ function drawGlow(tx, ty, x, y) {
 }
 function drawChase() {
   const c = G.L.chase; if (!c) return;
+  const skin = worldOf(G.L.world).drawChase;
+  if (skin) { skin(c, ctx); return; }
   const x = c.x, floorY = (G.L.h - 4) * T, t = G.time, top = G.cam.y - 120, bottom = G.cam.y + VIEW_H + 120;
   // snow mass with a tumbling crest
   ctx.fillStyle = P.w3Snow; ctx.globalAlpha = 0.96;
@@ -4586,8 +4901,10 @@ function drawItems() {
     const wave = reduced() ? 0 : Math.sin(t * 6 + f.x) * 2 * (f.active ? 1 : 0.4);
     ctx.beginPath(); ctx.moveTo(x + 10, y + 5); ctx.lineTo(x + 27, y + 10 + wave); ctx.lineTo(x + 10, y + 16); ctx.closePath(); ctx.fill();
   }
+  const mushSkin = worldOf(L.world).drawMushroom;
   for (const mu of L.mushrooms) {
     const x = mu.x * T + T / 2, y = mu.y * T + T;
+    if (mushSkin) { mushSkin(mu, x, y, ctx); continue; }
     const sq = mu.squash, breathe = reduced() ? 0 : Math.sin(t * 2.5 + mu.x) * 0.03;
     ctx.save(); ctx.translate(x, y); ctx.scale(1 + sq * 0.3 + breathe, 1 - sq * 0.35 - breathe);
     ctx.fillStyle = P.mushStem; rr(-6, -16, 12, 16, 4); ctx.fill();
@@ -4596,7 +4913,7 @@ function drawItems() {
     ctx.beginPath(); ctx.arc(-6, -22, 2.2, 0, Math.PI * 2); ctx.arc(4, -24, 1.8, 0, Math.PI * 2); ctx.arc(8, -20, 1.5, 0, Math.PI * 2); ctx.fill();
     ctx.restore(); ctx.globalAlpha = 1;
   }
-  if (L.door) drawDoor(L.door);
+  if (L.door && !L.door.shut) drawDoor(L.door);
 }
 function drawDoor(d) {
   const x = d.x * T + 4, y = d.y * T - 12, w = 24, h = 44;
@@ -4638,6 +4955,12 @@ function drawMovers() {
     ctx.beginPath(); ctx.arc(m.x + 7, m.y + 6, 1.8, 0, Math.PI * 2); ctx.arc(m.x + m.w - 7, m.y + 6, 1.8, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
   }
 }
+// a wardrobe piece of a world module draws itself; the picture stands at Mimo's feet, scaled like him (o.top = top of the head)
+function drawWorldCostume(id, o, late) {
+  const c = id && COSTUMES.find((x) => x.id === id);
+  if (!c || !c.draw || !!c.face !== !!late) return; // face pieces (late) are drawn after the eyes
+  ctx.save(); c.draw(ctx, o); ctx.restore(); ctx.globalAlpha = o.alpha;
+}
 function outfitColor(outfit) {
   const c = COSTUMES.find((x) => x.id === (outfit || progress.outfit).color);
   return P[(c && c.token) || 'mimo'] || P.mimo;
@@ -4646,7 +4969,7 @@ function outfitColor(outfit) {
 function drawMimo(cx, bottom, o) {
   const w = 22, h = 26, alpha = o.alpha == null ? 1 : o.alpha, scale = o.scale || 1, breathe = o.breathe || 0;
   const bob = o.bob || 0, step = o.step || 0, facing = o.facing || 1, blink = o.blink == null ? 1 : o.blink;
-  const outfit = o.outfit || progress.outfit;
+  const outfit = o.hat ? { ...(o.outfit || progress.outfit), hat: o.hat } : o.outfit || progress.outfit;
   ctx.save(); ctx.translate(cx, bottom); ctx.scale((o.sx || 1) * scale * (1 - breathe), (o.sy || 1) * scale * (1 + breathe)); ctx.globalAlpha = alpha;
   let bodyColor = o.tint || outfitColor(outfit);
   if (!o.tint && outfit.color === 'c_rainbow') { const gr = ctx.createLinearGradient(0, -h - (o.bob || 0), 0, 0); gr.addColorStop(0, P.mush); gr.addColorStop(0.5, P.star); gr.addColorStop(1, P.mimoMint); bodyColor = gr; }
@@ -4695,7 +5018,7 @@ function drawMimo(cx, bottom, o) {
     ctx.fillStyle = P.star; ctx.beginPath(); ctx.moveTo(-5.6, -6); ctx.lineTo(5.6, -6); ctx.lineTo(4.3, -9.6); ctx.lineTo(-4.3, -9.6); ctx.closePath(); ctx.moveTo(-3, -13); ctx.lineTo(3, -13); ctx.lineTo(1.9, -16); ctx.lineTo(-1.9, -16); ctx.closePath(); ctx.fill();
     ctx.fillStyle = P.mush; ctx.beginPath(); ctx.arc(0, -21, 3, 0, Math.PI * 2); ctx.fill();
     ctx.restore();
-  }
+  } else drawWorldCostume(outfit.hat, { top, tilt, facing, alpha, bob, w, h });
   if (outfit.acc === 'a_wings') {
     const flap = Math.sin(G.time * 9) * 0.25;
     for (const sgn of [-1, 1]) {
@@ -4741,6 +5064,7 @@ function drawMimo(cx, bottom, o) {
     ctx.fillStyle = P.dust; ctx.globalAlpha = alpha * 0.8; ctx.beginPath(); ctx.arc(0, 0, 2, 0, Math.PI * 2); ctx.fill();
     ctx.restore(); ctx.globalAlpha = alpha;
   }
+  drawWorldCostume(outfit.acc, { top, tilt, facing, alpha, bob, w, h });
   // face
   ctx.save(); ctx.scale(facing, 1);
   const eyeY = -h / 2 - 3 - bob, mood = o.mood || null;
@@ -4761,6 +5085,7 @@ function drawMimo(cx, bottom, o) {
     ctx.fillStyle = P.dust; ctx.globalAlpha = alpha * 0.18; ctx.beginPath(); ctx.arc(1, eyeY + 0.5, 4.6, 0, Math.PI * 2); ctx.arc(8, eyeY + 0.5, 4.6, 0, Math.PI * 2); ctx.fill();
     ctx.globalAlpha = alpha;
   }
+  drawWorldCostume(outfit.acc, { top, tilt, facing, alpha, bob, w, h, eyeY }, true);
   ctx.fillStyle = P.blush; ctx.globalAlpha = alpha * 0.8;
   ctx.beginPath(); ctx.ellipse(-3, eyeY + 6, 2.6, 1.6, 0, 0, Math.PI * 2); ctx.ellipse(10, eyeY + 6, 2.6, 1.6, 0, 0, Math.PI * 2); ctx.fill();
   ctx.globalAlpha = alpha;
@@ -4807,6 +5132,7 @@ function drawPlayer() {
   if (g && g.kind === 'spin') { o.sx = Math.cos(g.t / g.dur * Math.PI * 4) * (p.sx || 1); o.mood = 'happy'; }
   if (g && g.kind === 'heart') { o.mood = 'happy'; o.sy = 1 + Math.sin(g.t * 10) * 0.04; }
   if (g && g.kind === 'selfie') o.mood = g.t > 0.6 && g.t < 1.2 ? 'happy' : 'look';
+  if (G.mode === 'boss' && G.rewardHat) o.outfit = { ...progress.outfit, hat: G.rewardHat };
   const cx = p.x + p.w / 2, by = p.y + p.h;
   drawMimo(cx, by, o);
   if (g && g.kind === 'juggle') for (let i = 0; i < 3; i++) { const a = g.t * 5 + i * 2.09; drawMiniStar(cx + Math.cos(a) * 10 * scale, by - 32 * scale - Math.abs(Math.sin(a)) * 12, 3.4); }
@@ -4905,12 +5231,15 @@ function render() {
   drawDisco();
   const sh = G.shake > 0 ? G.shake * 5 : 0;
   const ox = Math.round(G.cam.x) - (sh ? (Math.random() - 0.5) * sh * 2 : 0), oy = Math.round(G.cam.y) - (sh ? (Math.random() - 0.5) * sh * 2 : 0);
-  ctx.save(); ctx.translate(-ox, -oy); if (G.mode === 'boss') bossView();
-  drawPollen(); drawTiles(); drawItems(); drawMovers(); drawSnails(); drawFallingIcicles(); if (G.mode === 'boss') drawBoss(); drawGhost(); drawPlayer(); drawCompanion(); drawChase(); drawParticles(); if (G.mode === 'boss') drawBossFront(); drawBubbles();
+  const cz = camZoom();
+  ctx.save(); if (cz !== 1) ctx.scale(cz, cz); ctx.translate(-ox, -oy); if (G.mode === 'boss') bossView();
+  // world layers: back (behind the tiles), mid (its things, behind Mimo), front (over Mimo), over (screen space)
+  drawPollen(); wcall('draw', 'back', ctx); drawTiles(); drawItems(); drawMovers(); drawSnails(); drawFallingIcicles(); wcall('draw', 'mid', ctx); if (G.mode === 'boss') drawBoss(); drawGhost(); drawPlayer(); drawCompanion(); drawChase(); drawParticles(); wcall('draw', 'front', ctx); if (G.mode === 'boss') drawBossFront(); drawBubbles();
   ctx.restore();
+  wcall('draw', 'over', ctx);
   if (G.flash > 0) { ctx.fillStyle = '#FFFFFF'; ctx.globalAlpha = G.flash * 0.75; ctx.fillRect(0, 0, VIEW_W, VIEW_H); ctx.globalAlpha = 1; }
   if (G.state === 'dead') { ctx.fillStyle = P.thorn; ctx.globalAlpha = 0.18 * Math.max(0, 1 - G.stateT / DEATH_TIME); ctx.fillRect(0, 0, VIEW_W, VIEW_H); ctx.globalAlpha = 1; }
-  if (G.state === 'win') { ctx.fillStyle = P.doorGlow; ctx.globalAlpha = Math.min(0.6, Math.max(0, (G.stateT - 0.4) / 0.7) * 0.6); ctx.fillRect(0, 0, VIEW_W, VIEW_H); ctx.globalAlpha = 1; }
+  if (G.state === 'win') { ctx.fillStyle = P.doorGlow; ctx.globalAlpha = Math.min(0.6, Math.max(0, (G.stateT - winTime() + 0.7) / 0.7) * 0.6); ctx.fillRect(0, 0, VIEW_W, VIEW_H); ctx.globalAlpha = 1; }
   drawWipe(); drawIntro(); drawTouchHint();
 }
 
@@ -5042,7 +5371,7 @@ function showOverlay(name) {
   G.overlay = name; Music.duck(true);
   for (const [k, el] of Object.entries(OVERLAYS)) el.hidden = k !== name;
   cancelAnimationFrame(previewRaf);
-  if (name === 'menu') { renderMenu(); animatePreview($('menuMimo'), () => progress.outfit); }
+  if (name === 'menu') { renderMenu(); animatePreview($('menuMimo'), () => progress.outfit); maybeShowNews(); }
   if (name === 'shop') animatePreview(previewCanvas, () => shopSel);
 }
 function hideOverlays() {
@@ -5121,17 +5450,274 @@ $('btnSettings').addEventListener('click', () => { navFrom = 'menu'; renderSetti
 $('btnLevelsBack').addEventListener('click', () => showOverlay('menu'));
 $('btnSettingsBack').addEventListener('click', () => showOverlay(navFrom));
 
+// ---------- "Neu!" card: the coast is out ----------
+// Shown once per player over the main menu (localStorage NEWS_KEY), only to players who have played before: a brand new
+// player starts with level 1 and meets the coast on the way, so the key is set quietly for them. Never under test
+// automation (navigator.webdriver) unless window.__mimoNews is set. The little beach scene runs on the real clock
+// (it is decoration, not gameplay): Käpt'n Krake sneaks an arm out of the sea, steals a beach thing, waves with it and
+// tosses it back, again and again.
+const NEWS_KEY = 'mimo.news.coast', NEWS_WORLD = 4, NEWS_LOOP = 9;
+const ovNews = $('ovNews'), newsCv = $('newsScene');
+let newsRaf = 0, newsT0 = 0, newsHop = -9, newsShown = false;
+const newsOpen = () => !ovNews.hidden;
+function newsSeen() { try { return localStorage.getItem(NEWS_KEY) != null; } catch (_) { return true; } }
+function newsMark() { try { localStorage.setItem(NEWS_KEY, '1'); } catch (_) { /* storage may be unavailable */ } }
+const newsFirst = () => (WORLDS[NEWS_WORLD] ? WORLDS[NEWS_WORLD].firstLevel : -1);
+const newsWorldOpen = () => newsFirst() >= 0 && (DEV || OPEN || levelOpen(newsFirst()));
+const playedBefore = () => Object.keys(progress.best).length > 0 || progress.unlocked > 1;
+function maybeShowNews() {
+  if (newsShown || newsOpen() || !WORLDS[NEWS_WORLD] || newsSeen()) return;
+  if (navigator.webdriver && !window.__mimoNews) return;
+  newsShown = true;
+  newsMark();
+  if (!playedBefore()) return;
+  const open = newsWorldOpen();
+  $('newsMore').textContent = open
+    ? 'Hilf Mimo, alles zurückzubringen. Dreizehn neue Level und ein Endgegner mit sehr vielen Armen warten schon.'
+    : 'Sie wartet hinter den Verschneiten Höhen auf dich. Dreizehn neue Level und ein Endgegner mit sehr vielen Armen warten schon.';
+  $('btnNewsGo').textContent = open ? 'Ab an den Strand!' : 'Juhu, ich komme!';
+  $('btnNewsLater').hidden = !open;
+  ovNews.hidden = false;
+  newsT0 = performance.now(); newsHop = -9;
+  newsSize(); newsFrame();
+  $('newsCard').focus({ preventScroll: true });
+}
+function closeNews(go) {
+  if (!newsOpen()) return;
+  ovNews.hidden = true; cancelAnimationFrame(newsRaf); newsRaf = 0;
+  if (go && newsWorldOpen()) {
+    const c = continueLevel();
+    audio(); SFX.ui();
+    startLevel(LEVELS[c] && LEVELS[c].world === NEWS_WORLD ? c : newsFirst());
+    return;
+  }
+  $('btnContinue').focus({ preventScroll: true });
+}
+$('btnNewsGo').addEventListener('click', () => closeNews(true));
+$('btnNewsLater').addEventListener('click', () => closeNews(false));
+ovNews.addEventListener('click', (e) => { if (e.target === ovNews) closeNews(false); });
+// Escape closes, Tab stays inside the card; Enter and Space work on the focused button (the menu keys stay asleep)
+window.addEventListener('keydown', (e) => {
+  if (!newsOpen()) return;
+  e.stopImmediatePropagation();
+  if (e.code === 'Escape') { closeNews(false); e.preventDefault(); return; }
+  // Enter on the card itself (no button focused yet) is the main button
+  if ((e.code === 'Enter' || e.code === 'NumpadEnter') && document.activeElement === $('newsCard')) { closeNews(true); e.preventDefault(); return; }
+  if (e.code === 'Tab') {
+    const btns = [...ovNews.querySelectorAll('button')].filter((b) => !b.hidden), i = btns.indexOf(document.activeElement);
+    btns[(i + (e.shiftKey ? btns.length - 1 : 1)) % btns.length].focus(); e.preventDefault();
+  }
+}, true);
+newsCv.addEventListener('pointerdown', () => { newsHop = (performance.now() - newsT0) / 1000; SFX.hup(); });
+function newsSize() {
+  const r = newsCv.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1);
+  const w = Math.max(200, Math.round(r.width * dpr)), h = Math.max(100, Math.round(r.height * dpr));
+  if (newsCv.width !== w || newsCv.height !== h) { newsCv.width = w; newsCv.height = h; }
+}
+window.addEventListener('resize', () => { if (newsOpen()) { newsSize(); if (reduced()) newsFrame(); } });
+function newsFrame() {
+  const t = (performance.now() - newsT0) / 1000;
+  drawNewsScene(newsCv.getContext('2d'), reduced() ? 5.6 : t + 0.4, reduced());
+  if (!reduced() && newsOpen()) newsRaf = requestAnimationFrame(newsFrame);
+}
+
+const NEWS_PAL = {
+  light: { skyTop: '#BFE6EE', skyBot: '#FFF1DC', sun: '#FFE29A', sunCore: '#FFF4CF', cloud: '#FFFFFF', seaTop: '#86CFDA', seaDeep: '#56A9C2', glint: '#FFFFFF', foam: '#FFFFFF',
+    sand: '#F3DDB0', sandLow: '#ECCF98', sandDot: '#DDBD84', coral: '#F59AAE', coral2: '#FFB48F', octo: '#F08FA4', octoLite: '#F9BFCB', ink: '#3B3560',
+    castle: '#E7C88C', castleInk: '#C9A266', flag: '#F59AAE', bucket: '#7FC4E8', bucketRim: '#5AA6CF', flip: '#F6D374', flipStrap: '#F08FA4', hatTop: '#FDF6EC', hatBand: '#4B5A8C', hatBrim: '#3E4B78', badge: '#F6D374', pop: '#FFFFFF' },
+  dark: { skyTop: '#22324A', skyBot: '#5A4A64', sun: '#F3B98A', sunCore: '#FFD9AE', cloud: '#4F5470', seaTop: '#3F8397', seaDeep: '#1F4C66', glint: '#F2C9A6', foam: '#D5E2EA',
+    sand: '#A8936F', sandLow: '#968260', sandDot: '#83714F', coral: '#D9849A', coral2: '#D99A7C', octo: '#D98399', octoLite: '#EDB4C2', ink: '#1F1E2C',
+    castle: '#B39A70', castleInk: '#8A7452', flag: '#D9849A', bucket: '#5E9DC2', bucketRim: '#477FA2', flip: '#D9BC62', flipStrap: '#D98399', hatTop: '#ECE4D8', hatBand: '#43508A', hatBrim: '#36416E', badge: '#E8C766', pop: '#FFF6EA' },
+};
+// the scene: 400 x 200 units, fitted into the canvas; sky, sea and sand reach on to the canvas edges
+const NEWS_SEA = 92, NEWS_SPOTS = { flip: { x: 262, y: 165 }, bucket: { x: 224, y: 174 } }, NEWS_BASE = { x: 300, y: 128 };
+const nEase = (k) => { k = Math.max(0, Math.min(1, k)); return k * k * (3 - 2 * k); };
+const nSeg = (k, a, b) => nEase((k - a) / (b - a));
+function newsShore(x, t) { return 133 + Math.sin(x * 0.031 + 0.6) * 2.2 + Math.sin(x * 0.011) * 1.6 + Math.sin(t * 1.3) * 1.6; }
+function newsItem(c, kind, x, y, rot, pal) {
+  c.save(); c.translate(x, y); c.rotate(rot); c.scale(1.35, 1.35);
+  if (kind === 'flip') {
+    c.fillStyle = pal.flip; c.beginPath(); c.ellipse(0, 0, 10, 4.2, 0, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = pal.flipStrap; c.lineWidth = 2.2; c.lineCap = 'round';
+    c.beginPath(); c.moveTo(-4, -1.6); c.lineTo(2, -3.6); c.lineTo(6.5, -1.4); c.stroke();
+  } else {
+    c.fillStyle = pal.bucket; c.beginPath(); c.moveTo(-8, -11); c.lineTo(8, -11); c.lineTo(6, 0); c.lineTo(-6, 0); c.closePath(); c.fill();
+    c.fillStyle = pal.bucketRim; c.fillRect(-8.6, -12.5, 17.2, 3);
+    c.strokeStyle = pal.bucketRim; c.lineWidth = 1.4; c.beginPath(); c.arc(0, -12, 7, Math.PI * 1.05, Math.PI * 1.95); c.stroke();
+  }
+  c.restore();
+}
+function newsCap(c, x, y, rot, pal) {
+  c.save(); c.translate(x, y); c.rotate(rot);
+  c.fillStyle = pal.hatTop; c.beginPath(); c.ellipse(0, -7, 15, 6.5, 0, 0, Math.PI * 2); c.fill();
+  c.fillStyle = pal.hatBand; c.beginPath(); c.roundRect ? c.roundRect(-13, -4, 26, 7, 3.5) : c.rect(-13, -4, 26, 7); c.fill();
+  c.fillStyle = pal.hatBrim; c.beginPath(); c.ellipse(-3, 3, 13, 3.2, 0, 0, Math.PI); c.closePath(); c.fill();
+  c.fillStyle = pal.badge; c.beginPath(); c.arc(0, -0.6, 2.3, 0, Math.PI * 2); c.fill();
+  c.restore();
+}
+// the Krake's head: a pink dome rising out of the water, cap on top, eyes on Mimo or on its prize
+function newsHead(c, rise, laugh, jolt, lookX, pal, t) {
+  if (rise <= 0) return;
+  const x = 338, wl = 125, y = wl + 32 - rise * 34 - jolt * 7;
+  c.save(); c.beginPath(); c.rect(x - 50, 0, 100, wl + 1); c.clip();
+  c.fillStyle = pal.octo; c.beginPath(); c.ellipse(x, y, 30, 25, 0, 0, Math.PI * 2); c.fill();
+  c.fillStyle = pal.octoLite; c.globalAlpha = 0.75;
+  for (const [dx, dy, r] of [[-13, -11, 3.8], [10, -14, 2.8], [17, -4, 2.3], [-19, 1, 2.1]]) { c.beginPath(); c.arc(x + dx, y + dy, r, 0, Math.PI * 2); c.fill(); }
+  c.globalAlpha = 1;
+  const ey = y + 3;
+  for (const ex of [x - 11, x + 7]) {
+    if (laugh > 0.5) { c.strokeStyle = pal.ink; c.lineWidth = 2.2; c.lineCap = 'round'; c.beginPath(); c.arc(ex, ey + 2, 5, Math.PI * 1.15, Math.PI * 1.85); c.stroke(); continue; }
+    c.fillStyle = '#FFFFFF'; c.beginPath(); c.ellipse(ex, ey, 6.2, 7.2 + jolt * 1.8, 0, 0, Math.PI * 2); c.fill();
+    c.fillStyle = pal.ink; c.beginPath(); c.arc(ex + lookX * 2.6, ey + 1, 3.1, 0, Math.PI * 2); c.fill();
+  }
+  c.save(); c.translate(x - 1, y - 21 - jolt * 5); c.scale(1.2, 1.2); newsCap(c, 0, 0, -0.12 + Math.sin(t * 2) * 0.04, pal); c.restore();
+  c.restore();
+  // ripples where the head meets the water
+  c.strokeStyle = pal.foam; c.lineWidth = 1.6; c.globalAlpha = 0.7 * Math.min(1, rise * 2);
+  c.beginPath(); c.ellipse(x, wl + 1, 36 + Math.sin(t * 3) * 2, 3.4, 0, 0, Math.PI * 2); c.stroke(); c.globalAlpha = 1;
+}
+// a tapered tentacle from the base to the tip with a light underside and suckers
+function newsArm(c, tip, k, pal, t) {
+  const b = NEWS_BASE, n = 16, ps = [], cx = (b.x + tip.x) / 2 + 10, cy = Math.min(b.y, tip.y) - 26 - k * 10;
+  for (let i = 0; i < n; i++) {
+    const u = i / (n - 1), m = 1 - u, x = m * m * b.x + 2 * m * u * cx + u * u * tip.x, y = m * m * (b.y + 14) + 2 * m * u * cy + u * u * tip.y;
+    ps.push({ x: x + Math.sin(u * 5 - t * 4) * 3 * Math.sin(u * Math.PI), y });
+  }
+  const L = [], R = [];
+  for (let i = 0; i < n; i++) {
+    const a = ps[Math.max(0, i - 1)], d = ps[Math.min(n - 1, i + 1)], dx = d.x - a.x, dy = d.y - a.y, l = Math.hypot(dx, dy) || 1, w = (15 - (i / (n - 1)) * 11.5) / 2;
+    L.push({ x: ps[i].x - dy / l * w, y: ps[i].y + dx / l * w }); R.push({ x: ps[i].x + dy / l * w, y: ps[i].y - dx / l * w });
+  }
+  // hidden below the water around its base, free everywhere else (it reaches far up the sand)
+  c.save(); c.beginPath(); c.rect(-400, -400, 1200, 1200); c.rect(b.x - 13, b.y + 1, 26, 80); c.clip("evenodd");
+  c.fillStyle = pal.octo; c.beginPath(); c.moveTo(L[0].x, L[0].y);
+  for (const q of L) c.lineTo(q.x, q.y);
+  const e = ps[n - 1]; c.arc(e.x, e.y, 1.4, 0, Math.PI * 2);
+  for (let i = n - 1; i >= 0; i--) c.lineTo(R[i].x, R[i].y);
+  c.closePath(); c.fill();
+  c.fillStyle = pal.octoLite;
+  for (let i = 3; i < n - 2; i += 2) { const q = L[i], p = ps[i]; c.beginPath(); c.arc((q.x + p.x * 2) / 3, (q.y + p.y * 2) / 3, 2.1 - i * 0.07, 0, Math.PI * 2); c.fill(); }
+  c.restore();
+  c.strokeStyle = pal.foam; c.lineWidth = 1.4; c.globalAlpha = 0.75; c.beginPath(); c.ellipse(b.x, b.y + 1, 9 + Math.sin(t * 5) * 1.5, 2.2, 0, 0, Math.PI * 2); c.stroke(); c.globalAlpha = 1;
+  return e;
+}
+// a comic word: white letters with an ink outline, popping in
+function newsPop(c, text, x, y, k, rot, size, pal) {
+  if (k <= 0 || k >= 1) return;
+  const sc = k < 0.15 ? 0.5 + k / 0.15 * 0.6 : k < 0.25 ? 1.1 - (k - 0.15) : 1, a = k > 0.8 ? (1 - k) / 0.2 : 1;
+  c.save(); c.translate(x, y); c.rotate(rot); c.scale(sc, sc); c.globalAlpha = a;
+  c.font = '600 ' + size + 'px ' + "'Fredoka', 'Nunito', system-ui, sans-serif"; c.textAlign = 'center'; c.textBaseline = 'middle';
+  c.lineJoin = 'round'; c.lineWidth = 4; c.strokeStyle = pal.ink; c.strokeText(text, 0, 0); c.fillStyle = pal.pop; c.fillText(text, 0, 0);
+  c.restore();
+}
+// the loop (NEWS_LOOP s): the head peeks out, an arm steals the flip-flop (next time the bucket), "Schlürf!", it waves
+// with it ("Meins!"), Mimo peeps, the Krake jumps and tosses it back, Mimo hops for joy
+function newsBeats(t) {
+  const k = t % NEWS_LOOP, kind = Math.floor(t / NEWS_LOOP) % 2 ? 'bucket' : 'flip', spot = NEWS_SPOTS[kind], b = NEWS_BASE;
+  const out = { kind, k, rise: nSeg(k, 1.0, 1.8) * (1 - nSeg(k, 6.9, 7.6)), laugh: k > 5.2 && k < 6.5 ? 1 : 0, jolt: k > 6.55 && k < 7.1 ? Math.sin((k - 6.55) / 0.55 * Math.PI) : 0,
+    arm: null, held: false, item: { x: spot.x, y: spot.y, rot: 0, on: true }, mood: null, hop: 0, look: 1 };
+  if (k >= 2.0 && k < 3.2) { const u = nSeg(k, 2.0, 3.2); out.arm = { x: b.x + (spot.x - b.x) * u, y: b.y + 14 + (spot.y - 6 - b.y - 14) * u - Math.sin(u * Math.PI) * 22 }; }
+  else if (k >= 3.2 && k < 3.6) { const tap = Math.abs(Math.sin((k - 3.2) / 0.4 * Math.PI * 2)) * 4; out.arm = { x: spot.x + 2, y: spot.y - 6 - tap }; }
+  else if (k >= 3.6 && k < 4.6) { const u = nSeg(k, 3.6, 4.6); out.arm = { x: spot.x + (b.x - spot.x) * u, y: spot.y - 6 + (b.y + 18 - spot.y + 6) * u - Math.sin(u * Math.PI) * 14 }; out.held = true; }
+  else if (k >= 5.0 && k < 6.7) { const u = nSeg(k, 5.0, 5.5), w = Math.sin((k - 5.0) * 7) * 12 * u; out.arm = { x: b.x - 6 + w, y: b.y + 14 - u * 62 }; out.held = true; }
+  else if (k >= 6.7 && k < 7.4) { const u = nSeg(k, 6.7, 7.4); out.arm = { x: b.x - 6, y: b.y - 48 + u * 66 }; }
+  if (out.held) out.item = { x: out.arm.x - 1, y: out.arm.y + 3, rot: Math.sin(k * 6) * 0.5, on: true };
+  else if (k >= 4.6 && k < 6.7) out.item.on = false;
+  else if (k >= 6.7 && k < 7.8) {
+    // tossed back in an arc, one small bounce on the sand
+    const u = Math.min(1, (k - 6.7) / 0.75), bounce = k > 7.45 ? Math.sin(Math.min(1, (k - 7.45) / 0.35) * Math.PI) * 6 : 0;
+    out.item = { x: b.x - 6 + (spot.x - b.x + 6) * u, y: b.y - 48 + (spot.y - b.y + 48) * u - Math.sin(u * Math.PI) * 40 - bounce, rot: u < 1 ? u * Math.PI * 3 : 0, on: true };
+  }
+  if (k > 3.3 && k < 4.9) out.mood = 'scared';
+  else if (k > 6.25 && k < 7.0) out.mood = 'piep';
+  else if (k > 7.55 && k < 8.6) out.mood = 'happy';
+  const hop = (a, d, h) => (k > a && k < a + d ? Math.sin((k - a) / d * Math.PI) * h : 0);
+  out.hop = hop(3.45, 0.32, 9) + hop(5.55, 0.3, 6) + hop(5.95, 0.3, 6) + hop(7.6, 0.45, 15) + hop(8.1, 0.4, 10);
+  return out;
+}
+function drawNewsScene(c, t, still) {
+  const pal = NEWS_PAL[darkTheme() ? 'dark' : 'light'], cw = c.canvas.width, ch = c.canvas.height;
+  // a tall canvas (the side-by-side card on a phone held sideways) may crop the scene edges a little to keep things big
+  const s = Math.min(cw / 360, ch / 200), ox = (cw - 400 * s) / 2, oy = (ch - 200 * s) / 2;
+  const X0 = -ox / s - 1, X1 = (cw - ox) / s + 1, Y0 = -oy / s - 1, Y1 = (ch - oy) / s + 1, B = newsBeats(t);
+  c.setTransform(s, 0, 0, s, ox, oy);
+  // sky, sun, clouds
+  const sky = c.createLinearGradient(0, Y0, 0, NEWS_SEA); sky.addColorStop(0, pal.skyTop); sky.addColorStop(1, pal.skyBot);
+  c.fillStyle = sky; c.fillRect(X0, Y0, X1 - X0, NEWS_SEA - Y0 + 2);
+  c.fillStyle = pal.sun; c.globalAlpha = 0.45; c.beginPath(); c.arc(206, 58, 30, 0, Math.PI * 2); c.fill(); c.globalAlpha = 1;
+  c.fillStyle = pal.sunCore; c.beginPath(); c.arc(206, 58, 19, 0, Math.PI * 2); c.fill();
+  c.fillStyle = pal.cloud; c.globalAlpha = 0.9;
+  for (const [x0, y, r] of [[60, 34, 11], [300, 24, 9]]) { const x = ((x0 + t * 4) % 520) - 60; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.arc(x + r * 1.2, y - r * 0.5, r * 1.1, 0, Math.PI * 2); c.arc(x + r * 2.4, y, r * 0.9, 0, Math.PI * 2); c.rect(x, y, r * 2.4, r * 0.9); c.fill(); }
+  c.globalAlpha = 1;
+  // the sea: deeper towards the horizon line, glints and slow waves
+  const sea = c.createLinearGradient(0, NEWS_SEA, 0, 140); sea.addColorStop(0, pal.seaDeep); sea.addColorStop(1, pal.seaTop);
+  c.fillStyle = sea; c.fillRect(X0, NEWS_SEA, X1 - X0, 60);
+  c.strokeStyle = pal.glint; c.lineCap = 'round'; c.lineWidth = 1.6;
+  for (let i = 0; i < 14; i++) {
+    const gx = ((i * 71 + 23) % 440) - 20 + Math.sin(t * 0.7 + i) * 4, gy = NEWS_SEA + 6 + ((i * 37) % 28), a = 0.25 + 0.35 * (0.5 + 0.5 * Math.sin(t * 2.2 + i * 1.7));
+    c.globalAlpha = a; c.beginPath(); c.moveTo(gx, gy); c.lineTo(gx + 7 + (i % 3) * 3, gy); c.stroke();
+  }
+  c.globalAlpha = 1;
+  newsHead(c, B.rise, B.laugh, B.jolt, B.held ? -1 : B.k > 2 && B.k < 3.6 ? -0.6 : -1, pal, t);
+  // the sand with its wet edge and foam
+  c.fillStyle = pal.sand; c.beginPath(); c.moveTo(X0, Y1);
+  for (let x = Math.floor(X0); x <= X1 + 4; x += 4) c.lineTo(x, newsShore(x, t));
+  c.lineTo(X1, Y1); c.closePath(); c.fill();
+  const low = c.createLinearGradient(0, 150, 0, 200); low.addColorStop(0, pal.sand); low.addColorStop(1, pal.sandLow);
+  c.fillStyle = low; c.fillRect(X0, 150, X1 - X0, Y1 - 150);
+  c.strokeStyle = pal.foam; c.lineWidth = 2.4; c.globalAlpha = 0.85; c.beginPath();
+  for (let x = Math.floor(X0); x <= X1 + 4; x += 4) { const y = newsShore(x, t) + 0.5; if (x <= X0) c.moveTo(x, y); else c.lineTo(x, y); }
+  c.stroke(); c.globalAlpha = 1;
+  c.fillStyle = pal.sandDot;
+  for (let i = 0; i < 46; i++) { const x = ((i * 89 + 11) % 420) - 10, y = 142 + ((i * 53) % 56); c.beginPath(); c.arc(x, y, 0.9 + (i % 3) * 0.35, 0, Math.PI * 2); c.fill(); }
+  // corals at the water's edge, a starfish, a shell, the sandcastle with its flag
+  for (const [x, h, col] of [[16, 22, pal.coral], [30, 15, pal.coral2], [388, 20, pal.coral2], [400, 13, pal.coral]]) {
+    c.strokeStyle = col; c.lineWidth = 4; c.lineCap = 'round'; const y = newsShore(x, 0) + 6, sw = Math.sin(t * 1.4 + x) * 1.5;
+    c.beginPath(); c.moveTo(x, y); c.quadraticCurveTo(x - 1, y - h * 0.6, x + sw, y - h); c.moveTo(x, y - h * 0.45); c.quadraticCurveTo(x - 7, y - h * 0.6, x - 8 + sw, y - h * 0.85); c.moveTo(x + 1, y - h * 0.35); c.quadraticCurveTo(x + 7, y - h * 0.45, x + 8 + sw, y - h * 0.75); c.stroke();
+  }
+  c.fillStyle = pal.coral; c.save(); c.translate(98, 189); c.rotate(0.3); c.beginPath();
+  for (let i = 0; i < 10; i++) { const r = i % 2 ? 2.6 : 7, a = i / 10 * Math.PI * 2 - Math.PI / 2; c.lineTo(Math.cos(a) * r, Math.sin(a) * r); }
+  c.closePath(); c.fill(); c.restore();
+  c.fillStyle = pal.coral2; c.beginPath(); c.moveTo(306, 186); c.arc(306, 186, 6, Math.PI, 0); c.closePath(); c.fill();
+  c.strokeStyle = pal.sandLow; c.lineWidth = 1; c.beginPath(); for (const a of [-0.5, 0, 0.5]) { c.moveTo(306, 186); c.lineTo(306 + Math.sin(a) * 6, 186 - Math.cos(a) * 6); } c.stroke();
+  c.fillStyle = pal.castle; c.fillRect(38, 160, 36, 22); c.fillRect(46, 146, 20, 16);
+  for (const x of [38, 47, 56, 65]) c.fillRect(x, 155, 6, 6);
+  for (const x of [46, 54, 62]) c.fillRect(x, 141, 5, 6);
+  c.fillStyle = pal.castleInk; c.beginPath(); c.arc(56, 182, 5, Math.PI, 0); c.fill();
+  c.strokeStyle = pal.castleInk; c.lineWidth = 1.4; c.beginPath(); c.moveTo(56, 141); c.lineTo(56, 124); c.stroke();
+  c.fillStyle = pal.flag; c.beginPath(); c.moveTo(56, 124); c.lineTo(56 + 13 + Math.sin(t * 5) * 1.5, 128); c.lineTo(56, 132); c.closePath(); c.fill();
+  // the beach things; the one in the arm is drawn with the arm
+  for (const kind of ['bucket', 'flip']) if (kind !== B.kind) newsItem(c, kind, NEWS_SPOTS[kind].x, NEWS_SPOTS[kind].y, 0, pal);
+  if (B.arm) newsArm(c, B.arm, B.held ? 1 : 0, pal, t);
+  if (B.item.on) newsItem(c, B.kind, B.item.x, B.item.y, B.item.rot, pal);
+  // Mimo on holiday: sunglasses on, eyes on the sea
+  const tapHop = t - newsHop > 0 && t - newsHop < 0.5 ? Math.sin((t - newsHop) / 0.5 * Math.PI) * 16 : 0, hop = B.hop + tapHop;
+  const saved = ctx; ctx = c;
+  c.save(); c.translate(150, 184 - hop); c.scale(2, 2);
+  const shades = COSTUMES.some((x) => x.id === 'a_shades') ? 'a_shades' : 'a_none';
+  drawMimo(0, 0, { facing: 1, outfit: { ...progress.outfit, hat: 'h_straw', acc: B.mood === 'scared' ? 'a_none' : shades }, mood: B.mood, sx: hop > 1 ? 0.94 : 1, sy: hop > 1 ? 1.06 : 1,
+    breathe: still ? 0 : Math.sin(t * 3) * 0.025, blink: (t % 3.7) > 3.55 ? 0.12 : 1 });
+  c.restore(); ctx = saved;
+  c.setTransform(s, 0, 0, s, ox, oy);
+  // comic words
+  newsPop(c, '!', 166, 112 - B.hop, (B.k - 3.32) / 1.2, 0.1, 26, pal);
+  newsPop(c, 'Schlürf!', 268, 104, (B.k - 3.85) / 1.25, -0.12, 19, pal);
+  newsPop(c, 'Meins!', 352, 52, (B.k - 5.15) / 1.35, 0.1, 18, pal);
+  newsPop(c, 'Piep!', 184, 118, (B.k - 6.2) / 0.95, -0.1, 18, pal);
+  c.setTransform(1, 0, 0, 1, 0, 0);
+}
+
 // ---------- Level select ----------
 function buildLevelGrid() {
   const grid = $('levelGrid'); grid.innerHTML = '';
-  const current = Math.min(LEVELS.length - 1, progress.unlocked - 1);
+  const current = MAIN[mainOpen() - 1];
   const head = (text) => { const hd = document.createElement('h3'); hd.className = 'world-head'; hd.textContent = text; grid.appendChild(hd); };
   let lastWorld = 0;
   LEVELS.forEach((lv, i) => {
-    if (lv.night) return;
-    if (lv.world !== lastWorld) { lastWorld = lv.world; head('Welt ' + lv.world + ' · ' + WORLDS[lv.world].name); }
+    if (lv.night || lv.bonus) return;
+    if (lv.world !== lastWorld) { lastWorld = lv.world; const note = WORLDS[lv.world].headNote && WORLDS[lv.world].headNote(); head('Welt ' + lv.world + ' · ' + WORLDS[lv.world].name + (note ? ' · ' + note : '')); }
     const b = document.createElement('button'); b.type = 'button'; b.className = 'lvl-card';
-    const unlocked = OPEN_ALL || i < progress.unlocked, best = progress.best[i], got = progress.stars[i] || 0, medal = medalFor(i, best);
+    const unlocked = OPEN || levelOpen(i), best = progress.best[i], got = progress.stars[i] || 0, medal = medalFor(i, best);
     if (!unlocked) b.classList.add('locked'); if (i === current) b.classList.add('current');
     b.disabled = !unlocked;
     const meta = unlocked
@@ -5143,14 +5729,26 @@ function buildLevelGrid() {
     const bw = bossAfterLevel(i);
     if (bw > 0) grid.appendChild(bossCard(bw));
   });
+  // a world that is built but held back (UNRELEASED_WORLDS): a friendly note where it will begin, no level of it
+  if (HELD_WORLDS.length) {
+    const soon = document.createElement('p'); soon.className = 'lvl-soon';
+    soon.innerHTML = '<b>Bald geht es weiter.</b> <span>Mimo packt schon den Koffer für die nächste Welt.</span>';
+    grid.appendChild(soon);
+  }
   head('Bonus');
   const dl = dailyLevel(), d = progress.daily, doneToday = d && d.day === dayIndex(), sk = streak();
   grid.appendChild(bonusCard('☀\uFE0E', 'Tageslauf', 'Level ' + (dl + 1) + ' · ' + (doneToday ? fmtTime(d.time) : 'heute offen') + (sk ? ' · Serie ' + sk : ''), true,
     () => { hideOverlays(); loadLevel(dailyLevel()); G.daily = true; updateHud(); }));
   const su = skyUnlocked(), sp = progress.sky;
   grid.appendChild(bonusCard('3D', 'Himmelsinseln', !su ? 'Nach Level ' + (worldEnd(1) + 1) : sp && sp.best != null ? fmtTime(sp.best) + ' · ★ ' + (sp.stars || 0) + '/' + SKY_STARS : 'Inseln und Endgegner', su, startSky));
-  const ni = LEVELS.findIndex((l) => l.night), nightOpen = DEV || OPEN_ALL || nightness() >= 0.5;
+  const ni = LEVELS.findIndex((l) => l.night), nightOpen = DEV || OPEN || nightness() >= 0.5;
   if (ni >= 0) grid.appendChild(bonusCard('☾\uFE0E', LEVELS[ni].name, nightOpen ? (progress.best[ni] != null ? 'Bestzeit ' + fmtTime(progress.best[ni]) : 'Jetzt offen') : 'Nur von 21 bis 5 Uhr', nightOpen, () => startLevel(ni)));
+  // bonus levels of the world modules open once their world's last level is done
+  LEVELS.forEach((lv, i) => {
+    if (!lv.bonus) return;
+    const end = worldEnd(lv.world), open = DEV || OPEN || progress.best[end] != null;
+    grid.appendChild(bonusCard('◆', lv.name, !open ? 'Nach Level ' + (end + 1) : progress.best[i] != null ? 'Bestzeit ' + fmtTime(progress.best[i]) : 'Jetzt offen', open, () => startLevel(i)));
+  });
 }
 function bonusCard(icon, name, meta, open, go) {
   const b = document.createElement('button'); b.type = 'button'; b.className = 'lvl-card bonus' + (open ? '' : ' locked'); b.disabled = !open;
@@ -5229,6 +5827,7 @@ function openShop(from) {
 }
 function rewardText(c) {
   if (c.boss) return 'Besiege ' + BOSSES[c.boss].name + '.';
+  if (c.own) return (c.how && c.how()) || 'Finde alle Fundstücke.';
   if (c.ach) return 'Sammle ' + c.ach + ' Erfolge (' + Math.min(achCount(), c.ach) + ' von ' + c.ach + ').';
   return 'Spiele den Tageslauf an ' + c.streak + ' Tagen in Folge (' + Math.min(streak(), c.streak) + ' von ' + c.streak + ').';
 }
@@ -5248,7 +5847,7 @@ function renderShop() {
     if (sel) b.classList.add(owned ? 'on' : 'try'); if (worn) b.classList.add('worn'); if (!owned && isReward(c)) b.classList.add('closed');
     const cv = document.createElement('canvas'); cv.width = cv.height = 128; drawThumb(cv, { ...progress.outfit, [c.kind]: c.id });
     const name = document.createElement('span'); name.textContent = c.name;
-    const st = document.createElement('small'); st.textContent = worn ? 'Angelegt' : owned ? 'Im Schrank' : c.boss ? 'Endgegner' : c.ach ? 'Erfolge' : c.streak ? 'Serie' : '★ ' + c.price;
+    const st = document.createElement('small'); st.textContent = worn ? 'Angelegt' : owned ? 'Im Schrank' : c.boss ? 'Endgegner' : c.own ? 'Fundstücke' : c.ach ? 'Erfolge' : c.streak ? 'Serie' : '★ ' + c.price;
     if (!owned && !isReward(c)) st.className = 'price';
     b.append(cv, name, st); b.setAttribute('aria-pressed', String(sel));
     b.addEventListener('click', () => {
@@ -5303,7 +5902,7 @@ function showWin() {
   const m = MEDALS[G.levelIndex] || [0, 0, 0], order = ['gold', 'silver', 'bronze'], t = Math.round(G.levelTime * 10) / 10;
   $('winMedals').innerHTML = order.map((k, j) => '<span class="medal' + (t <= m[j] ? ' won' : '') + '"><i class="m-' + k + '"></i>' + MEDAL_NAMES[k] + ' ' + fmtTime(m[j]) + '</span>').join('');
   const bw = bossAfterLevel(G.levelIndex);
-  $('btnNext').textContent = bw > 0 && !bossBeatenBefore(bw) ? 'Zum Endgegner' : G.levelIndex + 1 < LEVELS.length ? 'Weiter' : 'Zum Ende';
+  $('btnNext').textContent = bw > 0 && !bossBeatenBefore(bw) ? 'Zum Endgegner' : nextMain(G.levelIndex) != null ? 'Weiter' : 'Zum Ende';
   $('btnReplay').hidden = G.rec.length < 6; $('btnWinMenu').hidden = false;
   showOverlay('win');
 }
@@ -5314,16 +5913,24 @@ function showEnd() {
   $('endStars').textContent = total + '/' + LEVELS.length * 3;
   $('endTime').textContent = allBest ? fmtTime(sum) : '–';
   $('endMedals').textContent = String(LEVELS.filter((_, i) => medalFor(i, progress.best[i]) === 'gold').length);
+  // the last world may bring its own ending card (title and text); without one the card stays as it is in the page
+  const endW = WORLD_MODS.filter((w) => w.ending).pop(), endCard = $('ovEnd');
+  if (!endCard.dataset.title) { endCard.dataset.title = endCard.querySelector('h2').textContent; endCard.dataset.text = endCard.querySelector('p').textContent; }
+  const ending = endW && G.mode === 'boss' && G.bossW === endW.world ? endW.ending : null;
+  endCard.querySelector('h2').textContent = ending && ending.title ? ending.title : endCard.dataset.title;
+  endCard.querySelector('p').textContent = ending && ending.text ? ending.text : endCard.dataset.text;
   G.fireworkT = 0;
   showOverlay('end');
 }
 function nextLevel() {
-  if (G.mode === 'boss') { const w = G.bossW; if (w < 3) startLevel(BOSSES[w].after + 1); else showEnd(); return; }
+  // after a boss the next world begins; after the last boss there is, the ending card
+  if (G.mode === 'boss') { const nx = nextMain(BOSSES[G.bossW].after); if (nx != null) startLevel(nx); else showEnd(); return; }
   if (G.mode === 'dash') { restartDash(); return; }
-  if (G.mode === 'bonus' || G.mode === 'sky' || G.levelIndex > LAST_MAIN) { goMenu(); return; }
+  if (G.mode === 'bonus' || G.mode === 'sky' || mainPos(G.levelIndex) < 0) { goMenu(); return; }
   const bw = bossAfterLevel(G.levelIndex);
   if (bw > 0 && !bossBeatenBefore(bw) && !G.daily) { startBoss(bw); return; }
-  if (G.levelIndex + 1 <= LAST_MAIN) startLevel(G.levelIndex + 1);
+  const nx = nextMain(G.levelIndex);
+  if (nx != null) startLevel(nx);
   else showEnd();
 }
 function overlayPrimary() {
@@ -5379,24 +5986,55 @@ function updateBubbles(dt) {
   if (!G.bubbles) return;
   for (let i = G.bubbles.length - 1; i >= 0; i--) { const b = G.bubbles[i]; b.life += dt; if (b.life >= b.max) G.bubbles.splice(i, 1); }
 }
-function drawBubbles() {
-  if (!G.bubbles || !G.bubbles.length) return;
-  ctx.font = '700 11px Nunito, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+// bubbles never overlap: each is laid out in turn and a newer one that would cover an older one moves up above it, its
+// tail stretched down to its speaker
+function bubbleBoxes() {
+  const out = [], vw = VIEW_W / camZoom();
   for (const b of G.bubbles) {
     if (b.life < 0) continue;
     let ax, ay;
     if (b.anchor === 'player') { if (!G.p || G.state === 'dead') continue; ax = G.p.x + G.p.w / 2; ay = G.p.y + G.p.h - 26 * funScale() - 6; }
     else { ax = b.anchor.x + (b.anchor.w || 0) / 2; ay = b.anchor.y - 8; }
-    const pop = Math.min(1, b.life / 0.12), fade = Math.min(1, (b.max - b.life) / 0.25);
     const w = ctx.measureText(b.text).width + 14, h = 20;
-    const x = Math.max(G.cam.x + SAFE_L + w / 2 + 4, Math.min(G.cam.x + VIEW_W - SAFE_R - w / 2 - 4, ax)), y = ay - h / 2 - 8;
-    const tx = Math.max(x - w / 2 + 8, Math.min(x + w / 2 - 8, ax));
+    const x = Math.max(G.cam.x + SAFE_L + w / 2 + 4, Math.min(G.cam.x + vw - SAFE_R - w / 2 - 4, ax));
+    let y = ay - h / 2 - 8;
+    for (let n = 0; n < 8; n++) {
+      const hit = out.find((o) => Math.abs(o.x - x) < (o.w + w) / 2 + 3 && Math.abs(o.y - y) < (o.h + h) / 2 + 3);
+      if (!hit) break;
+      y = hit.y - hit.h / 2 - h / 2 - 4;
+    }
+    // never under the top bar of a scene or the HUD row of a phone; pressed against it, it moves sideways instead
+    const minY = G.cam.y + ((G.state === 'cine' ? VIEW_H * 0.12 : HUD_PAD) + 4) / camZoom() + h / 2;
+    // and never cut off by the bottom edge (a speaker below the view): it stays inside, its tail points down to him
+    const maxY = G.cam.y + (VIEW_H * (G.state === 'cine' ? 0.88 : 1) - 6) / camZoom() - h / 2;
+    if (y > maxY) y = Math.max(minY, maxY);
+    let bx = x;
+    if (y < minY) {
+      y = minY;
+      for (let n = 0; n < 8; n++) {
+        const hit = out.find((o) => Math.abs(o.x - bx) < (o.w + w) / 2 + 3 && Math.abs(o.y - y) < (o.h + h) / 2 + 3);
+        if (!hit) break;
+        const right = hit.x + (hit.w + w) / 2 + 4, left = hit.x - (hit.w + w) / 2 - 4;
+        bx = right + w / 2 < G.cam.x + vw - SAFE_R - 4 && (ax >= hit.x || left - w / 2 < G.cam.x + SAFE_L + 4) ? right : left;
+      }
+    }
+    out.push({ b, ax, ay, x: bx, y, w, h });
+  }
+  return out;
+}
+function drawBubbles() {
+  if (!G.bubbles || !G.bubbles.length) return;
+  ctx.font = '700 11px Nunito, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  for (const { b, ax, ay, x, y, w, h } of bubbleBoxes()) {
+    const pop = Math.min(1, b.life / 0.12), fade = Math.min(1, (b.max - b.life) / 0.25);
+    const tx = Math.max(x - w / 2 + 8, Math.min(x + w / 2 - 8, ax)), lifted = ay - (y + h / 2) > 10;
     ctx.save(); ctx.globalAlpha = fade;
     const k = 0.6 + 0.4 * pop; ctx.translate(tx, ay); ctx.scale(k, k); ctx.translate(-tx, -ay);
     ctx.fillStyle = P.card || '#FFFFFF'; ctx.strokeStyle = P.mimoInk; ctx.lineWidth = 1;
     rr(x - w / 2, y - h / 2, w, h, 9); ctx.fill(); ctx.globalAlpha = fade * 0.25; ctx.stroke(); ctx.globalAlpha = fade;
     ctx.beginPath();
     if (b.kind === 'think') { ctx.arc(tx - 2, y + h / 2 + 4, 2.6, 0, Math.PI * 2); ctx.moveTo(tx - 4, y + h / 2 + 9); ctx.arc(tx - 5.5, y + h / 2 + 9, 1.6, 0, Math.PI * 2); }
+    else if (lifted) { ctx.moveTo(tx - 3, y + h / 2 - 1); ctx.lineTo(ax, ay - 2); ctx.lineTo(tx + 3, y + h / 2 - 1); ctx.closePath(); }
     else { ctx.moveTo(tx - 4, y + h / 2 - 1); ctx.lineTo(tx, y + h / 2 + 6); ctx.lineTo(tx + 4, y + h / 2 - 1); ctx.closePath(); }
     ctx.fill();
     ctx.fillStyle = P.fg || P.mimoInk; ctx.fillText(b.text, x, y + 0.5);
@@ -5406,7 +6044,7 @@ function drawBubbles() {
 }
 
 // Piep: a button that does nothing useful, and the world reacts to it
-let lastPiep = 0;
+let lastPiep = -Infinity;   // a piep in the first 260 ms after the page loaded must count too (fast test runs reach it)
 function piep() {
   if (G.overlay) return;
   const now = performance.now(); if (now - lastPiep < 260) return; lastPiep = now;
@@ -5429,6 +6067,8 @@ function piep() {
   }
   if (G.comp) G.comp.flash = 1;
   if (G.mode === 'boss') bossPiep();
+  // the world reacts too (a crab turns round); it answers how many it scared, for the achievement
+  scared += Number(wcall('piep', { x: cx, y: cy })) || 0;
   countPiep(scared);
 }
 function countPiep(scared) {
@@ -5602,7 +6242,7 @@ $('btnPiep').addEventListener('click', () => { piep(); stage.focus({ preventScro
 // ---------- Bonus: Himmelsinseln (3D diorama, module and Three.js load on demand) ----------
 const THREE_URL = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js';
 let sky = null, skyLoad = null;
-const skyUnlocked = () => DEV || OPEN_ALL || progress.best[worldEnd(1)] != null;
+const skyUnlocked = () => DEV || OPEN || progress.best[worldEnd(1)] != null;
 const isDarkTheme = () => { const h = P.skyTop || '#ffffff'; return h[0] === '#' && parseInt(h.slice(1, 3), 16) < 110; };
 function loadScript(src) {
   return new Promise((resolve, reject) => {
@@ -5710,10 +6350,9 @@ async function initCloud() {
 }
 initCloud();
 function cloudStats() {
-  const main = LEVELS.slice(0, LAST_MAIN + 1);
-  const golds = main.filter((_, i) => medalFor(i, progress.best[i]) === 'gold').length;
-  const done = main.filter((_, i) => progress.best[i] != null).length;
-  const time = main.reduce((a, _, i) => a + (progress.best[i] || 0), 0);
+  const golds = MAIN.filter((i) => medalFor(i, progress.best[i]) === 'gold').length;
+  const done = MAIN.filter((i) => progress.best[i] != null).length;
+  const time = MAIN.reduce((a, i) => a + (progress.best[i] || 0), 0);
   return { golds, stars: starsTotal(), done, time: Math.round(time * 10) / 10, bonus: progress.bonus ? progress.bonus.stars : 0, bonusScore: progress.bonus ? progress.bonus.score || 0 : 0, bonusPct: progress.bonus ? progress.bonus.pct || 0 : 0, dashScore: progress.dash ? progress.dash.score || 0 : 0, dashEnd: progress.dash && progress.dash.endless ? progress.dash.endless.score || 0 : 0, dashDist: progress.dash && progress.dash.endless ? progress.dash.endless.dist || 0 : 0, updatedAt: Date.now() };
 }
 function pushCloud() {
@@ -5766,7 +6405,7 @@ async function showBoard() {
       }
       const g = document.createElement('span'); g.className = 'st'; g.innerHTML = '<i class="m-gold" style="width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:4px"></i>' + (r.golds || 0);
       const st = document.createElement('span'); st.className = 'st'; st.textContent = '★ ' + (r.stars || 0);
-      const tm = document.createElement('span'); tm.className = 'st'; tm.textContent = (r.done || 0) + '/' + (LAST_MAIN + 1) + ' · ' + fmtTime(r.time || 0);
+      const tm = document.createElement('span'); tm.className = 'st'; tm.textContent = (r.done || 0) + '/' + MAIN.length + ' · ' + fmtTime(r.time || 0);
       el.append(rk, nm, g, st, tm); list.appendChild(el);
     });
   } catch (_) { list.innerHTML = '<div class="row"><span class="rk">·</span><span class="nm">Bestenliste gerade nicht erreichbar.</span></div>'; }
@@ -5774,6 +6413,47 @@ async function showBoard() {
 $('btnBoard').addEventListener('click', () => { boardFrom = 'levels'; showBoard(); });
 $('btnRunBoard').addEventListener('click', () => { boardFrom = 'run'; setBoardTab('dash'); showBoard(); });
 $('btnBoardBack').addEventListener('click', overlayBack);
+
+// ---------- What a world module gets in setup(api) (src/worlds/README.md describes every member) ----------
+// Live values are getters, so a module always sees the current level, player, palette and drawing context.
+const seeded = (seed) => { let a = seed | 0; return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; };
+const worldApi = Object.freeze({
+  T, STEP,
+  TILE: Object.freeze({ EMPTY, SOLID, ONEWAY, THORN_UP, THORN_DOWN, TOG_A, TOG_B, CRUMBLE, LOCK, WIND_R, WIND_L, UPDRAFT, ICE, TTHORN, GLOW }),
+  PHYS: Object.freeze({ GRAV, MAX_FALL, RUN, ACCEL, AIR_ACCEL, JUMP, BOUNCE, JUMP_CUT, STOMP, COYOTE, BUFFER }),
+  get ctx() { return ctx; }, get G() { return G; }, get L() { return G.L; }, get p() { return G.p; }, get input() { return input; },
+  get P() { return P; }, get W() { return W; }, get cam() { return G.cam; }, get time() { return G.time; }, get state() { return G.state; }, get mode() { return G.mode; },
+  get view() { return { w: VIEW_W, h: VIEW_H, hudPad: HUD_PAD, safeL: SAFE_L, safeR: SAFE_R }; },
+  get reduced() { return reduced(); }, get dark() { return darkTheme(); }, get levelIndex() { return G.levelIndex; }, levels: LEVELS,
+  rr, hash, mixHex, rnd: seeded, pick,
+  burst, dust, ring, floater, shake, bubble, setMood,
+  // a short opening scene of a level (letterbox bars, Mimo waits, jump skips): begin() returns false when it cannot start
+  cine: Object.freeze({
+    // the level title waits for the end of the scene (it would cover its first seconds on a phone), then pops up
+    begin() { if (G.state !== 'play' || G.mode !== 'level') return false; G.state = 'cine'; G.stateT = 0; G.cineCam = null; G.intro = INTRO_TIME; G.cineHint = G.touchHint; G.touchHint = 0; input.jumpQueued = false; onCine({ bars: true, skip: true }); return true; },
+    end() { if (G.state !== 'cine' || G.mode !== 'level') return; G.state = 'play'; G.stateT = 0; G.cineCam = null; G.intro = 0; G.touchHint = G.cineHint || 0; input.jumpQueued = false; onCine({ bars: false, skip: false, who: null, title: null }); },
+    // while the scene runs the world may hold the camera (world px of the top left corner, also outside the level); null gives it back.
+    // zoom > 1 brings the picture closer: the view then shows VIEW_W / zoom by VIEW_H / zoom world px from (x, y)
+    camera(x, y, zoom) { G.cineCam = x == null ? null : { x, y, zoom: Math.max(1, Math.min(3, zoom || 1)) }; },
+    skipRequested() { const j = input.jumpQueued; input.jumpQueued = false; return j; },
+  }),
+  // world sounds obey the effects switch like the built-in ones
+  sfx: SFX, voice: fx(voice), noise: fx(noise), midi,
+  hurt, die,
+  tileAt, isSolid, overlapsTile, thornExt,
+  setTile(tx, ty, t) { const L = G.L; if (L && ty >= 0 && ty < L.h && tx >= 0 && tx < L.w) L.tiles[ty][tx] = t; },
+  tileId: (world, ch) => ((WORLDS[world] && WORLDS[world].tileIds) || {})[ch],
+  // does Mimo overlap this box (world pixels)? inset shrinks Mimo, like the thorns do
+  touches(box, inset) { const p = G.p, i = inset || 0; return !!p && p.x + p.w - i > box.x && p.x + i < box.x + box.w && p.y + p.h - i > box.y && p.y + i < box.y + box.h; },
+  drawSky, drawHills, drawThorns, drawMimo, drawMiniStar,
+  music: { songs: Music.SONGS, setIntensity: (n) => Music.setIntensity(n), refresh() { if (progress.music && Music.running && Music.song !== songForState()) Music.start(); } },
+  boss: { FLOOR: BOSS_FLOOR, say: bossSay, bar: bossBarNow, set: bossSet, bark: bossBark, phase: bossPhase, rnd: bossRnd, shadow: bossShadow, eyes: bossEyes, col: bossCol, crown: drawCrown, stars: bossStars, scene: bossScene,
+    // a hit that does not come from a jump (a world boss decides itself when it is hit)
+    hit(B) { if (G.boss === B && !B.done && G.state === 'play') bossHit(B, true); },
+    // the boss's hat has landed on Mimo: he wears it from now on
+    wear: wearRewardHat },
+});
+for (const w of WORLD_MODS) for (const f of w.hooks.setup) f(worldApi);
 
 // Boot (keeps the current level across live updates of this page)
 function boot(data) {
@@ -5786,7 +6466,7 @@ if (window.claude && window.claude.hot && window.claude.hot.snapshot) {
   window.claude.hot.snapshot(() => (G.L && !G.overlay ? { levelIndex: G.levelIndex, attempts: G.attempts } : {}));
 }
 if (window.claude && window.claude.hot && window.claude.hot.ready) window.claude.hot.ready(boot); else boot(window.claude && window.claude.hot ? window.claude.hot.data : null);
-window.__mimo = { startSky, sim: { hold(on) { simHold = !!on; }, step(n) { for (let i = 0; i < n; i++) update(STEP); }, STEP }, startBoss, BOSSES, boss: () => G.boss, aud: () => ({ ac, masterGain, Music, audioStuck, btn: btnUnlock.textContent }), piep, bubble, unlock, startGag, CODES, ACHIEVEMENTS, progress, G, LEVELS, input, load: (i) => { hideOverlays(); loadLevel(i); }, setKey, startBonus, startDash, restartDash, openRunMenu, ph: (tx, ty) => (G.time / TT_PERIOD + (G.L.tgroup.get(tx + ',' + ty) || 0)) % 1, audioState: () => ({ state: ac && ac.state, music: musGain && musGain.gain.value, master: masterGain && masterGain.gain.value, running: Music.running, musicOn: progress.music, sfxOn: progress.sfx }),
+window.__mimo = { startSky, sim: { hold(on) { simHold = !!on; }, step(n) { for (let i = 0; i < n; i++) update(STEP); }, STEP }, startBoss, BOSSES, boss: () => G.boss, aud: () => ({ ac, masterGain, Music, audioStuck, btn: btnUnlock.textContent }), piep, bubble, unlock, startGag, CODES, ACHIEVEMENTS, progress, G, LEVELS, MEDALS, WORLDS, MAIN, COSTUMES, worldApi, song: () => songForState(), mainOpen, levelOpen, continueLevel, nextMain, input, load: (i) => { hideOverlays(); loadLevel(i); }, setKey, startBonus, startDash, restartDash, openRunMenu, ph: (tx, ty) => (G.time / TT_PERIOD + (G.L.tgroup.get(tx + ',' + ty) || 0)) % 1, audioState: () => ({ state: ac && ac.state, music: musGain && musGain.gain.value, master: masterGain && masterGain.gain.value, running: Music.running, musicOn: progress.music, sfxOn: progress.sfx }),
   meter: (ms) => new Promise((res) => { if (!ac) return res(null); const an = ac.createAnalyser(); an.fftSize = 2048; masterGain.connect(an); const buf = new Float32Array(an.fftSize); let peak = 0; const t0 = performance.now(); const tick = () => { an.getFloatTimeDomainData(buf); for (const v of buf) peak = Math.max(peak, Math.abs(v)); if (performance.now() - t0 < ms) requestAnimationFrame(tick); else { masterGain.disconnect(an); res(peak); } }; tick(); }) };
 })();
 </script>

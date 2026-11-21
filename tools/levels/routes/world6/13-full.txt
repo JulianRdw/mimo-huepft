@@ -1,0 +1,15 @@
+# Erdaufgang, all stars: straight up from the moon for the first star, a hop on the comet for the second, over the door into Käsebert's crater for the hidden one
+R until x>=19.6 max 4; RJ until falling; R until grounded max 2
+R until x>=25.4 max 1; RJ until orbit max 1.5
+R until ang>=177 and ang<=183 max 3; J 0.05; W 0.2; W until orbit max 2
+R until ang>=100 and ang<=106 max 3; J 0.05; R until grounded max 3
+W until time>=9.5 max 5; R until x>=45.5 max 2; RJ until falling; R until x>=50 max 1; W until body max 2
+R until x>=51.2 max 1; RJ until falling; R until x>=55.5 max 1; W until body max 2
+R until x>=56.3 max 1; RJ until falling; R until grounded max 2
+R until x>=64 max 2; W until time>=14.7 max 4; R until x>=69 max 2; W until x>=74.4 max 3; RJ 0.6; W until body max 2; W until x>=83.6 max 4; R until x>=86 max 2
+R until x>=94.8 max 3; J until y<=17 max 1; RJ until y<=12 max 2; R until grounded max 2
+R until x>=121.6 max 4; RJ until orbit max 1.5
+R until ang>=96 and ang<=104 max 3; J 0.05; R until grounded max 3
+R until x>=150 max 3; W until time>=30.0 max 4; R until x>=152.6 max 1; RJ 0.2; R until x>=155.5 max 1; W until body max 2
+R until x>=157.6 max 1; RJ until falling; R until grounded max 2; R until x>=167.6 max 3; RJ until x>=173.5 max 1; R until grounded max 3; R until x>=187.3 max 2
+L until x<=175.8 max 2; W 0.05; J until y<=8.9 max 2; LJ until grounded max 2; LJ 0.15; W until grounded max 1; L until x<=171.6 max 1; W 0.2

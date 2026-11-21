@@ -1,0 +1,37 @@
+# Seeigelgarten fast
+R until water max 3
+RD until y>=17.2 max 2
+R until x>=16.5 max 3
+RJ until y<=10.6 max 2
+R until x>=22 max 2
+RD until y>=17.2 max 2
+R until x>=28.5 max 3
+RJ until y<=10.6 max 2
+R until x>=34 max 2
+RD until y>=17.2 max 2
+R until x>=39 max 3
+RJ until y<=16.5 max 1
+R until x>=44.5 max 2
+RJ until y<=10.5 max 2
+R until x>=50.5 max 2
+RD until y>=13.4 max 2
+R until x>=56.5 max 2
+RD until y>=17 max 1
+R until x>=59.8 max 2
+W until time>=17.1 max 2
+R until body max 1
+W until x>=67.0 max 4
+RJ 0.05
+R until x>=69.5 max 1
+RJ until y<=13 max 2
+R until y>=14.2 max 2
+RJ 0.01
+R until y>=14.2 max 2
+RJ 0.01
+R until x>=99 max 3
+RJ until surface max 3
+R until x>=106.3 max 2
+J 0.05
+RJ 0.3
+R until x>=115.2 max 2
+W 0.5

@@ -1,0 +1,36 @@
+# Glutbrücke, all three stars: up to the bridge, the loose slab into the Brückenstube (hidden), the turret, the ferry star
+R until x>=3.6; RJ 0.2; R until x>=7.5 max 2; RJ 0.15; R until x>=10 max 1; W until grounded max 2
+RJ 0.15; R until x>=13.5 max 1; W until grounded max 2; R until x>=15.3 max 2
+# the bay: the first plate comes back hot, then turns dark
+W until time>=3.35 max 3; RJ 0.15; R until x>=18.6 max 1; W until grounded max 2
+RJ 0.2; R until x>=22.5 max 1; W until grounded max 2; R until x>=24.3 max 1; W until time>=4.35 max 2
+RJ 0.15; R until x>=27.3 max 1; W until grounded max 2; R until x>=28.5 max 1; RJ 0.3; R until grounded max 2
+# up to the bridge
+R until x>=33.3 max 1; J 0.2; R until x>=34.4 max 1; W until grounded max 2
+J 0.2; R until x>=35.4 max 1; W until grounded max 2
+J 0.2; R until x>=36.6 max 1; W until grounded max 2
+R until x>=38 max 1; RJ 0.2; R until grounded max 2
+R until x>=46.4 max 3; RJ 0.3; R until grounded max 2
+# the loose slab: stand on it and drop into the Brückenstube, out to the left onto the stump
+R until x>=55.6 max 2; W until y>=9.5 max 2; L until x<=50 max 3; W until grounded max 2
+R until x>=55.5 max 2; W until time>=16.75 max 4; R until x>=60.4 max 1; RJ 0.15; R until x>=63.4 max 1; W until grounded max 2
+R until x>=64.6 max 1; RJ 0.25; R until grounded max 2
+# up the middle tower to the turret star
+R until x>=71.6 max 2; J 0.3; W until grounded max 2
+R until x>=72.6 max 1; J 0.25; R until x>=73.6 max 1; W until grounded max 2
+J 0.25; W until grounded max 2
+L until x<=72.4 max 1; LJ 0.3; L until x<=71 max 1; W until grounded max 2
+J 0.35; W until grounded max 2
+# back down through the boards, onto the ferry, the ferry star
+R until x>=73.6 max 1; D until y>=12.9 max 2; R until x>=77.3 max 2
+W until time>=26.5 max 4; RJ 0.2; R until x>=81 max 1; W until grounded max 2
+W until x>=82.2 max 3; J 0.3; W until grounded max 2
+W until time>=28.55 max 3; R until x>=85.8 max 1; RJ 0.3; R until x>=89.5 max 1; W until grounded max 2
+W until time>=29.6 max 2; R until x>=90.5 max 1; RJ 0.2; R until x>=93.4 max 1; W until grounded max 2
+R until x>=94.6 max 1; RJ 0.2; R until x>=97.4 max 1; W until grounded max 2
+R until x>=98.6 max 1; RJ 0.25; R until grounded max 2
+# the far tower gate, the last pool
+R until x>=113.4 max 3
+RJ 0.15; R until x>=115.6 max 1; W until grounded max 2
+R until x>=116.6 max 1; RJ 0.15; R until x>=118.6 max 1; W until grounded max 2
+R until x>=119.6 max 1; RJ 0.25; R until grounded max 2; R until x>=125 max 2

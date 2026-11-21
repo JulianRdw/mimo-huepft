@@ -1,0 +1,76 @@
+# Sandburg full: tower star (detour left on the battlements), dungeon star (down the hatch on the right tower, out through the trapdoor), pillar star in the moat
+R until x>=36.5 max 3
+RJ 0.25
+R until x>=46.2 max 3
+W until time>=2.9 max 2
+R until body max 1
+W until x>=50.4 max 5
+RJ 0.3
+R until x>=55.3 max 3
+RJ 0.3
+R until grounded max 1
+RJ 0.3
+R until x>=65.4 max 3
+RJ 0.2
+R until x>=71.4 max 3
+RJ 0.2
+R until x>=82.3 max 3
+RJ 0.2
+R until grounded max 1
+RJ 0.2
+R until grounded max 1
+RJ 0.2
+R until grounded max 1
+RJ 0.2
+R until x>=103 max 4
+W 4.5  # Mimo stops by the kid: the arm takes the bucket
+R until x>=110.6 max 4
+J 0.2
+W until grounded max 1
+J 0.3
+W until grounded max 1
+L until x<=110.4 max 1
+LJ 0.3
+L until grounded max 1
+LJ 0.3
+L until x<=104.6 max 1
+W until grounded max 1
+RJ 0.25
+R 0.25
+W until grounded max 1
+RJ 0.15
+R until grounded max 1
+R until x>=111.6 max 1
+RJ 0.3
+R until grounded max 1
+RJ 0.3
+R until x>=119.8 max 1
+W until grounded max 1
+R until x>=120.4 max 1
+D 0.3
+W until grounded max 2
+L until x<=114.5 max 2
+R until x>=123.9 max 2
+J 0.3
+R until grounded max 1
+R until body max 1
+W until x>=131.8 max 4
+RJ 0.3
+R until x>=134 max 1
+W until grounded max 2
+J 0.3
+W until grounded max 2
+W until time>=34.25 max 4
+RJ 0.12
+R until x>=137.6 max 1
+W until body max 1
+W until x>=139.4 max 4
+RJ 0.3
+R until x>=151.8 max 3
+RJ 0.2
+R until grounded max 1
+R until x>=156.6 max 3
+RJ 0.3
+R until x>=162.4 max 3
+W 12.5  # hand-over: Mimo walks to the owner and waits for the gag
+R until x>=168 max 3

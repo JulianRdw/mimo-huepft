@@ -1,0 +1,49 @@
+# Kopfsprung full
+R until water max 3
+R until x>=16.6 max 3
+D until y>=13.9 max 2
+L until x<=11.3 max 3
+R until x>=15.3 max 2
+J until y<=13.5 max 2
+R until x>=17 max 1
+R until x>=26.3 max 4
+RJ until surface max 3
+J 0.05
+RJ 0.3
+R until x>=30.3 max 2
+W 5  # Mimo looks back: the arm takes the microphone
+RJ 0.3
+R until grounded max 1
+RJ 0.3
+R until grounded max 1
+RJ 0.3
+R until x>=37.9 max 1
+W until grounded max 1
+D 0.3
+W until grounded max 3
+L until x<=35.6 max 2
+R until x>=55.5 max 6
+RJ until y<=15.0 max 2
+R until y>=15.1 max 2
+RJ 0.01
+R until y>=15.1 max 2
+RJ 0.01
+R until y>=15.1 max 2
+RJ 0.01
+RJ until x>=74.5 max 2
+RJ until surface and x>=77.3 max 4
+J 0.05
+RJ 0.3
+R until x>=80.3 max 2
+RJ 0.3
+R until x>=86.5 max 2
+RJ 0.2
+R until water max 2
+RD until y>=17.9 max 2
+R until x>=95.5 max 3
+RJ until surface and x>=100.3 max 4
+J 0.05
+RJ 0.3
+R until x>=101.5 max 3
+W 13.5  # hand-over: Mimo walks to the owner and waits for the gag
+R until x>=105 max 3

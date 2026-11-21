@@ -1,0 +1,10 @@
+# Kometenritt, all stars: first the wrong comet behind the start (straight up to the hidden star), then the fast way
+L until body max 1; L until x<=3.2 max 1; W until y<=4.6 max 4; W until falling max 2; W until grounded max 4
+RJ 0.15; R until grounded max 1; R until x>=8.5 max 2; RJ 0.3; R until grounded max 2; R until x>=16 max 2; W until time>=10.9 max 6
+R until x>=20.6 max 2; W until x>=25.3 max 6; J 0.15; W until grounded max 2; R until x>=31 max 3; R until grounded max 3
+R until x>=45 max 3; W until time>=19.1 max 6; R until x>=50 max 3; W until x>=56.5 max 5; RJ until falling; R until body max 2; R until x>=64.5 max 1; R 0.15
+W until x>=70.8 max 5; RJ 0.3; R until grounded max 2
+R until x>=88.6 max 4; W until time>=30.4 max 6
+R until x>=93.4 max 4; RJ until y<=7 max 2; R until body max 2; R until x>=99.8 max 1
+W until x>=109.4 max 3; RJ 0.15; R until grounded max 2; W until x>=117.5 max 4; RJ 0.2; R until grounded max 2
+R until x>=134 max 3; W until time>=40.2 max 6; R until x>=135.6 max 3; W until x>=137.5 max 4; RJ until falling; R until x>=154 max 3

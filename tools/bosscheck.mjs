@@ -1,6 +1,10 @@
 // Plays the three boss fights frame by frame (deterministic) and checks that they hold together.
 //
-// Usage: node tools/bosscheck.mjs [--boss 1|2|3] [--shots dir] [--verbose]
+// Usage: node tools/bosscheck.mjs [--boss n] [--shots dir] [--scheme dark] [--hour h] [--verbose]
+// Every boss of the game is checked, those of the world modules too: their winning bot is boss.bot(B, h) in the world file
+// (h: go, moveTo, jump, press, hopOnto, G, T), their pictures boss.checkShots = { name: 'condition on B, G, ph' } (a name
+// starting with "scene-" is taken during a phase scene of the boss, which the runs watch instead of skipping), and
+// boss.idleSpots = [{ name, x, y, shots }] adds an idle run that starts with Mimo at that spot (in the water, say).
 //
 // Per boss:
 //   win     a bot that plays the fight the way it is meant to be played; has to win, prints the time
@@ -15,7 +19,6 @@ import { chromium } from './pw.mjs';
 import { serveSrc, parseArgs } from './levels-lib.mjs';
 
 const args = parseArgs(process.argv.slice(2));
-const only = args.boss ? [Number(args.boss)] : [1, 2, 3];
 const shotsDir = args.shots ? path.resolve(String(args.shots)) : null;
 if (shotsDir) fs.mkdirSync(shotsDir, { recursive: true });
 
@@ -53,6 +56,8 @@ function pageSetup() {
   const go = (dir) => { keys.left = dir < 0; keys.right = dir > 0; };
   const moveTo = (x, tol) => { const px = G.p.x + G.p.w / 2; go(Math.abs(x - px) <= (tol || 4) ? 0 : x > px ? 1 : -1); return Math.abs(x - px) <= (tol || 4); };
   const jump = (steps) => { if (G.p.grounded && keys.jump <= 0 && !M.input.jumpHeld) keys.jump = steps || 44; };
+  // a press that does not need ground (swimming: a stroke, a leap at the surface, rising while held)
+  const press = (steps) => { if (keys.jump <= 0 && !M.input.jumpHeld) keys.jump = steps || 12; };
   // land on something at x: walk up, hop, steer onto it
   function hopOnto(x, reach, steps) { const px = G.p.x + G.p.w / 2, d = Math.abs(x - px); moveTo(x, 3); if (G.p.grounded && d < reach && d > 14) jump(steps); if (G.p.grounded && d <= 14) go(x > 320 ? -1 : 1); }
 
@@ -114,12 +119,16 @@ function pageSetup() {
     },
   };
 
+  // the bot of a world module's boss comes with the boss; without one the check says so
+  const helpers = { go, moveTo, jump, press, hopOnto, G, T };
+  const noBot = () => { if (!C.problems.includes('no bot for this boss')) C.problems.push('no bot for this boss'); go(0); };
+  const botFor = (B) => BOTS[C.mode] || BOTS[B.kind] || (B.def.bot ? (b) => B.def.bot(b, helpers) : noBot);
   // start a fight and reset the bookkeeping
-  C.start = (w, mode, shots, assist) => {
+  C.start = (w, mode, shots, assist, spot) => {
     M.progress.invincible = !!assist; M.progress.zen = false;
     M.sim.hold(true); M.startBoss(w);
     Object.assign(C, { w, mode, t: 0, deaths: [], causes: [], lastRespawn: -9, minGap: 99, stateT: 0, lastState: '', maxState: 0, maxStateName: '', problems: [], hits: [], hp: G.boss.hp, won: null, aim: null, sl: null, wasBlocked: false, states: {},
-      shots: Object.entries(shots || {}).map(([name, cond]) => ({ name, test: new Function('B', 'G', 'ph', 'return ' + cond), done: false })), prevG: 'cine' });
+      shots: Object.entries(shots || {}).map(([name, cond]) => ({ name, test: new Function('B', 'G', 'ph', 'return ' + cond), done: false })), prevG: 'cine', spot: spot || null });
     keys.left = keys.right = false; keys.jump = 0;
   };
   // run until a picture is due, the fight is won, or the time is up
@@ -127,8 +136,13 @@ function pageSetup() {
     const STEP = M.sim.STEP;
     while (C.t < limit) {
       const B = G.boss; if (!B) { C.problems.push('boss vanished'); return { end: true }; }
-      if (G.state === 'cine') { M.setKey('jump', Math.floor(C.t * 30) % 2 === 0); }
-      else if (G.state === 'play') { if (C.prevG === 'cine') M.setKey('jump', false); if (B.done) { go(0); if (G.L.door) moveTo(G.L.door.x * T + T / 2, 3); } else (BOTS[C.mode] || BOTS[B.kind])(B); apply(); }
+      // the intro is skipped; a phase scene of a world boss is watched (it is part of the fight)
+      if (G.state === 'cine') { M.setKey('jump', !(B.cine && B.cine.scene) && Math.floor(C.t * 30) % 2 === 0); }
+      else if (G.state === 'play') {
+        if (C.prevG === 'cine') M.setKey('jump', false);
+        if (C.spot) { G.p.x = C.spot.x - G.p.w / 2; G.p.y = C.spot.y; G.p.vy = 0; C.spot = null; } // after the win the bot walks to the door; a world boss bot is asked to do that itself (it may have to swim)
+        if (B.done && !(B.def.bot && !BOTS[C.mode])) { go(0); if (G.L.door) moveTo(G.L.door.x * T + T / 2, 3); } else botFor(B)(B);
+        apply(); }
       const wasState = G.state;
       M.sim.step(1); C.t += STEP;
       const p = G.p;
@@ -146,11 +160,12 @@ function pageSetup() {
         // Mimo must never sit inside a solid tile
         const tx = Math.floor((p.x + p.w / 2) / T), ty = Math.floor((p.y + p.h / 2) / T), tile = G.L.tiles[ty] && G.L.tiles[ty][tx];
         if (tile === 1 || tile === 12) { if (!C.inWall) C.problems.push('Mimo inside a tile at ' + C.t.toFixed(2) + ' (' + tx + ',' + ty + ')'); C.inWall = true; } else C.inWall = false;
-        if (p.x < T - 1 || p.x + p.w > 19 * T + 1) C.problems.push('Mimo outside the arena at ' + C.t.toFixed(2));
-        if (B.x < T || B.x > 19 * T) C.problems.push('boss outside the arena at ' + C.t.toFixed(2));
+        const right = (G.L.w - 1) * T;
+        if (p.x < T - 1 || p.x + p.w > right + 1) C.problems.push('Mimo outside the arena at ' + C.t.toFixed(2));
+        if (B.x < T || B.x > right) C.problems.push('boss outside the arena at ' + C.t.toFixed(2));
       }
       const ph = phaseOf(B);
-      for (const s of C.shots) if (!s.done && G.state !== 'cine' && s.test(B, G, ph)) { s.done = true; return { shot: s.name }; }
+      for (const s of C.shots) if (!s.done && (G.state !== 'cine' || s.name.startsWith('scene-')) && s.test(B, G, ph)) { s.done = true; return { shot: s.name }; }
     }
     return { end: true };
   };
@@ -160,18 +175,22 @@ function pageSetup() {
 
 const srv = await serveSrc();
 const browser = await chromium.launch();
-const page = await browser.newPage({ viewport: { width: 844, height: 390 }, hasTouch: true, isMobile: true });
+// --scheme dark and --hour h take the pictures in dark mode or at that hour of the day (the sky follows the clock)
+const page = await browser.newPage({ viewport: { width: 844, height: 390 }, hasTouch: true, isMobile: true, colorScheme: args.scheme === 'dark' ? 'dark' : 'light' });
+if (args.hour != null) await page.addInitScript((h) => { Date.prototype.getHours = function () { return h; }; Date.prototype.getMinutes = function () { return 0; }; }, Number(args.hour));
 await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());
 const errors = []; page.on('pageerror', (e) => errors.push(e.message)); page.on('console', (m) => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push('console: ' + m.text()); });
 let failed = 0;
 const check = (ok, label, extra) => { console.log((ok ? 'ok   ' : 'FAIL ') + label + (extra ? ' · ' + extra : '')); if (!ok) failed++; };
 
-async function play(w, mode, limit, shots, assist) {
-  await page.evaluate(([w, mode, shots, assist]) => window.__check.start(w, mode, shots, assist), [w, mode, shots || null, !!assist]);
+async function play(w, mode, limit, shots, assist, spot) {
+  await page.evaluate(([w, mode, shots, assist, spot]) => window.__check.start(w, mode, shots, assist, spot), [w, mode, shots || null, !!assist, spot || null]);
   for (;;) {
     const r = await page.evaluate((limit) => window.__check.run(limit), limit);
     if (r.shot && shotsDir) {
       await page.evaluate(() => { document.getElementById('toast').hidden = true; return new Promise((res) => requestAnimationFrame(() => requestAnimationFrame(res))); });
+      // let the letterbox bars of a scene finish fading (the simulation stands still meanwhile)
+      await page.waitForTimeout(450);
       await page.screenshot({ path: path.join(shotsDir, 'boss' + w + '-' + r.shot + '.png') });
     }
     if (r.end) break;
@@ -180,11 +199,15 @@ async function play(w, mode, limit, shots, assist) {
 }
 
 try {
-  await page.goto(srv.url);
+  // ?vorschau: the bosses of worlds that are not released yet are checked too
+  await page.goto(srv.url + '?vorschau');
   await page.waitForFunction(() => window.__mimo && window.__mimo.sim && !document.getElementById('ovMenu').hidden, null, { timeout: 20000 });
   await page.evaluate(pageSetup);
+  const all = await page.evaluate(() => window.__mimo.BOSSES.map((b, i) => (b ? i : 0)).filter(Boolean));
+  const only = args.boss ? [Number(args.boss)] : all;
   for (const w of only) {
     const name = await page.evaluate((w) => window.__mimo.BOSSES[w].name, w);
+    if (!SHOTS[w]) SHOTS[w] = await page.evaluate((w) => window.__mimo.BOSSES[w].checkShots || {}, w);
     console.log('\n' + name);
     const sane = (r, label) => {
       check(r.problems.length === 0, label + ': keine Auffälligkeiten', r.problems.join(' | '));
@@ -201,6 +224,11 @@ try {
     const idle = await play(w, 'idle', IDLE_TIME);
     check(idle.deaths.length >= 1, 'Nichtstun: der Gegner erreicht Mimo auch in der Ecke', idle.deaths.length + ' Stürze in ' + IDLE_TIME + ' s');
     sane(idle, 'Nichtstun');
+    for (const spot of await page.evaluate((w) => window.__mimo.BOSSES[w].idleSpots || [], w)) {
+      const r = await play(w, 'idle', IDLE_TIME, shotsDir ? spot.shots : null, false, spot);
+      check(r.deaths.length >= 1, 'Nichtstun ' + spot.name + ': der Gegner erreicht Mimo', r.deaths.length + ' Stürze in ' + IDLE_TIME + ' s');
+      sane(r, 'Nichtstun ' + spot.name);
+    }
     const sloppy = await play(w, 'sloppy', SLOPPY_TIME);
     sane(sloppy, 'Schludrig');
     console.log('     Schludrig: ' + sloppy.deaths.length + ' Stürze, ' + sloppy.hits.length + ' Treffer' + (sloppy.won ? ', gewonnen' : ''));

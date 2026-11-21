@@ -1,0 +1,53 @@
+# Seeigelgarten full: the star in the roof pocket, the star in the niche over the crab ferry, the star at the bottom of the well
+R until water max 3
+RD until y>=17.2 max 2
+R until x>=16.5 max 3
+RJ until y<=10.6 max 2
+R until x>=22 max 2
+RD until y>=17.2 max 2
+R until x>=27.4 max 3
+J until y<=6.9 max 3
+W until y>=10.4 max 2
+R until x>=28.5 max 1
+RJ until y<=10.6 max 2
+R until x>=34 max 2
+RD until y>=17.2 max 2
+R until x>=39 max 3
+RJ until y<=16.5 max 1
+R until x>=44.5 max 2
+RJ until y<=10.5 max 2
+R until x>=50.5 max 2
+RD until y>=13.4 max 2
+R until x>=56.5 max 2
+RD until y>=17 max 1
+R until x>=59.8 max 2
+W until time>=22.75 max 7
+R until body max 1
+W until x>=64.0 max 4
+J 0.01
+W until y>=17.4 max 1
+R until body max 1
+W until x>=67.0 max 4
+RJ 0.05
+R until x>=69.5 max 1
+RJ until y<=13 max 2
+R until y>=14.2 max 2
+RJ 0.01
+R until y>=14.2 max 2
+RJ 0.01
+R until x>=86.2 max 3
+D until y>=18.9 max 2
+L until x<=81.6 max 2
+R until x>=86.4 max 2
+J until y<=14.6 max 2
+R until x>=99 max 3
+RJ until surface max 3
+R until x>=106.3 max 2
+J 0.05
+RJ 0.3
+R until x>=109.5 max 2
+W 6.5  # on the shore: the arm takes the towel, the snorkeller gives a thumbs up, the professor notes it
+R until x>=111.4 max 2
+W 13  # hand-over: Mimo walks to the owner and waits for the gag
+R until x>=115.2 max 2
+W 0.5

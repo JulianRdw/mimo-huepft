@@ -1,0 +1,44 @@
+# 05 Sternschnuppen, full: star over the mesa (shooting star), star on the meteor spot, hidden star in the old meteor
+R until x>=29.3
+RJ until falling
+R until grounded max 3
+R until x>=41.8
+RJ until falling
+R until grounded max 3
+R until x>=47.3
+RJ until falling
+R until grounded max 3
+R until x>=53.7
+J until falling
+W until grounded max 3
+R until x>=57.5
+R until grounded max 3
+R 0.05
+RJ until falling
+R until grounded max 3
+R 0.05
+RJ until falling
+R until grounded max 3
+R 0.05
+RJ until falling
+R until grounded max 3
+R until x>=81.5
+W until time>=15.1 max 3
+R until x>=105.3
+RJ until falling
+R until grounded max 3
+R until x>=110.3
+RJ 0.15
+R until x>=113.4
+W until grounded max 3
+R until x>=116.3
+L until x<=114.2
+W 0.1
+J until y<=9.6
+R until grounded max 3
+R until x>=124.3
+RJ until falling
+R until grounded max 3
+R until x>=132.3
+J until falling
+R until x>=137.5 max 4

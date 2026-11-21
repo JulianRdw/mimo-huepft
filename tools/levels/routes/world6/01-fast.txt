@@ -1,0 +1,18 @@
+# Kleiner Schritt fast
+R until x>=15.2; RJ 0.3; R until grounded max 2
+R until x>=27.4 max 2; RJ 0.4; R until grounded max 2
+R until x>=34.6 max 2; RJ 0.3; R until grounded max 2
+R until x>=45.6 max 2; R until grounded max 2
+R until x>=54.4 max 2; RJ 0.3; R until grounded max 2
+R until x>=64.4 max 2; RJ 0.3; R until grounded max 2
+R until x>=75.4 max 2; RJ 0.3; R until grounded max 2
+R until x>=84.6 max 2; RJ 0.35; R until grounded max 2
+R until x>=88.6 max 2; RJ 0.35; R until grounded max 2
+R until x>=95.0 max 2; RJ 0.3; R until grounded max 2
+R until x>=105.6 max 2; RJ 0.3; R until grounded max 2
+R until x>=110.4 max 2; RJ 0.3; R until grounded max 2
+R until x>=116.4 max 2; RJ 0.3; R until grounded max 2
+R until x>=122.4 max 2; RJ 0.3; R until grounded max 2
+R until x>=127.4 max 2; RJ 0.3; R until grounded max 2
+R until x>=137.4 max 2; RJ 0.3; R until grounded max 2
+R until x>=150.5 max 3

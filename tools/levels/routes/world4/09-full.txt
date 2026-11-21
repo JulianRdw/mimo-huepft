@@ -1,0 +1,39 @@
+R until x>=5.8 max 1
+J 0.05
+R 0.25
+W until y<=38 max 2
+L until x<=4.6 max 3
+W until y<=33 max 3
+L until grounded max 2
+L until x<=1.7 max 1
+R until x>=15.3 max 4
+W until y<=35 max 3
+R until x>=20.4 max 2
+W until y<=31 max 3
+R until x>=25 max 2
+W until grounded max 2
+W 9  # on the picnic ledge: the arm takes the radio, its owner cries out
+L until x<=25.4 max 1
+J 0.15
+W until y<=26 max 2
+L until x<=21.6 max 2
+W until y<=22.5 max 2
+L until x<=17.5 max 2
+W until grounded max 2
+L until x<=15.6 max 1
+R until x>=18 max 1
+R until x>=21.6 max 2
+W until y<=23 max 2
+R until x>=26.5 max 2
+W until y<=17 max 2
+R until x>=31.6 max 2
+W until grounded max 2
+RJ 0.12
+W until y<=12 max 2
+L until x<=28.6 max 2
+W until y<=6 max 2
+L until x<=22 max 2
+W until grounded max 2
+L until x<=19.4 max 2
+W 16  # hand-over: Mimo walks to the owner and waits for the gag
+L until x<=15.4 max 2

@@ -1,0 +1,19 @@
+R until x>=6 max 2
+R until water max 2
+R until x>=12.3 max 2
+W until y>=8.8 max 2
+R until x>=44 max 5
+R until x>=50.6 max 2
+R until x>=56.5 max 5
+W until grounded max 2
+RJ 0.45
+R until x>=63.2 max 5
+R until x>=66 max 2
+RJ until y<=8.6 max 2
+R until x>=72.5 max 3
+R until x>=85.2 max 3
+W until y<=6.6 max 3
+RJ until surface max 2
+W 0.03
+RJ 0.3
+R until x>=100 max 3

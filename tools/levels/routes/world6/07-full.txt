@@ -1,0 +1,48 @@
+R until x>=7.3
+RJ until falling
+R until grounded max 3
+R until x>=14.3
+RJ until falling
+R until grounded max 3
+R 0.05
+R until x>=24.3
+RJ until falling
+R until grounded max 3
+R until x>=40
+R until x>=44
+RJ until falling
+R until grounded max 3
+R until x>=56.3
+RJ until falling
+R until body max 2
+W 0.05
+RJ until falling
+R until grounded max 3
+R until x>=72.6
+RJ 0.1
+R until orbit max 1.5
+W until ang>=96 and ang<=102 max 3
+J 0.05
+R until grounded max 3
+R until x>=91.3
+RJ until falling
+R until grounded max 3
+R 0.05
+RJ until falling
+R until grounded max 3
+R until x>=103.6
+W until grounded max 3
+R until x>=107.2 max 2
+W until x>=108.2 max 2
+J 0.1
+W until body max 2
+R until x>=111.9 max 1.5
+J until falling max 2
+R until grounded max 3
+R until x>=123.6
+RJ until falling
+R until grounded max 3
+L 0.1
+R until x>=140.3
+RJ until falling
+R until x>=145.5 max 3

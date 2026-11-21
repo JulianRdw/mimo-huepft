@@ -1,0 +1,25 @@
+# Umlaufbahn, all stars
+# the first moon: let go on its left side, straight up, into the tiny moon (hidden star), off it to the right
+R until x>=8.0 max 2; RJ until orbit max 1.5
+R until ang>=177 and ang<=183 max 3; J 0.05; W 0.2; W until orbit max 1
+R until ang>=96 and ang<=104 max 3; J 0.05; R until grounded max 3
+# the moon over the pit: straight up for the star, it catches Mimo again
+R until x>=24.2 max 2; RJ until orbit max 1.5
+R until ang>=177 and ang<=183 max 3; J 0.05; W 0.2; W until orbit max 1.5
+R until ang>=96 and ang<=104 max 3; J 0.05; R until grounded max 3
+R until x>=48.6 max 2; RJ until orbit max 1.5
+R until ang>=106 and ang<=114 max 3; J 0.05; R until grounded max 3
+R until x>=63.4 max 1; RJ 0.3; R until grounded max 2
+R until x>=76.0 max 2; RJ until orbit max 1.5
+R until ang>=96 and ang<=104 max 3; J 0.05; R until orbit max 2
+R until ang>=96 and ang<=104 max 4; J 0.05; R until orbit max 2
+R until ang>=96 and ang<=104 max 3; J 0.05; R until grounded max 3
+R until x>=110.6 max 2; RJ until orbit max 1.5
+R until ang>=306 and ang<=314 max 3; J 0.05; R until grounded max 3
+# the carousel moon flings backwards onto the rock arch (star), then on as usual
+R until x>=137.6 max 3; RJ until orbit max 1.5
+R until ang>=223 and ang<=227 max 3; J 0.05; L until grounded max 3
+R until x>=136.6 max 1; RJ until orbit max 1.5
+R until ang>=146 and ang<=154 max 3; J 0.05; R until orbit max 2
+R until ang>=96 and ang<=104 max 3; J 0.05; R until grounded max 3
+R until x>=160.5 max 2

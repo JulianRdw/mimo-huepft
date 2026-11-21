@@ -1,0 +1,38 @@
+# Kopfsprung fast
+R until water max 3
+R until x>=26.3 max 4
+RJ until surface max 3
+J 0.05
+RJ 0.3
+R until x>=30.3 max 2
+RJ 0.3
+R until grounded max 1
+RJ 0.3
+R until grounded max 1
+RJ 0.3
+R until x>=44.6 max 3
+RJ 0.3
+R until water max 2
+RJ until surface and x>=56.2 max 4
+J 0.05
+RJ 0.3
+R until x>=61.0 max 2
+RJ 0.25
+R until x>=67.0 max 2
+RJ 0.25
+R until water max 2
+RJ until surface and x>=77.3 max 4
+J 0.05
+RJ 0.3
+R until x>=80.3 max 2
+RJ 0.3
+R until x>=86.5 max 2
+RJ 0.2
+R until water max 2
+RD until y>=17.9 max 2
+R until x>=95.5 max 3
+RJ until surface and x>=100.3 max 4
+J 0.05
+RJ 0.3
+R until x>=105 max 3
+W until time>=99 max 0.01

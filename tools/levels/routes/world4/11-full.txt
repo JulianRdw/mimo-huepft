@@ -1,0 +1,14 @@
+R until x>=5.5 max 2; R until water max 1; RD until y>=56.4 max 2; R until x>=11.4 max 3
+RJ until surface max 3; W 0.03; RJ 0.2; R until grounded max 2
+W until grounded max 1; R until x>=14.2 max 1; RJ 0.3; R until grounded max 2
+R until x>=33.5 max 4; RJ 0.3; R until grounded max 2
+L until x<=35.4 max 1; LJ 0.32; L until grounded max 2
+R until x>=33.4 max 1; RJ 0.32; R until grounded max 2
+L until x<=21.4 max 3; W until water max 4; R until x>=23.6 max 1; J until y<=39.2 max 4; W until grounded max 2; R until x>=29.6 max 2; J 0.32; W until grounded max 2
+W 0.1; J 0.4; W until grounded max 1
+W until time>=18.5 max 3; L until x<=21.6 max 3; J 0.32; W until grounded max 1; J 0.35; W until grounded max 1
+PRJ 0.25; W until body max 1; W until x>=25.4 max 4; RJ 0.25; R until grounded max 1
+J 0.35; W until grounded max 1
+R until x>=36.7 max 3; W until y<=14.2 max 2; L until x<=35.3 max 1; W until y<=4 max 2; L until x<=32.6 max 2; W until grounded max 2
+L until x<=31.4 max 1; LJ 0.35; L until x<=25.6 max 1; W until grounded max 2; J 0.4; W until grounded max 2; W 9  # hand-over: Mimo walks to the owner and waits for the gag
+R until x>=28 max 2

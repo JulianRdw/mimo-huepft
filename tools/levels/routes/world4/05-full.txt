@@ -1,0 +1,70 @@
+R until x>=8.6 max 3
+P 0.05
+R until x>=9.6 max 1
+W until time>=0.95 max 1
+R 0.12
+W until body max 1
+R until x>=12.2 max 3
+RJ 0.3
+W until body max 2
+R until x>=16.6 max 3
+RJ 0.3
+R until x>=23.3 max 2
+RJ 0.2
+R until x>=28.4 max 1
+RJ 0.25
+R until x>=35.4 max 2
+W until time>=6.4 max 1
+R 0.1
+W until body max 1
+R until x>=41.6 max 3
+R until x>=48.6 max 1
+RJ 0.35
+R until x>=53.3 max 2
+RJ 0.25
+R until x>=62.4 max 2
+R until water max 1
+J 0.05
+W until time>=12.5 max 2
+D until y>=14.5 max 2
+W until body max 1
+W until x>=71.6 max 5
+J 0.05
+W until body max 2
+W until y<=12.3 max 3
+RJ 0.35
+R until grounded max 2
+RJ 0.2
+R until x>=78.3 max 1
+RJ 0.25
+R until x>=82.3 max 1
+RJ 0.25
+R until x>=89.4 max 2
+W until time>=20.0 max 1
+R 0.2
+W until body max 1
+W until x>=94.6 max 3
+RJ 0.25
+R until x>=97.5 max 1
+RJ 0.35
+R until grounded max 2
+R until x>=103.4 max 1
+P 0.05
+W until time>=23.3 max 1
+R 0.2
+W until body max 1
+W until x>=110.4 max 3
+RJ 0.25
+R until x>=122.3 max 2
+R 0.25
+W until body max 1
+P 0.05
+W until x<=115.4 max 4
+W until x>=124 max 5
+R until x>=129.4 max 4
+RJ 0.3
+R until grounded max 2
+RJ 0.2
+R until x>=137.4 max 3
+W 10.5  # hand-over: Mimo walks to the owner and waits for the gag
+R until x>=141.5 max 3

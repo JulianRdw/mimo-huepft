@@ -1,0 +1,15 @@
+R until x>=11.2 max 3; RJ 0.3; R until x>=21.5 max 3
+R until water max 3; RJ until surface and x>=32.3 max 8; W 0.03; RJ 0.2; R until grounded max 2
+R until x>=38.7 max 3; RJ 0.35; R until grounded max 2
+R until x>=44.6 max 3; RJ 0.3; R until x>=50 max 3
+R until x>=53 max 3; R until water max 2
+RJ 0.01; R 0.55; RJ 0.01; R 0.55; RJ 0.01; R 0.5; RJ 0.01; R until x>=76 max 2
+RJ until surface and x>=77.6 max 3; W 0.03; RJ 0.2; R until grounded max 2
+R until x>=89 max 3; W until time>=13.8 max 3; R until x>=99.5 max 6
+R until water max 3; RJ 0.15; R until x>=105.7 max 3; W until y>=12.8 max 3
+R until x>=112.8 max 2; D until y>=12.6 max 1; W until y<=11 max 1; R until water max 2; RJ until surface max 2; W 0.03; RJ 0.2; R until grounded max 2
+R until x>=128.2 max 3; RJ 0.3; R until grounded max 2
+R until x>=133.4 max 3; RJ 0.3; R until x>=140.3 max 3
+R until x>=143.2 max 3; RJ 0.38; R until grounded max 2
+R until x>=147.7 max 3; R until water max 2; RJ 0.1; R 0.6; RJ 0.01; R 0.6; RJ 0.01; R until x>=161.3 max 3
+W until y<=6.5 max 3; R until grounded max 3; R until x>=170 max 3

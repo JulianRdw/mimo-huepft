@@ -1,0 +1,24 @@
+# Mondstaub, all stars
+R until x>=5.6 max 1; RJ 0.3; R until grounded max 2
+R until x>=13.0 max 2; RJ 0.3; R until grounded max 2
+R until x>=25.0 max 2; RJ 0.3; R until grounded max 2
+# the safe rock among the thorns: from the second needle drop onto it, then up to the third needle
+R until x>=29.4 max 1; RJ 0.3; R until grounded max 2
+W 0.2; R until x>=36.6 max 1; W until grounded max 2
+R until x>=38.4 max 1; W 0.1; J 0.35; R until x>=40.7 max 1; W until grounded max 2
+R until x>=41.4 max 1; RJ 0.35; R until grounded max 2
+R until x>=47.4 max 1; RJ 0.3; R until grounded max 2
+# follow the tracks: down into the trough and into the dune, the old buggy
+R until x>=56.8 max 2; W until grounded max 2
+R until x>=68.4 max 3; L until x<=58.6 max 3
+LJ 0.4; L until grounded max 2
+W 0.1; R until x>=56.4 max 1; RJ 0.35; R until grounded max 2
+R until x>=76.8 max 4; RJ 0.3; R until grounded max 2
+R until x>=84.6 max 1; RJ 0.3; R until grounded max 2
+R until x>=90.6 max 1; RJ 0.3; R until grounded max 2
+R until x>=96.4 max 1; RJ 0.3; R until grounded max 2
+R until x>=103.4 max 1; RJ 0.3; R until grounded max 2
+R until x>=111.4 max 1; RJ 0.3; R until grounded max 2
+R until x>=120.4 max 1; RJ 0.3; R until grounded max 2
+R until x>=129.5 max 1; RJ 0.5; R until grounded max 2
+R until x>=147.6 max 3

@@ -1,0 +1,22 @@
+# Glutregen, full: the star under the cloud from the geyser top, the cellar under the rain hole (hidden star), the gallery roof via the geyser
+R until x>=7.2 max 2; RJ 0.3; R until grounded max 2
+R until x>=14.6 max 2; RJ 0.15; R until grounded max 2
+R until x>=17.2 max 1; RJ 0.3; R until grounded max 2
+R until x>=36.2 max 4; W until y<=16.2 max 5; W 0.05; J 0.36; W until grounded max 2
+RJ 0.3; R until grounded max 2
+R until x>=48 max 3; RJ 0.12; R until grounded max 2
+R until x>=57.3 max 4; RJ 0.3; R until grounded max 2
+R until x>=64.6 max 2; W until grounded max 2; R until x>=66.2 max 1; W until time>=12.62 max 1
+L until x<=64.9 max 1; W 0.2; RJ 0.36; R until grounded max 2
+R until x>=67.4 max 2; RJ 0.25; R until x>=69.6 max 1; W until grounded max 2
+RJ 0.25; R until x>=72.6 max 1; W until grounded max 2
+RJ 0.3; R until grounded max 2
+R until x>=88.2 max 3; RJ 0.1; R until grounded max 2
+R until x>=93.3 max 2; W until y<=5.2 max 5; R until x>=95.4 max 1; R until grounded max 1
+R until x>=102 max 2; R until grounded max 2
+R until x>=112.3 max 4; RJ 0.25; R until grounded max 2
+R until x>=118.3 max 2; RJ 0.25; R until grounded max 2
+R until x>=122.3 max 2; RJ 0.3; R until grounded max 2
+R until x>=127.3 max 2; RJ 0.2; R until grounded max 2
+R until x>=147.3 max 3; RJ 0.3; R until grounded max 2
+R until x>=158.3 max 3

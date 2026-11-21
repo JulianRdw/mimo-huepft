@@ -6,15 +6,33 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import { releaseWorldFiles } from './levels-lib.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = path.join(ROOT, 'src');
 const OUT = path.join(ROOT, 'docs');
 // the Sternenbahn files only ship while the game has it switched on (const STARWAY in src/index.html)
 const STARWAY_ON = /const STARWAY = true;/.test(fs.readFileSync(path.join(SRC, 'index.html'), 'utf8'));
-const MODULES = ['mimo3d.js', 'sky3d.js', ...(STARWAY_ON ? ['run3d.js', 'starway-core.js', 'starway-world.js', 'starway3d.js'] : [])];
+// the world files (src/worlds/, worlds 4 and up) are part of the main game: every build ships them, in the order of
+// their <script> lines in src/index.html; a world file that is not listed there would silently be missing, so that stops the build
+// worlds that are built but not released yet (const UNRELEASED_WORLDS in src/index.html) stay out of the app: their
+// <script> lines are taken out of the page and their files are not copied, so the published game cannot reach them
+const RELEASE = releaseWorldFiles();
+const WORLD_FILES = worldFiles().filter((f) => !RELEASE.held.includes(f));
+const MODULES = ['mimo3d.js', 'sky3d.js', ...(STARWAY_ON ? ['run3d.js', 'starway-core.js', 'starway-world.js', 'starway3d.js'] : []), ...WORLD_FILES];
 const ICONS = ['icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png'];
 const THREE_CDN = "'https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js'";
+
+function worldFiles() {
+  const html = fs.readFileSync(path.join(SRC, 'index.html'), 'utf8');
+  const listed = [...html.matchAll(/<script src="(worlds\/[\w./-]+\.js)"><\/script>/g)].map((m) => m[1]);
+  const dir = path.join(SRC, 'worlds');
+  const onDisk = fs.existsSync(dir) ? fs.readdirSync(dir, { recursive: true }).filter((f) => f.endsWith('.js')).map((f) => 'worlds/' + f.split(path.sep).join('/')) : [];
+  const missing = listed.filter((f) => !onDisk.includes(f)), unlisted = onDisk.filter((f) => !listed.includes(f));
+  if (missing.length) throw new Error('build: src/index.html loads ' + missing.join(', ') + ', but the file is missing');
+  if (unlisted.length) throw new Error('build: ' + unlisted.join(', ') + ' is not loaded by src/index.html (add a <script src> line in the world block)');
+  return listed;
+}
 
 function replaceOnce(text, from, to, label) {
   const n = text.split(from).length - 1;
@@ -51,6 +69,7 @@ function buildPage() {
     '<!doctype html><html lang="de"><head>' + APP_HEAD, 'artifact head');
   html = replaceOnce(html, THREE_CDN, "'vendor/three.min.js'", 'Three.js address');
   html = replaceOnce(html, '</body></html>', SW_REGISTER + '</body></html>', 'page end');
+  for (const f of RELEASE.held) html = replaceOnce(html, '<script src="' + f + '"></script>\n', '', f + ' script line');
   return html;
 }
 
@@ -137,7 +156,7 @@ function main() {
   for (const f of files) hash.update(f).update(fs.readFileSync(path.join(OUT, f)));
   const version = hash.digest('hex').slice(0, 12);
   fs.writeFileSync(path.join(OUT, 'sw.js'), serviceWorker(version, files));
-  console.log('built docs/ · version ' + version + ' · ' + files.length + ' files');
+  console.log('built docs/ · version ' + version + ' · ' + files.length + ' files' + (RELEASE.held.length ? ' · ' + RELEASE.held.length + ' files of unreleased worlds left out' : ''));
 }
 
 main();

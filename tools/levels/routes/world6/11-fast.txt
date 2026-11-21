@@ -1,0 +1,15 @@
+# Schwerelos, fast
+R until x>=10.5 max 2; RJ until falling; R until grounded max 3
+L until x<=24 max 1; LJ until falling; L until grounded max 3
+R until x>=14.5 max 1; RJ until falling; R until grounded max 3
+R until x>=23.5 max 1; RJ until falling; R until grounded max 3
+L until x<=31.5 max 1; LJ until falling; L until grounded max 3
+L until x<=21 max 1; LJ until falling; L until body max 3
+W until x>=11 max 3; J until y<=36.4 max 2; LJ until grounded max 2
+R until x>=7.5 max 1; RJ 0.2; R until body max 2
+R until x>=17.2 max 2; RJ until falling; R until grounded max 3
+R until x>=30.5 max 2; RJ until x>=33.7 max 1; J until falling max 2; W until grounded max 3
+L until x<=33.6 max 1; LJ until falling; L until grounded max 3
+L until x<=22.8 max 1; LJ until x<=17.4 max 1; J until falling max 2; W until body max 3
+L until x<=15.6 max 1; LJ until x<=11.5 max 1; J until falling max 2; W until grounded max 3; R until x>=10.3 max 1
+L until x<=10.5 max 1; W 0.2

@@ -1,0 +1,46 @@
+# Blubberlift fast
+R until x>=9.4 max 2
+W until body max 2
+W until y<=47.2 max 3
+J 0.25
+R until x>=15 max 2
+RJ 0.05
+R until x>=18.2 max 2
+RJ until y<=41.6 max 1
+R until x>=20.4 max 2
+W until body max 2
+W until y<=35 max 3
+LJ 0.05
+L until x<=15.6 max 2
+W until body max 2
+LJ 0.05
+L until x<=10.6 max 2
+W until body max 2
+LJ 0.05
+L until x<=5.6 max 2
+W until body max 2
+W until y<=23 max 3
+R until x>=8 max 1
+RD until x>=13.4 max 3
+W until body max 2
+W until y<=18.7 max 3
+RJ 0.3
+R until x>=17.4 max 2
+RJ 0.3
+R until grounded max 1
+RJ 0.3
+R until x>=20.5 max 1
+W until grounded max 1
+L until x<=19.4 max 1
+LJ 0.3
+L until grounded max 2
+L until x<=14.4 max 1
+LJ 0.3
+L until grounded max 2
+L until x<=9.4 max 1
+LJ 0.3
+L until grounded max 2
+L until x<=4.4 max 1
+LJ 0.3
+L until x<=1.6 max 2
+W 0.5
