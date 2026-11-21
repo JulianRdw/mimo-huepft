@@ -182,10 +182,11 @@
 
   // ---- 26-32: after the interview ----
   G.act({
-    name: 'notes', span: [26, 32],
-    pose: { reporter: [[30.0, 'write', 1, 1]] },
-    lines: [[30.2, 'reporter', 'Zitat: „Piep!“', 2.2]],
-    focus: [[23.6, 160], [25.8, 236], [30.6, 236]],
+    // after Mimo's "Piep!" of the interview (garden-chase.js, 26.4-31.6) Naike notes it down
+    name: 'notes', span: [26, 34],
+    pose: { reporter: [[31.35, 'write', 1, 1]] },
+    lines: [[31.45, 'reporter', 'Zitat: „Piep!“', 2.2]],
+    focus: [[32.2, 236]],
     dog(t) { return G.inn(t, 26.4, 31.6) ? { pose: 'lie', lookAt: null } : null; },
   });
 
