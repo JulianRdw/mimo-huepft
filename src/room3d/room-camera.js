@@ -34,6 +34,9 @@
   // stands; once he has run for `hold` seconds it goes back to its own way, `back` radians per second
   // on the rail. While turned by hand it comes closer in front of a wall instead of turning away.
   const LOOK = { hold: 1.0, back: 0.9, fitRate: 4, minDist: 1.0 };
+  // Tilting by hand: pitch 0 is the camera's own height; up to 1.5 it rises and looks down on Mimo, down to -1 it
+  // sinks and looks up. rise/sink: share of the distance the camera moves per unit, lift: how far the view looks up.
+  const TILT = { min: -1, max: 1.5, rise: 0.75, lift: 0.9, floor: 0.35, back: 0.8 };
 
   function makeCamera(THREE, deps) {
     const { p, S, PH, level, camBlocks } = deps;
@@ -45,7 +48,7 @@
     let explore = false, exploreW = 0, freeYaw = 0, backT = 0, fwdT = 0, bigT = 0, lead = 0, yawOff = 0;
     let lift = 0, share = 1, wantLift = 0, wantShare = 1, hideT = 0, clearT = 0;
     let latched = false, latchX = 0, latchY = 0, ctrl = 0, lastCtrl = 0;
-    let manual = 0, lookT = Infinity, fitD = Infinity, lastFull = Infinity;
+    let manual = 0, pitch = 0, lookT = Infinity, fitD = Infinity, lastFull = Infinity;
     const api = { pos, look, tall: false };
     const byHand = () => lookT < LOOK.hold;
 
@@ -131,11 +134,16 @@
       const d = Math.min(full, fitD);
       pos.set(fx - sn * d, S.focusY + height * (api.tall ? CAM.tallUp : 1), fz + cs * d);
       look.set(fx + sn * CAM.lookAhead, S.focusY + lookY, fz - cs * CAM.lookAhead);
+      if (pitch) {
+        // tilted by hand: higher up looking down, or lower down looking up (never into the floor under Mimo)
+        pos.y = Math.max(S.focusY + TILT.floor, pos.y + pitch * d * TILT.rise);
+        if (pitch < 0) look.y -= pitch * d * TILT.lift;
+      }
     }
     function snap() {
       const r = railAt(p.x, p.z);
       explore = r.off > (r.area || CAM.railFar); exploreW = explore ? 1 : 0; yawOff = 0; lead = 0; backT = fwdT = bigT = 0; latched = false;
-      manual = 0; lookT = Infinity; fitD = Infinity;
+      manual = 0; pitch = 0; lookT = Infinity; fitD = Infinity;
       dist = r.dist * lerp(1, CAM.exploreDist, exploreW); height = r.h * lerp(1, CAM.exploreUp, exploreW); lookY = r.look;
       yaw = freeYaw = roomYaw(r.yaw, dist); S.focusY = p.y;
       place(); centre.set(p.x, p.y + 0.5, p.z); pivot.set(p.x, S.focusY + 1, p.z); findClearSpot(); lift = wantLift; share = wantShare; hideT = clearT = 0;
@@ -155,7 +163,7 @@
       exploreW = damp(exploreW, explore ? 1 : 0, CAM.shapeRate, dt);
       // a turn by hand counts down only while Mimo runs; after that the rail angle comes back gently
       if (moving) lookT += dt;
-      if (moving && !byHand()) manual -= clamp(manual, -LOOK.back * dt, LOOK.back * dt);
+      if (moving && !byHand()) { manual -= clamp(manual, -LOOK.back * dt, LOOK.back * dt); pitch -= clamp(pitch, -TILT.back * dt, TILT.back * dt); }
       // angle: the explorer camera turns towards the way Mimo runs, the rail camera takes the designed angle
       if (!explore) freeYaw = yaw;
       else if (moving && !byHand()) {
@@ -205,9 +213,14 @@
       yaw += d; lookT = 0;
       if (explore) freeYaw += d; else manual = angDiff(0, manual + d);
     }
+    // Tilt the camera by hand (positive: higher up, looking down on Mimo)
+    function tilt(d) {
+      if (S.state !== 'play' || !d) return;
+      pitch = clamp(pitch + d, TILT.min, TILT.max); lookT = 0;
+    }
     // Turn the camera so it looks from behind Mimo towards a place (after a scene: towards the next goal)
     function face(x, z) { turn(angDiff(yaw, Math.atan2(x - p.x, -(z - p.z)))); }
-    return Object.assign(api, { snap, step, turn, face, byHand,controlYaw,yaw: () => yaw, avoidState: () => [lift, share, wantLift, wantShare], lastControlYaw: () => lastCtrl, exploring: () => explore });
+    return Object.assign(api, { snap, step, turn, tilt, pitch: () => pitch, face, byHand,controlYaw,yaw: () => yaw, avoidState: () => [lift, share, wantLift, wantShare], lastControlYaw: () => lastCtrl, exploring: () => explore });
   }
 
   Room3D.makeCamera = makeCamera;
