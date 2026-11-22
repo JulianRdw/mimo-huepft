@@ -376,6 +376,7 @@
       if (S.state !== 'dead') stepPlayer(dt);
       if (S.state === 'play') checks();
       if (input.look) { camera.turn(input.look); input.look = 0; }
+      if (input.lookY) { camera.tilt(input.lookY); input.lookY = 0; }
       stepParticles(dt); camera.step(dt);
     }
     // Quality steps down by itself on slow devices: coarser picture first, sun shadows last.

@@ -68,9 +68,9 @@
   const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
   const STICK_REACH = 46, STICK_DEAD = 0.18, HINT_TIME = 5200;
   // looking around: radians per pixel of finger or mouse, radians per second for Q and E, extra reach round the jump button
-  const LOOK_TOUCH = 0.0075, LOOK_MOUSE = 0.006, LOOK_KEYS = 2.2, JUMP_SLACK = 16;
-  // look: camera turn the game has not taken yet (radians, positive turns to the right)
-  const input = { left: false, right: false, up: false, down: false, ax: 0, ay: 0, jumpHeld: false, jumpQueued: false, look: 0 };
+  const LOOK_TOUCH = 0.0075, LOOK_MOUSE = 0.006, TILT_TOUCH = 0.006, TILT_MOUSE = 0.005, LOOK_KEYS = 2.2, JUMP_SLACK = 16;
+  // look: camera turn the game has not taken yet (radians, positive turns to the right); lookY: tilt not taken yet (positive looks down from higher up)
+  const input = { left: false, right: false, up: false, down: false, ax: 0, ay: 0, jumpHeld: false, jumpQueued: false, look: 0, lookY: 0 };
   if (isTouch) { document.body.classList.add('touch'); $('jump').hidden = false; }
   // inside the game app (?app, in a frame): a button back to the game's menu, and the game keeps the record
   const inApp = params.has('app') && window.parent !== window;
@@ -104,9 +104,9 @@
   })(0);
 
   // ---------- Mouse: drag on the picture to look around ----------
-  let mouseX = null;
-  $('stage').addEventListener('mousedown', (e) => { if (talking) { if (!ui.tap()) input.jumpQueued = true; return; } if (e.button === 0 && !isTouch) { mouseX = e.clientX; $('stage').classList.add('looking'); } });
-  window.addEventListener('mousemove', (e) => { if (mouseX === null) return; input.look += (e.clientX - mouseX) * LOOK_MOUSE; mouseX = e.clientX; });
+  let mouseX = null, mouseY = 0;
+  $('stage').addEventListener('mousedown', (e) => { if (talking) { if (!ui.tap()) input.jumpQueued = true; return; } if (e.button === 0 && !isTouch) { mouseX = e.clientX; mouseY = e.clientY; $('stage').classList.add('looking'); } });
+  window.addEventListener('mousemove', (e) => { if (mouseX === null) return; input.look += (e.clientX - mouseX) * LOOK_MOUSE; input.lookY += (e.clientY - mouseY) * TILT_MOUSE; mouseX = e.clientX; mouseY = e.clientY; });
   window.addEventListener('mouseup', () => { mouseX = null; $('stage').classList.remove('looking'); });
   window.addEventListener('keyup', (e) => {
     if (KEYS[e.code]) input[KEYS[e.code]] = false;
@@ -114,7 +114,7 @@
   });
 
   // ---------- Touch: left half is an invisible stick, the round button jumps, the rest of the right half looks around ----------
-  let stickId = null, stickX = 0, stickY = 0, jumpId = null, lookId = null, lookX = 0;
+  let stickId = null, stickX = 0, stickY = 0, jumpId = null, lookId = null, lookX = 0, lookY = 0;
   const stage = $('stage'), jumpEl = $('jump');
   const onJump = (t) => { const r = jumpEl.getBoundingClientRect(), cx = (r.left + r.right) / 2, cy = (r.top + r.bottom) / 2; return Math.hypot(t.clientX - cx, t.clientY - cy) < r.width / 2 + JUMP_SLACK; };
   stage.addEventListener('touchstart', (e) => {
@@ -123,7 +123,7 @@
     for (const t of e.changedTouches) {
       if (t.clientX < window.innerWidth / 2) { if (stickId === null) { stickId = t.identifier; stickX = t.clientX; stickY = t.clientY; } }
       else if (onJump(t)) { if (jumpId === null) { jumpId = t.identifier; input.jumpQueued = true; input.jumpHeld = true; jumpEl.classList.add('on'); } }
-      else if (lookId === null) { lookId = t.identifier; lookX = t.clientX; }
+      else if (lookId === null) { lookId = t.identifier; lookX = t.clientX; lookY = t.clientY; }
     }
   }, { passive: false });
   stage.addEventListener('touchmove', (e) => {
@@ -133,7 +133,7 @@
         const dx = (t.clientX - stickX) / STICK_REACH, dy = (t.clientY - stickY) / STICK_REACH, len = Math.hypot(dx, dy);
         const k = len < STICK_DEAD ? 0 : Math.min(1, len) / len;
         input.ax = dx * k; input.ay = dy * k;
-      } else if (t.identifier === lookId) { input.look += (t.clientX - lookX) * LOOK_TOUCH; lookX = t.clientX; }
+      } else if (t.identifier === lookId) { input.look += (t.clientX - lookX) * LOOK_TOUCH; input.lookY += (t.clientY - lookY) * TILT_TOUCH; lookX = t.clientX; lookY = t.clientY; }
     }
   }, { passive: false });
   const touchEnd = (e) => {
@@ -224,7 +224,7 @@
     onMission: (m) => ui.mission(m),
   };
   let talking = false, toldControls = false;
-  const CONTROLS = isTouch ? 'Links schieben zum Laufen, der runde Knopf springt. Rechts wischen zum Umschauen.' : 'Pfeiltasten oder WASD zum Laufen, Leertaste zum Springen. Mit der Maus ziehen oder Q und E zum Umschauen.';
+  const CONTROLS = isTouch ? 'Links schieben zum Laufen, der runde Knopf springt. Rechts wischen zum Umschauen, auch nach oben und unten.' : 'Pfeiltasten oder WASD zum Laufen, Leertaste zum Springen. Mit der Maus ziehen (auch hoch und runter) oder Q und E zum Umschauen.';
   let room = null;
   function restart() { if (!room) return; ui.hideWin(); room.restart(true); }
   // A private round crest: put it into stilprobe/privat/bvb.png (never committed). It then shows on the
