@@ -1,0 +1,252 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Mimo Kinderzimmer</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+  :root { --ink: #3A3850; --paper: #FFF9EE; }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html, body { margin: 0; height: 100%; background: #F1DCC0; overflow: hidden; font-family: 'Arial Rounded MT Bold', 'Nunito', system-ui, sans-serif; color: var(--ink); -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: none; }
+  .stage { position: fixed; inset: 0; }
+  .stage canvas.room3d { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .hud { position: fixed; top: calc(10px + env(safe-area-inset-top, 0px)); left: 0; right: 0; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; align-items: center; pointer-events: none; }
+  @media (max-width: 760px) { .chip .word { display: none; } }
+  .chip { display: inline-flex; align-items: center; gap: 6px; background: #FFFCF4; border: 2.5px solid var(--ink); border-radius: 999px; padding: 4px 12px; font-size: 15px; font-weight: 600; box-shadow: 0 3px 0 rgba(23, 20, 31, 0.22); font-family: 'Fredoka', 'Arial Rounded MT Bold', system-ui, sans-serif; }
+  .chip svg { width: 20px; height: 20px; }
+  .chip.fps { position: fixed; left: max(10px, env(safe-area-inset-left, 0px)); bottom: calc(8px + env(safe-area-inset-bottom, 0px)); font-size: 11px; font-weight: 500; opacity: 0.7; border-width: 1.5px; box-shadow: none; padding: 2px 8px; }
+  @media (max-height: 460px) { .chip { font-size: 13px; padding: 3px 9px; border-width: 2px; } .chip svg { width: 17px; height: 17px; } }
+  .hud button { pointer-events: auto; font: inherit; font-family: 'Fredoka', 'Arial Rounded MT Bold', system-ui, sans-serif; color: inherit; cursor: pointer; }
+  /* jump button on touch screens, same look as in the main game; the rest of the right half turns the camera */
+  .jump { position: fixed; right: calc(24px + env(safe-area-inset-right, 0px)); bottom: calc(22px + env(safe-area-inset-bottom, 0px)); width: 76px; height: 76px; border: 1.5px solid rgba(255, 255, 255, 0.6); border-radius: 50%; background: rgba(255, 255, 255, 0.2); opacity: 0.8; pointer-events: none; transition: background 0.08s, transform 0.08s; }
+  .jump::before { content: ""; position: absolute; inset: 0; margin: auto; width: 0; height: 0; border-style: solid; border-color: transparent; border-width: 0 12px 16px 12px; border-bottom-color: var(--ink); transform: translateY(-2px); }
+  .jump.on { background: rgba(255, 255, 255, 0.5); transform: scale(0.94); }
+  body:not(.touch) .stage { cursor: grab; }
+  body:not(.touch) .stage.looking { cursor: grabbing; }
+</style>
+<div class="stage" id="stage"><span id="anchor"></span></div>
+<div class="hud">
+  <span class="chip fps" id="hudFps">· fps</span>
+  <span class="chip" id="hudSecrets" hidden></span>
+  <span class="chip" id="hudStars"></span>
+  <span class="chip" id="hudTime"></span>
+  <button class="chip" id="btnFlag"></button>
+  <button class="chip" id="btnRestart"></button>
+</div>
+<div class="jump" id="jump" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+<script src="mimo3d.js"></script>
+<script src="room3d/room-kit.js"></script>
+<script src="room3d/room-props.js"></script>
+<script src="room3d/room-decor.js"></script>
+<script src="room3d/room-desk.js"></script>
+<script src="room3d/room-mood.js"></script>
+<script src="room3d/room-s1.js"></script>
+<script src="room3d/room-s2.js"></script>
+<script src="room3d/room-s2b.js"></script>
+<script src="room3d/room-s3.js"></script>
+<script src="room3d/room-s3b.js"></script>
+<script src="room3d/room-boss.js"></script>
+<script src="room3d/room-s4.js"></script>
+<script src="room3d/room-world.js"></script>
+<script src="room3d/room-pegs.js"></script>
+<script src="room3d/room-story-train.js"></script>
+<script src="room3d/room-story-desk.js"></script>
+<script src="room3d/room-side.js"></script>
+<script src="room3d/room-side-sport.js"></script>
+<script src="room3d/room-side-find.js"></script>
+<script src="room3d/room-side-play.js"></script>
+<script src="room3d/room-story.js"></script>
+<script src="room3d/room-ui.js"></script>
+<script src="room3d/room-camera.js"></script>
+<script src="room3d/room-core.js"></script>
+<script>
+(function () {
+  'use strict';
+  const $ = (id) => document.getElementById(id);
+  const params = new URLSearchParams(location.search);
+  const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  const STICK_REACH = 46, STICK_DEAD = 0.18, HINT_TIME = 5200;
+  // looking around: radians per pixel of finger or mouse, radians per second for Q and E, extra reach round the jump button
+  const LOOK_TOUCH = 0.0075, LOOK_MOUSE = 0.006, LOOK_KEYS = 2.2, JUMP_SLACK = 16;
+  // look: camera turn the game has not taken yet (radians, positive turns to the right)
+  const input = { left: false, right: false, up: false, down: false, ax: 0, ay: 0, jumpHeld: false, jumpQueued: false, look: 0 };
+  if (isTouch) { document.body.classList.add('touch'); $('jump').hidden = false; }
+
+  // ---------- Keyboard ----------
+  const KEYS = { ArrowLeft: 'left', KeyA: 'left', ArrowRight: 'right', KeyD: 'right', ArrowUp: 'up', KeyW: 'up', ArrowDown: 'down', KeyS: 'down' };
+  window.addEventListener('keydown', (e) => {
+    // in a scene the first press shows the whole line, the next one goes on
+    if (talking && (e.code === 'Space' || e.code === 'Enter') && !e.repeat && ui.tap()) { e.preventDefault(); return; }
+    if (KEYS[e.code]) { input[KEYS[e.code]] = true; e.preventDefault(); }
+    if (e.code === 'Space') { if (!e.repeat) input.jumpQueued = true; input.jumpHeld = true; e.preventDefault(); }
+    if (e.code === 'KeyR') restart();
+    if (e.code === 'KeyF' && room) room.toFlag();
+    if (e.code === 'Enter' && talking) input.jumpQueued = true;
+    if (e.code === 'KeyQ') turnKeys.left = true;
+    if (e.code === 'KeyE') turnKeys.right = true;
+  });
+  window.addEventListener('keyup', (e) => {
+    if (e.code === 'KeyQ') turnKeys.left = false;
+    if (e.code === 'KeyE') turnKeys.right = false;
+  });
+  // Q and E turn the camera while held
+  const turnKeys = { left: false, right: false };
+  let turnLast = 0;
+  (function turnLoop(now) {
+    const dt = turnLast ? Math.min(0.05, (now - turnLast) / 1000) : 0; turnLast = now;
+    input.look += ((turnKeys.right ? 1 : 0) - (turnKeys.left ? 1 : 0)) * LOOK_KEYS * dt;
+    requestAnimationFrame(turnLoop);
+  })(0);
+
+  // ---------- Mouse: drag on the picture to look around ----------
+  let mouseX = null;
+  $('stage').addEventListener('mousedown', (e) => { if (talking) { if (!ui.tap()) input.jumpQueued = true; return; } if (e.button === 0 && !isTouch) { mouseX = e.clientX; $('stage').classList.add('looking'); } });
+  window.addEventListener('mousemove', (e) => { if (mouseX === null) return; input.look += (e.clientX - mouseX) * LOOK_MOUSE; mouseX = e.clientX; });
+  window.addEventListener('mouseup', () => { mouseX = null; $('stage').classList.remove('looking'); });
+  window.addEventListener('keyup', (e) => {
+    if (KEYS[e.code]) input[KEYS[e.code]] = false;
+    if (e.code === 'Space') input.jumpHeld = false;
+  });
+
+  // ---------- Touch: left half is an invisible stick, the round button jumps, the rest of the right half looks around ----------
+  let stickId = null, stickX = 0, stickY = 0, jumpId = null, lookId = null, lookX = 0;
+  const stage = $('stage'), jumpEl = $('jump');
+  const onJump = (t) => { const r = jumpEl.getBoundingClientRect(), cx = (r.left + r.right) / 2, cy = (r.top + r.bottom) / 2; return Math.hypot(t.clientX - cx, t.clientY - cy) < r.width / 2 + JUMP_SLACK; };
+  stage.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    if (talking) { if (!ui.tap()) input.jumpQueued = true; return; }   // during a scene a tap shows the whole line, then goes on
+    for (const t of e.changedTouches) {
+      if (t.clientX < window.innerWidth / 2) { if (stickId === null) { stickId = t.identifier; stickX = t.clientX; stickY = t.clientY; } }
+      else if (onJump(t)) { if (jumpId === null) { jumpId = t.identifier; input.jumpQueued = true; input.jumpHeld = true; jumpEl.classList.add('on'); } }
+      else if (lookId === null) { lookId = t.identifier; lookX = t.clientX; }
+    }
+  }, { passive: false });
+  stage.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    for (const t of e.changedTouches) {
+      if (t.identifier === stickId) {
+        const dx = (t.clientX - stickX) / STICK_REACH, dy = (t.clientY - stickY) / STICK_REACH, len = Math.hypot(dx, dy);
+        const k = len < STICK_DEAD ? 0 : Math.min(1, len) / len;
+        input.ax = dx * k; input.ay = dy * k;
+      } else if (t.identifier === lookId) { input.look += (t.clientX - lookX) * LOOK_TOUCH; lookX = t.clientX; }
+    }
+  }, { passive: false });
+  const touchEnd = (e) => {
+    for (const t of e.changedTouches) {
+      if (t.identifier === stickId) { stickId = null; input.ax = input.ay = 0; }
+      if (t.identifier === jumpId) { jumpId = null; input.jumpHeld = false; jumpEl.classList.remove('on'); }
+      if (t.identifier === lookId) lookId = null;
+    }
+  };
+  stage.addEventListener('touchend', touchEnd); stage.addEventListener('touchcancel', touchEnd);
+
+  // ---------- Sound: a few small synth tones, only for this test page (the game brings its own) ----------
+  // Each tone: [start frequency, end frequency, seconds, wave form, loudness, delay]
+  const TONES = {
+    jump: [[420, 680, 0.12, 'sine', 0.16]], hup: [], land: [[150, 90, 0.08, 'triangle', 0.14]],
+    star: [[880, 880, 0.09, 'sine', 0.15], [1320, 1320, 0.16, 'sine', 0.15, 0.08]],
+    flag: [[520, 520, 0.1, 'triangle', 0.16], [780, 780, 0.18, 'triangle', 0.16, 0.1]],
+    bounce: [[240, 720, 0.2, 'sine', 0.2]], stomp: [[300, 80, 0.2, 'square', 0.12]],
+    hurt: [[330, 110, 0.3, 'sawtooth', 0.1]], oh: [[500, 300, 0.18, 'sine', 0.14]],
+    yay: [[660, 660, 0.1, 'sine', 0.15], [880, 880, 0.1, 'sine', 0.15, 0.1], [1100, 1100, 0.2, 'sine', 0.15, 0.2]],
+    dust: [[1500, 1900, 0.07, 'sine', 0.05]], pop: [[900, 160, 0.08, 'square', 0.16]],
+    toot: [[587, 587, 0.32, 'triangle', 0.12], [740, 740, 0.32, 'triangle', 0.1], [587, 587, 0.45, 'triangle', 0.12, 0.42], [740, 740, 0.45, 'triangle', 0.1, 0.42]],
+    win: [[523, 523, 0.14, 'triangle', 0.17],[659, 659, 0.14, 'triangle', 0.17, 0.14], [784, 784, 0.14, 'triangle', 0.17, 0.28], [1047, 1047, 0.4, 'triangle', 0.17, 0.42]],
+  };
+  let audio = null;
+  const wakeAudio = () => { try { audio = audio || new (window.AudioContext || window.webkitAudioContext)(); if (audio.state === 'suspended') audio.resume(); } catch (_) { audio = null; } };
+  window.addEventListener('keydown', wakeAudio); window.addEventListener('touchend', wakeAudio); window.addEventListener('mousedown', wakeAudio);
+  function tone([from, to, time, wave, loud, delay]) {
+    const t0 = audio.currentTime + (delay || 0), osc = audio.createOscillator(), gain = audio.createGain();
+    osc.type = wave; osc.frequency.setValueAtTime(from, t0); osc.frequency.exponentialRampToValueAtTime(to, t0 + time);
+    gain.gain.setValueAtTime(0.0001, t0); gain.gain.exponentialRampToValueAtTime(loud, t0 + 0.012); gain.gain.exponentialRampToValueAtTime(0.0001, t0 + time);
+    osc.connect(gain).connect(audio.destination); osc.start(t0); osc.stop(t0 + time + 0.03);
+  }
+  const sfx = {};
+  for (const name of Object.keys(TONES)) sfx[name] = () => { if (audio && audio.state === 'running') for (const one of TONES[name]) tone(one); };
+  // one note of a toy instrument (the floor piano, the dominoes): its pitch, and whether it is only a short click
+  sfx.note = (freq, short) => { if (audio && audio.state === 'running') tone([freq, freq, short ? 0.09 : 0.4, 'triangle', short ? 0.1 : 0.2]); };
+
+  // one beep for the story overlay's voices and jingles
+  const beep = (freq, time, wave, loud, delay) => { if (audio && audio.state === 'running') tone([freq, freq, time, wave, loud, delay]); };
+
+  // ---------- Story overlay and HUD (src/room3d/room-ui.js) ----------
+  const STICKERS_KEY = 'mimo-room-stickers';
+  function loadStickers() {
+    try { const list = JSON.parse(localStorage.getItem(STICKERS_KEY) || '[]'); return Array.isArray(list) ? list.filter((s) => typeof s === 'string' && s.length < 20) : []; } catch (_) { return []; }
+  }
+  // what the side missions keep across visits: records with their medals, the gold buttons already found
+  const KEEP_KEY = 'mimo-room-keep';
+  function loadKeep() {
+    try { const all = JSON.parse(localStorage.getItem(KEEP_KEY) || '{}'); return all && typeof all === 'object' && !Array.isArray(all) ? all : {}; } catch (_) { return {}; }
+  }
+  const kept = loadKeep();
+  const ui = window.Room3D.makeStoryUI({ tone: beep, stickers: loadStickers(), records: kept.rec, onTap: () => { if (talking && !ui.tap()) input.jumpQueued = true; } });
+  const IC = window.Room3D.UI_ICONS;
+  const hint = (html) => ui.hint(html);
+  const SECRETS_KEY = 'mimo-room-secrets';
+  function loadSecrets() {
+    try { const list = JSON.parse(localStorage.getItem(SECRETS_KEY) || '[]'); return Array.isArray(list) ? list.filter((n) => Number.isInteger(n) && n >= 0 && n < 16) : []; } catch (_) { return []; }
+  }
+  const fmt = (t) => t.toFixed(1).replace('.', ',') + ' s';
+  $('btnFlag').innerHTML = IC.flag + '<span class="word">Zur Fahne</span>';
+  $('btnRestart').innerHTML = IC.restart + '<span class="word">Neu</span>';
+  const host = {
+    anchor: $('anchor'), input, sfx, quick: params.has('quick'),
+    outfit: { color: params.get('farbe') ? '#' + params.get('farbe') : '#A8C8EC', hat: 'h_leaf', acc: 'a_none' },
+    secrets: loadSecrets(),
+    onSecret: (list) => { try { localStorage.setItem(SECRETS_KEY, JSON.stringify(list)); } catch (_) { /* private mode: the find only counts for this visit */ } },
+    onHud: (h) => {
+      $('hudStars').innerHTML = IC.star + h.stars + '/' + h.total; $('hudTime').innerHTML = IC.clock + fmt(h.time);
+      $('hudSecrets').hidden = !h.secrets; $('hudSecrets').innerHTML = IC.secret + h.secrets + '/' + h.secretTotal;
+    },
+    onHint: hint,
+    onBoss: (b) => ui.boss(b),
+    onWin: (r) => ui.win(r, restart),
+    onTalk: (line) => {
+      talking = !!line; ui.talk(line);
+      if (!line && !toldControls) { toldControls = true; setTimeout(() => hint(CONTROLS), 2600); }
+    },
+    onSay: (line) => ui.say(line),
+    stickers: loadStickers(),
+    onSticker: (id, list) => { ui.sticker(id, list); try { localStorage.setItem(STICKERS_KEY, JSON.stringify(list)); } catch (_) { /* private mode: only for this visit */ } },
+    onRace: (info) => ui.race(info),
+    keep: kept,
+    onKeep: (key, value, all) => { if (key === 'rec') ui.records(value); try { localStorage.setItem(KEEP_KEY, JSON.stringify(all)); } catch (_) { /* private mode: only for this visit */ } },
+    onMedal: (info) => ui.medal(info),
+    onCollect: (info) => ui.collect(info),
+    onMission: (m) => ui.mission(m),
+  };
+  let talking = false, toldControls = false;
+  const CONTROLS = isTouch ? 'Links schieben zum Laufen, der runde Knopf springt. Rechts wischen zum Umschauen.' : 'Pfeiltasten oder WASD zum Laufen, Leertaste zum Springen. Mit der Maus ziehen oder Q und E zum Umschauen.';
+  let room = null;
+  function restart() { if (!room) return; ui.hideWin(); room.restart(true); }
+  // A private round crest: put it into stilprobe/privat/bvb.png (never committed). It then shows on the
+  // flag and in a few other places. Only tried on a web server, because a page opened as a file may not
+  // use pictures as textures.
+  function privateEmblem() {
+    return new Promise((resolve) => {
+      if (!location.protocol.startsWith('http')) { resolve(null); return; }
+      const img = new Image();
+      img.onload = () => { const t = new THREE.Texture(img); t.colorSpace = THREE.SRGBColorSpace; t.needsUpdate = true; resolve(t); };
+      img.onerror = () => resolve(null);
+      img.src = 'privat/bvb.png';
+    });
+  }
+  privateEmblem().then((emblem) => {
+    try {
+      room = window.Room3D.create(Object.assign(host, { emblem }));
+    } catch (err) {
+      hint('Dieser Browser kann die 3D-Welt leider nicht darstellen.');
+      throw err;
+    }
+    window.__room = { room, input, ui };
+    (function uiLoop() { ui.frame(room); requestAnimationFrame(uiLoop); })();
+    setInterval(() => { const st = room.stats(); $('hudFps').textContent = st.fps + ' fps' + (st.capped ? ' · Gerät begrenzt' : st.lowered ? ' · sparsam' : ''); }, 500);
+  });
+  $('btnRestart').addEventListener('click', restart);
+  $('btnFlag').addEventListener('click', () => { if (room) room.toFlag(); });
+})();
+</script>
+
+</body></html>
