@@ -20,6 +20,9 @@ const STARWAY_ON = /const STARWAY = true;/.test(fs.readFileSync(path.join(SRC, '
 const RELEASE = releaseWorldFiles();
 const WORLD_FILES = worldFiles().filter((f) => !RELEASE.held.includes(f));
 const MODULES = ['mimo3d.js', 'sky3d.js', ...(STARWAY_ON ? ['run3d.js', 'starway-core.js', 'starway-world.js', 'starway3d.js'] : []), ...WORLD_FILES];
+// the 3D world Kinderzimmer: its own page (src/kinderzimmer.html, opened by the game in a frame) and the room3d/ files it loads
+const ROOM_PAGE = 'kinderzimmer.html';
+const ROOM_FILES = roomFiles();
 const ICONS = ['icons/icon-180.png', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png'];
 const THREE_CDN = "'https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js'";
 
@@ -34,9 +37,28 @@ function worldFiles() {
   return listed;
 }
 
+function roomFiles() {
+  const html = fs.readFileSync(path.join(SRC, ROOM_PAGE), 'utf8');
+  const listed = [...html.matchAll(/<script src="(room3d\/[\w./-]+\.js)"><\/script>/g)].map((m) => m[1]);
+  const dir = path.join(SRC, 'room3d');
+  const onDisk = fs.readdirSync(dir).filter((f) => f.endsWith('.js')).map((f) => 'room3d/' + f);
+  const missing = listed.filter((f) => !onDisk.includes(f)), unlisted = onDisk.filter((f) => !listed.includes(f));
+  if (missing.length) throw new Error('build: ' + ROOM_PAGE + ' loads ' + missing.join(', ') + ', but the file is missing');
+  if (unlisted.length) throw new Error('build: ' + unlisted.join(', ') + ' is not loaded by ' + ROOM_PAGE);
+  return listed;
+}
+
+// the room page as the app ships it: an app head, Three.js from vendor/ (works offline)
+function buildRoomPage() {
+  let html = fs.readFileSync(path.join(SRC, ROOM_PAGE), 'utf8');
+  html = html.replace(/^<!doctype html><html><head>.*?<\/head><body>/s, '<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"></head><body>');
+  if (!html.startsWith('<!doctype html><html lang="de">')) throw new Error('build: expected the artifact head in ' + ROOM_PAGE);
+  return replaceOnce(html, '<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>', '<script src="vendor/three.min.js"></script>', ROOM_PAGE + ' Three.js address');
+}
+
 function replaceOnce(text, from, to, label) {
   const n = text.split(from).length - 1;
-  if (n !== 1) throw new Error(`build: expected one "${label}" in src/index.html, found ${n}`);
+  if (n !== 1) throw new Error(`build: expected one "${label}", found ${n}`);
   return text.replace(from, () => to);
 }
 
@@ -131,7 +153,9 @@ self.addEventListener('fetch', (e) => {
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
   if (url.origin === self.location.origin) {
-    const key = req.mode === 'navigate' ? './' : req;
+    // a page of the app opened by name (the Kinderzimmer in its frame) is served as itself; any other navigation gets the game
+    const page = url.pathname.split('/').pop();
+    const key = req.mode === 'navigate' && !(page && page !== 'index.html' && FILES.includes(page)) ? './' : req;
     e.respondWith(caches.match(key, { ignoreSearch: true }).then((hit) => hit || fetch(req)));
     return;
   }
@@ -161,11 +185,13 @@ function main() {
   const page = buildPage();
   fs.writeFileSync(path.join(OUT, 'index.html'), page);
   for (const m of MODULES) copy(m, path.join(SRC, m));
+  fs.writeFileSync(path.join(OUT, ROOM_PAGE), buildRoomPage());
+  for (const f of ROOM_FILES) copy(f, path.join(SRC, f));
   copy('vendor/three.min.js', path.join(ROOT, 'vendor', 'three.min.js'));
   for (const icon of ICONS) copy(icon, path.join(ROOT, icon));
   fs.writeFileSync(path.join(OUT, 'manifest.webmanifest'), manifest());
   fs.writeFileSync(path.join(OUT, '.nojekyll'), '');
-  const files = ['index.html', 'manifest.webmanifest', ...MODULES, 'vendor/three.min.js', ...ICONS];
+  const files = ['index.html', 'manifest.webmanifest', ...MODULES, ROOM_PAGE, ...ROOM_FILES, 'vendor/three.min.js', ...ICONS];
   const hash = crypto.createHash('sha256');
   for (const f of files) hash.update(f).update(fs.readFileSync(path.join(OUT, f)));
   const version = hash.digest('hex').slice(0, 12);
