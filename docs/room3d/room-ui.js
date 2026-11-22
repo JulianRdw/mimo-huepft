@@ -13,7 +13,8 @@
   const REVEAL_TIME = 1700, REVEAL_GAP = 380;        // ms a new sticker or medal stays in the middle, and the pause before the next one
   const TYPE_CPS = 40, SAY_CPS = 60;                 // letters per second in a scene and in a short call-out
   const CARD_TIME = 2300, STAMP_TIME = 1700;         // ms the mission card and the "done" stamp stay
-  const SAY_BASE = 2600, SAY_PER_CHAR = 35, SAY_MAX = 2;   // ms a call-out stays (plus per letter), how many at once
+  const SAY_BASE = 2600, SAY_PER_CHAR = 35, SAY_MAX = 1;   // ms a call-out stays (plus per letter), how many at once: one, so it stays calm
+  const READ_BASE = 2800, READ_PER_CHAR = 45, READ_MAX = 8000;   // ms a scene line stays before the scene goes on by itself (a tap goes on at once)
   const EDGE_TOP = 110;                              // px kept free at the top for the badges
   const EDGE = 46;                                   // px from the screen edge for the goal arrow
   const RADIO_TOP = window.innerHeight < 460 ? 78 : 96;                              // px from the top for call-outs of figures out of the picture
@@ -148,7 +149,7 @@
   .rui-tail.up { bottom: 100%; } .rui-tail.up::before { bottom: 0; border-bottom: 22px solid var(--ink); } .rui-tail.up::after { bottom: -4px; left: 4px; border-bottom: 18px solid var(--paper); border-left: 9px solid transparent; border-right: 9px solid transparent; }
   .rui-bubble.docked .rui-tail { display: none; }
   .rui-say .rui-next { display: none; }
-  .rui-say { min-width: 190px; max-width: min(70vw, 300px); padding: 9px 14px 10px 30px; border-radius: 18px; border-width: 2.5px; pointer-events: none; }
+  .rui-say { min-width: 190px; max-width: min(70vw, 300px); padding: 9px 14px 10px 30px; border-radius: 18px; border-width: 2.5px; }   /* a tap closes it */
   .rui-say .rui-face { width: 40px; height: 40px; left: -18px; top: -16px; border-width: 2.5px; }
   .rui-say .rui-text { margin: 0; font-size: 15px; line-height: 1.3; }
   .rui-say .rui-tail { transform: scale(.75); transform-origin: 50% 0; }
@@ -332,6 +333,11 @@
       b.seen = b.text.firstChild; b.ghost = b.text.lastChild; b.ghost.textContent = b.full;   // the ghost keeps the size, so the bubble does not grow while typing
       b.el.classList.remove('done', 'out'); b.placed = false;
     }
+    // the whole line at once (no typing: one tap is enough), and three babbles of the speaker's voice
+    function showWhole(b, loud) {
+      b.shown = b.full.length; b.seen.textContent = b.full; b.ghost.textContent = ''; b.el.classList.add('done');
+      for (let i = 0; i < 3; i++) setTimeout(() => tone(b.voice.pitch * (0.85 + Math.random() * 0.35), 0.055, b.voice.wave || 'sine', loud), i * 70);
+    }
     function type(b, dt, cps, loud) {
       if (b.shown >= b.full.length) return false;
       const before = Math.floor(b.shown);
@@ -375,14 +381,16 @@
 
     const talk = makeBubble('rui-talk'); talk.low = true;
     talk.el.addEventListener('click', () => { if (o.onTap) o.onTap(); });
-    let talkLine = null, cardUntil = 0, pendingLine = null;
+    let talkLine = null, cardUntil = 0, pendingLine = null, talkUntil = 0;
     function setCinema(on) { root.classList.toggle('cinema', on); document.body.classList.toggle('rui-cinema', on); }
     function showTalk(line) {
       talkLine = line;
       if (!line) { talk.el.classList.remove('on'); talk.face.classList.remove('talk'); setCinema(false); pendingLine = null; return; }
       setCinema(true);
       if (performance.now() < cardUntil) { pendingLine = line; return; }   // the mission card goes first
-      fill(talk, line); talk.el.classList.add('on'); talk.face.classList.add('talk');
+      fill(talk, line); showWhole(talk, 0.07);
+      talkUntil = performance.now() + Math.min(READ_MAX, READ_BASE + talk.full.length * READ_PER_CHAR); talk.el.classList.add('on'); talk.face.classList.add('talk');
+      for (const b of says.slice()) drop(b);   // in a scene only the scene speaks
       talk.el.querySelector('.rui-next').style.display = '';
     }
     // a tap in a scene: first it shows the whole line, then the host may go on (returns true if the tap was used here)
@@ -394,10 +402,11 @@
 
     const says = [];
     function say(line) {
-      if (!line || !line.text) return;
+      if (!line || !line.text || talkLine) return;   // no call-outs on top of a scene
       says.filter((x) => x.line && x.line.who === line.who).forEach(drop);   // a figure speaks with one bubble: the new line replaces its old one
       while (says.length >= SAY_MAX) drop(says[0]);
-      const b = makeBubble('rui-say'); fill(b, line);
+      const b = makeBubble('rui-say'); fill(b, line); showWhole(b, 0.04);
+      b.el.addEventListener('click', (e) => { e.stopPropagation(); drop(b); });
       b.until = performance.now() + SAY_BASE + line.text.length * SAY_PER_CHAR;
       requestAnimationFrame(() => b.el.classList.add('on'));
       says.push(b);
@@ -547,7 +556,9 @@
       const now = performance.now(), dt = Math.min(0.1, (now - lastT) / 1000); lastT = now;
       if (talkLine && talk.el.classList.contains('on')) {
         type(talk, dt, TYPE_CPS, 0.07); place(talk, room, false);
-        talk.face.classList.toggle('talk', talk.shown < talk.full.length);
+        talk.face.classList.remove('talk');
+        // read long enough: the scene goes on as if tapped, so nothing piles up
+        if (now > talkUntil && o.onTap) { talkUntil = Infinity; o.onTap(); }
       }
       for (const b of says.slice()) { type(b, dt, SAY_CPS, 0.04); place(b, room, false); if (now > b.until) drop(b); }
       // goal arrow at the screen's edge when the goal is out of the picture
