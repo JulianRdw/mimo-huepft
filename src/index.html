@@ -349,6 +349,17 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size
 .lvl-soon{grid-column:1/-1;margin:2px 0 4px;padding:10px 14px;border:1.5px dashed color-mix(in srgb,var(--muted) 45%,var(--line));border-radius:14px;color:var(--muted);font-size:13px;line-height:1.4;text-align:left}
 .lvl-soon b{color:var(--fg);font-family:var(--font-display);font-weight:600;font-size:15px;margin-right:4px}
 .lvl-card.current{background:var(--accent-soft);border-color:var(--accent)}
+/* the overview of the worlds: bigger cards, a coloured badge, a thin progress bar */
+.lvl-sum{grid-column:1/-1;margin:0 0 2px;display:flex;flex-wrap:wrap;gap:6px}
+.lvl-sum span{font-weight:700;font-size:13px;padding:4px 11px;border-radius:999px;background:color-mix(in srgb,var(--star) 22%,var(--bg));color:var(--fg);font-variant-numeric:tabular-nums}
+.lvl-card.world{padding:14px 14px 12px;gap:4px 12px}
+.lvl-card.world .num{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;font-size:21px;color:var(--fg);background:color-mix(in srgb,var(--wc,var(--accent)) 55%,var(--bg))}
+.lvl-card.world .name{font-size:16px}
+.lvl-card.world .bar{grid-column:1/-1;height:5px;border-radius:999px;background:color-mix(in srgb,var(--muted) 18%,transparent);overflow:hidden;margin-top:6px}
+.lvl-card.world .bar i{display:block;height:100%;border-radius:inherit;background:var(--wc,var(--accent))}
+.lvl-card.world.here{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
+.lvl-card .new-badge{margin-left:6px}
+.lvl-note{grid-column:1/-1;margin:0;font-size:13px;color:var(--muted)}
 .lvl-card.current .num{color:var(--accent-ink)}
 .lvl-card:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
 .seg{display:flex;gap:4px;padding:3px;border-radius:999px;background:var(--bg);border:1px solid var(--line);align-self:center}
@@ -482,6 +493,13 @@ input,textarea{-webkit-user-select:text;user-select:text}
   .card.news h2{font-size:23px}
   .news-body p{font-size:14px;line-height:1.38}
 }
+/* "Neu!" card of the Kinderzimmer: a picture from the 3D room instead of a drawn scene */
+.overlay.news.room{background:color-mix(in srgb,#E9C9A0 38%,transparent)}
+.overlay.news.room .news-scene{background:#F1DCC0}
+.overlay.news.room .news-body{background:var(--card)}
+.overlay.news.room .news-kicker{color:var(--accent-ink)}
+/* the Kinderzimmer plays in its own page, in a frame over everything */
+.room-frame{position:fixed;inset:0;bottom:auto;width:100%;height:var(--app-h,100%);border:0;z-index:50;background:#F1DCC0;display:block}
 /* ---------- Release polish: menus made for thumbs ---------- */
 .menu .tiles .tile{min-height:64px;justify-content:center}
 .card-head{position:sticky;top:calc(-12px - var(--sa-t));z-index:2;background:var(--card);margin:-8px -6px 0;padding:8px 6px;border-radius:14px}
@@ -589,9 +607,9 @@ input,textarea{-webkit-user-select:text;user-select:text}
 #btnLevels{--tc:var(--mimo-mint)!important}#btnWardrobe{--tc:var(--mimo-rose)!important}#btnAch{--tc:var(--mimo-sun)!important}#btnSettings{--tc:var(--mimo-lav)!important}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) #ovMenu .menu-title h1{text-shadow:0 2px 0 rgba(0,0,0,.35),0 0 20px rgba(0,0,0,.45)}}
 :root[data-theme="dark"] #ovMenu .menu-title h1{text-shadow:0 2px 0 rgba(0,0,0,.35),0 0 20px rgba(0,0,0,.45)}
-/* upright: a bigger play button and a taller bar with the short status under each name */
+/* upright: a bigger play button and a taller bar (only icons and names: the status lives in the screens behind) */
 @media (orientation: portrait){
-  #ovMenu{--nav-h:84px}
+  #ovMenu{--nav-h:74px}
   #ovMenu .btn.cta{width:min(400px,calc(100% - 32px));bottom:calc(var(--nav-h) + 24px + var(--sa-b));padding:11px 26px 11px 11px;column-gap:16px}
   #ovMenu .btn.cta::before{width:60px;height:60px;background-size:30px}
   #ovMenu .cta-main{font-size:26px}#ovMenu .cta-sub{font-size:14px}
@@ -599,7 +617,6 @@ input,textarea{-webkit-user-select:text;user-select:text}
   #ovMenu .tiles .tile{gap:2px;border-radius:20px}
   #ovMenu .tiles .tile svg{width:30px;height:30px;margin-bottom:2px}
   #ovMenu .tiles .tile b{font-size:13px}
-  #ovMenu .tiles .tile small{display:block;font-size:10.5px;line-height:1.15;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 }
 /* sideways on a phone: the play button sits next to the bar, both at the bottom */
 @media (orientation: landscape) and (max-height: 540px){
@@ -696,7 +713,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
         </div>
         <button class="btn primary cta" id="btnContinue" type="button"><span class="cta-main">Weiter spielen</span><span class="cta-sub" id="ctaSub">Level 1 · Aufwachen</span></button>
         <div class="tiles">
-          <button class="tile" id="btnLevels" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3v18M5 4h11l-2.5 3.5L16 11H5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg><b>Level</b><small id="tileLevels"></small></button>
+          <button class="tile" id="btnLevels" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3v18M5 4h11l-2.5 3.5L16 11H5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg><b>Welten</b><small id="tileLevels"></small></button>
           <button class="tile" id="btnWardrobe" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h2a2 2 0 0 0 4 0h2l4 3-2 3-2-1v11H8V9L6 10 4 7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><b>Kleiderschrank</b><small id="tileShop"></small></button>
           <button class="tile" id="btnAch" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v4a5 5 0 0 1-10 0z M7 6H4a3 3 0 0 0 3 4 M17 6h3a3 3 0 0 1-3 4 M12 13v4 M8 20h8 M9.5 17h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg><b>Erfolge</b><small id="tileAch"></small></button>
           <button class="tile" id="btnSettings" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><b>Einstellungen</b><small id="tileSettings"></small></button>
@@ -709,7 +726,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
 
     <div class="overlay" id="ovLevels" hidden>
       <div class="card">
-        <div class="card-head"><button class="btn small" id="btnLevelsBack" type="button">Zurück</button><h2>Level</h2><button class="btn small" id="btnBoard" type="button" hidden style="justify-self:end">Freunde</button></div>
+        <div class="card-head"><button class="btn small" id="btnLevelsBack" type="button">Zurück</button><h2 id="levelsTitle">Welten</h2><button class="btn small" id="btnBoard" type="button" hidden style="justify-self:end">Freunde</button></div>
         <div class="lvl-grid" id="levelGrid"></div>
       </div>
     </div>
@@ -860,6 +877,18 @@ input,textarea{-webkit-user-select:text;user-select:text}
           <p class="news-lead" id="newsLead">Mimo macht Urlaub am Meer. Doch Käpt’n Krake klaut heimlich den ganzen Strand leer, vom Eimer bis zum letzten Würstchen.</p>
           <p id="newsMore"></p>
           <div class="actions"><button class="btn" id="btnNewsLater" type="button">Später</button><button class="btn primary coast" id="btnNewsGo" type="button">Ab an den Strand!</button></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="overlay news room" id="ovRoomNews" hidden role="dialog" aria-modal="true" aria-labelledby="roomNewsTitle" aria-describedby="roomNewsLead">
+      <div class="card news" id="roomNewsCard" tabindex="-1">
+        <div class="news-scene"><canvas id="roomNewsScene" width="400" height="200" aria-hidden="true"></canvas><span class="news-badge">Neu!</span></div>
+        <div class="news-body">
+          <p class="news-kicker">Neue 3D-Welt</p>
+          <h2 id="roomNewsTitle">Das <span>Kinderzimmer</span></h2>
+          <p class="news-lead" id="roomNewsLead">Ein riesiges Zimmer voller Spielzeug: Klettere über Bauklötze und Bücherstapel, fahr mit der Eisenbahn und falte mit Oma einen Papierflieger.</p>
+          <div class="actions"><button class="btn" id="btnRoomLater" type="button">Später</button><button class="btn primary" id="btnRoomGo" type="button">Ab ins Zimmer!</button></div>
         </div>
       </div>
     </div>
@@ -1902,8 +1931,15 @@ function cleanDash(x) {
   const days = {}; if (x.days && typeof x.days === 'object') Object.keys(x.days).map(Number).filter((k) => k > 0).sort((a, b) => b - a).slice(0, 120).forEach((k) => { days[k] = n(x.days[k], 1e7); });
   return { stars: n(x.stars, 10), score: n(x.score, 1e7), medal: ['gold', 'silver', 'bronze'].includes(x.medal) ? x.medal : null, endless: e, quests, qDone: n(x.qDone, 1e5), dust: n(x.dust, 1e8), up, ghost, dailyRun: dr, days };
 }
+// Kinderzimmer record: null until it was opened once (the teaser shows until then); best time, most stars of how many
+function cleanRoom(r) {
+  if (!r || typeof r !== 'object') return null;
+  const n = (v, max) => Math.max(0, Math.min(max, Math.round(Number(v) || 0)));
+  const best = Number(r.best);
+  return { best: Number.isFinite(best) && best > 0 ? Math.round(best * 10) / 10 : null, stars: n(r.stars, 999), total: n(r.total, 999), secrets: n(r.secrets, 99) };
+}
 function loadProgress() {
-  const empty = { levelsVersion: LEVELS_VERSION, touchHelp: 0, stickHelp: 0, touchMode: 'thumb', unlocked: 1, stars: {}, best: {}, music: true, sfx: true, owned: [], outfit: { ...DEFAULT_OUTFIT }, ghosts: {}, ghostOn: true, hidden: {}, assisted: {}, slow: false, invincible: false, zen: false, daily: null, musicVol: 0.8, sfxVol: 0.8, bonus: null, dash: null, runOffset: 0, dailyLog: {}, companion: true, sky: null, fun: {}, codes: [], ach: {}, stats: { deaths: 0, pieps: 0, scares: 0 }, bosses: {} };
+  const empty = { levelsVersion: LEVELS_VERSION, touchHelp: 0, stickHelp: 0, touchMode: 'thumb', unlocked: 1, stars: {}, best: {}, music: true, sfx: true, owned: [], outfit: { ...DEFAULT_OUTFIT }, ghosts: {}, ghostOn: true, hidden: {}, assisted: {}, slow: false, invincible: false, zen: false, daily: null, musicVol: 0.8, sfxVol: 0.8, bonus: null, dash: null, runOffset: 0, dailyLog: {}, companion: true, sky: null, room: null, fun: {}, codes: [], ach: {}, stats: { deaths: 0, pieps: 0, scares: 0 }, bosses: {} };
   try {
     const raw = localStorage.getItem(SAVE_KEY);
     if (!raw) return empty;
@@ -1914,7 +1950,7 @@ function loadProgress() {
     return { levelsVersion: LEVELS_VERSION, touchHelp: Math.max(0, Math.min(9, d.touchHelp | 0)), stickHelp: Math.max(0, Math.min(9, d.stickHelp | 0)), touchMode: d.touchMode === 'buttons' ? 'buttons' : 'thumb', unlocked: Math.min(LEVELS.length, Math.max(1, d.unlocked | 0)), stars: d.stars || {}, best: d.best || {}, music: d.music !== false, sfx: d.sfx !== false,
       owned: Array.isArray(d.owned) ? d.owned.filter((id) => COSTUMES.some((c) => c.id === id)) : [], outfit, ghosts: d.ghosts || {}, ghostOn: d.ghostOn !== false,
       hidden: d.hidden || {}, assisted: d.assisted || {}, slow: !!d.slow, invincible: !!d.invincible, zen: !!d.zen, daily: d.daily || null,
-      musicVol: typeof d.musicVol === 'number' ? Math.max(0, Math.min(1, d.musicVol)) : 0.8, sfxVol: typeof d.sfxVol === 'number' ? Math.max(0, Math.min(1, d.sfxVol)) : 0.8, bonus: cleanBonus(d.bonus), dash: cleanDash(d.dash), runOffset: Math.max(0, Math.min(300, Number(d.runOffset) || 0)), dailyLog: d.dailyLog || {}, companion: d.companion !== false, sky: d.sky && typeof d.sky === 'object' ? d.sky : null,
+      musicVol: typeof d.musicVol === 'number' ? Math.max(0, Math.min(1, d.musicVol)) : 0.8, sfxVol: typeof d.sfxVol === 'number' ? Math.max(0, Math.min(1, d.sfxVol)) : 0.8, bonus: cleanBonus(d.bonus), dash: cleanDash(d.dash), runOffset: Math.max(0, Math.min(300, Number(d.runOffset) || 0)), dailyLog: d.dailyLog || {}, companion: d.companion !== false, sky: d.sky && typeof d.sky === 'object' ? d.sky : null, room: cleanRoom(d.room),
       fun: Object.fromEntries(FUN_IDS.map((k) => [k, !!(d.fun && d.fun[k])])), codes: Array.isArray(d.codes) ? d.codes.filter((k) => FUN_IDS.includes(k)) : [],
       ach: d.ach && typeof d.ach === 'object' ? d.ach : {}, stats: { deaths: (d.stats && d.stats.deaths) | 0, pieps: (d.stats && d.stats.pieps) | 0, scares: (d.stats && d.stats.scares) | 0 },
       bosses: d.bosses && typeof d.bosses === 'object' ? d.bosses : {} };
@@ -5505,7 +5541,7 @@ function showOverlay(name) {
   G.overlay = name; Music.duck(true);
   for (const [k, el] of Object.entries(OVERLAYS)) el.hidden = k !== name;
   cancelAnimationFrame(previewRaf);
-  if (name === 'menu') { renderMenu(); startMenuScene(); maybeShowNews(); }
+  if (name === 'menu') { renderMenu(); startMenuScene(); maybeShowNews(); maybeShowRoomNews(); }
   if (name === 'shop') animatePreview(previewCanvas, () => shopSel);
 }
 function hideOverlays() {
@@ -5577,11 +5613,11 @@ function renderMenu() {
   $('tileSettings').textContent = flags.length ? flags.join(' · ') : 'Ton, Steuerung, Hilfen';
 }
 $('btnContinue').addEventListener('click', () => { audio(); startLevel(continueLevel()); });
-$('btnLevels').addEventListener('click', () => { buildLevelGrid(); showOverlay('levels'); });
+$('btnLevels').addEventListener('click', openLevels);
 $('btnBonus').addEventListener('click', () => { if (!bonusUnlocked()) { SFX.pause(); return; } audio(); SFX.ui(); openRunMenu(); });
 $('btnWardrobe').addEventListener('click', () => openShop('menu'));
 $('btnSettings').addEventListener('click', () => { navFrom = 'menu'; renderSettings(); showOverlay('settings'); });
-$('btnLevelsBack').addEventListener('click', () => showOverlay('menu'));
+$('btnLevelsBack').addEventListener('click', levelsBack);
 $('btnSettingsBack').addEventListener('click', () => showOverlay(navFrom));
 
 // ---------- "Neu!" card: the coast is out ----------
@@ -5840,6 +5876,187 @@ function drawNewsScene(c, t, still) {
   newsPop(c, 'Meins!', 352, 52, (B.k - 5.15) / 1.35, 0.1, 18, pal);
   newsPop(c, 'Piep!', 184, 118, (B.k - 6.2) / 0.95, -0.1, 18, pal);
   c.setTransform(1, 0, 0, 1, 0, 0);
+}
+
+// ---------- "Neu!" card of the Kinderzimmer: a small painted gag in the style of the beach card ----------
+// The loop (ROOM_LOOP s): Mimo hops up a tower of letter blocks (M I M O), "Ganz oben!"; a toy train chugs in; the big
+// teddy pokes the tower ("Stups!"), it tips, Mimo sails into the open wagon and rides away ("Juhuu!"); the teddy looks
+// as if nothing happened ("Hihi."). The scene is 400 x 200 units like the beach card; wall and floor reach the edges.
+const ROOM_LOOP = 9.2, ROOM_STILL = 5.6;
+const ROOM_PAL = {
+  light: { wall: '#FBEBD3', wallLow: '#F4DDBE', dot: '#F1D3AD', board: '#E9C9A0', floor: '#E2B987', floorLow: '#D6A874', plank: '#C99862', rug: '#B8DCD0', rugEdge: '#8FC4B4',
+    sky: '#BFE6F5', frame: '#FFFFFF', cloud: '#FFFFFF', bear: '#C98E5A', bearLow: '#B37A4A', bearLite: '#E8C79E', scarf: '#F08FA4', ink: '#3B3560',
+    blocks: ['#F59AAE', '#F6D374', '#9FD8BE', '#8FC3EA'], blockInk: '#FFFFFF', track: '#B08A64', sleeper: '#9C7650', engine: '#F08F7E', engineLow: '#D97564', cab: '#8FC3EA', wagon: '#F6D374', wagonLow: '#E0B94F', wheel: '#4B4766', smoke: '#FFFFFF', pop: '#FFFFFF' },
+  dark: { wall: '#3A3456', wallLow: '#332D4C', dot: '#4A4370', board: '#2C2744', floor: '#6B5440', floorLow: '#5E4937', plank: '#4F3D2E', rug: '#3F6A66', rugEdge: '#335753',
+    sky: '#22324A', frame: '#D9D2E6', cloud: '#4F5470', bear: '#A87650', bearLow: '#8F6342', bearLite: '#C9A684', scarf: '#D9849A', ink: '#1F1E2C',
+    blocks: ['#D9849A', '#D9BC62', '#7FBF9E', '#6FA3CF'], blockInk: '#FFF6EA', track: '#5E4937', sleeper: '#4F3D2E', engine: '#D9786A', engineLow: '#B86254', cab: '#6FA3CF', wagon: '#D9BC62', wagonLow: '#B89A48', wheel: '#1F1E2C', smoke: '#D5D0E2', pop: '#FFF6EA' },
+};
+const ROOM_T = { x: 150, floor: 180, size: 25, letters: ['O', 'M', 'I', 'M'] };   // the tower: centre x, floor line, block size, letters bottom up
+const ROOM_HOPS = [0.55, 1.1, 1.65, 2.2], ROOM_HOP = 0.42;                         // Mimo's hops: start times and length
+const ROOM_TRAIN = { t0: 3.0, from: 450, speed: 125, gap: 50, y: 192 };            // the engine's nose starts at x = from
+const ROOM_POKE = { t0: 3.7, hit: 4.25, back: 4.9 }, ROOM_TIP = { t0: 4.45, t1: 4.95 }, ROOM_FLY = { t0: 4.7, t1: 5.25 };
+const rSeg = (k, a, b) => Math.max(0, Math.min(1, (k - a) / (b - a)));
+const rEase = (u) => u * u * (3 - 2 * u);
+const roomEngineX = (k) => ROOM_TRAIN.from - ROOM_TRAIN.speed * Math.max(0, k - ROOM_TRAIN.t0);
+const roomWagonX = (k) => roomEngineX(k) + ROOM_TRAIN.gap;
+// where Mimo is at loop second k: x, feet y, how he looks, and whether he sits in the wagon
+function roomMimo(k) {
+  const T = ROOM_T, top = (n) => T.floor - T.size * n;
+  if (k < ROOM_HOPS[0]) return { x: T.x + 40, y: T.floor + 4, mood: null, facing: -1, air: 0 };
+  for (let i = 0; i < ROOM_HOPS.length; i++) {
+    const a = ROOM_HOPS[i], u = rSeg(k, a, a + ROOM_HOP);
+    if (k < a + ROOM_HOP) {
+      const x0 = i === 0 ? T.x + 40 : T.x, y0 = i === 0 ? T.floor + 4 : top(i), y1 = top(i + 1);
+      return { x: x0 + (T.x - x0) * u, y: y0 + (y1 - y0) * u - Math.sin(u * Math.PI) * 20, mood: 'happy', facing: -1, air: 1 };
+    }
+    if (i < ROOM_HOPS.length - 1 && k < ROOM_HOPS[i + 1]) return { x: T.x, y: top(i + 1), mood: null, facing: -1, air: 0 };
+  }
+  const high = top(ROOM_HOPS.length);
+  if (k < ROOM_TIP.t0) return { x: T.x, y: high, mood: k > 2.7 && k < 3.6 ? 'happy' : k > ROOM_POKE.t0 ? 'look' : null, facing: k > ROOM_POKE.t0 ? -1 : 1, air: 0 };
+  // the tower tips: Mimo leans with it, then sails to the right into the wagon
+  if (k < ROOM_FLY.t0) { const u = rSeg(k, ROOM_TIP.t0, ROOM_FLY.t0); return { x: T.x + u * 14, y: high + u * 8, mood: 'scared', facing: 1, air: 1 }; }
+  const wx = roomWagonX(ROOM_FLY.t1), seat = ROOM_TRAIN.y - 9;
+  if (k < ROOM_FLY.t1) { const u = rSeg(k, ROOM_FLY.t0, ROOM_FLY.t1), x0 = T.x + 14, y0 = high + 8; return { x: x0 + (wx - x0) * u, y: y0 + (seat - y0) * u - Math.sin(u * Math.PI) * 34, mood: 'scared', facing: 1, air: 1 }; }
+  return { x: roomWagonX(k), y: seat, mood: 'happy', facing: -1, air: 0, ride: true };
+}
+function drawRoomTeaser(c, t, still) {
+  const pal = ROOM_PAL[darkTheme() ? 'dark' : 'light'], cw = c.canvas.width, ch = c.canvas.height;
+  const s = Math.min(cw / 360, ch / 200), ox = (cw - 400 * s) / 2, oy = (ch - 200 * s) / 2;
+  const X0 = -ox / s - 1, X1 = (cw - ox) / s + 1, Y0 = -oy / s - 1, Y1 = (ch - oy) / s + 1, k = t % ROOM_LOOP;
+  c.setTransform(s, 0, 0, s, ox, oy);
+  const FLOOR = 138;
+  // the wall with a dotted wallpaper, a window with a slow cloud, the skirting board
+  const wall = c.createLinearGradient(0, Y0, 0, FLOOR); wall.addColorStop(0, pal.wall); wall.addColorStop(1, pal.wallLow);
+  c.fillStyle = wall; c.fillRect(X0, Y0, X1 - X0, FLOOR - Y0);
+  c.fillStyle = pal.dot;
+  for (let row = 0; row < 7; row++) for (let i = -1; i < 22; i++) { const x = i * 22 + (row % 2) * 11, y = 8 + row * 19; if (x > 238 && x < 342 && y < 104) continue; c.beginPath(); c.arc(x, y, 1.8, 0, Math.PI * 2); c.fill(); }
+  c.fillStyle = pal.frame; c.fillRect(244, 14, 92, 84);
+  c.fillStyle = pal.sky; c.fillRect(249, 19, 82, 74);
+  c.save(); c.beginPath(); c.rect(249, 19, 82, 74); c.clip();
+  c.fillStyle = pal.cloud; const cx = 236 + ((t * 5) % 120), cy = 44;
+  c.beginPath(); c.arc(cx, cy, 8, 0, Math.PI * 2); c.arc(cx + 10, cy - 4, 10, 0, Math.PI * 2); c.arc(cx + 21, cy, 8, 0, Math.PI * 2); c.rect(cx, cy, 21, 8); c.fill();
+  c.restore();
+  c.fillStyle = pal.frame; c.fillRect(288, 19, 4, 74); c.fillRect(249, 54, 82, 4);
+  c.fillStyle = pal.board; c.fillRect(X0, FLOOR - 7, X1 - X0, 8);
+  // wooden floor and a round rug
+  const fl = c.createLinearGradient(0, FLOOR, 0, 200); fl.addColorStop(0, pal.floor); fl.addColorStop(1, pal.floorLow);
+  c.fillStyle = fl; c.fillRect(X0, FLOOR, X1 - X0, Y1 - FLOOR);
+  c.strokeStyle = pal.plank; c.lineWidth = 1; c.globalAlpha = 0.5; c.beginPath();
+  for (let i = 0; i < 4; i++) { const y = FLOOR + 10 + i * 15; c.moveTo(X0, y); c.lineTo(X1, y); }
+  for (let i = 0; i < 26; i++) { const y = FLOOR + 10 + (i % 4) * 15, x = ((i * 67) % 440) - 20; c.moveTo(x, y); c.lineTo(x, y + 15); }
+  c.stroke(); c.globalAlpha = 1;
+  c.fillStyle = pal.rugEdge; c.beginPath(); c.ellipse(212, 176, 132, 17, 0, 0, Math.PI * 2); c.fill();
+  c.fillStyle = pal.rug; c.beginPath(); c.ellipse(212, 175, 124, 14, 0, 0, Math.PI * 2); c.fill();
+  // the teddy, big and soft, its eyes on Mimo; its right paw pokes the tower
+  const m = roomMimo(k);
+  roomTeddy(c, pal, k, m, t);
+  // the tower: blocks with letters; it wobbles after the poke and tips over to the right
+  const T = ROOM_T, wob = k > ROOM_POKE.hit && k < ROOM_TIP.t0 ? Math.sin((k - ROOM_POKE.hit) * 40) * 0.05 : 0, tip = rEase(rSeg(k, ROOM_TIP.t0, ROOM_TIP.t1)) * 1.45;
+  c.save(); c.translate(T.x + T.size / 2, T.floor); c.rotate(wob + tip);
+  T.letters.forEach((ch, i) => {
+    const bx = -T.size, by = -T.size * (i + 1), col = pal.blocks[i % pal.blocks.length];
+    c.fillStyle = col; c.beginPath(); c.roundRect(bx + 0.5, by + 0.5, T.size - 1, T.size - 1, 3); c.fill();
+    c.strokeStyle = 'rgba(0,0,0,0.12)'; c.lineWidth = 1.2; c.stroke();
+    c.fillStyle = pal.blockInk; c.font = '700 16px ' + "'Fredoka', 'Nunito', system-ui, sans-serif"; c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.fillText(ch, bx + T.size / 2, by + T.size / 2 + 1);
+  });
+  c.restore();
+  // the track and the train (behind Mimo when he rides: wagon walls drawn after him)
+  c.fillStyle = pal.sleeper; for (let x = Math.floor(X0 / 12) * 12; x < X1; x += 12) c.fillRect(x, ROOM_TRAIN.y + 1, 7, 4);
+  c.fillStyle = pal.track; c.fillRect(X0, ROOM_TRAIN.y, X1 - X0, 2);
+  const ex = roomEngineX(k), wx = roomWagonX(k), onStage = k >= ROOM_TRAIN.t0 && wx > X0 - 60;
+  if (onStage) roomTrain(c, pal, ex, wx, k, false);
+  // Mimo (a tap on the picture makes him hop wherever he is)
+  const tapHop = t - roomNewsHop > 0 && t - roomNewsHop < 0.5 ? Math.sin((t - roomNewsHop) / 0.5 * Math.PI) * 12 : 0;
+  if (!m.ride || onStage) {
+    const saved = ctx; ctx = c;
+    c.save(); c.translate(m.x, m.y - tapHop); c.scale(1.05, 1.05);
+    drawMimo(0, 0, { facing: m.facing, mood: m.mood, sx: m.air ? 0.94 : 1, sy: m.air ? 1.07 : 1, breathe: still ? 0 : Math.sin(t * 3) * 0.025, blink: (t % 3.3) > 3.15 ? 0.12 : 1 });
+    c.restore(); ctx = saved;
+    c.setTransform(s, 0, 0, s, ox, oy);
+  }
+  if (onStage) roomTrain(c, pal, ex, wx, k, true);
+  // comic words
+  newsPop(c, 'Ganz oben!', T.x + 58, 62, (k - 2.65) / 1.1, -0.1, 18, pal);
+  newsPop(c, 'Tschu-tschu!', 330, 132, (k - 3.05) / 1.1, 0.08, 17, pal);
+  newsPop(c, 'Stups!', 120, 98, (k - ROOM_POKE.hit + 0.05) / 0.9, -0.14, 19, pal);
+  newsPop(c, 'Juhuu!', Math.max(40, wx) + 4, 150, (k - 5.35) / 1.2, 0.1, 18, pal);
+  newsPop(c, 'Hihi.', 98, 40, (k - 7.4) / 1.4, -0.08, 18, pal);
+  // a soft fade where the loop starts again
+  const fade = Math.max(rSeg(k, ROOM_LOOP - 0.35, ROOM_LOOP), 1 - rSeg(k, 0, 0.3));
+  if (!still && fade > 0 && t > 0.3) { c.globalAlpha = fade; c.fillStyle = pal.wall; c.fillRect(X0, Y0, X1 - X0, Y1 - Y0); c.globalAlpha = 1; }
+  c.setTransform(1, 0, 0, 1, 0, 0);
+}
+function roomTeddy(c, pal, k, m, t) {
+  const x = 66, y = 150, breathe = Math.sin(t * 1.6) * 0.8;
+  // whistling innocence at the end: eyes up and to the side
+  const innocent = k > 7.2, look = innocent ? [-1.6, -2] : [Math.max(-2, Math.min(2, (m.x - x) / 30)), Math.max(-2, Math.min(2, (m.y - 70) / 30))];
+  c.fillStyle = pal.bearLow;
+  c.beginPath(); c.ellipse(x - 26, y + 26, 16, 10, 0, 0, Math.PI * 2); c.ellipse(x + 26, y + 26, 16, 10, 0, 0, Math.PI * 2); c.fill();
+  c.fillStyle = pal.bear; c.beginPath(); c.ellipse(x, y - breathe, 40, 44, 0, 0, Math.PI * 2); c.fill();
+  c.fillStyle = pal.bearLite; c.beginPath(); c.ellipse(x, y + 8 - breathe, 24, 26, 0, 0, Math.PI * 2); c.fill();
+  // left paw resting; right paw: reaches out to the tower and back
+  const reach = rEase(rSeg(k, ROOM_POKE.t0, ROOM_POKE.hit)) * (1 - rEase(rSeg(k, ROOM_POKE.hit + 0.15, ROOM_POKE.back)));
+  c.fillStyle = pal.bear; c.beginPath(); c.ellipse(x - 38, y + 4 - breathe, 12, 22, 0.35, 0, Math.PI * 2); c.fill();
+  c.save(); c.translate(x + 30, y - 14 - breathe); c.rotate(-0.4 - reach * 1.05);
+  c.beginPath(); c.ellipse(0, 22 + reach * 12, 11, 22 + reach * 12, 0, 0, Math.PI * 2); c.fill();
+  c.fillStyle = pal.bearLite; c.beginPath(); c.arc(0, 38 + reach * 24, 6, 0, Math.PI * 2); c.fill();
+  c.restore();
+  // head
+  const hy = y - 58 - breathe, tilt = innocent ? Math.sin(t * 2.5) * 0.06 - 0.08 : reach * 0.12;
+  c.save(); c.translate(x, hy); c.rotate(tilt);
+  c.fillStyle = pal.bear;
+  for (const sx of [-1, 1]) { c.beginPath(); c.arc(sx * 22, -22, 11, 0, Math.PI * 2); c.fill(); }
+  c.fillStyle = pal.bearLite; for (const sx of [-1, 1]) { c.beginPath(); c.arc(sx * 22, -22, 6, 0, Math.PI * 2); c.fill(); }
+  c.fillStyle = pal.bear; c.beginPath(); c.ellipse(0, 0, 32, 29, 0, 0, Math.PI * 2); c.fill();
+  c.fillStyle = pal.bearLite; c.beginPath(); c.ellipse(0, 10, 14, 11, 0, 0, Math.PI * 2); c.fill();
+  c.fillStyle = pal.ink; c.beginPath(); c.ellipse(0, 5, 5, 3.6, 0, 0, Math.PI * 2); c.fill();
+  // eyes (button eyes with a glint), shut for a blink now and then
+  const blink = (t % 4.1) > 3.95;
+  for (const sx of [-1, 1]) {
+    if (blink) { c.strokeStyle = pal.ink; c.lineWidth = 2; c.beginPath(); c.moveTo(sx * 11 - 4, -6); c.lineTo(sx * 11 + 4, -6); c.stroke(); continue; }
+    c.fillStyle = pal.ink; c.beginPath(); c.arc(sx * 11 + look[0], -6 + look[1], 4.2, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#FFFFFF'; c.beginPath(); c.arc(sx * 11 + look[0] + 1.4, -7.6 + look[1], 1.3, 0, Math.PI * 2); c.fill();
+  }
+  // mouth: a smile, a sly grin after the poke, a little "o" when whistling
+  c.strokeStyle = pal.ink; c.lineWidth = 1.8; c.lineCap = 'round'; c.beginPath();
+  if (innocent) { c.fillStyle = pal.ink; c.arc(6, 15, 2.4, 0, Math.PI * 2); c.fill(); }
+  else if (k > ROOM_POKE.hit && k < 7.2) { c.moveTo(-6, 13); c.quadraticCurveTo(2, 20, 9, 11); c.stroke(); }
+  else { c.moveTo(-4, 13); c.quadraticCurveTo(0, 16, 4, 13); c.stroke(); }
+  c.restore();
+  // scarf
+  c.fillStyle = pal.scarf; c.beginPath(); c.ellipse(x, y - 34 - breathe, 26, 6, 0, 0, Math.PI * 2); c.fill();
+  c.beginPath(); c.roundRect(x + 10, y - 34 - breathe, 8, 22, 3); c.fill();
+  // the whistle notes while it plays innocent
+  if (innocent && k < ROOM_LOOP - 0.4) {
+    c.fillStyle = pal.ink; c.font = '600 12px ' + "'Fredoka', 'Nunito', system-ui, sans-serif"; c.textAlign = 'center';
+    for (let i = 0; i < 2; i++) { const u = ((k - 7.2) * 0.8 + i * 0.5) % 1; c.globalAlpha = Math.sin(u * Math.PI); c.fillText('♪', x + 16 + u * 22, hy + 10 - u * 26); }
+    c.globalAlpha = 1;
+  }
+}
+// front: false draws the engine, the wagon's back wall and wheels; true draws the wagon's front wall over a riding Mimo
+function roomTrain(c, pal, ex, wx, k, front) {
+  const y = ROOM_TRAIN.y, bounce = Math.abs(Math.sin(k * 14)) * 0.8;
+  if (front) {
+    c.fillStyle = pal.wagon; c.beginPath(); c.roundRect(wx - 19, y - 17 - bounce, 38, 13, 3); c.fill();
+    c.fillStyle = pal.wagonLow; c.fillRect(wx - 19, y - 9 - bounce, 38, 3);
+    return;
+  }
+  // wheels
+  c.fillStyle = pal.wheel;
+  for (const wxx of [ex + 8, ex + 26, wx - 11, wx + 11]) { c.beginPath(); c.arc(wxx, y - 3, 5, 0, Math.PI * 2); c.fill(); }
+  // coupling, wagon back wall
+  c.fillStyle = pal.wheel; c.fillRect(ex + 30, y - 9, wx - ex - 48, 2.5);
+  c.fillStyle = pal.wagonLow; c.beginPath(); c.roundRect(wx - 19, y - 23 - bounce, 38, 10, 3); c.fill();
+  // engine: boiler to the left (it drives left), cab behind, a chimney with puffs
+  c.fillStyle = pal.engine; c.beginPath(); c.roundRect(ex - 2, y - 20 - bounce, 30, 14, 5); c.fill();
+  c.fillStyle = pal.engineLow; c.fillRect(ex - 2, y - 10 - bounce, 30, 3);
+  c.fillStyle = pal.cab; c.beginPath(); c.roundRect(ex + 20, y - 34 - bounce, 16, 28, 3); c.fill();
+  c.fillStyle = pal.wall; c.fillRect(ex + 24, y - 30 - bounce, 8, 7);
+  c.fillStyle = pal.engineLow; c.fillRect(ex + 3, y - 30 - bounce, 7, 11);
+  c.fillStyle = pal.smoke;
+  for (let i = 0; i < 3; i++) { const u = ((k * 1.6) + i / 3) % 1; c.globalAlpha = 0.75 * (1 - u); c.beginPath(); c.arc(ex + 6 + u * 16, y - 34 - u * 22 - bounce, 3 + u * 5, 0, Math.PI * 2); c.fill(); }
+  c.globalAlpha = 1;
 }
 
 // ---------- Start screen: the family photo ----------
@@ -6560,15 +6777,69 @@ function drawAppIcon(c, N, safe) {
   c.setTransform(1, 0, 0, 1, 0, 0);
 }
 
-// ---------- Level select ----------
+// ---------- Level select: first the worlds, then the levels of one of them ----------
+// levelView: null is the overview of all worlds; a number is that world's levels; '3d' the 3D worlds; 'bonus' the bonus levels
+let levelView = null;
+const WORLD_TINTS = ['--mimo-mint', '--mimo-lav', '--mimo-sun', '--mimo-rose', '--mimo-peach'];
+const levelWorlds = () => [...new Set(MAIN.map((i) => LEVELS[i].world || 1))];
+const worldLevels = (w) => MAIN.filter((i) => (LEVELS[i].world || 1) === w);
+const worldTint = (w) => 'var(' + WORLD_TINTS[(w - 1) % WORLD_TINTS.length] + ')';
+// "Welten" opens on the world of the level Mimo plays now
+function openLevels() {
+  const c = MAIN[mainOpen() - 1];
+  levelView = c != null ? (LEVELS[c].world || 1) : null;
+  buildLevelGrid(); showOverlay('levels');
+}
+function levelsBack() {
+  if (levelView == null) { showOverlay('menu'); return; }
+  levelView = null; buildLevelGrid(); SFX.ui();
+}
+function showLevelView(v) { levelView = v; buildLevelGrid(); const card = $('levelGrid').closest('.card'); if (card) card.scrollTop = 0; }
 function buildLevelGrid() {
   const grid = $('levelGrid'); grid.innerHTML = '';
+  const v = levelView;
+  $('levelsTitle').textContent = v == null ? 'Welten' : v === '3d' ? '3D-Welten' : v === 'bonus' ? 'Bonus' : 'Welt ' + v + ' · ' + WORLDS[v].name;
+  if (v == null) buildWorldOverview(grid);
+  else if (v === '3d') build3dWorlds(grid);
+  else if (v === 'bonus') buildBonusLevels(grid);
+  else buildWorldLevels(grid, v);
+}
+// the overview: the sums of all worlds, one card a world, then the 3D worlds and the bonus
+function buildWorldOverview(grid) {
+  const golds = LEVELS.filter((_, i) => medalFor(i, progress.best[i]) === 'gold').length;
+  const done = MAIN.filter((i) => progress.best[i] != null).length;
+  const sum = document.createElement('p'); sum.className = 'lvl-sum';
+  sum.innerHTML = '<span></span><span></span>' + (golds ? '<span></span>' : '');
+  const parts = sum.querySelectorAll('span');
+  parts[0].textContent = '★ ' + starsTotal() + ' Sterne'; parts[1].textContent = done + ' von ' + MAIN.length + ' Level';
+  if (golds) parts[2].textContent = golds + ' × Gold';
+  grid.appendChild(sum);
+  const current = MAIN[mainOpen() - 1], here = current != null ? (LEVELS[current].world || 1) : 0;
+  for (const w of levelWorlds()) {
+    const list = worldLevels(w), n = list.length;
+    const won = list.filter((i) => progress.best[i] != null).length, got = list.reduce((a, i) => a + (progress.stars[i] || 0), 0);
+    const open = OPEN || list.some((i) => levelOpen(i));
+    const note = WORLDS[w].headNote && WORLDS[w].headNote();
+    const meta = !open ? 'Nach Welt ' + (w - 1) : won + ' von ' + n + ' geschafft · ★ ' + got + '/' + n * 3 + (note ? ' · ' + note : '');
+    const b = pickCard(String(w), WORLDS[w].name, meta, open, () => showLevelView(w), worldTint(w), won / n);
+    if (w === here) b.classList.add('here');
+    grid.appendChild(b);
+  }
+  // a world that is built but held back (UNRELEASED_WORLDS): a friendly note, no level of it
+  if (HELD_WORLDS.length) {
+    const soon = document.createElement('p'); soon.className = 'lvl-soon';
+    soon.innerHTML = '<b>Bald geht es weiter.</b> <span>Mimo packt schon den Koffer für die nächste Welt.</span>';
+    grid.appendChild(soon);
+  }
+  const room = progress.room;
+  grid.appendChild(pickCard('3D', '3D-Welten', 'Himmelsinseln · Kinderzimmer', true, () => showLevelView('3d'), 'var(--mimo)', null, !room));
+  grid.appendChild(pickCard('★', 'Bonus', 'Tageslauf und Extra-Level', true, () => showLevelView('bonus'), 'var(--star)'));
+}
+// one world: its levels and its boss
+function buildWorldLevels(grid, w) {
   const current = MAIN[mainOpen() - 1];
-  const head = (text) => { const hd = document.createElement('h3'); hd.className = 'world-head'; hd.textContent = text; grid.appendChild(hd); };
-  let lastWorld = 0;
-  LEVELS.forEach((lv, i) => {
-    if (lv.night || lv.bonus) return;
-    if (lv.world !== lastWorld) { lastWorld = lv.world; const note = WORLDS[lv.world].headNote && WORLDS[lv.world].headNote(); head('Welt ' + lv.world + ' · ' + WORLDS[lv.world].name + (note ? ' · ' + note : '')); }
+  for (const i of worldLevels(w)) {
+    const lv = LEVELS[i];
     const b = document.createElement('button'); b.type = 'button'; b.className = 'lvl-card';
     const unlocked = OPEN || levelOpen(i), best = progress.best[i], got = progress.stars[i] || 0, medal = medalFor(i, best);
     if (!unlocked) b.classList.add('locked'); if (i === current) b.classList.add('current');
@@ -6581,27 +6852,41 @@ function buildLevelGrid() {
     grid.appendChild(b);
     const bw = bossAfterLevel(i);
     if (bw > 0) grid.appendChild(bossCard(bw));
-  });
-  // a world that is built but held back (UNRELEASED_WORLDS): a friendly note where it will begin, no level of it
-  if (HELD_WORLDS.length) {
-    const soon = document.createElement('p'); soon.className = 'lvl-soon';
-    soon.innerHTML = '<b>Bald geht es weiter.</b> <span>Mimo packt schon den Koffer für die nächste Welt.</span>';
-    grid.appendChild(soon);
   }
-  head('Bonus');
-  const dl = dailyLevel(), d = progress.daily, doneToday = d && d.day === dayIndex(), sk = streak();
-  grid.appendChild(bonusCard('☀\uFE0E', 'Tageslauf', 'Level ' + (dl + 1) + ' · ' + (doneToday ? fmtTime(d.time) : 'heute offen') + (sk ? ' · Serie ' + sk : ''), true,
-    () => { hideOverlays(); loadLevel(dailyLevel()); G.daily = true; updateHud(); }));
-  const su = skyUnlocked(), sp = progress.sky;
+  // the current level in sight on a long list
+  const cur = grid.querySelector('.lvl-card.current');
+  if (cur) requestAnimationFrame(() => cur.scrollIntoView({ block: 'nearest' }));
+}
+function build3dWorlds(grid) {
+  const su = skyUnlocked(), sp = progress.sky, rm = progress.room;
   grid.appendChild(bonusCard('3D', 'Himmelsinseln', !su ? 'Nach Level ' + (worldEnd(1) + 1) : sp && sp.best != null ? fmtTime(sp.best) + ' · ★ ' + (sp.stars || 0) + '/' + SKY_STARS : 'Inseln und Endgegner', su, startSky));
+  const rc = bonusCard('3D', 'Kinderzimmer', rm && rm.best != null ? fmtTime(rm.best) + ' · ★ ' + (rm.stars || 0) + '/' + (rm.total || 0) : rm ? 'Weiterspielen' : 'Ein riesiges Zimmer voller Spielzeug', true, startRoom);
+  if (!rm) rc.querySelector('.name').insertAdjacentHTML('beforeend', '<span class="new-badge">Neu</span>');
+  grid.appendChild(rc);
+}
+function buildBonusLevels(grid) {
+  const dl = dailyLevel(), d = progress.daily, doneToday = d && d.day === dayIndex(), sk = streak();
+  grid.appendChild(bonusCard('☀︎', 'Tageslauf', 'Level ' + (dl + 1) + ' · ' + (doneToday ? fmtTime(d.time) : 'heute offen') + (sk ? ' · Serie ' + sk : ''), true,
+    () => { hideOverlays(); loadLevel(dailyLevel()); G.daily = true; updateHud(); }));
   const ni = LEVELS.findIndex((l) => l.night), nightOpen = DEV || OPEN || nightness() >= 0.5;
-  if (ni >= 0) grid.appendChild(bonusCard('☾\uFE0E', LEVELS[ni].name, nightOpen ? (progress.best[ni] != null ? 'Bestzeit ' + fmtTime(progress.best[ni]) : 'Jetzt offen') : 'Nur von 21 bis 5 Uhr', nightOpen, () => startLevel(ni)));
+  if (ni >= 0) grid.appendChild(bonusCard('☾︎', LEVELS[ni].name, nightOpen ? (progress.best[ni] != null ? 'Bestzeit ' + fmtTime(progress.best[ni]) : 'Jetzt offen') : 'Nur von 21 bis 5 Uhr', nightOpen, () => startLevel(ni)));
   // bonus levels of the world modules open once their world's last level is done
   LEVELS.forEach((lv, i) => {
     if (!lv.bonus) return;
     const end = worldEnd(lv.world), open = DEV || OPEN || progress.best[end] != null;
     grid.appendChild(bonusCard('◆', lv.name, !open ? 'Nach Level ' + (end + 1) : progress.best[i] != null ? 'Bestzeit ' + fmtTime(progress.best[i]) : 'Jetzt offen', open, () => startLevel(i)));
   });
+}
+// a big card of the overview: badge, name, one line, and a thin bar for how much of it is done (share 0..1, null for none)
+function pickCard(badge, name, meta, open, go, tint, share, fresh) {
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'lvl-card world' + (open ? '' : ' locked'); b.disabled = !open;
+  b.style.setProperty('--wc', tint);
+  b.innerHTML = '<span class="num"></span><span class="name"></span><span class="meta"><span></span></span>' + (share != null ? '<span class="bar"><i></i></span>' : '');
+  b.querySelector('.num').textContent = badge; b.querySelector('.name').textContent = name; b.querySelector('.meta span').textContent = meta;
+  if (fresh) b.querySelector('.name').insertAdjacentHTML('beforeend', '<span class="new-badge">Neu</span>');
+  if (share != null) b.querySelector('.bar i').style.width = Math.round(Math.max(0, Math.min(1, share)) * 100) + '%';
+  b.addEventListener('click', () => { if (open) { audio(); SFX.ui(); go(); } });
+  return b;
 }
 function bonusCard(icon, name, meta, open, go) {
   const b = document.createElement('button'); b.type = 'button'; b.className = 'lvl-card bonus' + (open ? '' : ' locked'); b.disabled = !open;
@@ -6795,7 +7080,8 @@ function overlayPrimary() {
 }
 function overlayBack() {
   if (G.overlay === 'board') { if (boardFrom === 'run') openRunMenu(); else { buildLevelGrid(); showOverlay('levels'); } return; }
-  if (G.overlay === 'levels' || G.overlay === 'ach' || G.overlay === 'run') showOverlay('menu');
+  if (G.overlay === 'levels') { levelsBack(); return; }
+  if (G.overlay === 'ach' || G.overlay === 'run') showOverlay('menu');
   else if (G.overlay === 'settings') showOverlay(navFrom);
   else if (G.overlay === 'shop') { shopSel = { ...progress.outfit }; showOverlay(navFrom); }
 }
@@ -7191,6 +7477,86 @@ function showSkyWin(r) {
   showOverlay('win');
 }
 
+// ---------- 3D-Welt Kinderzimmer: its own page (kinderzimmer.html) in a frame over the game ----------
+// The room brings its own controls, story overlay and sounds, so it runs as it is; it tells the game through
+// postMessage when the player wants back to the menu ({ mimoRoom: 'menu' }) and when a run is won ({ mimoRoom: 'win', ... }).
+let roomFrame = null;
+function roomUrl() {
+  const c = COSTUMES.find((x) => x.id === progress.outfit.color) || COSTUMES[0];
+  const col = String(P[c.token] || P.mimo || '#A8C8EC').replace('#', '');
+  return 'kinderzimmer.html?app&farbe=' + encodeURIComponent(col) + '&hut=' + encodeURIComponent(progress.outfit.hat || '') + '&acc=' + encodeURIComponent(progress.outfit.acc || '');
+}
+function startRoom() {
+  if (roomFrame) return;
+  closeRoomNews(false);
+  if (!progress.room) { progress.room = { best: null, stars: 0, total: 0, secrets: 0 }; saveProgress(); }
+  releaseAll(); Music.stop(); menuSceneHold(); keepAwake(true);
+  const f = document.createElement('iframe');
+  f.className = 'room-frame'; f.title = 'Kinderzimmer'; f.src = roomUrl();
+  f.addEventListener('load', () => { try { f.contentWindow.focus(); } catch (_) { /* focus may be refused */ } });
+  document.body.appendChild(f); roomFrame = f;
+}
+function closeRoom() {
+  if (!roomFrame) return;
+  roomFrame.remove(); roomFrame = null;
+  goMenu(); stage.focus({ preventScroll: true });
+}
+function saveRoom(r) {
+  const prev = progress.room || { best: null, stars: 0, total: 0, secrets: 0 }, t = Math.round((Number(r.time) || 0) * 10) / 10;
+  progress.room = cleanRoom({ best: t > 0 && (prev.best == null || t < prev.best) ? t : prev.best, stars: Math.max(prev.stars || 0, r.stars | 0), total: r.total | 0 || prev.total, secrets: Math.max(prev.secrets || 0, r.secrets | 0) });
+  saveProgress();
+}
+window.addEventListener('message', (e) => {
+  if (!roomFrame || e.source !== roomFrame.contentWindow || !e.data || typeof e.data !== 'object') return;
+  if (e.data.mimoRoom === 'menu') closeRoom();
+  else if (e.data.mimoRoom === 'win') saveRoom(e.data);
+});
+
+// The teaser: after the start photo, on every start of the app until the Kinderzimmer was opened once
+const ovRoomNews = $('ovRoomNews');
+let roomNewsShown = false, roomNewsT0 = 0, roomNewsHop = -9, roomNewsRaf = 0;
+const roomNewsCv = $('roomNewsScene');
+roomNewsCv.addEventListener('pointerdown', () => { roomNewsHop = (performance.now() - roomNewsT0) / 1000; SFX.hup(); });
+function roomNewsSize() {
+  const r = roomNewsCv.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1);
+  const w = Math.max(200, Math.round(r.width * dpr)), h = Math.max(100, Math.round(r.height * dpr));
+  if (roomNewsCv.width !== w || roomNewsCv.height !== h) { roomNewsCv.width = w; roomNewsCv.height = h; }
+}
+window.addEventListener('resize', () => { if (roomNewsOpen()) { roomNewsSize(); if (reduced()) roomNewsFrame(); } });
+function roomNewsFrame() {
+  const t = (performance.now() - roomNewsT0) / 1000;
+  drawRoomTeaser(roomNewsCv.getContext('2d'), reduced() ? ROOM_STILL : t, reduced());
+  if (!reduced() && roomNewsOpen()) roomNewsRaf = requestAnimationFrame(roomNewsFrame);
+}
+const roomNewsOpen = () => !ovRoomNews.hidden;
+function maybeShowRoomNews() {
+  if (roomNewsShown || progress.room || roomFrame || newsOpen() || roomNewsOpen()) return;
+  if (navigator.webdriver && !window.__mimoRoomNews) return;
+  roomNewsShown = true;
+  ovRoomNews.hidden = false;
+  roomNewsT0 = performance.now(); roomNewsHop = -9;
+  roomNewsSize(); roomNewsFrame();
+  $('roomNewsCard').focus({ preventScroll: true });
+}
+function closeRoomNews(go) {
+  if (!roomNewsOpen()) return;
+  ovRoomNews.hidden = true; cancelAnimationFrame(roomNewsRaf); roomNewsRaf = 0;
+  if (go) { audio(); SFX.ui(); startRoom(); } else $('btnContinue').focus({ preventScroll: true });
+}
+$('btnRoomGo').addEventListener('click', () => closeRoomNews(true));
+$('btnRoomLater').addEventListener('click', () => closeRoomNews(false));
+ovRoomNews.addEventListener('click', (e) => { if (e.target === ovRoomNews) closeRoomNews(false); });
+window.addEventListener('keydown', (e) => {
+  if (!roomNewsOpen() || splashCovers()) return;
+  e.stopImmediatePropagation();
+  if (e.code === 'Escape') { closeRoomNews(false); e.preventDefault(); return; }
+  if ((e.code === 'Enter' || e.code === 'NumpadEnter') && document.activeElement === $('roomNewsCard')) { closeRoomNews(true); e.preventDefault(); return; }
+  if (e.code === 'Tab') {
+    const btns = [...ovRoomNews.querySelectorAll('button')], i = btns.indexOf(document.activeElement);
+    btns[(i + (e.shiftKey ? btns.length - 1 : 1)) % btns.length].focus(); e.preventDefault();
+  }
+}, true);
+
 // ---------- Shared leaderboard (claude.ai db capability; absent outside the viewer) ----------
 let cloud = null, cloudTimer = 0;
 async function initCloud() {
@@ -7322,7 +7688,7 @@ if (window.claude && window.claude.hot && window.claude.hot.snapshot) {
   window.claude.hot.snapshot(() => (G.L && !G.overlay ? { levelIndex: G.levelIndex, attempts: G.attempts } : {}));
 }
 if (window.claude && window.claude.hot && window.claude.hot.ready) window.claude.hot.ready(boot); else boot(window.claude && window.claude.hot ? window.claude.hot.data : null);
-window.__mimo = { appIcon: { prepare: appIconPrepare, draw: drawAppIcon }, startSky, sim: { hold(on) { simHold = !!on; }, step(n) { for (let i = 0; i < n; i++) update(STEP); }, STEP }, startBoss, BOSSES, boss: () => G.boss, aud: () => ({ ac, masterGain, Music, audioStuck, btn: btnUnlock.textContent }), piep, bubble, unlock, startGag, CODES, ACHIEVEMENTS, progress, G, LEVELS, MEDALS, WORLDS, MAIN, COSTUMES, worldApi, song: () => songForState(), mainOpen, levelOpen, continueLevel, nextMain, input, load: (i) => { hideOverlays(); loadLevel(i); }, setKey, startBonus, startDash, restartDash, openRunMenu, ph: (tx, ty) => (G.time / TT_PERIOD + (G.L.tgroup.get(tx + ',' + ty) || 0)) % 1, audioState: () => ({ state: ac && ac.state, music: musGain && musGain.gain.value, master: masterGain && masterGain.gain.value, running: Music.running, musicOn: progress.music, sfxOn: progress.sfx }),
+window.__mimo = { startRoom, closeRoom, roomNews: maybeShowRoomNews, drawRoomTeaser, appIcon: { prepare: appIconPrepare, draw: drawAppIcon }, startSky, sim: { hold(on) { simHold = !!on; }, step(n) { for (let i = 0; i < n; i++) update(STEP); }, STEP }, startBoss, BOSSES, boss: () => G.boss, aud: () => ({ ac, masterGain, Music, audioStuck, btn: btnUnlock.textContent }), piep, bubble, unlock, startGag, CODES, ACHIEVEMENTS, progress, G, LEVELS, MEDALS, WORLDS, MAIN, COSTUMES, worldApi, song: () => songForState(), mainOpen, levelOpen, continueLevel, nextMain, input, load: (i) => { hideOverlays(); loadLevel(i); }, setKey, startBonus, startDash, restartDash, openRunMenu, ph: (tx, ty) => (G.time / TT_PERIOD + (G.L.tgroup.get(tx + ',' + ty) || 0)) % 1, audioState: () => ({ state: ac && ac.state, music: musGain && musGain.gain.value, master: masterGain && masterGain.gain.value, running: Music.running, musicOn: progress.music, sfxOn: progress.sfx }),
   meter: (ms) => new Promise((res) => { if (!ac) return res(null); const an = ac.createAnalyser(); an.fftSize = 2048; masterGain.connect(an); const buf = new Float32Array(an.fftSize); let peak = 0; const t0 = performance.now(); const tick = () => { an.getFloatTimeDomainData(buf); for (const v of buf) peak = Math.max(peak, Math.abs(v)); if (performance.now() - t0 < ms) requestAnimationFrame(tick); else { masterGain.disconnect(an); res(peak); } }; tick(); }) };
 })();
 </script>

@@ -30,6 +30,7 @@
   <span class="chip" id="hudTime"></span>
   <button class="chip" id="btnFlag"></button>
   <button class="chip" id="btnRestart"></button>
+  <button class="chip" id="btnHome" hidden></button>
 </div>
 <div class="jump" id="jump" hidden></div>
 
@@ -71,6 +72,9 @@
   // look: camera turn the game has not taken yet (radians, positive turns to the right)
   const input = { left: false, right: false, up: false, down: false, ax: 0, ay: 0, jumpHeld: false, jumpQueued: false, look: 0 };
   if (isTouch) { document.body.classList.add('touch'); $('jump').hidden = false; }
+  // inside the game app (?app, in a frame): a button back to the game's menu, and the game keeps the record
+  const inApp = params.has('app') && window.parent !== window;
+  const toGame = (msg) => { if (inApp) try { window.parent.postMessage(msg, location.origin); } catch (_) { /* the game is gone */ } };
 
   // ---------- Keyboard ----------
   const KEYS = { ArrowLeft: 'left', KeyA: 'left', ArrowRight: 'right', KeyD: 'right', ArrowUp: 'up', KeyW: 'up', ArrowDown: 'down', KeyS: 'down' };
@@ -80,6 +84,7 @@
     if (KEYS[e.code]) { input[KEYS[e.code]] = true; e.preventDefault(); }
     if (e.code === 'Space') { if (!e.repeat) input.jumpQueued = true; input.jumpHeld = true; e.preventDefault(); }
     if (e.code === 'KeyR') restart();
+    if (e.code === 'Escape' && inApp) { toGame({ mimoRoom: 'menu' }); e.preventDefault(); }
     if (e.code === 'KeyF' && room) room.toFlag();
     if (e.code === 'Enter' && talking) input.jumpQueued = true;
     if (e.code === 'KeyQ') turnKeys.left = true;
@@ -191,9 +196,10 @@
   const fmt = (t) => t.toFixed(1).replace('.', ',') + ' s';
   $('btnFlag').innerHTML = IC.flag + '<span class="word">Zur Fahne</span>';
   $('btnRestart').innerHTML = IC.restart + '<span class="word">Neu</span>';
+  if (inApp) { $('btnHome').hidden = false; $('btnHome').innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span class="word">Menü</span>'; $('btnHome').addEventListener('click', () => toGame({ mimoRoom: 'menu' })); }
   const host = {
     anchor: $('anchor'), input, sfx, quick: params.has('quick'),
-    outfit: { color: params.get('farbe') ? '#' + params.get('farbe') : '#A8C8EC', hat: 'h_leaf', acc: 'a_none' },
+    outfit: { color: params.get('farbe') ? '#' + params.get('farbe') : '#A8C8EC', hat: params.get('hut') || 'h_leaf', acc: params.get('acc') || 'a_none' },
     secrets: loadSecrets(),
     onSecret: (list) => { try { localStorage.setItem(SECRETS_KEY, JSON.stringify(list)); } catch (_) { /* private mode: the find only counts for this visit */ } },
     onHud: (h) => {
@@ -202,7 +208,7 @@
     },
     onHint: hint,
     onBoss: (b) => ui.boss(b),
-    onWin: (r) => ui.win(r, restart),
+    onWin: (r) => { ui.win(r, restart); toGame({ mimoRoom: 'win', time: r.time, stars: r.stars, total: r.total, secrets: r.secrets }); },
     onTalk: (line) => {
       talking = !!line; ui.talk(line);
       if (!line && !toldControls) { toldControls = true; setTimeout(() => hint(CONTROLS), 2600); }

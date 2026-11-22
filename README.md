@@ -2,6 +2,8 @@
 
 Ein ruhiges Hüpfspiel mit Mimo: 29 Level in drei Welten, drei Endgegner und das 3D-Bonuslevel Himmelsinseln.
 
+Unter „Welten“ gibt es außerdem die **3D-Welten**: die Himmelsinseln und das **Kinderzimmer** (`src/kinderzimmer.html` mit `src/room3d/`). Das Kinderzimmer ist eine eigene Seite, die das Spiel in einem Rahmen öffnet; sie läuft auch allein als Testseite. Bis man es einmal geöffnet hat, zeigt die App nach dem Startfoto eine gemalte Neu!-Karte.
+
 Die Sternenbahn (Musiklauf, Abenteuer, Endlosbahn) ruht: ihr Code liegt weiter in `src/`, ist aber über `const STARWAY = false` in `src/index.html` abgeschaltet und wird nicht in die App gebaut.
 
 **Spielen:** die GitHub-Pages-Adresse dieses Projekts öffnen.
