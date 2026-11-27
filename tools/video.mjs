@@ -1,13 +1,14 @@
 // Records real-time videos of the game played by its bots (boss bot, full level routes). Never touches src/ or the save.
 //
 // Usage: node tools/video.mjs --boss 4 | --level 29 | --world 4 | --opening 29 | --closing  [--out dir] [--scale 2] [--keep-webm]
-//   --closing   the fight of world 4 with its closing scene forced on (it never plays under automation by itself)
+//   --closing [5] the fight of world 4 (or 5) with its closing scene forced on (it never plays under automation by itself);
+//               world 5: --parts flag,book,thermos,tripod | none sets which summit photo parts count as found
 //   --opening i the opening scene of level index i (world 4: 29), forced on, until the level has begun for a moment
 //   --boss n    the boss fight of world n, played by boss.bot (the bot of tools/bosscheck.mjs), intro to the hat landing
 //   --level i   level index i (world 4 = 29..41) with its full route tools/levels/routes/world<w>/NN-full.txt
 //               (--route fast: its fast route instead, e.g. to show a level without its find)
 //   --world w   every level of world w, one video each
-//   --out       default ../mimo-welten-sicherung/videos
+//   --out       default /Users/julianradewagen/mimo-welten-sicherung/videos
 // Real time: the page clock is held (like in levelbot/bosscheck) and a requestAnimationFrame loop feeds it the real
 // elapsed time in 1/120 s steps, running the bot before every single step, so the run is as exact as the tools' runs
 // but plays at normal speed. Chromium is muted (tools/pw.mjs). Output: webm from Playwright, converted to H.264 mp4
@@ -21,7 +22,7 @@ import { serveSrc, parseArgs, srcLevels } from './levels-lib.mjs';
 import { pageDriver, routeJob } from './video-driver.mjs';
 
 const args = parseArgs(process.argv.slice(2));
-const OUT = path.resolve(String(args.out || '../mimo-welten-sicherung/videos'));
+const OUT = path.resolve(String(args.out || '/Users/julianradewagen/mimo-welten-sicherung/videos'));
 const SCALE = Number(args.scale) || 2, W = 844, H = 390;
 const ROUTES = path.resolve(import.meta.dirname, 'levels', 'routes');
 fs.mkdirSync(OUT, { recursive: true });
@@ -47,7 +48,7 @@ async function record(job, name) {
   await page.waitForTimeout(500);
   const tStart = Date.now();
   await page.evaluate(pageDriver, job);
-  try { await page.waitForFunction(() => window.__vid && window.__vid.finished, null, { timeout: 120000, polling: 500 }); }
+  try { await page.waitForFunction(() => window.__vid && window.__vid.finished, null, { timeout: 300000, polling: 500 }); }
   catch (e) { console.error(name + ' did not finish: ' + JSON.stringify(await page.evaluate(() => window.__vid.where && window.__vid.where())), errors); throw e; }
   await page.waitForTimeout(600);
   const result = await page.evaluate(() => window.__vid.result);
@@ -73,7 +74,12 @@ try {
   const levelJob = (i) => routeJob(levels, i, ROUTES, slug);
   if (args.opening) await record({ kind: 'opening', slot: Number(args.opening) }, 'anfangsszene');
   if (args.family) await record({ kind: 'family', slot: Number(args.family), after: !!args.after }, args.after ? 'familie-nach-szene' : 'familie-spaeterer-start');
-  if (args.closing) await record({ kind: 'boss', w: 4, closing: true }, 'schlussszene');
+  if (args.closing) {
+    const w = args.closing === true || args.closing === 'true' ? 4 : Number(args.closing);
+    // world 5: --parts flag,book,thermos,tripod (or 'none') decides which summit photo parts count as found
+    const parts = w === 5 && args.parts != null ? (args.parts === 'none' ? '' : String(args.parts)) : null;
+    await record({ kind: 'boss', w, closing: true, parts }, w === 4 ? 'schlussszene' : 'schlussszene-' + (parts == null ? 'gespeichert' : parts === '' ? '0teile' : parts.split(',').length + 'teile'));
+  }
   if (args.boss) await record({ kind: 'boss', w: Number(args.boss) }, ({ 4: 'kaept-n-krake', 5: 'drache-fauch', 6: 'kaesebert' })[args.boss] || 'boss-' + args.boss);
   if (args.level != null && args.level !== true) { const [j, n] = args.route === 'fast' ? routeJob(levels, Number(args.level), ROUTES, slug, 'fast') : levelJob(Number(args.level)); j.fast = !!args.fast; await record(j, args.route === 'fast' ? n + '-schnell' : n); }
   if (args.world) {

@@ -1,0 +1,308 @@
+// World 5 "Gipfelsturm": levels 43 to 46 (Aschestrand, Heißer Stein, Geysirfeld, Feuerhüpfer), the beach band of the climb
+// ("Gipfelsturm"). Each level has one Fauch moment (cast who 'fauch', volcano-fauch.js), up to three family scenes at quiet
+// places (field scenes, volcano-skit.js), one joke in an obstacle (quip, volcano-things-quips.js) and one person at the door,
+// told one after another. The other nine levels and the world song: volcano-levels.js (loaded after this file,
+// so these come first). Routes in tools/levels/routes/world5/01..04-full.txt and -fast.txt, map characters and level fields in
+// tools/levels/world5-kit.md, the story fields in src/worlds/README.md ("Welt 5").
+(function () {
+  'use strict';
+  window.MimoWorlds.register({
+    world: 5,
+    levels: [
+    { // 43 Aschestrand (0 m): the boat on the ash beach, the dead cable car, the little ash cone, the long crumble bridge,
+      // the rest bench where the pack is filled again, the obsidian cave, and the old cable car line over the last lava
+      name: 'Aschestrand',
+      opening: true,
+      medals: [41, 62, 94],
+      hint: 'Die <b>Lava</b> ist tabu: immer drüberspringen.',
+      says: [{x: 31, y: 11, r: 2.5, text: 'Das ist keine Suppe.'}, {x: 3, y: 13, r: 1.6, text: 'Ein Leck. Gut, dass wir schon da sind.'}],
+      sign: {x: 25, y: 13},
+      decor: [{k: 'boat', x: 3, y: 11, w: 11, h: 3, mast: 8, top: 4, hold: [5, 12, 7, 2], leak: [3, 13, 2, 1]},
+        {k: 'shore', x: 15, y: 14, plank: [13.2, 11, 17.2, 14]},
+        {k: 'pylon', x: 27, y: 14, h: 6, rope: [14, -6]}, {k: 'pylon', x: 173, y: 10, h: 4, rope: [12, -5], sign: false}, {k: 'pylon', x: 185, y: 9, h: 5, rope: [14, -6], sign: false},
+        {k: 'cairn', x: 104, y: 12, n: 3}],
+      cast: [
+        {who: 'fauch', act: 'smokering', x: 64, y: 6, at: 42, then: [{by: 'player', text: 'Ein Rauchring. Von ganz da oben.'}]},
+        {who: 'filmer', x: 110, y: 11, face: 1, tag: 'film'},
+        {who: 'kid', x: 111, y: 11, face: 1, tag: 'kid'},
+        {who: 'striped', x: 112, y: 11, face: -1, pack: 0, tag: 'jul'},
+        {who: 'professor', x: 113, y: 11, face: -1, tag: 'prof'},
+        {who: 'sidepart', x: 115, y: 11, face: -1, act: 'sweat', scarf: true, tag: 'sp'},
+        {who: 'dog', x: 116.5, y: 11, face: 1, tag: 'dog'},
+        // on the last tile of the rest place, the sausage held out over the lava
+        {who: 'redbeard', x: 118, y: 11, face: 1, act: 'grill', sausage: 'fresh', tag: 'rb'},
+        // the goal: the reporter already waits on the last ledge before the door and reports live
+        {who: 'reporter', x: 202, y: 7, face: -1, act: 'live', tag: 'rep'}],
+      scenes: [
+        {at: 104, steps: [
+          // 1 the pack is stuffed again
+          {by: 'film', do: [['pose', 'film', 'point', 1], ['look', 'film', 2]], lead: 0.4, secs: 2.4, say: 'So. Alles wieder in den Rucksack.', after: [['pose', 'film', null]]},
+          {by: 'kid', do: [['face', 'kid', 1], ['play', 'kid', 'cheer']], lead: 0.4, secs: 1.8, say: 'Mein Stein muss mit!', after: [['set', 'jul', {pack: 1}], ['pop', 112, 9.6, 'Stopf!', 18], ['play', 'jul', 'flinch']]},
+          {by: 'prof', do: [['pose', 'prof', 'write', -1]], lead: 0.4, secs: 2.4, say: 'Und meine Notizen. Unverzichtbar.', after: [['pose', 'prof', null], ['set', 'jul', {pack: 2}], ['pop', 112, 9.4, 'Stopf!', 18], ['play', 'jul', 'flinch']]},
+          {by: 'jul', do: [['expr', 'jul', 'ouch']], lead: 0.3, secs: 1.8, say: 'Uff. Sonst noch was?', after: [['expr', 'jul', null]]},
+          // 2 while nobody looks, he shuffles to the bench and falls asleep; then the filmer counts through
+          {hold: 4.4, do: [['face', 'jul', -1], ['walk', 'jul', 108.2, 1.1, 1], ['later', 4.0, [['set', 'jul', {act: 'bench', bench: false, face: 1}]]]]},
+          {by: 'film', do: [['face', 'film', 1], ['act', 'film', 'count', {targets: [111, 113, 115, 116.5, 118], every: 0.45}]], lead: 2.4, secs: 1.6, say: 'Acht!'},
+          {by: 'film', do: [['act', 'film', 'count', {targets: [111, 113, 115, 116.5, 118, 112], every: 0.4}]], lead: 2.5, secs: 3.0, say: '… Sieben? Wo ist der Rucksack?', after: [['set', 'film', {act: null}], ['look', 'film', -3]]},
+          {hold: 1.8, do: [['pop', 107.8, 10.2, 'Chrrr.', 16], ['look', 'kid', -4], ['look', 'prof', -5]]},
+          // 3 the first sausage of the climb, on a plain stick
+          {by: 'rb', do: [['look', 'rb', 1.5]], lead: 0.5, secs: 2.2, say: 'Erst mal das Würstchen testen.', after: [['set', 'rb', {sausage: 'coal'}], ['pop', 120.4, 10.4, 'Puff!', 20]]},
+          {by: 'rb', do: [['look', 'rb', 0.6]], lead: 1.4, secs: 2.0, say: 'Hm. Gut durch.', after: [['look', 'rb', null], ['look', 'kid', null], ['look', 'prof', null], ['look', 'film', null]]}]},
+        // the goal: one person, one moment
+        {at: 191, steps: [
+          {by: 'rep', secs: 2.6, say: 'Live vom Aschestrand: Er ist da!'}]}],
+      map: [
+        '                                                                                                                              ####                                                                             ',
+        '                                                                                                                              ####                                                                             ',
+        '                                                                                                                            #######                                                                            ',
+        '                                                                                                                            #######                                                                            ',
+        '                                                                                                                          ##########                                                                           ',
+        '                                                              *                                                           ##########                                                                           ',
+        '                                                                                                                         ###########                                                                           ',
+        '                                                                             Y    Y                                      ###########                                                                    C  Y DY',
+        '                                                                             ######## ccccccccccccccccc                        vvvv                                                                     #######',
+        '                                                                             ########                                                         C                                 cc       ##        cc   #######',
+        '     P                                                      #~~~#          ##########                                                         #        Y           cc        ##     ^    ##    Y      #########',
+        '   ###########                                            ###~~~###C       ##########      *                 f                           Y    #    Y   ##      Y        ##   ##    ###   ##    ###    #########',
+        '   ##       ##              ########           Y       Y#############  Y ############                   ###############    ^             ##   #   ##   ##     ###       ##   ##    ###   ##    ###    #########',
+        '        *   ##             ##      ##Y    C   ###     #################################   ##   ##  ##   ###############~~######          ##   #   ##   #####  ###       ##   ##    ###   ##    ###    #########',
+        '#############################~~~~~~#####~###~~###~~~###################################~~~##~~~##~~##~~~###############~~######~~#####~~~##~~~#~~~##~~~#####~~###~~~~~~~##~~~##~~~~###~~~##~~~~###~~~~#########',
+        '#############################~~~~~~#####~###~~###~~~###################################~~~##~~~##~~##~~~###############~~#############~~~##~~~#~~~##~~~#####~~###~~~~~~~##~~~##~~~~###~~~##~~~~###~~~~#########',
+        '#############################~~~~~~#####~###~~###~~~###################################~~~##~~~##~~##~~~###############~~#############~~~##~~~#~~~##~~~#####~~###~~~~~~~##~~~##~~~~###~~~##~~~~###~~~~#########',
+        '#############################~~~~~~#####~###~~###~~~###################################~~~##~~~##~~##~~~###############~~#############~~~##~~~#~~~##~~~#####~~###~~~~~~~##~~~##~~~~###~~~##~~~~###~~~~#########',
+      ] },
+    { // 44 Heißer Stein (150 m): the long hot strip (a roar from the summit, the pebbles tremble), the bread oven with the hot path,
+      // the ash box and the roof, the cool rest place behind the oven where the professor grades a stone, the hot ridge, the hot
+      // pillars over lava, and the hot stair up to the door
+      name: 'Heißer Stein',
+      medals: [37, 57, 85],
+      hint: 'Glühender <b>Stein</b> brennt, wenn du stehen bleibst. Weiterlaufen oder hüpfen!',
+      says: [{x: 57, y: 10, r: 2, text: 'Ich bin doch kein Brötchen.'}, {x: 61, y: 13, r: 2.5, text: 'Der Aschekasten. Hier ist es kühl.'}, {x: 123, y: 11, r: 2.5, text: 'Nicht stehen bleiben. Gilt auch für mich.'}],
+      // the hot stone is offended when Mimo jumps off it (once per level start, the first time the stage is free)
+      quips: [{k: 'hot'}],
+      decor: [{k: 'bricks', x: 56, y: 2, w: 25, h: 10, face: true}, {k: 'bricks', x: 56, y: 8, w: 25, h: 3}, {k: 'bricks', x: 58, y: 12, w: 23, h: 2, cover: true}, {k: 'bricks', x: 81, y: 12, w: 2, h: 2}, {k: 'glow', x: 68, y: 9, r: 5, a: 0.55}, {k: 'smoke', x: 67.5, y: 2},
+        {k: 'marker', x: 100, y: 13}],
+      cast: [
+        {who: 'fauch', act: 'roar', x: 22, y: 13, at: 22, then: [{by: 'player', text: 'Das war nicht mein Magen.'}]},
+        {who: 'striped', x: 83, y: 13, act: 'bench', bench: false, pack: 2, face: 1, tag: 'jul'},
+        {who: 'professor', x: 87.4, y: 13, face: 1, tag: 'prof'},
+        {who: 'prop', kind: 'thesis', x: 89, y: 13, state: 'kein', gone: true, tag: 'tafel'},
+        {who: 'sidepart', x: 91.6, y: 13, act: 'sweat', scarf: true, face: -1, tag: 'sp'},
+        {who: 'prop', kind: 'ember', x: 93, y: 13, scale: 2.4, gone: true, tag: 'rock'},
+        {who: 'dog', x: 94.2, y: 13, face: 1, tag: 'dog'},
+        {who: 'redbeard', x: 95.2, y: 13, face: 1, tag: 'rb'},
+        // the football: a stone at the edge of the little lava pit (the goal)
+        {who: 'prop', kind: 'rollstone', x: 95.8, y: 13, x2: 97, dur: 1.2, drop: 1, tag: 'stein'},
+        // the goal: the filmer reads the map, upside down
+        {who: 'filmer', x: 181, y: 6, act: 'read', face: -1, tag: 'film'}],
+      scenes: [
+        {at: 84, steps: [
+          // 1 the thesis board goes up, and a stone gets its grade
+          {by: 'prof', do: [['set', 'tafel', {gone: false}], ['pop', 89, 11.2, 'Klack!', 16]], lead: 1.2, secs: 2.4, say: 'Meine These für diesen Berg.'},
+          {by: 'prof', do: [['act', 'prof', 'teach', {aim: [89, 12], talk: true}]], lead: 0.8, secs: 2.4, say: 'Erstens: Kein Drache.', after: [['set', 'prof', {act: null}]]},
+          {by: 'prof', do: [['pose', 'prof', 'pen', -1], ['look', 'prof', -2]], lead: 0.8, secs: 2.6, say: 'Zweitens: Basalt. Note: Eins minus.', after: [['pose', 'prof', null], ['look', 'prof', null]]},
+          // 2 thumbs up, and right behind him a glowing rock lands; he never notices
+          {by: 'sp', do: [['pose', 'sp', 'thumb', -1], ['later', 1.5, [['set', 'rock', {gone: false}], ['pop', 94.2, 11.9, 'Plumps!', 20], ['shake', 0.3], ['burst', 93.5, 13.8], ['play', 'prof', 'flinch'], ['play', 'dog', 'flinch'], ['look', 'dog', -1]]]], lead: 0.5, secs: 3.0, say: 'Daumen hoch!'},
+          {hold: 1.6, after: [['pose', 'sp', null]]},
+          // 3 football at the lava: the redbeard kicks, the stone rolls into the pit
+          {by: 'rb', do: [['face', 'rb', 1], ['look', 'rb', 1]], lead: 0.6, secs: 1.8, say: 'Pass auf, Lotta!'},
+          {hold: 2.4, do: [['kick', 'rb', 'stein'], ['later', 1.0, [['walk', 'dog', 96.2, 3, 1]]], ['later', 1.9, [['pop', 97, 12.6, 'Zisch!', 16]]]]},
+          {by: 'rb', do: [['play', 'rb', 'cheer']], lead: 0.2, secs: 1.8, say: 'Tooor!'},
+          {hold: 1.4, do: [['float', 'dog', 'Wuff?'], ['look', 'dog', 1]]}]},
+        // the goal: one person, one moment
+        {at: 162, steps: [
+          {by: 'film', do: [['look', 'film', -3]], lead: 0.4, secs: 2.8, say: 'Laut Karte sind wir gleich oben.'}]}],
+      map: [
+        '                                                                                                                                                                                          ',
+        '                                                                    *                                                                                                                     ',
+        '                                                                   ##                                                                                                                     ',
+        '                                                                   ##                                                                                                                     ',
+        '                                                               ###########                                                                                                                ',
+        '                                                            #################                                                                                                             ',
+        '                                                          #####################                                                                                                    Y  C DY',
+        '                                                        #########################                                                                                            HHH   #######',
+        '                                                        ##                     ##                                                                      HH         cc   HHH   ###   #######',
+        '                                                      --                         --                      Y                                         HH  ##   HHH        ###   ###   #######',
+        '                         *                        Y                                                     ###^                                       ##  ##   ###        ###   ###   #######',
+        '                                             HH  #########HHHHH#HHHHH#HHHH#  HH####--                 HH###HH                                  HH  ##  ##   ###        ###   ###   #######',
+        '                                         HH  ##  #########                                          HH#######HH ^     HH   cc   HH   cc   ###  ##  ##  ##   ###        ###   ###   #######',
+        'Y P  C  Y       C                Y   HH  ##  ##  ######### *                        f             HH###########HH C   ##        ##        ###  ##  ##  ##   ###        ###   ###   #######',
+        '##########HHHHH###~~HHHHHHHHHHHH###~~##~~##~~##~~################################################~##################~~##~~~~~~~~##~~~~~~~~###~~##~~##~~##~~~###~~~~~~~~###~~~###~~~#######',
+        '##################~~###############~~##~~##~~##~~################################################~##################~~##~~~~~~~~##~~~~~~~~###~~##~~##~~##~~~###~~~~~~~~###~~~###~~~#######',
+        '##################~~###############~~##~~##~~##~~################################################~##################~~##~~~~~~~~##~~~~~~~~###~~##~~##~~##~~~###~~~~~~~~###~~~###~~~#######',
+        '##################~~###############~~##~~##~~##~~################################################~##################~~##~~~~~~~~##~~~~~~~~###~~##~~##~~##~~~###~~~~~~~~###~~~###~~~#######',
+      ] },
+    { // 45 Geysirfeld (300 m): the bubbling basin, sinter terraces up the basin, one geyser per terrace, the cave lift where the
+      // first summit photo gets wet, and high up on the left the highest jet of the field with the summit flag on top
+      name: 'Geysirfeld',
+      medals: [28, 42, 64],
+      hint: 'Der <b>Geysir</b> pustet erst, dann hebt er dich hoch.',
+      geysers: [{"x": 7, "y": 63, "offset": 0.4}, {"x": 25, "y": 63, "offset": 0.8}, {"x": 34, "y": 58, "offset": 3.75}, {"x": 37, "y": 52, "offset": 2.65}, {"x": 44, "y": 52, "offset": 2.05}, {"x": 54, "y": 46, "offset": 4}, {"x": 61, "y": 38, "offset": 2.42}, {"x": 66, "y": 33, "offset": 1.45}, {"x": 71, "y": 29, "offset": 1.45}, {"x": 75, "y": 25, "offset": 4}, {"x": 76, "y": 21, "height": 2, "offset": 1.0, "quip": "Pfft!"}, {"x": 86, "y": 21, "height": 7, "offset": 1.85}, {"x": 98, "y": 9, "height": 6}, {"x": 55, "y": 23, "height": 11, "offset": 0, "hold": 1.3}],
+      says: [{x: 5, y: 63, r: 1.5, text: 'Das blubbert. Das ist gut. Glaube ich.'}, {x: 67, y: 14, r: 3, text: 'Da oben flattert was.'}, {x: 101, y: 1, r: 2.5, text: 'Hier oben ist die Luft dünn.'}],
+      decor: [{"k": "sinter", "x": 16, "y": 64, "w": 4}, {"k": "sinter", "x": 22, "y": 64, "w": 3}, {"k": "sinter", "x": 26, "y": 59, "w": 2}, {"k": "sinter", "x": 33, "y": 59, "w": 3}, {"k": "sinter", "x": 36, "y": 53, "w": 3}, {"k": "sinter", "x": 43, "y": 53, "w": 3}, {"k": "sinter", "x": 46, "y": 47, "w": 2}, {"k": "sinter", "x": 52, "y": 47, "w": 4}, {"k": "sinter", "x": 49, "y": 39, "w": 3}, {"k": "sinter", "x": 56, "y": 39, "w": 2}, {"k": "sinter", "x": 60, "y": 39, "w": 2}, {"k": "sinter", "x": 64, "y": 34, "w": 4}, {"k": "sinter", "x": 70, "y": 30, "w": 2}, {"k": "sinter", "x": 74, "y": 26, "w": 2}, {"k": "sinter", "x": 76, "y": 22, "w": 16}, {"k": "sinter", "x": 80, "y": 15, "w": 5}, {"k": "sinter", "x": 87, "y": 15, "w": 5}, {"k": "sinter", "x": 92, "y": 13, "w": 2}, {"k": "sinter", "x": 94, "y": 10, "w": 10}, {"k": "sinter", "x": 100, "y": 2, "w": 3}],
+      cast: [
+        {who: 'fauch', act: 'shadow', x: 60, y: 37, at: false, atRow: 40, then: [{by: 'player', text: 'Eine Wolke. Mit Flügeln?'}],
+          // while the shadow sweeps over the terrace, Lotta storms after it and barks at the sky
+          with: [['later', 1.4, [['go', 'dogrun'], ['later', 0.8, [['pop', 60, 36.2, 'Wuff! Wuff!', 16]]]]]]},
+        // Lotta is always a step ahead: on the terrace she chases the shadow, up on the flag ledge she shows where the flag is
+        {who: 'dog', x: 57, y: 38, face: 1, act: 'chase', follow: {x1: 58, x2: 63, dur: 2.2}, tag: 'dogrun'},
+        {who: 'dog', x: 57.6, y: 10, face: -1, act: 'hint', aim: [55, 9], every: 4, tag: 'dog'},
+        {who: 'prop', kind: 'camera', rock: true, x: 80, y: 21, tag: 'cam'},
+        // the first test photo: it slides out of the camera after the flash, and far in its background flies Fauch
+        {who: 'prop', kind: 'polaroid', x: 80.9, y: 21, scale: 2.2, face: -1, scene: 'probe', big: [1.2, 8.2], gone: true, tag: 'polo'},
+        {who: 'professor', x: 82.1, y: 21, face: -1, tag: 'prof'},
+        {who: 'reporter', x: 82.9, y: 21, face: -1, tag: 'rep'},
+        {who: 'striped', x: 83.7, y: 21, face: -1, pack: 2, tag: 'jul'},
+        {who: 'sidepart', x: 84.4, y: 21, face: -1, scarf: true, act: 'sweat', tag: 'sp'},
+        {who: 'filmer', x: 80, y: 21, face: 1, tag: 'film'}],
+      scenes: [
+        {at: 77, steps: [
+          {by: 'film', do: [['pose', 'film', 'point', 1]], say: 'Alle zusammenrücken! Erstes Probefoto!', after: [['pose', 'film', null]]},
+          {by: 'film', do: [['timer', 'cam', 99], ['face', 'film', -1], ['look', 'film', -1]], say: 'Selbstauslöser läuft!', after: [['walk', 'film', 85.2, 3.4, -1]]},
+          {hold: 2.0, wait: 14, sync: [86, 21, 'rise'], do: [['flash', 'cam'], ['pop', 85, 17.6, 'PFFFT!', 26], ['splash', 85, 19], ['set', 'film', {act: 'wet'}], ['play', 'film', 'flinch'], ['play', 'rep', 'cheer']]},
+          {hold: 1.0, do: [['set', 'polo', {gone: false}], ['go', 'polo']]},
+          {by: 'film', do: [['look', 'film', -6]], lead: 1.6, secs: 2.6, say: 'Perfekt. Glaube ich.'},
+          // a beat to look at the photo: nobody sees the small dragon in the sky of it
+          {hold: 3.4, do: [['look', 'prof', -2], ['look', 'jul', -4]]},
+          {by: 'prof', do: [['pose', 'prof', 'pen', 1]], wait: 30, say: 'Statistisch gesehen ein Volltreffer.', after: [['pose', 'prof', null], ['look', 'prof', null], ['look', 'jul', null], ['look', 'film', null]]}]}],
+      part: {x: 55, y: 9, item: 'flag', glow: true, ownerAt: {x: 96, y: 9}, thanks: 'Unsere Gipfelfahne! Die kommt ganz nach oben!', missing: 'Wo ist nur unsere Gipfelfahne?'},
+      map: [
+        '                                                                                                        ',
+        '                                                                                                     *  ',
+        '                                                                                                    ### ',
+        '                                                                                                        ',
+        '                                                                                                        ',
+        '                                                                                                        ',
+        '                                                                                                        ',
+        '                                                                                                        ',
+        '                                                                                                        ',
+        '                                                                                              Y   G  D Y',
+        '                                                                                              ##########',
+        '                                                        ###                                   ##########',
+        '                                                  #                                           ##########',
+        '                                                  #                                         ############',
+        '                                                  #                                         ############',
+        '                                                  #        ##HHH#####cc#HHHH#########  #################',
+        '                                                  #        ##########  ##############  #################',
+        '                                                  #       #                                 ############',
+        '                                                  #       #                                 ############',
+        '                                                  #       #                                 ############',
+        '                                                  #       #                                 ############',
+        '                                                  #       #                 G f       G     ############',
+        '                                                  #       #                 ############################',
+        '                                                  #    G  #                 ############################',
+        '                                                  #########                 ############################',
+        '                                                  #########                G############################',
+        '                                                   #######                ##############################',
+        '                                                   #######                ##############################',
+        '                                                                          ##############################',
+        '                                                                       G  ##############################',
+        '                                                                      ##  ##############################',
+        '                                                                      ##  ##############################',
+        '                                                                      ##  ##############################',
+        '                                                                C G   ##  ##############################',
+        '                                                                ####~~##~~##############################',
+        '                                                                ####~~##~~##############################',
+        '                                                                ########################################',
+        '                                                                ########################################',
+        '                                                  *          G  ########################################',
+        '                                                 ###    ##HH##HH########################################',
+        '                                                        ################################################',
+        '                                                        ################################################',
+        '                                                        ################################################',
+        '                                       *                ################################################',
+        '                                                        ################################################',
+        '                                                        ################################################',
+        '                                                      GC################################################',
+        '                                              ##cccc####################################################',
+        '                                              ##~~~~####################################################',
+        '                                              ##~~~~####################################################',
+        '                                              ##########################################################',
+        '                                              ##########################################################',
+        '                                     G      GC##########################################################',
+        '                                    ###~~~~#############################################################',
+        '                                    ###~~~~#############################################################',
+        '                                    ####################################################################',
+        '                                    ####################################################################',
+        '                                    ####################################################################',
+        '                          C       G ####################################################################',
+        '                          ##~~~HH#######################################################################',
+        '           #####          ##~~~#########################################################################',
+        '           #####          ##############################################################################',
+        '           #####          ##############################################################################',
+        '  P    G   #####Y  C     G##############################################################################',
+        '####~~~#~~~#########~~##################################################################################',
+        '####~~~#~~~#########~~##################################################################################',
+        '########################################################################################################',
+        '########################################################################################################',
+      ] },
+    { // 46 Feuerhüpfer (450 m, first band of the mountain forest): the stone arch over a hopper pond, three pools in rhythm,
+      // the hopper hill, the rest place where the second cairn is built, under the arc, the hopper road: the stadium of the
+      // Funkenbrüder (they welcome Mimo at the gate, laugh at his squeak at the end), the double arc over the island, hot stone,
+      // Fauch watching from his crag beyond it, the breathing hole
+      name: 'Feuerhüpfer',
+      medals: [39, 59, 89],
+      hint: '<b>Feuerhüpfer</b> springen immer auf demselben Bogen. Ruht er in der Lava, ist der Weg frei.',
+      hoppers: [{"x": 11, "y": 16, "height": 3}, {"x": 13, "y": 16, "height": 3, "offset": 1.2}, {"x": 21, "y": 14}, {"x": 27, "y": 14, "offset": 0.8}, {"x": 33, "y": 14, "offset": 1.6}, {"x": 42, "y": 12, "height": 3}, {"x": 48, "y": 10, "height": 3}, {"x": 56, "y": 12, "height": 4, "quip": "Aua!"}, {"x": 76, "y": 14, "dx": 7, "height": 4, "offset": -1.829}, {"x": 92, "y": 14, "height": 5, "offset": -1.429}, {"x": 99, "y": 14, "offset": 0.291}, {"x": 104, "y": 14, "offset": -0.509}, {"x": 109, "y": 14, "offset": -0.539, "rest": 2.2, "bro": 1}, {"x": 114, "y": 14, "offset": 0.421, "bro": 2}, {"x": 119, "y": 14, "offset": -0.329, "bro": 3}, {"x": 124, "y": 14, "offset": -1.079}, {"x": 132, "y": 14, "height": 4}, {"x": 139, "y": 14, "height": 5, "offset": 0.8}, {"x": 143, "y": 14, "dx": 5, "height": 4}, {"x": 148, "y": 14, "dx": -5, "height": 4, "offset": 1.2}, {"x": 159, "y": 14, "dx": 7, "height": 4, "offset": 1.1}, {"x": 171, "y": 14, "dx": 2, "height": 4, "offset": 1.1}, {"x": 178, "y": 14, "dx": -2, "height": 4, "offset": 2.3}],
+      says: [{x: 11, y: 10, r: 2.5, text: 'Der wohnt da. Ich nur zu Besuch.'}, {x: 87, y: 12, r: 1.8, text: 'Drunter durch. Kopf einziehen.'}, {x: 183, y: 11, r: 2, text: 'Hier unten ist es warm wie in einem Nest.'}],
+      decor: [{"k": "nest", "x": 11, "y": 16}, {"k": "nest", "x": 42, "y": 12}, {"k": "nest", "x": 48, "y": 10}, {"k": "nest", "x": 56, "y": 12}, {"k": "nest", "x": 99, "y": 14}, {"k": "nest", "x": 104, "y": 14}, {"k": "nest", "x": 109, "y": 14}, {"k": "nest", "x": 114, "y": 14}, {"k": "nest", "x": 119, "y": 14}, {"k": "nest", "x": 124, "y": 14}, {"k": "rings", "x": 184.5, "y": 12}, {"k": "bricks", "x": 182, "y": 13, "w": 10, "h": 4, "cover": true, "rock": true}, {"k": "nest", "x": 132, "y": 14}, {"k": "nest", "x": 139, "y": 14}, {"k": "crag", "x": 169, "y": 13, "w": 3, "h": 3, "far": 0.3}],
+      bros: {x0: 98, x1: 131, lines: {start: ['Willkommen im Feuerstadion, Freunde!']}},
+      cast: [
+        // the rest place: the professor lectures three Funkenbrüder on their stones, the sleeper sleeps on the bench
+        {who: 'striped', x: 60, y: 13, act: 'bench', bench: false, pack: 3, face: 1, tag: 'jul'},
+        {who: 'professor', x: 65.4, y: 13, face: 1, tag: 'prof'},
+        {who: 'prop', kind: 'sleepers', x: 68.6, y: 13, tag: 'brueder'},
+        {who: 'redbeard', x: 73, y: 13, act: 'grill', sausage: 'coal', face: 1, tag: 'rb'},
+        // the turn of the first act: on his crag Fauch warms something round under his wing and covers it when he sees Mimo
+        {who: 'fauch', act: 'brood', x: 169, y: 9, face: -1, scale: 0.75, layer: 'back', at: 160, pop: 'Hmpf.', then: [{by: 'player', text: 'Was versteckt er da?'}]},
+        // the kid waits on the next rocks and waves at him
+        {who: 'kid', x: 180.6, y: 11, face: -1, tag: 'kid'},
+        // the goal: thumbs up at the door
+        {who: 'sidepart', x: 188.6, y: 11, act: 'sweat', scarf: true, face: -1, tag: 'sp'}],
+      scenes: [
+        {at: 62, steps: [
+          {by: 'prof', do: [['act', 'prof', 'teach', {aim: [68.6, 12.4], talk: true}]], lead: 0.8, secs: 2.8, say: 'Liebe Feuerhüpfer! Heute: Basalt.'},
+          {hold: 0.4, do: [['go', 'brueder']]},
+          {by: 'prof', lead: 0.3, secs: 3.4, wait: 30, say: 'Basalt entsteht, wenn Lava ganz langsam abkühlt …'},
+          {hold: 2.4, wait: 30},
+          {by: 'prof', do: [['set', 'prof', {act: null}], ['face', 'prof', 1], ['look', 'prof', 3]], lead: 0.8, secs: 1.8, wait: 30, say: 'Noch Fragen?'},
+          {hold: 2.0, wait: 30, do: [['pop', 68.6, 11.4, 'Chrrr.', 16]]},
+          {by: 'prof', do: [['pose', 'prof', 'pen', 1]], lead: 0.6, secs: 2.4, wait: 30, say: 'Sehr aufmerksam. Eins plus.', after: [['pose', 'prof', null], ['look', 'prof', null]]}]},
+        {at: 127, steps: [
+          {by: 'player', say: 'Fauchen kann ich auch. Pass auf.'},
+          {hold: 1.3, do: [['fx', 'inhale']]},
+          {hold: 1.3, do: [['fx', 'squeak']]},
+          {hold: 1.4, do: [['fx', 'laugh']]},
+          {by: 'bro:3', say: 'Das war ein Piepser, Freunde!'}]},
+        // after the brood moment: the kid waves, Fauch keeps looking away
+        {at: 166, steps: [
+          {by: 'kid', do: [['pose', 'kid', 'wave', -1]], lead: 1.0, secs: 2.4, wait: 20, say: 'Huhu, Drache!'},
+          {hold: 1.8},
+          {by: 'kid', do: [['pose', 'kid', null]], lead: 0.4, secs: 1.8, say: 'Schüchtern.'}]},
+        {at: 177, steps: [
+          {by: 'sp', do: [['pose', 'sp', 'thumb', -1]], lead: 0.4, secs: 2.4, say: 'Daumen hoch! Weiter geht’s.'}]}],
+      map: [
+        '                                                                                                                                                                                                      ',
+        '                                                                                                                                                                                                      ',
+        '                                                                                                                                                                                                      ',
+        '                                                                                                                                                                                                      ',
+        '                                                                                                                                                                                                      ',
+        '                                                                                                                                                                                                      ',
+        '                                                                                                                                                                                                      ',
+        '                                                  Y                                                                                                                                                   ',
+        '                                                 ###                                                                                                                                                  ',
+        '                                             C   ###                                        *                *                                                                                        ',
+        '                                            ###~F######                                                                                                                                               ',
+        '         ######                             ###########                                                                                                                             Y C          Y D Y',
+        '        #      #                       ###F~###########~F~                                                ##        ##                ##cc   ##      ##HHH#              C    ##   #####  ######  ####',
+        'Y P C  ##      ## Y           C        ################~~~C  f                        ###      Y     ##   ##   ##   ##   ##   ###     ##     ##  ##  ######             ###   ##   ###            ####',
+        '#########      #####~F~###~F~###~F~########################################~F~#####~~~#####~F~####~F~##~F~##~F~##~F~##~F~##~F~#####~F~##~~~F~##F~##~F##########F~HHHHH~~###F~~##~~F###            ####',
+        '#########      #####~~~###~~~###~~~########################################~~~#####~~~#####~~~####~~~##~~~##~~~##~~~##~~~##~~~#####~~~##~~~~~##~~##~~##########~~#####~~###~~~##~~~###        ########',
+        '#########~~F~F~#####~~~###~~~###~~~########################################~~~#####~~~#####~~~####~~~##~~~##~~~##~~~##~~~##~~~#####~~~##~~~~~##~~##~~##########~~#####~~###~~~##~~~###*     ##########',
+        '#########~~~~~~#######################################################################################################################################################################################',
+        '######################################################################################################################################################################################################',
+        '######################################################################################################################################################################################################',
+      ] },
+    ],
+  });
+})();

@@ -1,27 +1,16 @@
-# Schlotfahrt, all three stars: the niche behind the steam, the snoring hole (hidden), the side room at the high geyser
-# the way in: hop the two basalt columns over the lava to the first geyser
-L until x<=19.4 max 2; LJ 0.3; L until x<=16.4 max 1; W until grounded max 1
-L until x<=15.4 max 1; LJ 0.25; L until x<=12.4 max 1; W until grounded max 1
-L until x<=11.4 max 1; LJ 0.25; L until x<=8.6 max 1; W until grounded max 1
-W until y<=59.2 max 3; W 0.05; RJ 0.3; R until x>=11.5 max 1; W until grounded max 2
-R until x>=15.3 max 1; W until y<=55.5 max 3; R until grounded max 3
-# the niche on the left: jump back over the steam for the star
-L until x<=16.4 max 1; LJ 0.15; L until x<=14.4 max 1; W until grounded max 2; L until x<=11.6 max 1
-R until x>=14.4 max 1; RJ 0.15; R until x>=16.5 max 1; W until grounded max 2
-# the second geyser, left onto the hot ledge, the third geyser
-R until x>=19.4 max 1; W until y<=46.05 max 5; W 0.1; LJ 0.35; L until x<=16 max 1; W until grounded max 2
-L until x<=11.6 max 1; W until y<=39.1 max 5; W 0.1; LJ 0.25; L until x<=9.5 max 1; W until grounded max 2
-# the snoring hole: up into the wall for the hidden star, then down again
-L until x<=5.6 max 2; J 0.3; L until x<=3 max 1; W until grounded max 2; L until x<=2.4 max 1
-R until x>=5.4 max 2; W until grounded max 2
-W until y<=33.2 max 5; W 0.1; RJ 0.3; R until x>=8.5 max 1; W until grounded max 2
-R until x>=12.3 max 1; W until y<=26.05 max 5; W 0.1; RJ 0.3; R until x>=13.6 max 1; W until grounded max 2
-# the high geyser: right into the side room for the star, then across the chimney mouth onto the rim
-R until x>=18.4 max 1; W until y<=19.05 max 5; W 0.1; RJ 0.3; R until x>=20.6 max 1; W until grounded max 2; R until x>=22.5 max 1
-L until x<=19.5 max 1; LJ 0.35; L until x<=15 max 1; W until grounded max 2
-# out of the chimney: over the hot rim, up the basalt columns, past the hopper pit to the door
-L until x<=3.6 max 3; J 0.3; L until x<=2.2 max 1; W until grounded max 2
-R until x>=2.5 max 1; RJ 0.35; R until x>=5.5 max 1; W until grounded max 1
-RJ 0.3; R until x>=8.5 max 1; W until grounded max 1
-RJ 0.3; R until x>=11.6 max 1; W until grounded max 1
-R until x>=14.4 max 1; W until time>=25.6 max 3; RJ 0.3; R until grounded max 2; R until x>=22 max 2
+# Schlotfahrt, all three stars and the thermos: the family squeezes into the chimney mouth, the nook star, the thermos behind the
+# lava plate, the side room star, the star under the crack where the eye looks in
+R until x>=2.6 max 2; W until time>=26.4 max 28
+R until x>=17 max 6; RJ 0.3; R until x>=20.4 max 1; W until grounded max 2; RJ 0.3; R until x>=24.4 max 1; W until grounded max 2; RJ 0.3; R until x>=29 max 1; W until grounded max 2; R until x>=30.4 max 1; W until y<=76.2 max 5; W 0.05; LJ 0.35; L until x<=27 max 1; W until grounded max 2
+L until x<=21.6 max 2; W until y<=66.5 max 5; R until x>=22.6 max 1; W until grounded max 2; W 0.15; LJ 0.35; L until x<=18.5 max 1; W until grounded max 2; L until x<=17 max 1; R until x>=18.8 max 1; RJ 0.35; R until x>=22.6 max 1; W until grounded max 2
+R until x>=24.6 max 1; W until calm max 3; RJ 0.3; R until x>=29.6 max 1; W until grounded max 2; R until x>=31.3 max 1; W until y<=61.2 max 5; W 0.05; LJ 0.35; L until x<=28.5 max 1; W until grounded max 2; L until x<=21.6 max 2; W until y<=52.5 max 5; R until x>=22.6 max 1; W until grounded max 2
+W 0.15; LJ 0.35; L until x<=18.5 max 1; W until grounded max 2; L until x<=10.6 max 3
+W until time>=48.4 max 3; L until x<=2.6 max 2; R until x>=17.4 max 3; RJ 0.35; R until x>=22.4 max 1; W until grounded max 2
+R until x>=25.3 max 1; RJ 0.2; R until x>=27.5 max 1; W until grounded max 1; RJ 0.2; R until x>=29.5 max 1; W until grounded max 1; RJ 0.2; R until x>=31.3 max 1; W until grounded max 1; W until y<=47.2 max 5; W 0.05; LJ 0.35; L until x<=28 max 1; W until grounded max 2; L until x<=22.5 max 2
+W until y<=40.2 max 5; W 0.05; LJ 0.35; L until x<=19.5 max 1; W until grounded max 2; L until x<=13 max 2; R until x>=19.9 max 2; RJ 0.35; R until x>=24.6 max 2; W until grounded max 2
+W until calm max 3; RJ 0.3; R until x>=29.5 max 1; W until grounded max 2; R until x>=33 max 0.7; W until y<=29.5 max 5; L until x<=31 max 1; W until grounded max 2; L until x<=29.5 max 1; W until y<=24.2 max 5; W 0.05; J 0.35; W until y<=22 max 1; L until x<=27 max 1; W until grounded max 2
+L until x<=25.6 max 1; J 0.4; W until grounded max 2
+# the funnel: the eye looks in, then the interview at the crack and the smoke ring (geyser beat kept: four beats later)
+W until time>=82 max 14; J 0.1; W until grounded max 1; W until time>=90.8 max 10; L until x<=19.6 max 2; W until y<=17.2 max 5; W 0.05; LJ 0.35; L until x<=16 max 1; W until grounded max 2
+# the rim: Lotta is already up (the rim hopper beat kept: nine beats later)
+W until time>=96.62 max 6; L until x<=14.6 max 1; LJ 0.25; L until x<=12.8 max 1; W until grounded max 1; LJ 0.3; L until x<=9.7 max 1; W until grounded max 1; LJ 0.25; L until x<=6.5 max 1; W until grounded max 1; L until x<=3.6 max 2

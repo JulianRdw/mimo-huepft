@@ -1,28 +1,29 @@
-# Lavafall, all three stars: the shelf behind the big fall (hidden, in its pause), under the small fall, above the middle plate
-# the first small fall: wait for its pause, walk left under it
-L until x>=0 max 0.01; L until x<=34.6 max 1; W until time>=1.95 max 3; L until x<=25.3 max 2
-# the hidden star: jump onto the shelf under the big fall, step in while it pauses
-LJ 0.3; L until x<=21.5 max 1; W until grounded max 2; L until x<=19.6 max 1; R until x>=21.4 max 1
-R until x>=21.6 max 1; RJ 0.3; R until x>=25.4 max 1; W until grounded max 2
-R until x>=31.2 max 2; L until x<=29.9 max 1; J 0.2; L until x<=28 max 1; W until grounded max 2
-R until x>=28.3 max 1; RJ 0.3; R until x>=31.5 max 1; W until grounded max 2
-L until x<=31.3 max 1; LJ 0.3; L until x<=28.5 max 1; W until grounded max 2
-R until x>=28.6 max 1; RJ 0.3; R until x>=31.5 max 1; W until grounded max 2
-L until x<=31.3 max 1; LJ 0.3; L until x<=28.5 max 1; W until grounded max 2
-L until x<=21.4 max 2
-# through the big fall in its pause
-W until time>=12.05 max 6; LJ 0.25; L until x<=17.5 max 1; W until grounded max 2
-# the left side: under the small fall, zig-zag up
-L until x<=11.4 max 2; LJ 0.3; L until x<=8.5 max 1; W until grounded max 2
-R until x>=8.6 max 1; RJ 0.3; R until x>=11.5 max 1; W until grounded max 2
-L until x<=11.4 max 1; LJ 0.3; L until x<=8.5 max 1; W until grounded max 2
-# under the two falls, the geyser in the corner, up to the plateau and the door
-L until x<=1.6 max 3; W until y<=19.1 max 4; W 0.05; RJ 0.2; R until x>=3 max 1; W until grounded max 2
-R until x>=7.5 max 1; RJ 0.3; R until x>=9.5 max 1; W until grounded max 2
-# over the source rock and the river on plates (the star above the middle plate), through the last curtain
-R until x>=15.3 max 2; RJ 0.25; R until grounded max 2; R until x>=21.4 max 1; W until time>=21.35 max 3
-RJ 0.2; R until x>=23.4 max 1; W until grounded max 2
-R until x>=24.4 max 1; RJ 0.2; R until x>=27.4 max 1; W until grounded max 2; J 0.35; W until grounded max 2
-R until x>=28.4 max 1; RJ 0.2; R until x>=31.4 max 1; W until grounded max 2
-R until x>=32.4 max 1; RJ 0.25; R until grounded max 2; R until x>=34.4 max 1
-W until time>=26.3 max 3; R until x>=37.5 max 2
+# Lavafall, all stars
+# the teaching fall: Mimo waits for its pause, then the plates over the lake to the pillar
+# the geyser lifts Mimo smoothly now: he arrives at its sinking end, so he rides the next beat and every fall wait is one beat later
+R until x>=4.8 max 2; W until time>=1.3 max 4; R until x>=8.6 max 2; RJ 0.15; R until x>=10.6 max 1; W until grounded max 2
+R until x>=11.4 max 1; RJ 0.3; R until grounded max 2; R until x>=15.4 max 1; RJ 0.2; R until x>=17.5 max 1; W until grounded max 2
+# the geyser on the pillar beside the big fall up to the hot ledge
+R until x>=18.0 max 1; W until y<=54.1 max 6; W 0.05; LJ 0.35; L until x<=16.6 max 1; W until grounded max 2
+# under the small fall in its pause (the star in its stream), over the hot stone
+W until time>=8.9 max 8; L until x<=11.3 max 2; LJ 0.35; L until grounded max 2
+# the slab over the clouds: Mimo stands and looks down
+L until x<=6.4 max 1; LJ 0.35; L until grounded max 2; L until x<=3.2 max 1; W 4.4
+# the geyser at the edge of the slab, up to the rest bench
+L until x<=0.8 max 2; W until y<=40.1 max 6; W 0.05; RJ 0.35; R until grounded max 2
+R until x>=8.4 max 1; RJ 0.3; R until grounded max 2; R until x>=17.6 max 2
+# the rest bench: Fauch lands beside the sleeper, the filmer counts, both sleepers wake with a start (a hop in between)
+W until time>=24 max 14; J 0.1; W until grounded max 1
+# over the big fall again, the star in its pause, the steam vent up to the step in the mountain
+W until time>=34.7 max 12; R until x>=18.3 max 1; RJ 0.35; R until grounded max 2
+R until x>=26.2 max 2; W until y<=28.8 max 5; R until grounded max 2
+L until x<=27.4 max 1; LJ 0.35; L until grounded max 2
+# the star over the hot stone, then over the big fall to the plate basin
+W until time>=40.2 max 8; L until x<=22.6 max 1; LJ 0.3; L until grounded max 2; L until x<=21.4 max 1; LJ 0.25; L until x<=19.0 max 1; W until grounded max 2
+R until x>=17.4 max 0.5; W until time>=41.6 max 8; L until x<=16.3 max 1; LJ 0.2; L until x<=13.6 max 1; W until grounded max 2; L until x<=10.4 max 1; LJ 0.3; L until grounded max 2
+# the left geyser up to the lookout: Fauch drinks from the fall, Mimo watches
+L until x<=1.6 max 2; W until y<=19.1 max 6; W 0.05; RJ 0.4; R until x>=3.4 max 1; W until grounded max 2; W 9
+# over the crumbles onto the plateau: the professor's lecture
+R until x>=7.2 max 1; RJ 0.25; R until x>=8.6 max 1; W until grounded max 2; W 14
+# past Fauch, over the big fall to the door
+R until x>=17.2 max 3; W until time>=73.0 max 8; R until x>=18.3 max 1; RJ 0.2; R until grounded max 2; R until x>=27 max 3

@@ -1,4 +1,4 @@
-// World 5 "Vulkaninsel": the pictures of the things in volcano-things.js. Geysers (a white water column with a foam
+// World 5 "Gipfelsturm": the pictures of the things in volcano-things.js. Geysers (a white water column with a foam
 // cap, a puff of warning), lava plates (dark and safe, cracks that glow while warming, bright orange when hot), fire
 // hoppers (a little grumpy fireball and the dotted arc it always takes), steam vents, glow rain (the smoke puff, the
 // falling rock and the glowing spot where it lands) and lava falls.

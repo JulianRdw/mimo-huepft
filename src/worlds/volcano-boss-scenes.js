@@ -3,8 +3,9 @@
 //   floor like a lift; it arrives as the floor ledge of floor 2, still hot from below, so Mimo hops off it.
 // Scene 2 (into phase 3): Fauch shoots up the shaft to look for Mimo, who has hopped onto his head and rides along to
 //   floor 3. "Wo ist er hin?"
-// Finale: Fauch sneezes the cold water out, the steam blast shoots Mimo out of the crater onto the rim, Fauch looks out
-//   of the crater, grumpy but friendly, and throws Mimo his old baby horns (the reward, "Drachenhörnchen").
+// Finale: the last cold shower hisses on his hot head, the steam blast shoots Mimo out of the crater onto the rim. Fauch
+//   calms down, climbs out, sits down on his nest on the left rim (volcano-boss-nest.js) and throws Mimo his old baby
+//   horns (the reward, "Drachenhörnchen"). Then the closing scene (MimoVolcano.scenes, 'closing'); the door after it.
 // The core shows the scene bars and lets Mimo wait (state "cine"); here Mimo is moved by hand. A skipped scene ends
 // exactly where a watched one ends (finishScene).
 (function () {
@@ -16,9 +17,9 @@
     { len: 4.4, hop: 0.55, BREAK: 0.6, SURGE: 1.0, ARRIVE: 3.2, OFF: 3.45, OFF_LEN: 0.5 },
     { len: 4.6, GRAB: 0.45, HOP: 0.55, RISE: 1.15, ARRIVE: 3.3, OFF: 3.45, OFF_LEN: 0.55, LOOK: 3.6 },
   ];
-  const FIN = { SNEEZE: 0.35, FLY0: 0.45, FLY1: 2.7, APEX: 56, LAND_U: 688, PEEK0: 2.9, PEEK1: 3.6, SAY: 3.7, GIFT: 5.0, GIFT_LEN: 0.9, PEEK_X: 420, PEEK_DY: -8 };
+  const FIN = { SNEEZE: 0.35, FLY0: 0.45, FLY1: 2.7, APEX: 56, LAND_U: 688, PEEK0: 2.9, PEEK1: 3.6, SAY: 3.7, GIFT: 5.0, GIFT_LEN: 0.9, PEEK_X: 420, PEEK_DY: -8, CLOSE: 8.4 };
   const HOP_H = 54;
-  const GIFT_LINE = 'Hier, meine alten Babyhörnchen. Die stehen dir!', CRY = 'Ha... HATSCHI!', LOOK_LINE = 'Wo ist er hin?';
+  const GIFT_LINE = 'Hier, meine alten Babyhörnchen. Die stehen dir!', CRY = 'Zisch! Pffffff...', LOOK_LINE = 'Wo ist er hin?';
 
   const T = () => F().T;
   const ph = (B) => api.boss.phase(B);
@@ -113,13 +114,13 @@
   // ---------- the finale ----------
   function defeat(B) {
     const p = api.p;
-    B.fin = { x0: p.x + p.w / 2, y0: p.y + p.h, sneezed: false, landed: false, peek: false, said: false, gift: null };
+    B.fin = { x0: p.x + p.w / 2, y0: p.y + p.h, sneezed: false, landed: false, peek: false, said: false, gift: null, sit: null };
     B.water = null; B.breath = null;
   }
   function afterDefeat(B, dt) {
     const f = B.fin, t = B.t, p = api.p, H = F().HEAD;
     if (!f.cry) { f.cry = true; api.boss.say(B.def.name, CRY, 1.3, B.kind); }
-    // the sneeze: he rears back, then the steam blast shoots out of the crater
+    // the last shower hisses on his hot head: he rears back, then the steam blast shoots out of the crater
     if (t < FIN.SNEEZE) B.head.y -= 30 * dt;
     if (t >= FIN.SNEEZE && !f.sneezed) {
       f.sneezed = true; api.sfx.boom(); api.shake(1.4); api.noise({ hp: 500, dur: 1.6, vol: 0.09 });
@@ -139,17 +140,39 @@
       f.landed = true; putMimo(lx, ly, 0); api.sfx.land(); api.shake(0.5); api.dust({ x: lx - 15, y: ly - 10, w: 30, h: 10 }, 8); api.setMood('happy', 1);
     }
     // Fauch looks out of the crater, wet and friendly, and throws his baby horns
-    if (t >= FIN.PEEK0 && !f.peek) { f.peek = true; B.head.x = FIN.PEEK_X; B.head.y = ly + 300; B.head.f = 1; B.head.nk = 1; B.nkTo = 1; F().moveHead(B, { x: FIN.PEEK_X, y: ly + FIN.PEEK_DY, f: 1 }, FIN.PEEK1 - FIN.PEEK0); api.sfx.bubble(); }
+    // he climbs out of the crater and sits down on his nest on the left rim; the long body stays below, out of the picture
+    if (t >= FIN.PEEK0 && !f.peek) { f.peek = true; f.sit = t; F().moveHead(B, { x: FIN.PEEK_X, y: ly + 520, f: 1 }, 0.5); B.nkTo = -1; api.sfx.bubble(); }
     if (t >= FIN.SAY && !f.said) { f.said = true; api.boss.say(B.def.name, F().LINES.beaten, 1.6, B.kind); }
-    if (t >= FIN.GIFT && !f.gift) { f.gift = { x0: B.head.x + 18, y0: B.head.y - H.RY - 20 }; api.boss.say(B.def.name, GIFT_LINE, 2.6, B.kind); api.sfx.bounce(); }
+    if (t >= FIN.GIFT && !f.gift) { const nh = F().nestHead ? F().nestHead(B) : null; f.gift = nh ? { x0: nh.x, y0: nh.y } : { x0: B.head.x + 18, y0: B.head.y - H.RY - 20 }; api.boss.say(B.def.name, GIFT_LINE, 2.6, B.kind); api.sfx.bounce(); }
     if (f.gift && !B.hornsOn) {
       const k = Math.min(1, (t - FIN.GIFT) / FIN.GIFT_LEN), tx = p.x + p.w / 2, ty = p.y + 2;
       f.gift.x = F().lerp(f.gift.x0, tx, k); f.gift.y = F().lerp(f.gift.y0, ty, k) - Math.sin(k * Math.PI) * 80; f.gift.rot = (1 - k) * Math.PI * 4; f.gift.k = k;
       if (k >= 1) { B.hornsOn = true; api.boss.wear(); api.sfx.key(); api.ring(tx, ty, api.P.key); api.burst(tx, ty, 12, [api.P.key, '#FBEFD9'], 110, { grav: 200 }); api.setMood('happy', 1.5); }
     }
+    // the closing scene after the horns: the door waits for it (or comes right away when it does not play)
+    const V = window.MimoVolcano, sc = V && V.scenes;
+    if (B.hornsOn && !f.close && t > FIN.CLOSE) { f.close = true; f.closeRan = !!(sc && sc.start('closing', B)); }
+    if (f.closeRan && !sc.finished()) B.t = Math.min(B.t, FIN.CLOSE + 0.5);   // the door (def.doorAfter 9.0) waits for the scene
+    if (f.closeRan && sc.finished() && !f.doorFree) { f.doorFree = true; B.t = Math.max(B.t, FIN.CLOSE + 0.65); }   // the end of a scene resets the clock
   }
   const door = () => ({ x: F().DOOR.x, y: F().DOOR.y });
 
-  window.MimoWorlds.register({ world: 5, setup(a) { api = a; } });
+  // the kid calls up from below the first time Fauch gets wet: a speech tag at the bottom edge of the screen, its tail pointing
+  // down to where the family waits. Only a picture: it reads B.worryAt (set by douse) and keeps its own time on B.kidCall, after
+  // Fauch's own line about the cold is over, so there is never more than one line at a time.
+  const KID_CALL = { TEXT: 'Nicht so doll!', FROM: 2.0, LEN: 2.6 };
+  function drawKidCall(ctx) {
+    const B = F().fight ? F().fight() : null; if (!B) return;
+    if (B.worryAt == null || !window.MimoCoast || !window.MimoCoast.sdraw) return;
+    if (B.kidCall == null) B.kidCall = B.worryAt;
+    const k = api.time - B.kidCall - KID_CALL.FROM; if (k < 0 || k > KID_CALL.LEN || B.fin) return;
+    const v = api.view, a = Math.min(1, k / 0.2, (KID_CALL.LEN - k) / 0.3), x = v.w * 0.5, y = v.h - 26 - 6 * Math.min(1, k / 0.25);
+    ctx.save(); ctx.globalAlpha = a;
+    ctx.fillStyle = '#FFFFFF'; ctx.globalAlpha = a * 0.95; ctx.beginPath(); ctx.moveTo(x - 7, y + 10); ctx.lineTo(x + 7, y + 10); ctx.lineTo(x, v.h + 2); ctx.closePath(); ctx.fill();
+    ctx.globalAlpha = a; window.MimoCoast.sdraw.tag(ctx, KID_CALL.TEXT, x, y, 0.7);
+    ctx.restore();
+  }
+
+  window.MimoWorlds.register({ world: 5, setup(a) { api = a; }, draw(layer, ctx) { if (layer === 'over' && api) drawKidCall(ctx); } });
   Object.assign(window.MimoFauch = window.MimoFauch || {}, { SCENE, FIN, startScene, stepScene, finishScene, defeat, afterDefeat, door, spawnOf });
 })();

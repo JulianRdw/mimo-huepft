@@ -168,7 +168,7 @@
   // ---------- a sleeper blackened by the ink ----------
   let soot = null;
   // ink splotches on the lying sleeper ([x, y, r] from the middle of the mattress; head on the left, the face mostly spared), in the order they land
-  const INK_BLOTS = [[6, -12, 5.5], [-2, -16, 4], [18, -10, 4.5], [12, -16, 3.5], [-1, -5, 3.6], [26, -12, 3.2], [1, -8, 3], [-21, -17, 2.2], [22, -16, 2.6]];
+  const INK_BLOTS = [[6, -15, 5.5], [-2, -18, 4], [18, -13, 4.5], [12, -17, 3.5], [-8, -14, 3.6], [26, -14, 3.2], [1, -12, 3], [-29, -33, 2.4], [22, -17, 2.6]];
   function inkFloat(ctx, e, pos) {
     const c = api.L && api.L.chase;
     if (e.inkable && c) e.soot = Math.max(e.soot || 0, clamp01((c.x - (pos.x - 50)) / 70));

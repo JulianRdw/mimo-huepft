@@ -68,9 +68,11 @@
     return { arms: { l: arm('l', 1), r: arm('r', -1) }, torsoRot: s.torsoRot + 4 * amp * sw, headTilt: -3 * amp * sw, shiftX: 1.4 * amp * sw, brow: amp > 0.6 ? 1 : 0, done: w > 99 };
   };
 
+  // thumbs up: the arm out in front, the fist (drawn big, with the thumb standing up: coast-rig-draw.js drawThumbsUp) at head height
+  // beside the face, held; a small nod and one slow pump per period make it read as a gesture
   A.thumb = (w, s) => {
-    const r = track(w, [[0, 0], [0.4, 1, 'out']]), b = s.arm.r;
-    return { arms: { r: { upper: b.upper + (138 + 4 * Math.sin(w * TAU * 0.9) - b.upper) * r, fore: b.fore + (176 - b.fore) * r } }, headTilt: -4 * r, beam: r > 0.5, shrug: 0.5 * r, done: w > 99 };
+    const r = track(w, [[0, 0], [0.5, 1, 'out']]), pump = Math.max(0, Math.sin(w * TAU * 0.45)), b = s.arm.r;
+    return { arms: { r: { upper: b.upper + (96 + 5 * pump - b.upper) * r, fore: b.fore + (166 + 8 * pump - b.fore) * r } }, hand: { r: 'thumb' }, headTilt: -3 * r - 1.5 * pump, torsoRot: s.torsoRot - 1.2 * r, beam: r > 0.5, shrug: 0.3 * r, bounce: 0.35 * pump, done: w > 99 };
   };
 
   A.hop = (w, s) => {
@@ -147,7 +149,7 @@
     point: { act: 'point', loop: [0.6, 4], sided: true },
     flail: { act: 'flail', loop: [0.3, 1.0] },
     balance: { act: 'balance', loop: [0.2, 1.8182] },
-    thumb: { act: 'thumb', loop: [0.5, 2.2222] },
+    thumb: { act: 'thumb', loop: [0.6, 2.2222] },
     hop: { act: 'hop', loop: [0.3, 0.8333] },
     pat: { act: 'pat', loop: [0.5, 1.5385], sided: true },
     kick: { act: 'kick', loop: [0.2, 0.84] },

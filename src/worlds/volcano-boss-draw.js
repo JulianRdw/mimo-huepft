@@ -59,6 +59,19 @@
     if (B.state === 'breathe') return 'fire';
     return 'angry';
   }
+  // after a cold shower he glances worried at the egg for about a second: a turn of the head (radians in the picture, the world
+  // frame) and how much of it (0..1). Only a picture: nothing of the fight reads this. B.worryAt is set by douse() (volcano-boss.js)
+  const WORRY = { FROM: 0.55, IN: 0.35, HOLD: 0.45, OUT: 0.35, MAX: 0.55 };
+  function worry(B, h) {
+    if (B.worryAt == null || B.done || B.fin) return WORRY0;
+    const k = api.time - B.worryAt, a = Math.max(0, Math.min(1, (k - WORRY.FROM) / WORRY.IN)), o = Math.max(0, Math.min(1, (k - WORRY.FROM - WORRY.IN - WORRY.HOLD) / WORRY.OUT));
+    const env = a * a * (3 - 2 * a) * (1 - o * o * (3 - 2 * o)); if (env <= 0) return WORRY0;
+    const n = window.MimoFauch && window.MimoFauch.nestNow ? window.MimoFauch.nestNow(B) : null; if (!n) return WORRY0;
+    let d = Math.atan2(n.y - 20 - h.y, n.x - h.x) - (h.f > 0 ? 0 : Math.PI);
+    d = Math.atan2(Math.sin(d), Math.cos(d));
+    WORRY_OUT.k = env; WORRY_OUT.rot = Math.max(-WORRY.MAX, Math.min(WORRY.MAX, d)); return WORRY_OUT;
+  }
+  const WORRY0 = Object.freeze({ k: 0, rot: 0 }), WORRY_OUT = { k: 0, rot: 0 };
   // shapes of the head, made once (no arrays per frame): horns (base, tip, width), horn rings, neck spikes, teeth
   const HORNS = [[16, -34, 34, -84, 11], [40, -28, 64, -70, 9]], RINGS = [[14, -46], [19, -58], [40, -40], [46, -50]];
   const SPIKES = [[58, -14, 11], [62, 10, 10], [58, 32, 9]], TEETH = [-100, -84, -68];
@@ -76,7 +89,8 @@
     const md = mood(B), t = api.time, body = api.boss.col(B, B.wet > 0.05 ? api.mixHex(c.body, '#C9A0C8', B.wet * 0.35) : c.body);
     const open = md === 'fire' || md === 'roar' ? 1 : md === 'charge' ? 0.25 + 0.1 * Math.sin(t * 20) : md === 'pant' ? 0.55 + 0.12 * Math.sin(t * 6) : md === 'sneeze' ? 0.8 : md === 'happy' ? 0.3 : 0.08;
     const bob = md === 'pant' ? Math.sin(t * 3) * 1.5 : 0;
-    ctx.save(); ctx.translate(h.x, h.y + bob); if (h.f > 0) ctx.scale(-1, 1);
+    const care = worry(B, h);
+    ctx.save(); ctx.translate(h.x, h.y + bob); if (care.k > 0) ctx.rotate(care.rot * care.k); if (h.f > 0) ctx.scale(-1, 1);
     // back spikes on the neck, horns, the skull, the snout
     ctx.fillStyle = c.spike; ctx.beginPath();
     for (const [x, y, r] of SPIKES) { ctx.moveTo(x, y - r); ctx.lineTo(x + r * 1.5, y); ctx.lineTo(x, y + r); }
@@ -99,7 +113,7 @@
     // nostril, cheek, belly of the jaw
     ell(ctx, -100, -2, 4, 3.4); fill(ctx, c.ink, 0.6);
     ell(ctx, 12, 18, 14, 8); fill(ctx, c.blush, md === 'happy' || md === 'wet' ? 0.95 : 0.7);
-    drawEye(ctx, B, h, md, c);
+    drawEye(ctx, B, h, md, c, care.k);
     // while he rests, the top of the snout and of the skull shine a little: they are steps
     if (md === 'pant') { const a = 0.55 + 0.35 * Math.sin(t * 5); api.rr(-106, -15, 40, 6, 3); fill(ctx, c.belly, a); api.rr(-46, -45, 54, 6, 3); fill(ctx, c.belly, a * 0.8); }
     ctx.restore();
@@ -113,8 +127,9 @@
       for (let i = 0; i < 3; i++) { const k = (t * 0.8 + i / 3) % 1; ell(ctx, h.x + (i - 1) * 34, h.y - 50 - k * 50, 8 + k * 10, 8 + k * 10); fill(ctx, c.steam, B.wet * 0.55 * (1 - k)); }
     }
   }
-  function drawEye(ctx, B, h, md, c) {
+  function drawEye(ctx, B, h, md, c, care) {
     const ink = c.ink, ex = -18, ey = -12, p = api.p;
+    if (care > 0.25 && md === 'wet') md = 'worry';
     ctx.strokeStyle = ink; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     if (md === 'wet' || md === 'sneeze') {
       ctx.lineWidth = 4.5; ctx.beginPath(); ctx.moveTo(ex - 12, ey - 10); ctx.lineTo(ex + 8, ey); ctx.lineTo(ex - 12, ey + 10); ctx.stroke();
@@ -125,13 +140,16 @@
     // the pupil looks at Mimo (in the head's own mirrored space)
     let lx = -6, ly = 3;
     if (p) { const dx = (p.x + p.w / 2 - h.x) * -h.f, dy = p.y + 10 - h.y, d = Math.hypot(dx, dy) || 1; lx = dx / d * 6; ly = dy / d * 5; }
+    if (care > 0) { lx += (-6 - lx) * care; ly += (-3 - ly) * care; }   // the pupil goes with the head, towards the nest
     const small = md === 'charge' ? 0.42 : 0.55;
     ell(ctx, ex + lx, ey + ly, 16 * small, 16 * small); fill(ctx, ink);
     ell(ctx, ex + lx - 3, ey + ly - 4, 3, 3); fill(ctx, '#FFFFFF');
     if (md === 'pant' || md === 'wake') { api.rr(ex - 18, ey - 18, 36, md === 'pant' ? 16 : 11, 6); fill(ctx, api.boss.col(B, c.body)); }
     // the angry brow (flat and tired while he rests)
     const tilt = md === 'pant' ? -2 : md === 'charge' ? 9 : 6;
-    ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(ex - 22, ey - 22 - tilt * 0.3); ctx.lineTo(ex + 18, ey - 16 + tilt); ctx.stroke();
+    ctx.lineWidth = 5; ctx.beginPath();
+    if (md === 'worry') { ctx.moveTo(ex - 20, ey - 17); ctx.lineTo(ex + 16, ey - 28); } else { ctx.moveTo(ex - 22, ey - 22 - tilt * 0.3); ctx.lineTo(ex + 18, ey - 16 + tilt); }
+    ctx.stroke();
   }
 
   // ---------- warnings: the throat glows, the band of the shaft and its ledges light up ----------

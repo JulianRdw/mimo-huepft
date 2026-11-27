@@ -7,7 +7,7 @@
   // map characters the game itself already uses (a world may not give them a new meaning)
   const CORE_CHARS = ' #-^vabcL><A8iTgePD*hksfu';
   // fields a world has once; any part of the world may give them, but only one part
-  const SINGLE = ['name', 'firstLevel', 'draft', 'palette', 'nightBlend', 'song', 'lines', 'particles', 'boss', 'drawBackground', 'drawAmbient', 'drawThorn', 'drawMushroom', 'drawChase', 'lint', 'ending', 'headNote'];
+  const SINGLE = ['name', 'firstLevel', 'draft', 'palette', 'nightBlend', 'song', 'lines', 'particles', 'boss', 'drawBackground', 'drawAmbient', 'drawThorn', 'drawMushroom', 'drawChase', 'lint', 'ending', 'headNote', 'levelPath', 'finds'];
   // hooks every part may give; the game calls all of them in file order
   const MULTI = ['setup', 'init', 'update', 'physics', 'draw', 'drawTile', 'piep'];
   const parts = [];

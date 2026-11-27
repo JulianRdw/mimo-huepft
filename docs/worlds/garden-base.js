@@ -17,17 +17,14 @@
 //   hold: { who: [[t, propName | null, hand], ...] }   what a hand holds (props of the rigs, Garden.addProp adds more)
 //   lines: [[t, who, text, seconds, quiet], ...]        speech bubbles (shown only while the speaker is in the picture)
 //   focus: [[t, x, ease?], ...]        where the camera of an upright phone looks (the engine fills the quiet gaps)
-//   figure(k, t, A) -> { look, asleep, y, hop, idle } | null   per-frame overrides for a person k ({ who, x, y, p });
-//                                      idle: false stops the figure's own little gestures (Naike's microphone, ...)
+//   figure(k, t, A) -> { look, asleep, y, hop } | null   per-frame overrides for a person k ({ who, x, y, p })
 //   person(c, k, t, A) -> true          draw person k yourself (sunk in a hole, fallen over); true = done
 //   after(c, k, t, A)                   draw on top of person k (drips, ketchup on the face)
 //   back(c, t, A)                       draw before the people (props on the ground, a hole)
 //   front(c, t, A)                      draw after the people, the dog and Mimo (flying things, a towel)
 //   talk(c, t, A)                       comic words: A.pop(c, text, x, y, k, rot, size, colours)
 //   dog(t, A) -> { pose, carry, carryDraw, lookAt, happy, jump } | null   Lotta (her x is the 'dog' track in x)
-//   mimo(t, A) -> { hop, mood, face } | null                            Mimo (his x is the 'mimo' track in x);
-//                                      mood 'neutral' keeps his normal face while he hops (else hopping looks happy)
-//   dog(...) may also give y (feet further back), rear (0..1, on the hind legs), dir; A.dogMouth(), A.dogY, A.REAR help
+//   mimo(t, A) -> { hop, mood, face } | null                            Mimo (his x is the 'mimo' track in x)
 //   grill(t) -> number                  how many sausages lie on the grill (3 when no act says otherwise)
 //   sounds: [[t, name], ...]            comic sounds, played once when the loop passes t (A.SOUNDS lists the names)
 // }

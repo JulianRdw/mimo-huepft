@@ -150,11 +150,14 @@
   // a thumb up big enough to read on a phone: a fist with the thumb, at the raised hand (snorkeller)
   function thumbUp(ctx, e, s) {
     const h = e.pp.hand('r', s), t = api.time, wob = Math.sin(t * 3 + e.phase) * 0.12;
-    ctx.save(); ctx.translate(h[0] + (1 - SNORKEL_SHOW) * 0, h[1] + (1 - SNORKEL_SHOW) * ((e.pp.rig.size[1] - MARGIN) * s) - 4); ctx.rotate(wob); ctx.scale(1.25, 1.25);
+    ctx.save(); ctx.translate(h[0] + (1 - SNORKEL_SHOW) * 0, h[1] + (1 - SNORKEL_SHOW) * ((e.pp.rig.size[1] - MARGIN) * s) - 4); ctx.rotate(wob); ctx.scale(1.55, 1.55);
     const skin = (e.pp.rig.colors && e.pp.rig.colors.skin && (e.pp.rig.colors.skin.base || e.pp.rig.colors.skin.fill)) || '#F6CDB0';
-    ctx.fillStyle = skin; ctx.strokeStyle = D().ink(); ctx.lineWidth = 0.9;
-    ctx.beginPath(); ctx.ellipse(0, 0, 4.2, 3.6, 0, 0, TAU); ctx.fill(); ctx.globalAlpha = 0.4; ctx.stroke(); ctx.globalAlpha = 1;
-    ctx.beginPath(); ctx.ellipse(-0.8, -5.2, 1.7, 3.2, -0.15, 0, TAU); ctx.fill(); ctx.globalAlpha = 0.4; ctx.stroke(); ctx.globalAlpha = 1;
+    ctx.fillStyle = skin; ctx.strokeStyle = (e.pp.rig.colors && e.pp.rig.colors.skin && e.pp.rig.colors.skin.line) || D().ink(); ctx.lineWidth = 1.1; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    // the thumb stands up on the fist (a capsule), the fist over its foot, the curled fingers across it
+    ctx.beginPath(); ctx.moveTo(-2.5, -2); ctx.lineTo(-2.5, -8); ctx.arc(0, -8, 2.5, Math.PI, 0); ctx.lineTo(2.5, -2); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(0, 0, 5.2, 4.4, 0, 0, TAU); ctx.fill(); ctx.stroke();
+    ctx.fillRect(-1.9, -3, 3.8, 3.4);
+    ctx.lineWidth = 0.7; ctx.beginPath(); for (const fy of [-1, 1, 2.9]) { ctx.moveTo(4.6, fy); ctx.quadraticCurveTo(1.5, fy + 0.7, -3.6, fy + 0.3); } ctx.stroke();
     ctx.restore();
   }
 
@@ -172,9 +175,10 @@
     ctx.save(); ctx.translate(pos.x, pos.foot - 3 + bob); ctx.rotate(tilt);
     if (e.shadow && !figureOnly) { ctx.fillStyle = 'rgba(40,60,110,0.16)'; ctx.beginPath(); ctx.ellipse(0, 30 + 6 * Math.sin(t * 0.7), 42, 7, 0, 0, TAU); ctx.fill(); }
     if (!figureOnly) D().PROPS.mattress(ctx, t, e);
-    if (e.pp) {
-      ctx.save(); ctx.translate(30, -9); ctx.rotate(-Math.PI / 2); ctx.scale(0.66 * (1 + Math.sin(t * 1.6 + e.phase) * 0.05), 1);
-      e.pp.fig.asleep = !e.awake; rigAt(ctx, e, 0, 0, { noShadow: true }); e.pp.fig.asleep = false; ctx.restore();
+    if (e.pp && C.sleeper) {   // head on the pillow, the body under a towel (coast-sleeper.js); e.awake lifts him up
+      e.pp.fig.asleep = !e.awake && !(e.wakeK > 0);
+      C.sleeper.drawTowel(ctx, e, rigAt, { t, wake: e.wakeK || 0, figureOnly });
+      e.pp.fig.asleep = false;
     }
     ctx.restore();
   }

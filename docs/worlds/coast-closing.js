@@ -261,12 +261,10 @@
   // the sleeper: lying on his mattress at the water line, bright red; he sits up when he wakes
   function drawSleeper(ctx) {
     const e = E('sleeper'); if (!e.pos) return;
-    const t = cs.t, wake = cs.wake != null ? ease((t - cs.wake) / 0.6) : 0, bob = Math.sin(t * 1.3) * 1.8, x = e.pos.x, y = WY - 3 + bob;
+    const t = cs.t, bob = Math.sin(t * 1.3) * 1.8, x = e.pos.x, y = WY - 3 + bob;
     ctx.save(); ctx.translate(x, y); SD().PROPS.mattress(ctx, api.time, { color: 0 });
-    if (e.pp) {
-      ctx.save(); ctx.beginPath(); ctx.rect(-80, -140, 160, 130); ctx.clip();
-      ctx.translate(lerp(30, 6, wake), lerp(-9, 12, wake)); ctx.rotate(-Math.PI / 2 * (1 - wake) - 0.08 * wake); ctx.scale(lerp(0.66, 1, wake), 1);
-      e.pp.fig.asleep = cs.wake == null; CD().rigAt(ctx, e, 0, 0, { noShadow: true }); e.pp.fig.asleep = false; ctx.restore();
+    if (e.pp && C().sleeper) {   // head on the pillow under his towel; waking he sits up out of it (coast-sleeper.js)
+      e.pp.fig.asleep = cs.wake == null; C().sleeper.drawTowel(ctx, e, CD().rigAt, { t, wake: cs.wake != null ? (t - cs.wake) / 0.6 : 0 }); e.pp.fig.asleep = false;
     }
     ctx.restore();
     if (!cs.wake && Math.floor(t / 1.3) % 2) { ctx.save(); ctx.font = '800 12px Nunito, system-ui, sans-serif'; ctx.fillStyle = '#8E8CA3'; ctx.fillText('Zz', x - 30, y - 30 - (t * 6 % 8)); ctx.restore(); }
@@ -284,7 +282,8 @@
     for (const q of cs.says) {
       const k = cs.t - q.t0; if (k < 0 || k > q.dur) continue;
       const a = q.e.anchor || q.e, ax = a.x + (a.w || 0) / 2, ay = a.y - 6, w = ctx.measureText(q.text).width + 14, h = 20;
-      let x = Math.max(cam.x + w / 2 + 4, Math.min(cam.x + api.view.w / cam.z - w / 2 - 4, ax)), y = Math.max(minY + h / 2, ay - h / 2 - 8);
+      // inside the safe part of a phone held sideways (notch and rounded corners left and right)
+      let x = Math.max(cam.x + ((api.view.safeL || 0) + 6) / cam.z + w / 2, Math.min(cam.x + (api.view.w - (api.view.safeR || 0) - 6) / cam.z - w / 2, ax)), y = Math.max(minY + h / 2, ay - h / 2 - 8);
       for (let n = 0; n < 8; n++) { const hit = placed.find((o) => Math.abs(o.x - x) < (o.w + w) / 2 + 3 && Math.abs(o.y - y) < (o.h + h) / 2 + 3); if (!hit) break; if (hit.y - hit.h / 2 - h / 2 - 4 >= minY + h / 2) y = hit.y - hit.h / 2 - h / 2 - 4; else x = hit.x + (hit.w + w) / 2 + 4; }
       placed.push({ x, y, w, h });
       const fade = Math.min(1, k / 0.12, (q.dur - k) / 0.25);

@@ -40,6 +40,8 @@ export function pageDriver(job) {
     let seed = 12345; Math.random = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; };
     M.progress.invincible = false; M.progress.zen = false;
     if (job.closing && window.MimoCoast) window.MimoCoast.forceClosing = true;   // world 4: the closing scene after the win
+    if (job.closing && window.MimoVolcano) window.MimoVolcano.forceClosing = true;   // world 5: the summit photo after the win
+    if (job.parts != null && window.MimoVolcano) { const set = String(job.parts).split(','); window.MimoVolcano.foundParts = () => ({ flag: set.includes('flag'), book: set.includes('book'), thermos: set.includes('thermos'), tripod: set.includes('tripod') }); }
     M.sim.hold(true); M.startBoss(job.w);
     const keys = { left: false, right: false, jump: 0 };
     const go = (d) => { keys.left = d < 0; keys.right = d > 0; };
@@ -59,12 +61,12 @@ export function pageDriver(job) {
     };
   } else if (job.kind === 'opening') {
     // the opening scene of world 4 (it never plays under automation by itself): until the level has begun for a moment
-    window.MimoCoast.forceOpening = true; window.MimoCoast.openingReset(); M.sim.hold(true); M.load(job.slot);
+    window.MimoCoast.forceOpening = true; window.MimoCoast.openingReset(); if (window.MimoVolcano && window.MimoVolcano.openingReset) { window.MimoVolcano.forceOpening = true; window.MimoVolcano.openingReset(); } M.sim.hold(true); M.load(job.slot);
     let played = 0;
     tick = () => { keysOff(); if (G.state === 'cine') played = 1; else if (played) { played += STEP; if (played > 3.5) R.stop = true; } };
   } else if (job.kind === 'family') {
     // after the opening (or without it): Mimo walks left out of the starting view to the family, stands there, then back
-    if (job.after) { window.MimoCoast.forceOpening = true; window.MimoCoast.openingReset(); } else window.MimoCoast.forceOpening = false;
+    if (job.after) { window.MimoCoast.forceOpening = true; window.MimoCoast.openingReset(); if (window.MimoVolcano && window.MimoVolcano.openingReset) { window.MimoVolcano.forceOpening = true; window.MimoVolcano.openingReset(); } } else window.MimoCoast.forceOpening = false;
     M.sim.hold(true); M.load(job.slot);
     let phase = 0, wait = 0, x0 = null;
     tick = () => {
@@ -89,6 +91,7 @@ export function pageDriver(job) {
       if (c.v === 'water') return !!P.swim; if (c.v === 'dry') return !P.swim; if (c.v === 'body') return !!P.carried && L.bodies.includes(P.carried);
       if (c.v === 'surface') return !!P.atSurface;
       // world 6 orbit conditions and world 5 heat, the same as tools/levelbot.mjs
+      if (c.v === 'calm') { const v = G.L && G.L.volcano; if (!v) return true; const px = (P.x + P.w / 2) / 32; for (const h of v.hoppers) { const a = h.tx + 0.5, b = a + (h.dx || 0); if (Math.max(a, b) < px - 0.5 || Math.min(a, b) > px + 6) continue; const cyc = h.rest + h.dur, tt = G.time + h.offset, t = tt - Math.floor(tt / cyc) * cyc; if (t >= h.rest - 0.8) return false; } return true; }
       if (c.v === 'orbit') return !!P.orbit;
       if (c.v === 'ang') { if (!P.orbit || P.orbitDeg == null) return false; return c.op === '>=' ? P.orbitDeg >= c.n : P.orbitDeg <= c.n; }
       const v = c.v === 'stars' ? G.starsGot : c.v === 'time' ? G.time : c.v === 'heat' ? P.heat || 0 : p[c.v];

@@ -18,6 +18,7 @@
   --mimo-mint:#A9DCC3; --mimo-peach:#F6BFA6; --mimo-lav:#C9B8EA; --mimo-sun:#F3D98B; --mimo-rose:#F2B3C6;
   --night-sky-top:#33305A; --night-sky-bot:#6C5C86; --night-cloud:#716B98; --night-hill-far:#4C4A74; --night-hill-near:#3C5A52; --night-sun:#C9C2E8;
   --coast-sea:#5FB4C8; --coast-sea-ink:#2D7488; --coast-coral:#F59AAE; --coast-coral-ink:#4A1E2A; --coast-sand:#F3DDB0;
+  --volc-ash:#F6DCC6; --volc-basalt:#76527A; --volc-ink:#9A4A52; --volc-ember:#FFA578; --volc-ember-ink:#4A1E18;
   --w3-sky-top:#D8E6F5; --w3-sky-bot:#F7F1F5; --w3-hill-far:#C3D6EA; --w3-hill-near:#E6EEF7; --w3-ground:#EDF3FA; --w3-ground-edge:#FFFFFF; --w3-ground-dot:#D5E0EC; --w3-cloud:#FFFFFF; --w3-snow:#FFFFFF;
   --w2-sky-top:#6B6798; --w2-sky-bot:#E9B6A4; --w2-hill-far:#6F8C86; --w2-hill-near:#4A6B61; --w2-tree:#5C7D74; --w2-ground:#6A9A86; --w2-ground-edge:#95C7A8; --w2-ground-dot:#7FAE97; --w2-cloud:#A39BC9; --w2-ice:#CFE6EE; --w2-ice-ink:#8FB7C6; --w2-snail:#F0C9A2; --w2-snail-ink:#B98A5E;
   --font-display:'Fredoka','Nunito',system-ui,sans-serif;
@@ -41,6 +42,7 @@
   --mimo-mint:#7FBF9E; --mimo-peach:#D99A80; --mimo-lav:#A491CF; --mimo-sun:#D9BC62; --mimo-rose:#D98DA6;
   --night-sky-top:#1C1A30; --night-sky-bot:#3A3150; --night-cloud:#3C3858; --night-hill-far:#2A2A45; --night-hill-near:#1F332E; --night-sun:#8F89B8;
   --coast-sea:#3E8197; --coast-sea-ink:#8FD0DE; --coast-coral:#E48DA2; --coast-coral-ink:#3A1420; --coast-sand:#9C8A6A;
+  --volc-ash:#8A6E66; --volc-basalt:#4B3253; --volc-ink:#F2B08A; --volc-ember:#E8875E; --volc-ember-ink:#2E1210;
   --w3-sky-top:#2A3348; --w3-sky-bot:#4B4D68; --w3-hill-far:#3B4B64; --w3-hill-near:#56657B; --w3-ground:#8894A8; --w3-ground-edge:#B8C4D5; --w3-ground-dot:#75839A; --w3-cloud:#5B6782; --w3-snow:#DCE4F0;
   --w2-sky-top:#2C2A47; --w2-sky-bot:#7A5262; --w2-hill-far:#33504A; --w2-hill-near:#223B35; --w2-tree:#2B4740; --w2-ground:#3F6D5B; --w2-ground-edge:#6CA48C; --w2-ground-dot:#528A75; --w2-cloud:#4D4875; --w2-ice:#9DBECB; --w2-ice-ink:#6E95A4; --w2-snail:#C9A47E; --w2-snail-ink:#8E6A48;
     color-scheme:dark;
@@ -61,6 +63,7 @@
   --mimo-mint:#7FBF9E; --mimo-peach:#D99A80; --mimo-lav:#A491CF; --mimo-sun:#D9BC62; --mimo-rose:#D98DA6;
   --night-sky-top:#1C1A30; --night-sky-bot:#3A3150; --night-cloud:#3C3858; --night-hill-far:#2A2A45; --night-hill-near:#1F332E; --night-sun:#8F89B8;
   --coast-sea:#3E8197; --coast-sea-ink:#8FD0DE; --coast-coral:#E48DA2; --coast-coral-ink:#3A1420; --coast-sand:#9C8A6A;
+  --volc-ash:#8A6E66; --volc-basalt:#4B3253; --volc-ink:#F2B08A; --volc-ember:#E8875E; --volc-ember-ink:#2E1210;
   --w3-sky-top:#2A3348; --w3-sky-bot:#4B4D68; --w3-hill-far:#3B4B64; --w3-hill-near:#56657B; --w3-ground:#8894A8; --w3-ground-edge:#B8C4D5; --w3-ground-dot:#75839A; --w3-cloud:#5B6782; --w3-snow:#DCE4F0;
   --w2-sky-top:#2C2A47; --w2-sky-bot:#7A5262; --w2-hill-far:#33504A; --w2-hill-near:#223B35; --w2-tree:#2B4740; --w2-ground:#3F6D5B; --w2-ground-edge:#6CA48C; --w2-ground-dot:#528A75; --w2-cloud:#4D4875; --w2-ice:#9DBECB; --w2-ice-ink:#6E95A4; --w2-snail:#C9A47E; --w2-snail-ink:#8E6A48;
   color-scheme:dark;
@@ -359,6 +362,12 @@ body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size
 .lvl-card.world .bar i{display:block;height:100%;border-radius:inherit;background:var(--wc,var(--accent))}
 .lvl-card.world.here{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent) inset}
 .lvl-card .new-badge{margin-left:6px}
+/* the "Neu" sticker of a new world: tilted, wobbles now and then (still with reduced motion) */
+.new-badge.wobble{background:var(--volc-ember);color:var(--volc-ember-ink);transform:rotate(-6deg);transform-origin:50% 60%}
+.lvl-card.world{position:relative}
+.lvl-card.world .new-badge.wobble{position:absolute;left:5px;top:5px;margin:0;font-size:11px;padding:1px 7px;box-shadow:0 2px 0 rgba(90,40,20,.18)}
+@media (prefers-reduced-motion:no-preference){.new-badge.wobble{animation:newWobble 3.2s ease-in-out infinite}}
+@keyframes newWobble{0%,72%,100%{transform:rotate(-6deg) scale(1)}78%{transform:rotate(4deg) scale(1.12)}84%{transform:rotate(-9deg) scale(1.04)}90%{transform:rotate(-3deg) scale(1)}}
 .lvl-note{grid-column:1/-1;margin:0;font-size:13px;color:var(--muted)}
 .lvl-card.current .num{color:var(--accent-ink)}
 .lvl-card:focus-visible{outline:3px solid var(--accent);outline-offset:1px}
@@ -498,6 +507,14 @@ input,textarea{-webkit-user-select:text;user-select:text}
 .overlay.news.room .news-scene{background:#F1DCC0}
 .overlay.news.room .news-body{background:var(--card)}
 .overlay.news.room .news-kicker{color:var(--accent-ink)}
+/* "Neu!" card of the volcano (world 5): warm ash and ember instead of sea and sand */
+.overlay.news.volcano{background:color-mix(in srgb,var(--volc-basalt) 34%,transparent)}
+.overlay.news.volcano .card.news{box-shadow:0 24px 60px rgba(45,25,40,.34),0 0 0 1px color-mix(in srgb,var(--volc-basalt) 28%,transparent)}
+.overlay.news.volcano .news-scene{background:var(--volc-ash)}
+.overlay.news.volcano .news-body{background:color-mix(in srgb,var(--volc-ash) 16%,var(--card))}
+.overlay.news.volcano .news-kicker{color:var(--volc-ink)}
+.btn.primary.volcano{background:var(--volc-ember);color:var(--volc-ember-ink);box-shadow:0 3px 0 color-mix(in srgb,var(--volc-ember) 55%,#000 24%)}
+.btn.primary.volcano:focus-visible{outline-color:var(--volc-basalt)}
 /* the Kinderzimmer plays in its own page, in a frame over everything */
 .room-frame{position:fixed;inset:0;bottom:auto;width:100%;height:var(--app-h,100%);border:0;z-index:50;background:#F1DCC0;display:block}
 /* ---------- Release polish: menus made for thumbs ---------- */
@@ -713,7 +730,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
         </div>
         <button class="btn primary cta" id="btnContinue" type="button"><span class="cta-main">Weiter spielen</span><span class="cta-sub" id="ctaSub">Level 1 · Aufwachen</span></button>
         <div class="tiles">
-          <button class="tile" id="btnLevels" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3v18M5 4h11l-2.5 3.5L16 11H5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg><b>Welten</b><small id="tileLevels"></small></button>
+          <button class="tile" id="btnLevels" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3v18M5 4h11l-2.5 3.5L16 11H5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg><b>Welten <span class="new-badge wobble" id="levelsNew" hidden>Neu</span></b><small id="tileLevels"></small></button>
           <button class="tile" id="btnWardrobe" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h2a2 2 0 0 0 4 0h2l4 3-2 3-2-1v11H8V9L6 10 4 7z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><b>Kleiderschrank</b><small id="tileShop"></small></button>
           <button class="tile" id="btnAch" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v4a5 5 0 0 1-10 0z M7 6H4a3 3 0 0 0 3 4 M17 6h3a3 3 0 0 1-3 4 M12 13v4 M8 20h8 M9.5 17h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/></svg><b>Erfolge</b><small id="tileAch"></small></button>
           <button class="tile" id="btnSettings" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><b>Einstellungen</b><small id="tileSettings"></small></button>
@@ -881,6 +898,19 @@ input,textarea{-webkit-user-select:text;user-select:text}
       </div>
     </div>
 
+    <div class="overlay news volcano" id="ovVolcNews" hidden role="dialog" aria-modal="true" aria-labelledby="volcNewsTitle" aria-describedby="volcNewsLead">
+      <div class="card news" id="volcNewsCard" tabindex="-1">
+        <div class="news-scene"><canvas id="volcNewsScene" width="400" height="200" aria-hidden="true"></canvas><span class="news-badge">Neu!</span></div>
+        <div class="news-body">
+          <p class="news-kicker">Welt 5 ist da</p>
+          <h2 id="volcNewsTitle">Neue Welt: <span>Der Gipfelsturm!</span></h2>
+          <p class="news-lead" id="volcNewsLead">Mimo geht mit der Familie wandern, hinauf auf einen rauchenden Vulkan. Doch ganz oben wacht ein grummeliger Drache über den Gipfel. Nur warum?</p>
+          <p id="volcNewsMore"></p>
+          <div class="actions"><button class="btn" id="btnVolcLater" type="button">Später</button><button class="btn primary volcano" id="btnVolcGo" type="button">Auf zum Gipfel!</button></div>
+        </div>
+      </div>
+    </div>
+
     <div class="overlay news room" id="ovRoomNews" hidden role="dialog" aria-modal="true" aria-labelledby="roomNewsTitle" aria-describedby="roomNewsLead">
       <div class="card news" id="roomNewsCard" tabindex="-1">
         <div class="news-scene"><canvas id="roomNewsScene" width="400" height="200" aria-hidden="true"></canvas><span class="news-badge">Neu!</span></div>
@@ -920,6 +950,7 @@ input,textarea{-webkit-user-select:text;user-select:text}
 <script src="worlds/coast-cast-actions.js"></script>
 <script src="worlds/coast-cast.js"></script>
 <script src="worlds/coast-cast-draw.js"></script>
+<script src="worlds/coast-sleeper.js"></script>
 <script src="worlds/coast-story-draw.js"></script>
 <script src="worlds/coast-story-draw2.js"></script>
 <script src="worlds/coast-story-draw3.js"></script>
@@ -943,6 +974,41 @@ input,textarea{-webkit-user-select:text;user-select:text}
 <script src="worlds/garden-caspar.js"></script>
 <script src="worlds/garden-pranks.js"></script>
 <script src="worlds/garden-ambient.js"></script>
+<script src="worlds/volcano.js"></script>
+<script src="worlds/volcano-things.js"></script>
+<script src="worlds/volcano-things-quips.js"></script>
+<script src="worlds/volcano-things-draw.js"></script>
+<script src="worlds/volcano-look.js"></script>
+<script src="worlds/volcano-ascent.js"></script>
+<script src="worlds/volcano-trail.js"></script>
+<script src="worlds/volcano-shore.js"></script>
+<script src="worlds/volcano-levels-a.js"></script>
+<script src="worlds/volcano-levels-b.js"></script>
+<script src="worlds/volcano-levels-c.js"></script>
+<script src="worlds/volcano-levels.js"></script>
+<script src="worlds/volcano-story-draw.js"></script>
+<script src="worlds/volcano-fauch-draw.js"></script>
+<script src="worlds/volcano-story-acts.js"></script>
+<script src="worlds/volcano-gags.js"></script>
+<script src="worlds/volcano-story.js"></script>
+<script src="worlds/volcano-map.js"></script>
+<script src="worlds/volcano-fauch.js"></script>
+<script src="worlds/volcano-fauch-acts.js"></script>
+<script src="worlds/volcano-skit.js"></script>
+<script src="worlds/volcano-story-draw2.js"></script><script src="worlds/volcano-photos.js"></script><script src="worlds/volcano-story-acts2.js"></script><script src="worlds/volcano-story-pets.js"></script>
+<script src="worlds/volcano-mimo.js"></script>
+<script src="worlds/volcano-summit.js"></script>
+<script src="worlds/volcano-scenes.js"></script>
+<script src="worlds/volcano-scenes-default.js"></script>
+<script src="worlds/volcano-closing.js"></script>
+<script src="worlds/volcano-boss-shape.js"></script>
+<script src="worlds/volcano-boss.js"></script>
+<script src="worlds/volcano-boss-scenes.js"></script>
+<script src="worlds/volcano-boss-draw.js"></script>
+<script src="worlds/volcano-boss-look.js"></script>
+<script src="worlds/volcano-boss-nest.js"></script>
+<script src="worlds/volcano-boss-bot.js"></script>
+<script src="worlds/volcano-news.js"></script>
 <!-- world files end -->
 <script>
 (() => {
@@ -974,7 +1040,7 @@ const STARWAY = false;
 // no songs, and the app build leaves their files out. They come after the released worlds, so holding them back moves
 // no saved index. To release a world, take its number out of this list (always the lowest one first: a world whose
 // predecessor is still held does not load, its firstLevel would not fit).
-const UNRELEASED_WORLDS = [5, 6];
+const UNRELEASED_WORLDS = [6];
 // Look at the held worlds anyway: the developer build, or the address parameter ?vorschau for one visit (it changes
 // nothing in the save and, like ?offen, never works on the published app). The level tools load the game with it.
 const PREVIEW_URL = /[?&]vorschau(=|&|$)/.test(location.search) && !/github\.io$/.test(location.hostname);
@@ -1746,7 +1812,7 @@ const TILE_EXT = 32, TILE_DEFS = [];
 const worldFailed = new Set();
 function worldFail(label, e) { const key = label + ':' + (e && e.message); if (worldFailed.has(key)) return; worldFailed.add(key); console.error('Welt: Fehler in ' + label, e); }
 const safeHook = (label, fn) => (typeof fn !== 'function' ? fn : function (...a) { try { return fn.apply(this, a); } catch (e) { worldFail(label, e); return undefined; } });
-const WORLD_FNS = ['headNote', 'song', 'drawBackground', 'drawAmbient', 'drawThorn', 'drawMushroom', 'drawChase'];
+const WORLD_FNS = ['headNote', 'levelPath', 'song', 'drawBackground', 'drawAmbient', 'drawThorn', 'drawMushroom', 'drawChase'];
 function installWorlds() {
   const reg = window.MimoWorlds;
   if (!reg || typeof reg.assemble !== 'function') return [];
@@ -1768,7 +1834,7 @@ function installWorlds() {
     for (const c of w.costumes) {
       if (COSTUMES.some((x) => x.id === c.id)) { console.error('Welt: Kostüm ' + c.id + ' gibt es schon (' + at + ')'); continue; }
       const hook = (f) => safeHook(at + ' Kostüm ' + c.id, f);
-      COSTUMES.push({ price: 0, ...c, draw: hook(c.draw), back: hook(c.back), paint: hook(c.paint), own: hook(c.own), how: hook(c.how) });
+      COSTUMES.push({ price: 0, world: w.world, ...c, draw: hook(c.draw), back: hook(c.back), paint: hook(c.paint), own: hook(c.own), how: hook(c.how) });
     }
     WORLDS[w.world] = w;
   }
@@ -2824,6 +2890,7 @@ function loadLevel(i, keepAttempts) {
   leaveBoss(); stopRun(); stopSky(); stopDash();
   G.mode = 'level'; G.bonus = null; hudTries.hidden = false; Rumble.level(0);
   G.levelIndex = i;
+  if (LEVELS[i] && LEVELS[i].world === VOLC_WORLD) volcTriedMark();
   G.L = parseLevel(LEVELS[i]);
   applyWorldPalette();
   const L = G.L;
@@ -5588,6 +5655,7 @@ function renderMenu() {
   $('tileShop').textContent = '★ ' + wallet() + ' zum Ausgeben' + (fresh ? ' · Neues zu haben' : '');
   $('btnBonus').hidden = !STARWAY;
   if (STARWAY) { const bu = bonusUnlocked(); $('btnBonus').classList.toggle('locked', !bu); $('tileBonus').textContent = bu ? bonusTileText() : 'ab ' + BONUS_UNLOCK + ' Sternen'; $('bonusNew').hidden = !bu || !!((progress.bonus && progress.bonus.score) || (progress.dash && progress.dash.score)); }
+  $('levelsNew').hidden = !volcFresh();
   $('tileAch').textContent = achCount() + ' von ' + ACHIEVEMENTS.length;
   const flags = [progress.zen ? 'Zen' : null, assistOn() ? 'Hilfen an' : null, !progress.music && !progress.sfx ? 'Ton aus' : !progress.music ? 'Musik aus' : null].filter(Boolean);
   $('tileSettings').textContent = flags.length ? flags.join(' · ') : 'Ton, Steuerung, Hilfen';
@@ -5615,12 +5683,17 @@ function newsMark() { try { localStorage.setItem(NEWS_KEY, '1'); } catch (_) { /
 const newsFirst = () => (WORLDS[NEWS_WORLD] ? WORLDS[NEWS_WORLD].firstLevel : -1);
 const newsWorldOpen = () => newsFirst() >= 0 && (DEV || OPEN || levelOpen(newsFirst()));
 const playedBefore = () => Object.keys(progress.best).length > 0 || progress.unlocked > 1;
+// one card a start: once a "Neu!" card was shown, the others wait for the next start
+let newsCardShown = false;
 function maybeShowNews() {
-  if (newsShown || newsOpen() || !WORLDS[NEWS_WORLD] || newsSeen()) return;
+  // the volcano card goes first; when it is due the coast card is quietly marked as seen (never two cards)
+  if (volcNewsDue()) { newsMark(); showVolcNews(); return; }
+  if (newsShown || newsCardShown || newsOpen() || !WORLDS[NEWS_WORLD] || newsSeen()) return;
   if (navigator.webdriver && !window.__mimoNews) return;
   newsShown = true;
   newsMark();
   if (!playedBefore()) return;
+  newsCardShown = true;
   const open = newsWorldOpen();
   $('newsMore').textContent = open
     ? 'Hilf Mimo, alles zurückzubringen. Dreizehn neue Level und ein Endgegner mit sehr vielen Armen warten schon.'
@@ -5670,6 +5743,104 @@ function newsFrame() {
   drawNewsScene(newsCv.getContext('2d'), reduced() ? 5.6 : t + 0.4, reduced());
   if (!reduced() && newsOpen()) newsRaf = requestAnimationFrame(newsFrame);
 }
+
+// ---------- "Neu!" card: the volcano (world 5) is out ----------
+// The same rules as the coast card above (once per player, localStorage VOLC_NEWS_KEY, not for brand new players, not under
+// test automation unless window.__mimoNews), only while world 5 is in the game. Its scene lives in
+// src/worlds/volcano-news.js: the family poses for a group photo at the foot of the volcano, Fauch flies past, only Mimo sees him.
+const VOLC_NEWS_KEY = 'mimo.news.volcano', VOLC_WORLD = 5;
+const ovVolcNews = $('ovVolcNews'), volcNewsCv = $('volcNewsScene');
+let volcNewsRaf = 0, volcNewsT0 = 0, volcNewsHop = null, volcNewsShown = false;
+const volcNewsOpen = () => !ovVolcNews.hidden;
+const volcScene = () => (WORLDS[VOLC_WORLD] && window.MimoVolcano && window.MimoVolcano.news) || null;
+function volcNewsSeen() { try { return localStorage.getItem(VOLC_NEWS_KEY) != null; } catch (_) { return true; } }
+function volcNewsMark() { try { localStorage.setItem(VOLC_NEWS_KEY, '1'); } catch (_) { /* storage may be unavailable */ } }
+// the "Neu" sticker of world 5 (menu tile "Welten", world card): until a level of the volcano was started once
+const VOLC_TRIED_KEY = 'mimo.new.volcano';
+function volcTried() { try { return localStorage.getItem(VOLC_TRIED_KEY) != null; } catch (_) { return true; } }
+function volcTriedMark() { try { localStorage.setItem(VOLC_TRIED_KEY, '1'); } catch (_) { /* storage may be unavailable */ } }
+const volcFresh = () => !!WORLDS[VOLC_WORLD] && playedBefore() && !volcTried();
+const volcFirst = () => (WORLDS[VOLC_WORLD] ? WORLDS[VOLC_WORLD].firstLevel : -1);
+const volcWorldOpen = () => volcFirst() >= 0 && (DEV || OPEN || levelOpen(volcFirst()));
+function volcNewsDue() {
+  if (volcNewsShown || newsCardShown || volcNewsOpen() || !volcScene() || volcNewsSeen()) return false;
+  return !(navigator.webdriver && !window.__mimoNews);
+}
+function showVolcNews() {
+  volcNewsShown = true;
+  volcNewsMark();
+  if (!playedBefore()) return;
+  newsCardShown = true;
+  const open = volcWorldOpen();
+  $('volcNewsMore').textContent = open
+    ? 'Hilf Mimo, alle hinauf zum Gipfel zu bringen. Dreizehn neue Level und ganz oben ein Endgegner mit heißem Atem warten schon.'
+    : 'Sie wartet hinter der Korallenküste auf dich. Dreizehn neue Level und ganz oben ein Endgegner mit heißem Atem warten schon.';
+  $('btnVolcGo').textContent = open ? 'Auf zum Gipfel!' : 'Juhu, ich komme!';
+  $('btnVolcLater').hidden = !open;
+  ovVolcNews.hidden = false;
+  volcNewsT0 = performance.now(); volcNewsHop = null;
+  if (volcScene().reset) volcScene().reset();
+  volcNewsSize(); volcNewsFrame();
+  $('volcNewsCard').focus({ preventScroll: true });
+}
+function closeVolcNews(go) {
+  if (!volcNewsOpen()) return;
+  ovVolcNews.hidden = true; cancelAnimationFrame(volcNewsRaf); volcNewsRaf = 0;
+  if (go && volcWorldOpen()) {
+    const c = continueLevel();
+    audio(); SFX.ui();
+    startLevel(LEVELS[c] && LEVELS[c].world === VOLC_WORLD ? c : volcFirst());
+    return;
+  }
+  $('btnContinue').focus({ preventScroll: true });
+}
+$('btnVolcGo').addEventListener('click', () => closeVolcNews(true));
+$('btnVolcLater').addEventListener('click', () => closeVolcNews(false));
+ovVolcNews.addEventListener('click', (e) => { if (e.target === ovVolcNews) closeVolcNews(false); });
+window.addEventListener('keydown', (e) => {
+  if (!volcNewsOpen()) return;
+  e.stopImmediatePropagation();
+  if (e.code === 'Escape') { closeVolcNews(false); e.preventDefault(); return; }
+  if ((e.code === 'Enter' || e.code === 'NumpadEnter') && document.activeElement === $('volcNewsCard')) { closeVolcNews(true); e.preventDefault(); return; }
+  if (e.code === 'Tab') {
+    const btns = [...ovVolcNews.querySelectorAll('button')].filter((b) => !b.hidden), i = btns.indexOf(document.activeElement);
+    btns[(i + (e.shiftKey ? btns.length - 1 : 1)) % btns.length].focus(); e.preventDefault();
+  }
+}, true);
+// a tap on the picture makes Mimo hop (also in the still picture: it is drawn again for the hop)
+volcNewsCv.addEventListener('pointerdown', () => {
+  volcNewsHop = (performance.now() - volcNewsT0) / 1000; SFX.hup();
+  if (reduced()) { const t0 = performance.now(); const hopFrame = () => { volcNewsFrame(); if (volcNewsOpen() && performance.now() - t0 < 600) requestAnimationFrame(hopFrame); }; hopFrame(); }
+});
+function volcNewsSize() {
+  const r = volcNewsCv.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1);
+  const w = Math.max(200, Math.round(r.width * dpr)), h = Math.max(100, Math.round(r.height * dpr));
+  if (volcNewsCv.width !== w || volcNewsCv.height !== h) { volcNewsCv.width = w; volcNewsCv.height = h; }
+}
+window.addEventListener('resize', () => { if (volcNewsOpen()) { volcNewsSize(); if (reduced()) volcNewsFrame(); } });
+// Mimo for the scene: drawMimo on the scene's canvas, in his hiking hat when the wardrobe has it
+function volcNewsMimo(c, x, foot, o) {
+  const saved = ctx, t = performance.now() / 1000, hat = COSTUMES.some((k) => k.id === 'h_wander') ? 'h_wander' : progress.outfit.hat;
+  ctx = c; c.save(); c.translate(x, foot); c.scale(o.scale || 1, o.scale || 1); if (o.stretch) c.rotate(-(o.facing || 1) * 0.1 * o.stretch);
+  try {
+    const up = o.stretch ? 0.05 : 0, air = o.hop > 1;
+    drawMimo(0, 0, { facing: o.facing || 1, look: o.look || 0, mood: o.mood, outfit: { ...progress.outfit, hat }, sx: air ? 0.94 : 1 - up * 0.5, sy: air ? 1.06 : 1 + up,
+      breathe: reduced() ? 0 : Math.sin(t * 3) * 0.025, blink: reduced() || (t % 3.7) <= 3.55 ? 1 : 0.12 });
+  } finally { c.restore(); ctx = saved; }
+}
+function volcNewsFrame() {
+  const sc = volcScene(); if (!sc) return;
+  const t = (performance.now() - volcNewsT0) / 1000, still = reduced(), saved = ctx;
+  let ready = true;
+  // the world's drawing helpers paint rounded boxes through the core's rr() on the global ctx: point it at this canvas meanwhile
+  ctx = volcNewsCv.getContext('2d');
+  try {
+    ready = sc.draw(ctx, still ? sc.STILL : t, { dark: darkTheme(), still, tapAt: volcNewsHop == null ? null : still ? sc.STILL - (t - volcNewsHop) : volcNewsHop, mimo: volcNewsMimo, pop: newsPop });
+  } catch (e) { worldFail('Welt 5 Neu-Karte', e); } finally { ctx = saved; }
+  if ((!still || !ready) && volcNewsOpen()) volcNewsRaf = requestAnimationFrame(volcNewsFrame);
+}
+// pictures and tests: the scene at second s of its loop
+window.__volcNewsSeek = (s) => { volcNewsT0 = performance.now() - s * 1000; };
 
 const NEWS_PAL = {
   light: { skyTop: '#BFE6EE', skyBot: '#FFF1DC', sun: '#FFE29A', sunCore: '#FFF4CF', cloud: '#FFFFFF', seaTop: '#86CFDA', seaDeep: '#56A9C2', glint: '#FFFFFF', foam: '#FFFFFF',
@@ -6441,7 +6612,7 @@ function msStep(dt, t) {
     c.p.fig.asleep = !!o.asleep;
     // a one-off gesture ('throw', 'cheer', 'flinch', ...) plays once when its key comes up
     if (pose && !(window.MimoCoast.castPoses || {})[pose]) { if (c.played !== ps[0]) { c.played = ps[0]; c.p.play(pose); } c.p.step(dt, c.x, { face, look: o.look, pose: null, idle: false, amp: 0.3 }); continue; }
-    c.p.step(dt, c.x, { face, look: o.look, pose, poseOpts: { dir: ps[2] || 1 }, idle: !pose && !o.asleep && o.idle !== false, amp: 0.3 });
+    c.p.step(dt, c.x, { face, look: o.look, pose, poseOpts: { dir: ps[2] || 1 }, idle: !pose && !o.asleep, amp: 0.3 });
   }
   const d = ms.dog;
   if (d) {
@@ -6524,6 +6695,8 @@ function drawGdWorld(c, t, now, s, ox, oy, cx) {
   c.fillStyle = pal.cloud; c.globalAlpha = 0.9;
   for (const [x0, y, r] of [[30, 34, 9], [200, 18, 7], [360, 56, 8], [520, 26, 9]]) { const x = x0 + par(0.5) + ((now * 2.5) % 600) - 60; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.arc(x + r * 1.2, y - r * 0.5, r * 1.1, 0, Math.PI * 2); c.arc(x + r * 2.4, y, r * 0.9, 0, Math.PI * 2); c.rect(x, y, r * 2.4, r * 0.9); c.fill(); }
   c.globalAlpha = 1;
+  // world 5 is out: a small smoking volcano on the horizon (Fauch circles over it now and then), behind the hills
+  if (WORLDS[5] && window.MimoVolcano && window.MimoVolcano.gardenVolcano) { try { window.MimoVolcano.gardenVolcano(c, 262 + par(0.45), now, darkTheme()); } catch (e) { worldFail('Welt 5 Garten-Vulkan', e); } re(); }
   c.fillStyle = pal.hill2; c.beginPath(); c.moveTo(X0, 136); for (let x = Math.floor(X0); x <= X1 + 6; x += 6) { const u = x - par(0.4); c.lineTo(x, 98 + Math.sin(u * 0.018) * 8 + Math.sin(u * 0.05) * 3); } c.lineTo(X1, 136); c.fill();
   c.fillStyle = pal.hill; c.beginPath(); c.moveTo(X0, 136); for (let x = Math.floor(X0); x <= X1 + 6; x += 6) { const u = x - par(0.2); c.lineTo(x, 110 + Math.sin(u * 0.026 + 1) * 6); } c.lineTo(X1, 136); c.fill();
   // the fence, the tree, the string of lights
@@ -6581,7 +6754,7 @@ function drawGdWorld(c, t, now, s, ox, oy, cx) {
   if (ms.mimoX > X0 - 30 && ms.mimoX < X1 + 30) {
     const saved = ctx; ctx = c;
     c.save(); c.translate(ms.mimoX, GD.FRONT + 4 - hop); c.scale(1.3, 1.3);
-    drawMimo(0, 0, { facing: face, mood: mo.mood === 'neutral' ? null : mo.mood || (hop > 1 ? 'happy' : null), sx: hop > 1 ? 0.94 : 1, sy: hop > 1 ? 1.06 : 1, breathe: Math.sin(now * 3) * 0.025, blink: (now % 3.7) > 3.55 ? 0.12 : 1 });
+    drawMimo(0, 0, { facing: face, mood: mo.mood || (hop > 1 ? 'happy' : null), sx: hop > 1 ? 0.94 : 1, sy: hop > 1 ? 1.06 : 1, breathe: Math.sin(now * 3) * 0.025, blink: (now % 3.7) > 3.55 ? 0.12 : 1 });
     c.restore(); ctx = saved;
     re();
   }
@@ -6801,7 +6974,7 @@ function buildWorldOverview(grid) {
     const open = OPEN || list.some((i) => levelOpen(i));
     const note = WORLDS[w].headNote && WORLDS[w].headNote();
     const meta = !open ? 'Nach Welt ' + (w - 1) : won + ' von ' + n + ' geschafft · ★ ' + got + '/' + n * 3 + (note ? ' · ' + note : '');
-    const b = pickCard(String(w), WORLDS[w].name, meta, open, () => showLevelView(w), worldTint(w), won / n);
+    const b = pickCard(String(w), WORLDS[w].name, meta, open, () => showLevelView(w), worldTint(w), won / n, w === VOLC_WORLD && volcFresh() ? 'wobble' : false);
     if (w === here) b.classList.add('here');
     grid.appendChild(b);
   }
@@ -6818,6 +6991,9 @@ function buildWorldOverview(grid) {
 // one world: its levels and its boss
 function buildWorldLevels(grid, w) {
   const current = MAIN[mainOpen() - 1];
+  const W = WORLDS[w], items = W.levelPath ? [] : null;
+  // a world with a levelPath hook draws its own list (volcano-map.js): its cards are collected and handed over
+  const place = (el, item) => { if (items) items.push({ el, ...item }); else grid.appendChild(el); };
   for (const i of worldLevels(w)) {
     const lv = LEVELS[i];
     const b = document.createElement('button'); b.type = 'button'; b.className = 'lvl-card';
@@ -6829,13 +7005,16 @@ function buildWorldLevels(grid, w) {
       : '<span>Gesperrt</span>';
     b.innerHTML = '<span class="num">' + (i + 1) + '</span><span class="name">' + lv.name + '</span><span class="meta">' + meta + '</span>';
     b.addEventListener('click', () => { if (unlocked) { audio(); startLevel(i); } });
-    grid.appendChild(b);
+    place(b, { index: i, level: lv });
     const bw = bossAfterLevel(i);
-    if (bw > 0) grid.appendChild(bossCard(bw));
+    if (bw > 0) place(bossCard(bw), { boss: bw, after: i, level: lv });
   }
+  if (items) { const box = document.createElement('div'); if (W.levelPath(box, items)) grid.appendChild(box); else items.forEach((it) => grid.appendChild(it.el)); }
   // the current level in sight on a long list
   const cur = grid.querySelector('.lvl-card.current');
-  if (cur) requestAnimationFrame(() => cur.scrollIntoView({ block: 'nearest' }));
+  // the climb (levelPath) runs bottom-up and settles its layout a frame later: the current level goes to the middle then
+  if (cur && items) requestAnimationFrame(() => requestAnimationFrame(() => cur.scrollIntoView({ block: 'center' })));
+  else if (cur) requestAnimationFrame(() => cur.scrollIntoView({ block: 'nearest' }));
 }
 function build3dWorlds(grid) {
   const su = skyUnlocked(), sp = progress.sky, rm = progress.room;
@@ -6863,7 +7042,9 @@ function pickCard(badge, name, meta, open, go, tint, share, fresh) {
   b.style.setProperty('--wc', tint);
   b.innerHTML = '<span class="num"></span><span class="name"></span><span class="meta"><span></span></span>' + (share != null ? '<span class="bar"><i></i></span>' : '');
   b.querySelector('.num').textContent = badge; b.querySelector('.name').textContent = name; b.querySelector('.meta span').textContent = meta;
-  if (fresh) b.querySelector('.name').insertAdjacentHTML('beforeend', '<span class="new-badge">Neu</span>');
+  // fresh: true = a small "Neu" after the name; 'wobble' = a sticker on the corner of the number (a new world: never cut off)
+  if (fresh === 'wobble') b.insertAdjacentHTML('beforeend', '<span class="new-badge wobble">Neu</span>');
+  else if (fresh) b.querySelector('.name').insertAdjacentHTML('beforeend', '<span class="new-badge">Neu</span>');
   if (share != null) b.querySelector('.bar i').style.width = Math.round(Math.max(0, Math.min(1, share)) * 100) + '%';
   b.addEventListener('click', () => { if (open) { audio(); SFX.ui(); go(); } });
   return b;
@@ -6943,9 +7124,11 @@ const costume = (id) => COSTUMES.find((c) => c.id === id);
 function openShop(from) {
   navFrom = from; shopSel = { ...progress.outfit }; renderShop(); showOverlay('shop'); SFX.ui();
 }
+// what a world calls the things to find for its wardrobe piece (world field finds: { label }); the coast says "Fundstücke"
+const findsOf = (c) => Object.assign({ label: 'Fundstücke' }, (WORLDS[c.world] || {}).finds);
 function rewardText(c) {
   if (c.boss) return 'Besiege ' + BOSSES[c.boss].name + '.';
-  if (c.own) return (c.how && c.how()) || 'Finde alle Fundstücke.';
+  if (c.own) return (c.how && c.how()) || 'Finde alle ' + findsOf(c).label + '.';
   if (c.ach) return 'Sammle ' + c.ach + ' Erfolge (' + Math.min(achCount(), c.ach) + ' von ' + c.ach + ').';
   return 'Spiele den Tageslauf an ' + c.streak + ' Tagen in Folge (' + Math.min(streak(), c.streak) + ' von ' + c.streak + ').';
 }
@@ -6966,7 +7149,7 @@ function renderShop() {
     const cv = document.createElement('canvas'); cv.width = cv.height = 128; drawThumb(cv, { ...progress.outfit, [c.kind]: c.id });
     const name = document.createElement('span'); name.textContent = c.name;
     if (c.master) b.classList.add('master');
-    const st = document.createElement('small'); st.textContent = worn ? 'Angelegt' : owned ? 'Im Schrank' : c.boss ? 'Endgegner' : c.own ? c.tag || 'Fundstücke' : c.ach ? 'Erfolge' : c.streak ? 'Serie' : '★ ' + c.price;
+    const st = document.createElement('small'); st.textContent = worn ? 'Angelegt' : owned ? 'Im Schrank' : c.boss ? 'Endgegner' : c.own ? c.tag || findsOf(c).label : c.ach ? 'Erfolge' : c.streak ? 'Serie' : '★ ' + c.price;
     if (!owned && !isReward(c)) st.className = 'price';
     b.append(cv, name, st); b.setAttribute('aria-pressed', String(sel));
     b.addEventListener('click', () => {
@@ -7510,9 +7693,9 @@ function roomNewsFrame() {
 }
 const roomNewsOpen = () => !ovRoomNews.hidden;
 function maybeShowRoomNews() {
-  if (roomNewsShown || progress.room || roomFrame || newsOpen() || roomNewsOpen()) return;
+  if (roomNewsShown || newsCardShown || progress.room || roomFrame || newsOpen() || volcNewsOpen() || roomNewsOpen()) return;
   if (navigator.webdriver && !window.__mimoRoomNews) return;
-  roomNewsShown = true;
+  roomNewsShown = true; newsCardShown = true;
   ovRoomNews.hidden = false;
   roomNewsT0 = performance.now(); roomNewsHop = -9;
   roomNewsSize(); roomNewsFrame();

@@ -137,6 +137,6 @@
   window.MimoWorlds.register({
     world: 5, songs, costumes,
     setup(a) { api = a; },
-    draw(layer, ctx) { const B = fight(); if (B && layer === 'back') { drawShaft(ctx); drawBody(ctx, B); } },
+    draw(layer, ctx) { const B = fight(); if (B && layer === 'back') { drawShaft(ctx); if (!(B.fin && B.fin.sit != null && B.t > B.fin.sit + 0.5)) drawBody(ctx, B); } },   // on the rim at the end he sits on his nest (volcano-boss-nest.js)
   });
 })();

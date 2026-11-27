@@ -1,4 +1,4 @@
-// World 5 "Vulkaninsel": the picture. A plum to peach sky, the sea around the island at the horizon, the volcano cone
+// World 5 "Gipfelsturm": the picture. A plum to peach sky, the sea around the island at the horizon, the volcano cone
 // with its glowing crater, smoke and a lava stream, dark basalt ground, lava pools with a bright edge, the rising lava,
 // hot stone with glowing cracks, basalt columns, obsidian spikes (the thorns), ash flakes and embers, and the
 // decoration tiles ash palm "Y" and crystals "C".
@@ -80,15 +80,21 @@
   // ---------- background (screen space) ----------
   function drawBackground(ctx) {
     const W = api.W, v = api.view, cam = api.cam, L = api.L, t = api.reduced ? 0 : api.time;
+    // the ascent (volcano-ascent.js): height bands from the beach to the crater rim; null in the boss arena
+    const A = V().ascent, up = A ? A.now() : null;
     ctx.fillStyle = linear('sky', 0, v.h, W.skyTop, W.skyBot); ctx.fillRect(0, 0, v.w, v.h);
+    if (up) A.sky(ctx, up);
     if (night() > 0.25) drawStars(ctx, v, cam);
     // the horizon: a little above the bottom of the level, drifting slower than the level (far away)
-    const hy = Math.round(((L.h - 2) * T - cam.y) * 0.85 - 10);
+    let hy = Math.round(((L.h - 2) * T - cam.y) * 0.85 - 10);
+    if (up) hy = Math.round(A.horizon(hy));
+    if (V().shore) hy = V().shore.horizon(hy);   // a level with a shore: the sea comes up behind the boat (volcano-shore.js)
     // the volcano cone with its crater glow, smoke and a lava stream down the flank; it comes closer from level to level
     // (level field cone 0..1, see coneOf): small and far away first, big and close at the crater rim
     const c = coneOf(), s = CONE_FAR + (CONE_NEAR - CONE_FAR) * c;
     const cx = Math.round(v.w * (0.74 - 0.14 * c) - cam.x * 0.04), base = Math.max(hy, 150), h0 = Math.min(v.h * 0.42, 190);
-    if (base - h0 * s < v.h) drawCone(ctx, cx, base, h0, s, t);
+    if (base - h0 * s < v.h) drawCone(ctx, cx, base, h0, s, t, up);
+    if (up) A.deck(ctx, up, hy);
     if (hy < v.h) {
       const sea = night() > 0 ? api.mixHex(W.sea, W.seaNight, night() * 0.8) : W.sea;
       ctx.fillStyle = sea; ctx.fillRect(0, Math.max(0, hy), v.w, v.h - Math.max(0, hy));
@@ -104,8 +110,10 @@
       for (let k = 0; k < 4; k++) ctx.fillRect(cx - 26 + Math.sin(t * 0.8 + k) * 6 + k * 3, hy + 6 + k * 9, 40 - k * 7, 2);
       ctx.globalAlpha = 1;
     }
-    // near ridges of the island, dark, in front of the sea
-    api.drawHills(W.hillNear, Math.min(v.h + 40, hy + 34), 0.32, 22, 0.011, 7);
+    // near ridges of the island, dark, in front of the sea (with the ascent: palms, huts, crags, clouds below, the rim)
+    // (a level with a shore, volcano-shore.js: left of the beach the open sea instead of the ridge)
+    const ridge = () => (up ? A.below(ctx, up, hy) : api.drawHills(W.hillNear, Math.min(v.h + 40, hy + 34), 0.32, 22, 0.011, 7));
+    if (V().shore) V().shore.background(ctx, ridge); else ridge();
   }
   function drawStars(ctx, v, cam) {
     ctx.fillStyle = '#FFF4E6';
@@ -127,9 +135,10 @@
     return i < 0 ? 1 : Math.min(1, i / CONE_LAST);
   }
   // the cone is drawn in its own units (foot at 0, 0, height h0) and scaled by s around its foot
-  function drawCone(ctx, cx, baseY, h0, s, t) {
+  function drawCone(ctx, cx, baseY, h0, s, t, up) {
     ctx.save(); ctx.translate(cx, baseY); ctx.scale(s, s);
     paintCone(ctx, 0, -h0, 0, t);
+    if (up) V().ascent.coneCross(ctx, up, -22, -h0 - 3);
     ctx.restore();
   }
   function paintCone(ctx, cx, top, base, t) {
@@ -322,6 +331,9 @@
 
   // ---------- decoration tiles: ash palm and crystals (no collision, never look like something to stand on) ----------
   function drawPalm(tx, ty, x, y, ctx) {
+    // from the bare rock up (height band 3 and 4, volcano-ascent.js) the palms are dry (volcano-trail.js)
+    const up = V().ascent && V().ascent.now();
+    if (up && up.band >= 3 && V().trail) { V().trail.dryPalm(tx, ty, x, y, ctx); return; }
     const W = api.W, bx = x + 12, by = y + T, tipX = bx + 18, tipY = by - 84;
     ctx.strokeStyle = W.palmTrunk; ctx.lineWidth = 7; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(bx, by); ctx.quadraticCurveTo(bx + 2, by - 46, tipX, tipY); ctx.stroke();
     const sway = api.reduced ? 0 : Math.sin(api.time * 1.1 + tx) * 0.05;

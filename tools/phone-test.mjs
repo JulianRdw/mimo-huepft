@@ -337,36 +337,36 @@ async function oldIos() {
   await browser.close();
 }
 
-// the "Neu!" card for the coast (shown once over the menu to a player who has played before): fits upright, sideways with
+// the "Neu!" card for the volcano, the newest world (it takes the place of the coast card; shown once over the menu to a player who has played before): fits upright, sideways with
 // the camera notch and on an iPhone 8 without color-mix(), the scene is drawn, the button closes it, a reload keeps it away
 async function newsCard() {
   const browser = await webkit.launch();
-  const save = () => { const best = {}, stars = {}; for (let i = 0; i < 29; i++) { best[i] = 40; stars[i] = 3; } return { levelsVersion: 3, unlocked: 29, best, stars, bosses: { 1: { best: 80 }, 2: { best: 90 }, 3: { best: 99 } } }; };
+  const save = () => { const best = {}, stars = {}; for (let i = 0; i < 42; i++) { best[i] = 40; stars[i] = 3; } return { levelsVersion: 3, unlocked: 43, best, stars, bosses: { 1: { best: 80 }, 2: { best: 90 }, 3: { best: 99 }, 4: { best: 99 } } }; };
   for (const [name, vw, vh, inset, oldSafari] of [['hoch', 390, 844, 0, false], ['quer', 844, 390, 47, false], ['iphone8-quer', 667, 375, 0, true]]) {
     const ctx = await browser.newContext({ ...iphone, viewport: { width: vw, height: vh }, screen: { width: vw, height: vh } });
     await ctx.addInitScript(([sv, old]) => { window.__mimoNews = 1; if (old) window.__mimoNoColorMix = true; if (!localStorage.getItem('mimo-progress-v2')) localStorage.setItem('mimo-progress-v2', JSON.stringify(sv)); }, [save(), oldSafari]);
     const page = await ctx.newPage();
     const errors = []; page.on('pageerror', (e) => errors.push(e.message));
     await page.goto(URL0);
-    await page.waitForFunction(() => window.__mimo && !document.getElementById('ovNews').hidden, null, { timeout: 20000 });
+    await page.waitForFunction(() => window.__mimo && !document.getElementById('ovVolcNews').hidden, null, { timeout: 20000 });
     if (inset) { await page.addStyleTag({ content: 'html:root{--sa-l:' + inset + 'px;--sa-r:' + inset + 'px;--sa-b:21px}' }); await page.evaluate(() => window.dispatchEvent(new Event('resize'))); }
     await page.waitForTimeout(1200);
     await page.screenshot({ path: path.join(SHOTS, 'neu-' + name + '.png') });
     const m = await page.evaluate(() => {
-      const r = (el) => el.getBoundingClientRect(), c = r(document.querySelector('#ovNews .card')), cv = document.getElementById('newsScene');
+      const r = (el) => el.getBoundingClientRect(), c = r(document.querySelector('#ovVolcNews .card')), cv = document.getElementById('volcNewsScene');
       const px = cv.getContext('2d').getImageData(Math.floor(cv.width / 2), Math.floor(cv.height * 0.3), 1, 1).data;
-      const btns = [...document.querySelectorAll('#ovNews .actions .btn')].filter((b) => !b.hidden).map((b) => Math.round(r(b).height));
-      return { l: Math.round(c.left), r: Math.round(innerWidth - c.right), t: Math.round(c.top), b: Math.round(innerHeight - c.bottom), cw: cv.width, ch: cv.height, painted: px[3] === 255, btns, scroll: document.getElementById('ovNews').scrollHeight > innerHeight + 1 };
+      const btns = [...document.querySelectorAll('#ovVolcNews .actions .btn')].filter((b) => !b.hidden).map((b) => Math.round(r(b).height));
+      return { l: Math.round(c.left), r: Math.round(innerWidth - c.right), t: Math.round(c.top), b: Math.round(innerHeight - c.bottom), cw: cv.width, ch: cv.height, painted: px[3] === 255, btns, scroll: document.getElementById('ovVolcNews').scrollHeight > innerHeight + 1 };
     });
     check(m.l >= inset && m.r >= inset && m.t >= 0 && m.b >= 0 && !m.scroll, 'Neu-Karte ' + name + ': ganz im Bild' + (inset ? ', neben der Aussparung' : ''), JSON.stringify(m));
-    check(m.painted && m.cw > 200 && m.btns.length === 2 && m.btns.every((h) => h >= 40), 'Neu-Karte ' + name + ': Strandszene gemalt, zwei daumengroße Knöpfe', JSON.stringify({ cw: m.cw, ch: m.ch, btns: m.btns }));
-    await page.tap('#btnNewsLater');
+    check(m.painted && m.cw > 200 && m.btns.length === 2 && m.btns.every((h) => h >= 40), 'Neu-Karte ' + name + ': Vulkanszene gemalt, zwei daumengroße Knöpfe', JSON.stringify({ cw: m.cw, ch: m.ch, btns: m.btns }));
+    await page.tap('#btnVolcLater');
     await page.waitForTimeout(200);
-    const closed = await page.evaluate(() => document.getElementById('ovNews').hidden && window.__mimo.G.overlay === 'menu');
+    const closed = await page.evaluate(() => document.getElementById('ovVolcNews').hidden && window.__mimo.G.overlay === 'menu');
     await page.reload();
     await page.waitForFunction(() => window.__mimo && !document.getElementById('ovMenu').hidden);
     await page.waitForTimeout(400);
-    const again = await page.evaluate(() => !document.getElementById('ovNews').hidden);
+    const again = await page.evaluate(() => !document.getElementById('ovVolcNews').hidden);
     check(closed && !again, 'Neu-Karte ' + name + ': „Später“ schließt, nach dem Neuladen bleibt sie weg');
     check(errors.length === 0, 'keine Skriptfehler (Neu-Karte ' + name + ')', errors.join(' | '));
     await ctx.close();

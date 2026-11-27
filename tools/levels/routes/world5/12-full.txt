@@ -21,5 +21,18 @@ R until x>=145.4 max 2; W until time>=35.8 max 2; RJ 0.25; R until grounded max 
 R until x>=148.8 max 2; W until y<=3.3 max 5; R until grounded max 2
 R until x>=153.4 max 2; W until grounded max 2
 R until x>=154.4 max 2; RJ 0.2; R until grounded max 2
-R until x>=167.3 max 3; RJ 0.3; R until grounded max 2
-R until x>=178.4 max 4
+# the gorge: Fauch circles over his nest
+R until x>=168.3 max 4; W 11
+# the detour: down onto the sinking plates, to the nest island and the tripod, up on the steam to the crumble path
+W until time>=52.3 max 7; R until x>=168.5 max 1; RJ 0.3; R until x>=170.2 max 1; W until grounded max 2
+W 0.45; R until x>=172.05 max 1; L 0.12; W until grounded max 2
+R until x>=173.4 max 1; RJ 0.12; R until x>=175.6 max 1; W until grounded max 2
+R until x>=176.2 max 1; RJ 0.22; R until x>=178.6 max 1; W until grounded max 2
+R until x>=182.2 max 2; W 1.5
+R until x>=184.4 max 1; W until y<=10 max 5; L until x<=183.4 max 1; W until grounded max 2
+R until x>=183.75 max 1; RJ 0.35; R until x>=188.5 max 1; W until grounded max 2
+R until x>=190.4 max 2; RJ 0.3; R until x>=195 max 1; W until grounded max 2
+# the cairn tower, Fauch lands on it
+R until x>=196.4 max 2; W 27
+R until x>=213.3 max 3; RJ 0.3; R until grounded max 2
+R until x>=224.4 max 4

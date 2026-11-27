@@ -1,36 +1,43 @@
-# Basaltorgel, quickest clean way: up the scale, over the organ pipes, the pedals between the hoppers, the final chord
+# Basaltorgel, quickest clean way: the scale, over the organ, the pedals, the register, the final chord
 # forecourt: three columns on dry ground
-R until x>=6.2 max 2; RJ 0.15; R until x>=7.4 max 1; W until grounded max 1
-RJ 0.2; R until x>=9.4 max 1; W until grounded max 1
-RJ 0.2; R until x>=11.4 max 1; W until grounded max 1
+R until x>=12.2 max 2; RJ 0.15; R until x>=13.4 max 1; W until grounded max 1
+RJ 0.2; R until x>=15.4 max 1; W until grounded max 1
+RJ 0.2; R until x>=17.4 max 1; W until grounded max 1
 # the scale, Mimo sings it: Do Re Mi ...
-RJ 0.25; R until x>=15.4 max 1; W until grounded max 2
-R until x>=16.4 max 1; RJ 0.1; R until grounded max 1
-R until x>=19.4 max 1; RJ 0.1; R until grounded max 1
+RJ 0.25; R until x>=21.4 max 1; W until grounded max 2
 R until x>=22.4 max 1; RJ 0.1; R until grounded max 1
 R until x>=25.4 max 1; RJ 0.1; R until grounded max 1
 R until x>=28.4 max 1; RJ 0.1; R until grounded max 1
 R until x>=31.4 max 1; RJ 0.1; R until grounded max 1
 R until x>=34.4 max 1; RJ 0.1; R until grounded max 1
 R until x>=37.4 max 1; RJ 0.1; R until grounded max 1
+R until x>=40.4 max 1; RJ 0.1; R until grounded max 1
+R until x>=43.4 max 1; RJ 0.1; R until grounded max 1
 # over the organ
-R until x>=41.3 max 1; RJ 0.2; R until x>=44.4 max 1; W until grounded max 1
-RJ 0.2; R until x>=47.4 max 1; W until grounded max 1
-RJ 0.2; R until x>=50.4 max 1; W until grounded max 1
-RJ 0.25; R until x>=52.4 max 1; W until grounded max 1
-RJ 0.25; R until x>=54.4 max 1; W until grounded max 1
-RJ 0.3; R until x>=58.4 max 1; W until grounded max 1
-RJ 0.15; R until x>=60.4 max 1; W until grounded max 1
-RJ 0.15; R until x>=62.4 max 1; W until grounded max 1
-RJ 0.15; R until x>=64.6 max 1; W until grounded max 2
+R until x>=47.3 max 1; RJ 0.2; R until x>=50.4 max 1; W until grounded max 1
+RJ 0.2; R until x>=53.4 max 1; W until grounded max 1
+RJ 0.2; R until x>=56.4 max 1; W until grounded max 1
+RJ 0.25; R until x>=58.4 max 1; W until grounded max 1
+RJ 0.25; R until x>=60.4 max 1; W until grounded max 1
+RJ 0.3; R until x>=64.4 max 1; W until grounded max 1
+RJ 0.15; R until x>=66.4 max 1; W until grounded max 1
+RJ 0.15; R until x>=68.4 max 1; W until grounded max 1
+RJ 0.15; R until x>=70.6 max 1; W until grounded max 2
 # the pedals: hop the wide keys, cross while the hoppers rest
-R until x>=65.4 max 1; RJ 0.2; R until grounded max 1
-R until x>=69.4 max 1; RJ 0.25; R until grounded max 1
-R until x>=74.4 max 1; RJ 0.25; R until grounded max 1
-R until x>=79.4 max 1; RJ 0.25; R until grounded max 1
-R until x>=84.4 max 1; RJ 0.25; R until grounded max 1
-# the final chord, the hot top, the door
-R until x>=91 max 1; RJ 0.2; R until x>=92.4 max 1; W until grounded max 1
-RJ 0.25; R until x>=94.4 max 1; W until grounded max 1
-RJ 0.25; R until x>=96.4 max 1; W until grounded max 1
-RJ 0.2; R until x>=99 max 1; R until x>=100.4 max 1; RJ 0.3; R until grounded max 2; R until x>=107 max 2
+R until x>=71.4 max 1; RJ 0.2; R until grounded max 1
+R until x>=75.4 max 1; RJ 0.25; R until grounded max 1
+R until x>=80.4 max 1; RJ 0.25; R until grounded max 1
+R until x>=85.4 max 1; RJ 0.25; R until grounded max 1
+R until x>=90.4 max 1; RJ 0.25; R until grounded max 1
+
+# the rest, then the register: columns, the hot pillar, the hopper, rising to the ledge
+R until x>=97.6 max 2; RJ 0.2; R until x>=100.4 max 1; W until grounded max 1
+RJ 0.25; R until x>=103.4 max 1; W until grounded max 1
+RJ 0.25; R until x>=106.6 max 1; W until grounded max 1
+W until calm max 3; RJ 0.3; R until x>=111.4 max 1; W until grounded max 1
+W until calm max 3; RJ 0.3; R until x>=115.4 max 1; W until grounded max 1
+RJ 0.3; R until x>=120 max 1; R until grounded max 1
+R until x>=131.5 max 2; RJ 0.2; R until x>=134.4 max 1; W until grounded max 1
+RJ 0.25; R until x>=137.4 max 1; W until grounded max 1
+RJ 0.25; R until x>=140.4 max 1; W until grounded max 1
+RJ 0.3; R until x>=144 max 1; RJ 0.2; R until x>=147.5 max 2

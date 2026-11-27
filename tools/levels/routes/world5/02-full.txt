@@ -11,7 +11,9 @@ R until x>=52.5 max 2; R until grounded max 2
 R until x>=59.4 max 2; RJ 0.2; R until grounded max 2; R until x>=64.4 max 1; RJ 0.25; R until grounded max 2; R until x>=70.4 max 1; RJ 0.2; R until grounded max 2; R until x>=75.6 max 1; W until grounded max 2
 L until x<=59.4 max 4
 # out through the drawer, up the lip and the board onto the roof, the chimney star
-R until x>=84.2 max 5; J 0.35; W until grounded max 2
+# the rest place: the professor grades a stone, something glowing lands behind him
+R until x>=85.7 max 5; W 27
+L until x<=84.2 max 2; J 0.35; W until grounded max 2
 L until x<=82.3 max 1; J 0.35; W until grounded max 2
 LJ 0.35; L until grounded max 2
 L until x<=79.4 max 1; LJ 0.3; L until grounded max 2
@@ -21,18 +23,22 @@ L until x<=69.8 max 2; LJ 0.3; W until grounded max 2
 RJ 0.3; R until grounded max 2
 # down the roof steps, off the lip and the board
 R until x>=81.4 max 3; W until grounded max 3; D 0.3; W until grounded max 2
-R until x>=85.5 max 2; R until grounded max 2
-R until x>=87.6 max 1; RJ 0.25; R until grounded max 2
-R until x>=89.6 max 1; RJ 0.25; R until grounded max 2
-R until x>=94.4 max 1; RJ 0.3; R until grounded max 2
-R until x>=98.8 max 1; RJ 0.3; R until grounded max 2
-R until x>=103.4 max 2; RJ 0.3; R until grounded max 2
-R until x>=107.4 max 1; RJ 0.35; R until grounded max 2
-R until x>=112.4 max 1; RJ 0.35; R until grounded max 2
-R until x>=117.4 max 1; RJ 0.35; R until grounded max 2
-R until x>=122.4 max 1; RJ 0.35; R until grounded max 2
-R until x>=128.4 max 2; RJ 0.3; R until grounded max 2
-R until x>=132.4 max 1; RJ 0.35; R until grounded max 2
-R until x>=136.4 max 1; RJ 0.3; R until grounded max 2
-R until x>=140.4 max 1; RJ 0.35; R until grounded max 2
-R until x>=149.3 max 2
+R until x>=95.9 max 3; RJ 0.3; R until grounded max 2
+R until x>=99.6 max 1; RJ 0.25; R until grounded max 2
+R until x>=101.6 max 1; W 0.3; RJ 0.25; R until grounded max 2
+R until x>=106.4 max 1; RJ 0.3; R until grounded max 2
+R until x>=110.8 max 1; RJ 0.3; R until grounded max 2
+R until x>=115.4 max 2; RJ 0.3; R until grounded max 2
+R until x>=119.4 max 1; RJ 0.35; R until grounded max 2
+R until x>=124.4 max 1; RJ 0.35; R until grounded max 2
+R until x>=129.4 max 1; RJ 0.35; R until grounded max 2
+R until x>=134.4 max 1; RJ 0.35; R until grounded max 2
+R until x>=140.4 max 2; RJ 0.3; R until grounded max 2
+R until x>=144.4 max 1; RJ 0.35; R until grounded max 2
+R until x>=148.4 max 1; RJ 0.3; R until grounded max 2
+R until x>=153.2 max 2; RJ 0.3; R until grounded max 2
+R until x>=159.4 max 1; RJ 0.3; R until grounded max 2
+R until x>=164.4 max 1; RJ 0.3; R until grounded max 2
+R until x>=170.4 max 1; RJ 0.3; R until grounded max 2
+R until x>=176.4 max 1; RJ 0.35; R until grounded max 2
+R until x>=184.3 max 2

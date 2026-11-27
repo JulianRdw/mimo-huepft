@@ -1,4 +1,4 @@
-// World 5 "Vulkaninsel": the world itself, lava, rising lava, hot stone and basalt columns.
+// World 5 "Gipfelsturm": the world itself, lava, rising lava, hot stone and basalt columns.
 // The other parts: volcano-look.js (picture), volcano-things.js (geysers, lava plates, fire hoppers, steam vents,
 // glow rain, lava falls), volcano-levels.js (levels and the song). They share numbers, state and helpers through
 // window.MimoVolcano (set up here at load time, without document or canvas, so the level tools can run it in Node).
@@ -76,7 +76,7 @@
       v.heat = Math.min(1, v.heat + dt / (v.burn || HOT.BURN));
       v.sizzleT -= dt;
       if (v.sizzleT <= 0) { v.sizzleT = HOT.SIZZLE; api.noise({ hp: 2400, dur: 0.12, vol: 0.012 + 0.03 * v.heat }); }
-      if (v.heat > HOT.SAY && !v.heatSaid) { v.heatSaid = true; api.bubble(api.pick(HOT_LINES), 'player', 1.0); p.sx = 0.9; p.sy = 1.1; }
+      if (v.heat > HOT.SAY && !v.heatSaid) { v.heatSaid = true; { const d = window.MimoCoast && window.MimoCoast.director; if (!(api.L.story && d && !d.free(1))) api.bubble(api.pick(HOT_LINES), 'player', 1.0); } p.sx = 0.9; p.sy = 1.1; }
       if (v.heat >= 1) { v.heat = 0; v.heatSaid = false; api.hurt(); }
     } else {
       v.heat = Math.max(0, v.heat - dt / HOT.COOL);
@@ -128,7 +128,9 @@
     const cx = (p.x + p.w / 2) / T, cy = (p.y + p.h / 2) / T;
     for (const s of v.says) {
       if (s.said || Math.hypot(cx - s.x - 0.5, cy - s.y - 0.5) > s.r) continue;
-      s.said = true; api.bubble(s.text, 'player', Math.min(3.5, 1.4 + s.text.length * 0.045));
+      // through the story director (one beat at a time, volcano-story.js) when the level has a story, else straight away
+      s.said = true; const secs = Math.min(3.5, 1.4 + s.text.length * 0.045), D = window.MimoCoast && window.MimoCoast.director;
+      if (D && api.L.story) D.say('player', s.text, { prio: 'player', secs }); else api.bubble(s.text, 'player', secs);
     }
   }
 
@@ -189,8 +191,12 @@
   });
 
   window.MimoWorlds.register({
+    // the ending card while the volcano is the last released world (src/index.html UNRELEASED_WORLDS): the coast's card
+    // counts only after its own boss, this one after Fauch
+    ending: { title: 'Familie Fauch ist komplett',
+      text: 'Fauch hat jetzt ein Küken und ganz viele Babysitter. Danke fürs Spielen! Mimo packt schon den Koffer für das nächste Abenteuer. Bis dahin bleiben alle Level offen, falls du noch Sterne, Medaillen, Gipfelfoto-Teile oder Kostüme holen möchtest.' },
     world: 5,
-    name: 'Vulkaninsel',
+    name: 'Gipfelsturm',
     // right after the 13 levels of world 4 (29 + 13)
     firstLevel: 42,
     // the world song; a level with rising lava gets the chase song

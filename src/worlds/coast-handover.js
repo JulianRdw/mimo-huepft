@@ -236,5 +236,6 @@
 
   window.MimoCoast = window.MimoCoast || {};
   window.MimoCoast.handover = { update, draw, wasHanded, since, ownerSpot, over, chain, mimo };
+  window.MimoCoast.handoverHooks = { draw };   // another world draws the hand-over the same way (volcano-story.js)
   window.MimoWorlds.register({ world: 4, setup(a) { api = a; }, draw });
 })();

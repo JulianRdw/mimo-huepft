@@ -259,7 +259,7 @@
       if (this.mode === 'land') torsoRot += d * Math.abs(bodyTurn) * 5;
 
       let bounce = 0, reach = null, feet = { l: 0, r: 0 }, shiftX = 0;
-      this.prop = null;
+      this.prop = null; this.handShape = null;
       if (this.act) {
         const ballLocal = env.ball ? [env.ball.x - this.posX + this.rig.center, this.rig.ground - env.ball.y] : null;
         const toLocal = (wx, wy) => [wx - this.posX + this.rig.center, this.rig.ground - wy];
@@ -277,7 +277,7 @@
         // one-off moments of a clip (e.g. 'kick' when the foot meets the ball) become events for the scene
         if (res.event && !this.act['ev_' + res.event]) { this.act['ev_' + res.event] = true; this.events.push({ type: res.event, dir: this.act.dir }); }
         if (res.release && !this.act.released) { this.act.released = true; this.events.push({ type: 'release', hand: res.release, dir: this.act.dir, vel: (this.handVel && this.handVel[res.release]) || [0, 0] }); }
-        this.prop = res.prop || null;
+        this.prop = res.prop || null; this.handShape = res.hand || null;   // res.hand: { r: 'thumb' } draws that hand as a closed fist with the thumb up
         if ((res.done || (this.act.endAt != null && this.act.t >= this.act.endAt)) && !this.act.loop) { this.act = null; this.holding = null; }
       }
       if (this.browFlash > 0) { this.browFlash -= dt; brow = 1; }

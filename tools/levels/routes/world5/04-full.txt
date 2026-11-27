@@ -10,21 +10,32 @@ R until x>=41.4 max 1; RJ 0.35; R until grounded max 2
 R until x>=46.4 max 1; RJ 0.35; R until grounded max 2
 R until x>=51.4 max 1; R until grounded max 2
 R until x>=54.2 max 1; RJ 0.3; R until grounded max 2
-R until x>=62.4 max 2; RJ 0.3; R until grounded max 2
-R until x>=70.4 max 2; RJ 0.3; R until grounded max 2
-R until x>=78.4 max 2; RJ 0.45; R until grounded max 2
-R until x>=85.4 max 2; RJ 0.3; R until grounded max 2
-R until x>=90.3 max 1; RJ 0.3; R until grounded max 2
+# the rest place: the kid builds his second cairn
+R until x>=62.6 max 2; W until time>=33.62 max 26
+R until x>=74.4 max 3; RJ 0.3; R until grounded max 2
+R until x>=82.4 max 2; RJ 0.3; R until grounded max 2
+R until x>=90.4 max 2; RJ 0.45; R until grounded max 2
+R until x>=97.4 max 2; RJ 0.3; R until grounded max 2
+R until x>=102.3 max 1; RJ 0.3; R until grounded max 2
 # the guarded nest: a lower jump over it while the hopper rests
-R until x>=95.4 max 1; RJ 0.12; R until grounded max 2
-R until x>=100.3 max 1; RJ 0.3; R until grounded max 2
-R until x>=105.3 max 1; RJ 0.3; R until grounded max 2
-R until x>=110.3 max 1; RJ 0.3; R until grounded max 2
-R until x>=118.4 max 2; RJ 0.3; R until grounded max 2
-R until x>=125.1 max 1; RJ 0.3; R until grounded max 2
-R until x>=130.4 max 2; RJ 0.3; R until grounded max 2
-R until x>=135.4 max 1; RJ 0.3; R until grounded max 2
+R until x>=107.4 max 1; RJ 0.12; R until grounded max 2
+R until x>=112.3 max 1; RJ 0.3; R until grounded max 2
+R until x>=117.3 max 1; RJ 0.3; R until grounded max 2
+R until x>=122.3 max 1; RJ 0.3; R until grounded max 2
+# the wide pillar behind the stadium: Mimo tries to fauch too, the brothers laugh
+R until x>=128 max 1; W 11; W until calm max 3
+# the double arc: over the first hopper, the crumbles, over the tall hopper, the island under the crossing arcs, hot stone
+R until x>=130.4 max 2; RJ 0.35; R until grounded max 2
+R until x>=135.6 max 1; R until x>=137.4 max 1; RJ 0.35; R until grounded max 2
+R until x>=142.4 max 1; RJ 0.25; R until grounded max 2
+R until x>=146.4 max 1; RJ 0.3; R until grounded max 2
+R until x>=150.4 max 1; RJ 0.2; R until grounded max 2; RJ 0.2; R until grounded max 2
+R until x>=158.4 max 2; RJ 0.3; R until grounded max 2
+# onto the block under Fauch's crag: he wakes and looks, Mimo looks back a moment
+R until x>=165.1 max 1; RJ 0.3; R until grounded max 2; W 13; W until calm max 3
+R until x>=170.4 max 2; RJ 0.3; R until grounded max 2
+R until x>=175.4 max 1; RJ 0.3; R until grounded max 2
 # the breathing hole: drop in, the star at the back, out through the back door
-R until x>=144.6 max 2; W until grounded max 2; L until x<=142.4 max 1
-R until x>=147.2 max 2; RJ 0.2; R until grounded max 2; RJ 0.2; R until grounded max 2
-R until x>=152.3 max 1; RJ 0.4; R until grounded max 2; R until x>=155.3 max 2
+R until x>=184.6 max 2; W until grounded max 2; L until x<=182.4 max 1
+R until x>=187.2 max 2; RJ 0.2; R until grounded max 2; RJ 0.2; R until grounded max 2
+R until x>=192.3 max 1; RJ 0.4; R until grounded max 2; R until x>=195.3 max 2

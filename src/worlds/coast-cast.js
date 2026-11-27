@@ -160,7 +160,7 @@
   const found = () => { ev.findNext = true; };
 
   function react(e, p, pos) {
-    if (!ev.at) return;
+    if (!ev.at || e.act === 'bench') return;   // a sleeper on a bench sleeps through what Mimo does (only a scene wakes him)
     const dx = Math.abs(ev.at.x - pos.x), dy = Math.abs(ev.at.y - pos.foot);
     if (e.copy) copycat(e, p, dx, dy);
     if (!(ev.star || ev.death || ev.find || ev.land)) return;
@@ -212,7 +212,7 @@
     let lk;
     if (e.lookDx != null) lk = e.lookDx;
     else if (m && Math.abs(m.x + m.w / 2 - pos.x) < LOOK_RANGE && Math.abs(m.y + m.h - pos.foot) < LOOK_UP) lk = m.x + m.w / 2 - pos.x;
-    p.fig.propSwap = e.propSwap || null; p.fig.holdProp = e.holdProp || null;
+    p.fig.propSwap = e.propSwap || null; p.fig.holdProp = e.holdProp || null; p.fig.extra = e.extra || null;   // extra: { behind, neck } drawn with the figure (volcano-story-acts.js)
     // a rider (want.still) moves with its mount but must not walk: its legs see no change of place
     p.step(dt, want.still && p.lastX != null ? p.lastX : pos.x, { look: lk, face: want.face, pose: want.pose, poseOpts: want.poseOpts, amp: want.amp, idle: want.idle });
     react(e, p, pos); if (e.films || e.five) extras(e, p, pos);

@@ -4,7 +4,7 @@
 //   - bubbles that start while their speaker is off screen,
 //   - thefts whose thing is not well inside the view when the arm rises or is off screen when it goes under,
 //   - the hand-over at the door: whether its lines were shown before the win card.
-// Usage: node tools/story-pace.mjs [--level 29] [--verbose]   (default: every level of world 4)
+// Usage: node tools/story-pace.mjs [--level 29 | --world 5] [--verbose]   (default: every level of world 4)
 // Exit code 1 when a level breaks a rule. Headless and muted (tools/pw.mjs).
 import { chromium } from './pw.mjs';
 import { serveSrc, parseArgs, srcLevels } from './levels-lib.mjs';
@@ -54,11 +54,11 @@ const srv = await serveSrc();
 const browser = await chromium.launch();
 const levels = srcLevels();
 const slug = (s) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-const list = args.level != null && args.level !== true ? [Number(args.level)] : levels.map((l, i) => i).filter((i) => levels[i].world === 4 && !levels[i].night && !levels[i].bonus);
+const list = args.level != null && args.level !== true ? [Number(args.level)] : levels.map((l, i) => i).filter((i) => levels[i].world === (args.world ? Number(args.world) : 4) && !levels[i].night && !levels[i].bonus);
 let bad = 0;
 try {
   for (const i of list) {
-    const [job, name] = routeJob(levels, i, ROUTES, slug); job.fast = !args.real;
+    const [job, name] = routeJob(levels, i, ROUTES, slug, args.route || 'full'); job.fast = !args.real;
     const ctx = await browser.newContext({ viewport: { width: W, height: H }, ...(args.desk ? {} : { hasTouch: true, isMobile: true }) });
     const page = await ctx.newPage();
     await page.route(/fonts\.(googleapis|gstatic)\.com/, (r) => r.abort());

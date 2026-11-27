@@ -20,13 +20,22 @@ R until x>=61.5 max 2; RJ 0.3; R until grounded max 2
 R until x>=66.4 max 2; RJ 0.25; R until grounded max 2
 R until x>=77.5 max 2
 L until x<=70.5 max 2; W until time>=17.1 max 2; L until x<=59.5 max 3
-R until x>=64 max 2; W until time>=19.7 max 2; R until x>=86.6 max 5; W until time>=26.45 max 4; RJ 0.15; R until grounded max 2
-R until x>=90.6 max 2; W until time>=27.65 max 2; RJ 0.2; R until grounded max 2
-R until x>=94.2 max 1; J 0.35; W until grounded max 2
-R until x>=95.6 max 2; W until time>=28.85 max 2; RJ 0.2; R until grounded max 2
-R until x>=100.6 max 2; RJ 0.25; R until grounded max 2
-R until x>=112.6 max 3; RJ 0.3; R until grounded max 2
-R until x>=121.5 max 2; RJ 0.3; R until grounded max 2
-R until x>=131.6 max 3; RJ 0.2; R until grounded max 2
-R until x>=136.4 max 2; RJ 0.35; R until grounded max 2
-R until x>=147.3 max 3
+# the lock, then Fauch's cave: Mimo stops in front of the drawings
+R until x>=64 max 2; W until time>=19.7 max 2; R until x>=93.6 max 5; W 13.5
+R until x>=104.6 max 5; W until time>=42.39 max 8; RJ 0.15; R until grounded max 2
+R until x>=108.6 max 2; W until time>=43.59 max 2; RJ 0.2; R until grounded max 2
+R until x>=112.2 max 1; J 0.35; W until grounded max 2
+R until x>=113.6 max 2; W until time>=44.79 max 2; RJ 0.2; R until grounded max 2
+R until x>=118.6 max 2; RJ 0.25; R until grounded max 2
+R until x>=130.6 max 3; RJ 0.3; R until grounded max 2
+R until x>=139.5 max 2; RJ 0.3; R until grounded max 2
+R until x>=149.6 max 3; W until calm max 2.5; RJ 0.2; R until grounded max 2
+# the cooling run: pillar, plate (wait for the hopper), basalt, over the hopper, hot pillar, the terrace
+R until x>=154.4 max 2; RJ 0.35; R until x>=158.4 max 1; W until grounded max 2
+W until time>=52.8 max 7; R until x>=159.6 max 1; RJ 0.2; R until x>=161.8 max 1; W until grounded max 2
+W until calm max 2.4; R until x>=162.8 max 1; RJ 0.3; R until x>=165.4 max 1; W until grounded max 2
+R until x>=166.3 max 1; RJ 0.35; R until x>=170.4 max 1; W until grounded max 2
+RJ 0.3; R until grounded max 2
+# the terrace: Lotta and the egg shell
+R until x>=178.6 max 3; W 25
+R until x>=191.3 max 4

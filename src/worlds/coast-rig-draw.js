@@ -153,7 +153,9 @@
     const turn = p.headTurn, trail = r.longHair ? 1.5 : 1;
     this.drawLayer(ctx, 'hairBack', F.head, HAIR_TURN * turn + F.hair[0] * trail, F.hair[1], scale);
     if (far) { this.drawLeg(ctx, far, true); this.drawLeg(ctx, near, false); } else { this.drawLeg(ctx, 'right', false); this.drawLeg(ctx, 'left', false); }
+    if (this.extra && this.extra.behind) this.extra.behind(ctx, this);   // a pack on the back
     this.drawLayer(ctx, 'torso', F.torso, 0, 0, scale);
+    if (this.extra && this.extra.neck) this.extra.neck(ctx, this);   // a scarf round the neck
     this.drawHead(ctx, scale);
     if (far) this.drawArm(ctx, near, false); else { this.drawArm(ctx, 'left', false); this.drawArm(ctx, 'right', false); }
     this.drawProp(ctx, scale);
@@ -285,6 +287,7 @@
     const ang = Math.atan2(W[0] - E[0], W[1] - E[1]) * sgn; // 0 = down, PI = up
     const open = clamp((Math.abs(ang) / DEG - 95) / 40, 0, 1);
     const dir = Math.atan2(W[1] - E[1], W[0] - E[0]);
+    if (this.handShape && this.handShape[side === 'left' ? 'l' : 'r'] === 'thumb') return this.drawThumbsUp(ctx, side, H, dir, c);
     ctx.save();
     ctx.translate(H[0], H[1]);
     ctx.rotate(dir - Math.PI / 2);
@@ -298,6 +301,34 @@
       ctx.strokeStyle = c.skin.shade; ctx.lineWidth = 0.35; ctx.globalAlpha = (open - 0.5) * 2;
       for (const fx of [-0.42, 0, 0.42]) { ctx.beginPath(); ctx.moveTo(fx * hr, hr * 0.85); ctx.lineTo(fx * hr * 1.05, hr * 1.25); ctx.stroke(); }
     }
+    ctx.restore();
+  };
+
+    // A thumbs up that reads as one even on a phone: a closed fist about twice the size of the ordinary hand, seen from the front
+    // (the fingers curl across it), with a thick thumb standing straight up on it, everything outlined. It always points up on
+    // the screen, whatever the forearm does, and sits a little further out than the wrist so the arm does not hide it.
+  P.drawThumbsUp = function (ctx, side, H, dir, c) {
+    const r = this.rig, hr = r.arm.hand, sgn = this.frame.arms[side].sgn, k = hr * 1.5;
+    const rx = hr * 2.25, ry = hr * 2.0, tw = hr * 1.75, th = hr * 3.6;
+    ctx.save();
+    ctx.translate(H[0] + Math.cos(dir) * k, H[1] + Math.sin(dir) * k - hr * 0.6);
+    ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    ctx.fillStyle = c.skin.fill; ctx.strokeStyle = c.skin.line; ctx.lineWidth = r.outline * 1.15;
+    // the thumb: a capsule standing up on the fist, tilted a little away from the head
+    ctx.save(); ctx.translate(sgn * -rx * 0.12, -ry * 0.55); ctx.rotate(sgn * 0.1);
+    ctx.beginPath(); ctx.moveTo(-tw / 2, 0); ctx.lineTo(-tw / 2, -th + tw / 2); ctx.arc(0, -th + tw / 2, tw / 2, Math.PI, 0); ctx.lineTo(tw / 2, 0); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.restore();
+    // the fist over its foot
+    ctx.beginPath(); ctx.ellipse(0, 0, rx, ry, 0, 0, TAU); ctx.fill(); ctx.stroke();
+    // merge the thumb's foot into the fist (no outline across the join), then the nail, the curled fingers and a highlight
+    ctx.save(); ctx.translate(sgn * -rx * 0.12, -ry * 0.55); ctx.rotate(sgn * 0.1); ctx.fillRect(-tw / 2 + r.outline * 0.6, -0.4, tw - r.outline * 1.2, ry * 0.9); ctx.restore();
+    ctx.save(); ctx.translate(sgn * -rx * 0.12, -ry * 0.55); ctx.rotate(sgn * 0.1);
+    ctx.fillStyle = '#FFFFFF'; ctx.globalAlpha = 0.5; ctx.beginPath(); ctx.ellipse(tw * 0.04, -th + tw * 0.62, tw * 0.28, tw * 0.36, 0, 0, TAU); ctx.fill(); ctx.globalAlpha = 1;
+    ctx.strokeStyle = c.skin.shade; ctx.lineWidth = 0.55; ctx.beginPath(); ctx.moveTo(-tw * 0.18, -th * 0.34); ctx.lineTo(tw * 0.22, -th * 0.34); ctx.stroke();
+    ctx.restore();
+    ctx.strokeStyle = c.skin.line; ctx.lineWidth = 0.65; ctx.globalAlpha = 1;
+    for (const fy of [-0.1, 0.33, 0.7]) { ctx.beginPath(); ctx.moveTo(rx * 0.95, ry * fy); ctx.quadraticCurveTo(rx * 0.35, ry * (fy + 0.12), -rx * 0.62, ry * (fy + 0.05)); ctx.stroke(); }
+    ctx.globalAlpha = 0.6; ctx.fillStyle = '#FFFFFF'; ctx.beginPath(); ctx.ellipse(-rx * 0.42, -ry * 0.1, rx * 0.2, ry * 0.3, 0.3, 0, TAU); ctx.fill();
     ctx.restore();
   };
 

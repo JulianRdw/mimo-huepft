@@ -37,12 +37,12 @@ try {
     if (scheme === 'dark') {
       for (const fn of ['lava', 'hot', 'basalt', 'geyser', 'plates', 'hopper', 'steam', 'rain', 'fall', 'rise', 'chaseLook']) await look(fn);
       const info = await page.evaluate(() => ({ world: window.__mimo.WORLDS[5] && window.__mimo.WORLDS[5].name, first: window.__mimo.WORLDS[5].firstLevel }));
-      check(info.world === 'Vulkaninsel', 'dark mode: every element drawn without errors', errors.length ? errors.slice(0, 3) : null);
+      check(info.world === 'Gipfelsturm', 'dark mode: every element drawn without errors', errors.length ? errors.slice(0, 3) : null);
       await page.close();
       continue;
     }
     const info = await page.evaluate(() => { const M = window.__mimo, w = M.WORLDS[5]; return { name: w && w.name, first: w && w.firstLevel, levels: M.LEVELS.filter((l) => l.world === 5).length, w4: M.LEVELS.filter((l) => l.world === 4).length, song: M.Music ? null : null }; });
-    check(info.name === 'Vulkaninsel' && info.first === 29 + info.w4, 'world 5 is registered right after world 4', info);
+    check(info.name === 'Gipfelsturm' && info.first === 29 + info.w4, 'world 5 is registered right after world 4', info);
 
     // ---------- reference ----------
     const land = raw.land = await lab('landJump');
@@ -76,6 +76,7 @@ try {
     const ge = raw.geyser = await lab('geyser');
     check(between(ge.lift, 4.9, 5.1) && ge.carriedS > 1.5, 'geyser lifts Mimo 5 tiles and carries him', { lift: ge.lift, carried: ge.carriedS });
     check(ge.sidePickup, 'geyser: walking into the column picks Mimo up', ge.sidePickup);
+    check(ge.sideSmooth, 'geyser: Mimo is lifted smoothly (no frame moves him more than 6 px), not set on the top', ge.sideMaxStep);
     check(near(ge.jumpFromTop, land.landJump, 0.1), 'a jump from the geyser top is a normal jump', ge.jumpFromTop);
     check(ge.ledge[2] && ge.ledge[3] && !ge.ledge[4], 'from the geyser top a ledge 3 tiles higher is reachable, 4 not', ge.ledge);
     check(ge.ceilingMax < 4, 'a ceiling cuts the column short', ge.ceilingMax);

@@ -14,5 +14,12 @@ R until x>=112.3 max 4; RJ 0.25; R until grounded max 2
 R until x>=118.3 max 2; RJ 0.25; R until grounded max 2
 R until x>=122.3 max 2; RJ 0.3; R until grounded max 2
 R until x>=127.3 max 2; RJ 0.2; R until grounded max 2
-R until x>=147.3 max 3; RJ 0.3; R until grounded max 2
-R until x>=158.3 max 3
+# the ridge in the glow rain: over the hopper pocket, hop the hot stone, past the family, the basalt pocket, the hot stretch
+R until x>=134.6 max 2; W until calm max 3; R until x>=136.5 max 1; RJ 0.3; R until x>=140.6 max 1; W until grounded max 2
+RJ 0.3; R until x>=144.4 max 1; W until grounded max 2
+R until x>=157.6 max 3; RJ 0.25; R until x>=160.3 max 1; W until grounded max 2
+RJ 0.25; R until x>=162.5 max 1; W until grounded max 2
+RJ 0.3; R until x>=166.5 max 1; W until grounded max 2
+RJ 0.25; R until grounded max 2
+R until x>=187.3 max 3; RJ 0.3; R until grounded max 2
+R until x>=198.3 max 3

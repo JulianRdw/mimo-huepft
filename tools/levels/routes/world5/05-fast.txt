@@ -1,24 +1,27 @@
-# Glutbrücke, quickest clean way: the lower way across the lake on plates
-R until x>=3.6; RJ 0.2; R until x>=7.5 max 2; RJ 0.15; R until x>=10 max 1; W until grounded max 2
-RJ 0.15; R until x>=13.5 max 1; W until grounded max 2; R until x>=15.3 max 2
-# the bay: the first plate comes back hot, then turns dark
-W until time>=3.0 max 3; R until x>=15.8 max 1; W until time>=3.35 max 3; RJ 0.15; R until x>=18.6 max 1; W until grounded max 2
-RJ 0.2; R until x>=22.5 max 1; W until grounded max 2; R until x>=24.3 max 1; W until time>=4.35 max 2
-RJ 0.15; R until x>=27.3 max 1; W until grounded max 2; R until x>=28.5 max 1; RJ 0.3; R until grounded max 2
-# lower way: through the gate, plate, past the hopper, the hot strip under the Brückenstube
-R until x>=42.4 max 2; RJ 0.15; R until x>=45.4 max 1; W until grounded max 2
-R until x>=46.6 max 1; RJ 0.3; R until grounded max 2
-R until x>=60.4 max 3
-RJ 0.15; R until x>=63.4 max 1; W until grounded max 2
-R until x>=64.6 max 1; RJ 0.25; R until grounded max 2
-# the middle tower gate, the ferry
-R until x>=77.3 max 3; RJ 0.2; R until x>=81.2 max 1; W until grounded max 2
-W until time>=14.7 max 3; R until x>=83.6 max 1; W until time>=15.35 max 3; R until x>=85.8 max 1; RJ 0.3; R until x>=89.5 max 1; W until grounded max 2
-W until time>=16.4 max 2; R until x>=90.5 max 1; RJ 0.2; R until x>=93.4 max 1; R until grounded max 2
-R until x>=94.6 max 1; RJ 0.2; R until x>=97.2 max 1; R until grounded max 2
-R until x>=98.6 max 1; RJ 0.25; R until grounded max 2
-# the far tower gate, the last pool
-R until x>=113.4 max 3
-RJ 0.15; R until x>=115.6 max 1; W until grounded max 2
-R until x>=116.6 max 1; RJ 0.15; R until x>=118.6 max 1; W until grounded max 2
-R until x>=119.6 max 1; RJ 0.25; R until grounded max 2; R until x>=125 max 2
+# Glutbrücke, quickest clean way
+R until x>=11.3 max 3; RJ 0.15; R until x>=14 max 1; W until grounded max 2
+R until x>=15.5 max 1; RJ 0.2; R until x>=17.6 max 1; W until grounded max 2
+R until x>=18.6 max 1; RJ 0.2; R until x>=21 max 1; W until grounded max 2
+R until x>=22.3 max 1; RJ 0.2; R until x>=24.6 max 1; W until grounded max 2
+R until x>=25.4 max 1; RJ 0.25; R until x>=29.8 max 1; W until grounded max 2
+RJ 0.2; R until x>=32 max 1; W until grounded max 2
+R until x>=33.4 max 1; RJ 0.2; R until grounded max 2
+R until x>=35.2 max 1; RJ 0.3; R until grounded max 2
+R until x>=60.4 max 4; W until calm max 3; RJ 0.25; R until x>=64.5 max 1; W until grounded max 2
+R until x>=70.4 max 2
+RJ 0.1; R until x>=72.6 max 1; W until grounded max 2
+RJ 0.2; R until x>=75.6 max 1; W until grounded max 2
+RJ 0.25; R until x>=79 max 1; W until grounded max 2
+R until x>=82.4 max 2; RJ 0.2; R until grounded max 2
+RJ 0.3; R until x>=85 max 1; W until grounded max 2
+R until x>=86.6 max 1; W until grounded max 2
+R until x>=89.4 max 2; W until calm max 3; RJ 0.3; R until x>=93.5 max 1; W until grounded max 2
+R until x>=95.5 max 1; RJ 0.2; R until x>=99 max 1; W until grounded max 2
+R until x>=101.4 max 1; RJ 0.1; R until x>=103.6 max 1; W until grounded max 2
+W until time>=18.7 max 2; RJ 0.2; R until x>=107.6 max 1; W until grounded max 2
+W until time>=20.2 max 3; RJ 0.3; R until x>=112.6 max 1; W until grounded max 2
+W until time>=21.7 max 3; RJ 0.25; R until x>=117.6 max 1; W until grounded max 2
+RJ 0.25; R until x>=121 max 1; W until grounded max 2
+R until x>=145.6 max 5; RJ 0.15; R until x>=148 max 1; W until grounded max 2
+R until x>=149.3 max 1; W until calm max 3; RJ 0.25; R until x>=154 max 1; W until grounded max 2
+RJ 0.2; R until x>=158 max 1; W until grounded max 2; R until x>=163 max 2

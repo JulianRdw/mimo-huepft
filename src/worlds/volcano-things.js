@@ -1,4 +1,4 @@
-// World 5 "Vulkaninsel": the things that live in it, their rules and timing. Geysers ("G", a timed lift), lava plates
+// World 5 "Gipfelsturm": the things that live in it, their rules and timing. Geysers ("G", a timed lift), lava plates
 // ("=", float on lava: cool, warming, sinking, hot), fire hoppers ("F", jump out of the lava on a fixed arc), steam vents
 // ("S", a timed updraft), glow rain ("Q", glowing rocks drop from a smoke puff), lava falls ("|", a timed curtain).
 // Their pictures: volcano-things-draw.js. Rules and numbers: tools/levels/world5-kit.md.
@@ -11,7 +11,10 @@
 
   // ---------- numbers (measured in tools/volcano-test.mjs) ----------
   // geyser: quiet, warning puff, rise, hold at the top, sink; EVERY is the whole beat
-  const GEY = Object.freeze({ EVERY: 4.4, WARN: 0.8, RISE: 0.45, HOLD: 1.1, FALL: 0.7, HEIGHT: 5, W: 34, HEAD: 26 });
+  const GEY = Object.freeze({ EVERY: 4.4, WARN: 0.8, RISE: 0.45, HOLD: 1.1, FALL: 0.7, HEIGHT: 5, W: 34, HEAD: 26,
+  // Mimo inside a standing column is carried up like a rider: he accelerates to LIFT px/s, slows down near the top and is
+  // set onto it the last SNAP px; the column draws him to its middle (PULL per step) so he cannot run through it
+  LIFT: 430, ACCEL: 2600, EASE: 56, SNAP: 5, PULL: 0.1 });
   // lava plate: cool (safe) -> warm (safe, glowing cracks, trembles) -> sink -> under -> rise hot -> hot (burns)
   const PLATE = Object.freeze({ COOL: 2.6, WARM: 1.2, SINK: 0.5, UNDER: 0.9, RISE: 0.4, HOT: 1.0, DEPTH: 30, H: 14, TOP: -8, FADE: 0.35 });
   // fire hopper: rests in the lava, glows brighter WARN s before it jumps, flies a parabola HEIGHT tiles high
@@ -23,6 +26,8 @@
   // lava fall: pours ON s, pauses OFF s (off 0: always), drips WARN s before it starts; the stream moves SPEED px/s
   const FALL = Object.freeze({ ON: 2.0, OFF: 2.0, WARN: 0.6, SPEED: 520, W: 20 });
 
+  // small chatter: with a story in the level it only speaks when the story is silent (one bubble at a time)
+  const chat = (text, anchor, secs) => { const d = window.MimoCoast && window.MimoCoast.director, st = api.L && api.L.story; if (st && d && !d.free(1)) return; api.bubble(text, anchor, secs); };
   const lines = { geyser: ['Huiii!', 'Fahrstuhl nach oben.', 'Nasse Füße, aber oben.'], hopper: ['Fffft.', 'Pfft!', 'Heiß wie Suppe.'] };
   const entryAt = (list, x, y) => (Array.isArray(list) ? list.find((e) => e && e.x === x && e.y === y) : null) || {};
   const mod = (a, n) => ((a % n) + n) % n;
@@ -87,7 +92,7 @@
     for (const pl of v.plates) { const e = entryAt(def.plates, pl.tx, pl.ty); pl.offset = e.offset || 0; pl.still = !!e.still; pl.dist = e.dist || 0; pl.speed = e.speed || 1; }
     for (const h of v.hoppers) {
       const e = entryAt(def.hoppers, h.tx, h.ty);
-      h.dx = e.dx || 0; h.height = e.height || HOP.HEIGHT; h.rest = e.rest || HOP.REST; h.offset = e.offset || 0; h.line = e.line || null;
+      h.dx = e.dx || 0; h.height = e.height || HOP.HEIGHT; h.rest = e.rest || HOP.REST; h.offset = e.offset || 0; h.line = e.line || null; h.bro = e.bro || 0;
       h.home = V().isLava(h.tx, h.ty) ? V().lavaTop(h.tx, h.ty) : (h.ty + 1) * T;
       h.dur = 2 * Math.sqrt(2 * h.height * T / HOP.GRAV);
       h.arc = makeArc(h);
@@ -95,6 +100,7 @@
     for (const s of v.steam) {
       const e = entryAt(def.steam, s.tx, s.ty);
       s.height = e.height || STEAM.HEIGHT; s.on = e.on || STEAM.ON; s.off = e.off != null ? e.off : STEAM.OFF; s.offset = e.offset || 0;
+      s.shut = e.shut ? (typeof e.shut === 'number' ? e.shut : Infinity) : 0; s.openAt = null; s.nearAt = null;
       s.top = s.floor - Math.min(s.height * T, roomAbove(s.tx, s.floor));
     }
     for (const r of v.rain) {
@@ -132,13 +138,35 @@
         if (g.phase === 'rise') { api.noise({ lp: 1800, f1: 500, dur: 0.6, vol: 0.05 }); api.burst(g.cx, g.floor - 4, 10, [api.W.geyserFoam || '#FFFFFF', api.W.geyser || '#BFE3F2'], 140, { grav: 400, vy: -160 }); }
       }
       if (!play || g.h < 4) continue;
-      // the column lifts whoever is inside it onto its top (from the side or from below), not a Mimo jumping up through it
-      const b = g.body, feet = p.y + p.h;
-      if (p.carried !== b && p.vy > -250 && p.x + p.w - 4 > b.x && p.x + 4 < b.x + b.w && feet >= b.y - 1 && feet <= g.floor + 2) {
-        p.y = b.y - p.h; if (p.vy > 0) p.vy = 0;
-      }
-      if (p.carried === b && !g.rode && g.phase === 'rise') { g.rode = true; api.bubble(api.pick(lines.geyser), 'player', 1.1); }
+      if (p.carried === g.body && !g.rode && g.phase === 'rise') { g.rode = true; chat(api.pick(lines.geyser), 'player', 1.1); }
     }
+  }
+
+  // the column Mimo is inside of (standing, his feet below its top), not a Mimo jumping up through it: he is lifted
+  // smoothly (gravity turns into an acceleration upwards) instead of being set onto the top
+  function liftColumn(p) {
+    const v = api.L && api.L.volcano; if (!v || !v.geysers.length || api.state !== 'play') return null;
+    const feet = p.y + p.h, cur = p.gyLift;
+    // the last few px of a lift: set him onto the top, from there the core carries him like any rider
+    if (cur && cur.h >= 4 && p.carried !== cur.body && feet - cur.body.y <= GEY.SNAP && feet - cur.body.y > -GEY.SNAP * 8 && p.vy <= 0 + 60) {
+      p.y = cur.body.y - p.h; if (p.vy < 0) p.vy = 0; p.gyLift = null; return null;
+    }
+    for (const g of v.geysers) {
+      const b = g.body;
+      if (g.h < 4 || p.carried === b || !(p.x + p.w - 4 > b.x && p.x + 4 < b.x + b.w) || feet <= b.y + 1 || feet > g.floor + 2) continue;
+      if (cur === g ? p.canCut : p.vy <= -250) continue;
+      p.gyLift = g; return g;
+    }
+    p.gyLift = null; return null;
+  }
+  const LIFT_OUT = { gravity: 0, maxRise: GEY.LIFT };
+  function geyserPhysics(p) {
+    const g = liftColumn(p); if (!g) return steamPhysics(p);
+    const b = g.body, dist = p.y + p.h - b.y;
+    p.canCut = false;
+    p.x += (g.cx - (p.x + p.w / 2)) * GEY.PULL;
+    LIFT_OUT.gravity = -GEY.ACCEL; LIFT_OUT.maxRise = Math.min(GEY.LIFT, GEY.EASE + dist * 6);
+    return LIFT_OUT;
   }
 
   // ---------- lava plates ----------
@@ -195,7 +223,7 @@
       h.fly = s.fly; h.x = s.x; h.y = s.y; h.warn = s.warn; h.back = s.back; h.up = s.up;
       if (h.fly && !wasFly && near(h.x, h.home, 1)) {
         api.voice({ type: 'sine', f0: 300, f1: 900, slide: 0.12, dur: 0.16, vol: 0.03 }); api.noise({ lp: 1500, dur: 0.12, vol: 0.025 });
-        if (h.said !== s.n && (h.line || api.hash(s.n, h.tx) < 0.25) && Math.abs(p.x - h.x) < 5 * T && api.state === 'play') { h.said = s.n; api.bubble(h.line || api.pick(lines.hopper), { x: h.x - 10, y: h.y - 30, w: 20 }, 1.0); }
+        if (!h.bro && h.said !== s.n && (h.line || api.hash(s.n, h.tx) < 0.25) && Math.abs(p.x - h.x) < 5 * T && api.state === 'play') { h.said = s.n; chat(h.line || api.pick(lines.hopper), { x: h.x - 10, y: h.y - 30, w: 20 }, 1.0); }
       }
       if (!wasFly && h.fly && !api.reduced) api.burst(h.x, h.home, 6, [api.W.lavaTop || '#FFC978', api.W.lavaLine || '#FFEBAA'], 90, { grav: 500, vy: -90, life: 0.3 });
       if (h.fly && api.state === 'play' && h.y < h.home && boxCircle(p, h.x, h.y, HOP.R * HOP.HIT + 3)) api.hurt();
@@ -207,14 +235,34 @@
   }
 
   // ---------- steam vents ----------
+  // a shut vent (entry field shut: true | secs) rests without a hiss until MimoVolcano.steamOpen(tx, ty) (scene op
+  // ['fx', 'steamOpen', x, y]) opens it, or by itself `secs` after Mimo first came within 8 tiles; then it hisses WARN s and
+  // runs its beat from that moment (offset still moves it)
   function steamAt(s, time) {
-    if (!s.off) return set3(SO, true, 0, 1);
-    const t = mod(time + s.offset, s.on + s.off);
+    let base = 0;
+    if (s.shut) {
+      if (s.openAt == null || time < s.openAt) return set3(SO, false, 0, 0);
+      const k = time - s.openAt;
+      if (k < STEAM.WARN) return set3(SO, false, k / STEAM.WARN, 0);
+      base = s.openAt + STEAM.WARN;
+    }
+    if (!s.off) return set3(SO, true, 0, Math.min(1, (time - base) / STEAM.RAMP));
+    const t = mod(time - base + s.offset, s.on + s.off);
     if (t < s.on) return set3(SO, true, 0, Math.min(1, t / STEAM.RAMP));
     return set3(SO, false, t > s.on + s.off - STEAM.WARN ? (t - (s.on + s.off - STEAM.WARN)) / STEAM.WARN : 0, 0);
   }
+  function steamOpen(tx, ty) {
+    const v = api.L && api.L.volcano, s = v && v.steam.find((q) => q.tx === tx && q.ty === ty);
+    if (!s || !s.shut || s.openAt != null) return false;
+    s.openAt = api.time; return true;
+  }
   function updateSteam(v) {
+    const p = api.p;
     for (const s of v.steam) {
+      if (s.shut && s.openAt == null && s.shut !== Infinity && p) {
+        if (s.nearAt == null && Math.abs(p.x + p.w / 2 - s.cx) < 8 * T && Math.abs(p.y + p.h - s.floor) < 8 * T) s.nearAt = api.time;
+        if (s.nearAt != null && api.time >= s.nearAt + s.shut) s.openAt = api.time;
+      }
       const was = s.active, st = steamAt(s, api.time);
       s.active = st[0]; s.warn = st[1]; s.k = st[2];
       if (s.active && !was && near(s.cx, s.floor - 2 * T, 2)) api.noise({ hp: 1600, dur: Math.min(1.2, s.on), vol: 0.02 });
@@ -259,7 +307,7 @@
       const landed = Math.floor((api.time - r.offset - r.fallT) / r.every);
       if (landed > r.last) {
         r.last = landed;
-        if (landed >= 0 && near(r.cx, r.impact, 1)) {
+        if (landed >= 0 && near(r.cx, r.impact, 1) && !(V().quipRock && V().quipRock(r))) {   // quipRock: a rock that lands softly (volcano-things-quips.js)
           api.burst(r.cx, r.impact - 2, 10, [api.W.lavaTop || '#FFC978', api.W.ember || '#FF9A5C'], 130, { grav: 600, vy: -140 });
           api.ring(r.cx, r.impact - 4, api.W.lavaLine || '#FFEBAA'); api.noise({ lp: 700, f1: 120, dur: 0.18, vol: 0.04 });
         }
@@ -310,7 +358,9 @@
       const v = api.L && api.L.volcano, p = api.p; if (!v || !p) return;
       updateGeysers(v, p); updatePlates(v, p); updateHoppers(v, p); updateSteam(v); updateRain(v, p); updateFalls(v, p); keepRide(api.L);
     },
-    physics: steamPhysics,
+    physics: geyserPhysics,
   });
-  Object.assign(window.MimoVolcano, { GEY, PLATE, HOP, STEAM, RAIN, FALL, geyserAt, plateAt, platePeriod, hopperAt, steamAt, eachRock, rainWarn, fallAt });
+  Object.assign(window.MimoVolcano, { GEY, PLATE, HOP, STEAM, RAIN, FALL, geyserAt, plateAt, platePeriod, hopperAt, steamAt, steamOpen, eachRock, rainWarn, fallAt });
+  window.MimoVolcano.skitFx = window.MimoVolcano.skitFx || {};
+  window.MimoVolcano.skitFx.steamOpen = (args) => { steamOpen(args[0], args[1]); };
 })();

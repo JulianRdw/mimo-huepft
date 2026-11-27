@@ -110,7 +110,7 @@
     C().cast.look(e, null);
     later(e, 0.35, () => { C().cast.look(e, spotX - (e.pos ? e.pos.x : e.x0)); if (e.pp) e.pp.fig.flashBrows(); e.jolt = ENV().api.time; });
     later(e, 0.6, () => { hold(e, o.pose || 'point', { dir }); if (line) C().cast.say(e, line, o.secs || 2.2); });   // a line here is said at once (scenes)
-    later(e, o.until || 2.9, () => { hold(e, null); C().cast.look(e, null); });
+    later(e, (o.until || 2.9) + (o.pose === 'thumb' ? 1.2 : 0), () => { hold(e, null); C().cast.look(e, null); });
   }
   // the professor writes it down: the pen scribbles while the note shows as a bubble (one beat of the director)
   function note(e, text, o) {

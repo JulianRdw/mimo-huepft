@@ -115,7 +115,7 @@
   function douse(B) {
     const h = B.head;
     splash(B, h.x, h.y - F().HEAD.RY, true);
-    B.wet = 1; B.hitNow = true;
+    B.wet = 1; B.worryAt = api.time; B.hitNow = true;   // worryAt: a picture only, he glances worried at the egg (volcano-boss-draw.js)
     api.boss.hit(B);
     B.hitNow = false;
   }
@@ -207,6 +207,7 @@
     B.feet = p.y + p.h; placeSteps(B);
   }
   function enter(B) {
+    if (B.done) return;   // the closing scene after the win ends like a scene: nothing to start again
     if (B.scene) { window.MimoFauch.finishScene(B); return; }
     const L0 = F().lurkPose(api.boss.phase(B)); moveHead(B, L0, 0.6, 30); B.nkTo = -1;
   }
@@ -284,6 +285,8 @@
     update,
     boss: {
       name: 'Drache Fauch', kicker: 'Hüter des Kraters', song: 'bossVolcano', hp: 6, phases: [6, 4, 2],
+      // the door waits for the end: Fauch on his nest, the horns, the closing scene (volcano-boss-scenes.js holds the clock meanwhile)
+      doorAfter: 9.0,
       hint: 'Weich dem <b>Feuer</b> aus. Ruht Fauch sich aus, klettere über seine <b>Nase</b> zum <b>Hebel</b>: Die kalte Dusche trifft ihn.',
       lines: LINES, map: F().MAP,
       make, arena, respawn, enter, ai, box, phase, shot, camera, voice,

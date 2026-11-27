@@ -110,5 +110,6 @@
 
   window.MimoCoast = window.MimoCoast || {};
   window.MimoCoast.director = { say, beat, free, quiet, secsFor, PRIO };
+  window.MimoCoast.directorHooks = { update };   // another world runs the same director (volcano-story.js)
   window.MimoWorlds.register({ world: 4, setup(a) { api = a; }, update });
 })();

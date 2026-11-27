@@ -16,6 +16,7 @@
 //         water (Mimo swims), dry (he does not), body (he stands on a world body: a crab, a bubble, a raft),
 //         surface (he floats calmly at the water surface: a jump press now leaps out of the water),
 //         heat>=n heat<=n (world 5: the heat of hot stone under Mimo's paws, 0..1; it burns at 1),
+//         calm (world 5: every fire hopper from Mimo to 6 tiles to his right rests in its lava for at least 0.8 s more),
 //         orbit (world 6: a small moon holds Mimo on its orbit), ang>=n ang<=n (world 6: where on the orbit, in degrees:
 //         0 right, 90 top, 180 left, 270 bottom; a jump press now flings him off along the orbit).
 //         Conditions can be joined with "and":  RJ until surface and x>=29.3
@@ -48,7 +49,7 @@ function parseCmd(line) {
 function parseCond(text) {
   const c = text.trim(), cm = c.match(/^(x|y|stars|time|heat|ang)\s*(>=|<=)\s*(-?\d*\.?\d+)$/);
   if (cm) return { v: cm[1], op: cm[2], n: Number(cm[3]) };
-  if (['grounded', 'air', 'falling', 'water', 'dry', 'body', 'surface', 'orbit'].includes(c)) return { v: c };
+  if (['grounded', 'air', 'falling', 'water', 'dry', 'body', 'surface', 'orbit', 'calm'].includes(c)) return { v: c };
   throw new Error('route: unknown condition "' + c + '"');
 }
 
@@ -98,6 +99,7 @@ try {
         if (c.v === 'grounded') return G.p.grounded; if (c.v === 'air') return !G.p.grounded; if (c.v === 'falling') return !G.p.grounded && G.p.vy > 0;
         if (c.v === 'water') return !!G.p.swim; if (c.v === 'dry') return !G.p.swim; if (c.v === 'body') return !!G.p.carried && L.bodies.includes(G.p.carried);
         if (c.v === 'surface') return !!G.p.atSurface;
+        if (c.v === 'calm') { const v = G.L && G.L.volcano; if (!v) return true; const px = (G.p.x + G.p.w / 2) / 32; for (const h of v.hoppers) { const a = h.tx + 0.5, b = a + (h.dx || 0); if (Math.max(a, b) < px - 0.5 || Math.min(a, b) > px + 6) continue; const cyc = h.rest + h.dur, tt = G.time + h.offset, t = tt - Math.floor(tt / cyc) * cyc; if (t >= h.rest - 0.8) return false; } return true; }
         if (c.v === 'orbit') return !!G.p.orbit;
         if (c.v === 'ang') { if (!G.p.orbit || G.p.orbitDeg == null) return false; return c.op === '>=' ? G.p.orbitDeg >= c.n : G.p.orbitDeg <= c.n; }
         const v = c.v === 'stars' ? G.starsGot : c.v === 'time' ? G.time : c.v === 'heat' ? G.p.heat || 0 : p[c.v];

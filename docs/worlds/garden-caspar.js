@@ -381,13 +381,13 @@
         if (t < 91.5) return { look: G.at([[86.7, -120], [86.9, 160], [87.4, 160], [87.6, -140]], t) };
         return { look: 200 };
       }
-      if (t < 86.5) return LOOKS[k.who] ? { look: G.at(LOOKS[k.who], t), idle: false } : null;
-      if (t < 89.5) return { look: G.at([[86.5, 0], [86.75 + (k.seed % 5) * 0.06, HX - k.x]], t), idle: false };   // the "Hilfe …": all heads to the right
-      return { look: HX - k.x, idle: false };
+      if (t < 86.5) return LOOKS[k.who] ? { look: G.at(LOOKS[k.who], t) } : null;
+      if (t < 89.5) return { look: G.at([[86.5, 0], [86.75 + (k.seed % 5) * 0.06, HX - k.x]], t) };   // the "Hilfe …": all heads to the right
+      return { look: HX - k.x };
     },
     mimo(t, A) {
-      if (G.inn(t, 86.5, 89.2)) return { face: 1, mood: 'neutral' };   // he heard it and hops over, curious
-      if (G.inn(t, 89.2, 89.9)) return { face: 1, mood: 'neutral' };
+      if (G.inn(t, 86.5, 86.9)) return { face: 1 };   // he heard it
+      if (G.inn(t, 89.2, 89.9)) return { face: 1 };
       if (G.inn(t, 89.9, 90.5)) return { hop: Math.sin(seg(t, 89.9, 90.5) * Math.PI) * 16, mood: 'scared', face: 1 };   // the towel moves!
       if (G.inn(t, 90.5, 91.4)) return { mood: 'scared', face: -1 };
       if (G.inn(t, 91.4, 93.5)) return { hop: Math.abs(Math.sin((t - 91.4) * Math.PI / 0.3)) * 9, mood: 'scared', face: -1 };   // the alarm

@@ -18,6 +18,10 @@
 //     unless ownerAt is given; the hand-over and each person's gag are coast-handover.js and coast-handover-gags.js.
 //   saltLine: true  Mimo says "Stimmt. Salzig." the first time he swims in this level.
 // Found items are stored in localStorage "mimo.coast.finds" ({ levelIndex: 1 }), never in the core save.
+// The engine also runs in other worlds (world 5: volcano-story.js): MimoCoast.storyCfg[world] = { store (makeFindStore), total, names,
+// peek, allText } replaces the settings of the coast (13 finds, their names, the "all found" line) for the levels of that world, and
+// MimoCoast.named[who] = { height, facePlayer?, draw(ctx, e, pos, t) } adds named figures beyond gull, keeper, crab, prop and dog.
+// MimoCoast.storyHooks / directorHooks / handoverHooks hand the hooks of this world 4 file to such a world.
 (function () {
   'use strict';
   let api = null;
@@ -33,11 +37,24 @@
   const NEAR_WAVE = 6, OWNER_GAP = 2.4, OWNER_STEP = 1.2;   // tiles: the owner before the door, several owners apart
 
   // ---------- found items in the browser's storage (every access guarded) ----------
-  function loadFinds() { try { const o = JSON.parse(localStorage.getItem(FIND_KEY) || '{}'); return o && typeof o === 'object' ? o : {}; } catch (_) { return {}; } }
-  function saveFind(i) { try { const o = loadFinds(); o[i] = 1; localStorage.setItem(FIND_KEY, JSON.stringify(o)); } catch (_) { /* no storage: the find still counts for this session */ } }
-  let sessionFinds = new Set(); // finds of this session, for when storage is unavailable
-  const findCount = () => Math.min(FIND_TOTAL, new Set([...Object.keys(loadFinds()), ...[...sessionFinds].map(String)]).size);
-  const hasFind = (i) => !!loadFinds()[i] || sessionFinds.has(i);
+  // one store per kind of find: the keys are level indices, so two worlds never meet in one store
+  function makeFindStore(key, total) {
+    let session = new Set(); // finds of this session, for when storage is unavailable
+    const load = () => { try { const o = JSON.parse(localStorage.getItem(key) || '{}'); return o && typeof o === 'object' ? o : {}; } catch (_) { return {}; } };
+    return {
+      load, total,
+      save(i) { session = new Set([...session, i]); try { const o = load(); o[i] = 1; localStorage.setItem(key, JSON.stringify(o)); } catch (_) { /* no storage: the find still counts for this session */ } },
+      count: () => Math.min(total, new Set([...Object.keys(load()), ...[...session].map(String)]).size),
+      has: (i) => !!load()[i] || session.has(i),
+    };
+  }
+  const coastStore = makeFindStore(FIND_KEY, FIND_TOTAL);
+  const findCount = coastStore.count, hasFind = coastStore.has;
+  const COAST_CFG = { store: coastStore, total: FIND_TOTAL, names: NAMES, allText: 'Alle dreizehn! Die Sonnenbrille wartet im Kleiderschrank.' };
+  // the settings of the world that is being played (the coast's own when a world gave none)
+  const cfgOf = (world) => (C().storyCfg && C().storyCfg[world]) || COAST_CFG;
+  const cfg = () => cfgOf(api.L && api.L.world);
+  const named = (who) => (C().named && C().named[who]) || null;
 
   // ---------- helpers ----------
   const pingpong = (d, range) => { const m = ((d % (2 * range)) + 2 * range) % (2 * range); return m < range ? m : 2 * range - m; };
@@ -58,9 +75,9 @@
     const who = d.who, act = d.act || (who === 'gull' ? 'sit' : 'stand');
     const x = (d.x + 0.5) * T, foot = (d.y + 1) * T;
     const e = { ...d, who, act, x, x0: x, foot, tag: d.tag || null, bx: x, scale: d.scale || 1, face: d.face || 1, phase: phaseOf(d.x, d.y), said: false, greeted: false, evT: 0, near: false, anchor: { x, y: foot, w: 0 }, id: i, mood: 'idle' };
-    if (!NAMED.includes(who) && !FAMILY.includes(who)) return null;
+    if (!NAMED.includes(who) && !FAMILY.includes(who) && !named(who)) return null;
     if (d.holds) e.propSwap = { ...d.holds };   // what a hand holds instead (the reporter's banana, later a shell)
-    e.top = who === 'prop' || HEIGHT[who] ? HEIGHT[who] : rigH(who) * e.scale;
+    e.top = who === 'prop' || HEIGHT[who] ? HEIGHT[who] : named(who) ? named(who).height * e.scale : rigH(who) * e.scale;
     if (act === 'buried') e.top = (e.top - MARGIN * e.scale) * BURIED_SHOW[Math.max(1, Math.min(3, d.depth | 0 || 1))];
     if (act === 'snorkel') e.top = (e.top - MARGIN * e.scale) * SNORKEL_SHOW;
     return e;
@@ -70,7 +87,7 @@
   function buildFind(def, L, index) {
     const f = def.find;
     if (!f || typeof f.item !== 'string' || !D().ICONS[f.item]) return null;
-    const door = L.door, ids = ownerIds(f.owner), n = ids.length;
+    const cf = cfgOf(L.world), door = L.door, ids = ownerIds(f.owner), n = ids.length;
     // the first owner (who takes the item) stands furthest from the door, where Mimo meets it first; the others towards the door
     const side = f.ownerAt ? Math.sign(f.ownerAt.x + 0.5 - (door ? door.x + 0.5 : 0)) || -1 : f.ownerSide === 1 ? 1 : -1;
     const first = f.ownerAt ? { x: f.ownerAt.x + 0.5 - (f.ownerAt.shift || 0), y: f.ownerAt.y } : door ? { x: door.x + 0.5 + side * (OWNER_GAP + (n - 1) * OWNER_STEP), y: door.y } : null;
@@ -83,9 +100,9 @@
       if (f.ownerProp) e.propSwap = { ...f.ownerProp }; e.red = f.ownerRed | 0; if (f.ownerScale) { e.scale = f.ownerScale; e.top *= f.ownerScale; }
       e.phase += k; e.mood = seen ? 'replay' : 'idle'; e.cx = e.x0; owners.push(e);
     });
-    const already = hasFind(index);
+    const already = cf.store.has(index);
     return { ...f, index, cx: (f.x + 0.5) * T, cy: (f.y + 0.5) * T, got: false, already, seen, side, owners, fx: {},
-      thanks: f.thanks == null ? 'Danke!' : f.thanks, missing: f.missing || 'Wo ist nur ' + (NAMES[f.item] || 'mein Ding') + '?', hold: null };
+      thanks: f.thanks == null ? 'Danke!' : f.thanks, missing: f.missing || 'Wo ist nur ' + (cf.names[f.item] || 'mein Ding') + '?', hold: null, ...(f.peek == null && cf.peek != null ? { peek: cf.peek } : {}) };
   }
 
   function init(L, info) {
@@ -128,6 +145,8 @@
     e.evT += dt;
     const X = ACTS()[e.act], pos = X && X.pos ? X.pos(e, api.time, env) : position(e, api.time); e.pos = pos; e.cx = pos.x;
     e.anchor.x = pos.x; e.anchor.y = pos.foot - e.top - 2 + (e.act === 'snorkel' ? -14 : 0);
+    const nm = named(e.who);
+    if (nm && nm.facePlayer && p) { const dir = Math.sign((p.x + p.w / 2) - pos.x); if (dir) pos.face = dir; }
     if (e.who === 'gull' || e.who === 'crab' || e.who === 'keeper') {
       const dir = p ? Math.sign((p.x + p.w / 2) - pos.x) : 0; if (dir && e.who !== 'keeper' || (dir && e.act === 'wave')) pos.face = dir;
       const cyc = 3.3 + (e.phase % 1), tt = (api.time + e.phase * 2) % cyc; // a small hop every few seconds
@@ -169,12 +188,12 @@
     }
     if (!f.got && live && api.state === 'play' && Math.hypot(p.x + p.w / 2 - f.cx, p.y + p.h / 2 - (f.cy + wob)) < reach) {
       f.got = true; f.hold = { t: 0 }; f.carry = !f.seen; C().cast.found();
-      if (!f.already) { saveFind(f.index); sessionFinds = new Set([...sessionFinds, f.index]); }
+      const cf = cfg(); if (!f.already) cf.store.save(f.index);
       api.sfx.key(); api.setMood('happy', 1.2);
       api.burst(f.cx, f.cy, 14, ['#FFF2B0', '#F6A9BF', '#9ED3EE', '#FFFFFF'], 120, { grav: 160, life: 0.5 });
       api.ring(f.cx, f.cy, '#FFE08F');
       if (!f.already) pop(p.x + p.w / 2, p.y - 40, 'Gefunden!', { size: 17, fill: '#FFE08F', rot: 0.05 });
-      if (!f.already && findCount() >= FIND_TOTAL) DIR().say('player', 'Alle dreizehn! Die Sonnenbrille wartet im Kleiderschrank.', { prio: 'door' });
+      if (!f.already && cf.store.count() >= cf.total) DIR().say('player', cf.allText, { prio: 'door' });
     }
     if (C().handover) C().handover.update(api.L.story, dt);   // the owner at the door, the hand-over, the gag
   }
@@ -223,6 +242,7 @@
     const X = ACTS()[e.act];
     if (X && X.draw) X.draw(ctx, e, pos, env);
     else if (e.who === 'dog') C().dogDraw(ctx, e, pos, 'ground');
+    else if (named(e.who)) named(e.who).draw(ctx, e, pos, api.time);
     else if (NAMED.includes(e.who)) drawNamed(ctx, e, pos);
     else if (e.act === 'buried') CD().drawBuried(ctx, e, pos);
     else if (e.act === 'snorkel') CD().drawSnorkel(ctx, e, pos);
@@ -245,16 +265,18 @@
     D().findIcon(ctx, f.item, api.time, 1); ctx.restore();
   }
   // big comic sound words (MimoCoast.pop): they pop in with an overshoot, rise a little, hold, then fade
-  const POP_LIFE = 1.5, POP_OUT = 0.2;
+  // (o.life: seconds on screen, default POP_LIFE; a word that has to be read, like an echo, stays longer)
+  const POP_LIFE = 1.5, POP_OUT = 0.2, POP_MAX = 4;
   function pop(x, y, text, o) {
     const st = api.L && api.L.story; if (!st) return;
-    st.pops = [...st.pops.filter((q) => api.time - q.t0 < POP_LIFE), { x, y, text, t0: api.time, size: (o && o.size) || 22, fill: o && o.fill, rot: o && o.rot }];
+    const life = Math.min(POP_MAX, (o && o.life) || POP_LIFE);
+    st.pops = [...st.pops.filter((q) => api.time - q.t0 < q.life), { x, y, text, t0: api.time, life, size: (o && o.size) || 22, fill: o && o.fill, rot: o && o.rot }];
   }
   function drawPops(ctx, st) {
     for (const q of st.pops) {
-      const k = api.time - q.t0; if (k < 0 || k > POP_LIFE) continue;
+      const k = api.time - q.t0; if (k < 0 || k > q.life) continue;
       // the word leaves quickly and a little smaller: a long half-faded word is hard to read on the sand
-      const out = Math.max(0, 1 - (POP_LIFE - k) / POP_OUT), s = (k < 0.12 ? k / 0.12 * 1.25 : k < 0.22 ? 1.25 - (k - 0.12) / 0.1 * 0.25 : 1) * (1 - out * 0.25);
+      const out = Math.max(0, 1 - (q.life - k) / POP_OUT), s = (k < 0.12 ? k / 0.12 * 1.25 : k < 0.22 ? 1.25 - (k - 0.12) / 0.1 * 0.25 : 1) * (1 - out * 0.25);
       ctx.save(); ctx.globalAlpha = 1 - out * out; ctx.translate(q.x, q.y - Math.min(k, 0.6) * 14); ctx.scale(s, s);
       D().comic(ctx, q.text, 0, 0, q.size, q.fill, q.rot); ctx.restore();
     }
@@ -293,7 +315,7 @@
 
   // what the act modules (coast-story-acts.js, coast-opening.js) may use of this engine
   const env = { T, TAU, get api() { return api; }, drawFigure: (ctx, e, pos) => CD().drawFigure(ctx, e, pos), drawBuried: (ctx, e, pos) => CD().drawBuried(ctx, e, pos), rigAt: (ctx, e, x, y, o) => CD().rigAt(ctx, e, x, y, o), reaches, onScreen, pingpong, position, phaseOf, makeEntry, rigH, get night() { return C().nightOverride != null ? C().nightOverride : nightNow; }, surface: () => C().surface(), story: () => api.L && api.L.story };
-  Object.assign(window.MimoCoast, { findCount, hasFind, FIND_TOTAL, storyEnv: env, pop });
+  Object.assign(window.MimoCoast, { findCount, hasFind, FIND_TOTAL, makeFindStore, storyEnv: env, pop, storyHooks: { init, update, draw } });
   window.MimoWorlds.register({
     world: 4,
     costumes: [shades],

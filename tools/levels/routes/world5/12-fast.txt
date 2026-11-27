@@ -19,5 +19,11 @@ R until x>=140.4 max 2; RJ 0.2; R until grounded max 2
 R until x>=145.4 max 2; RJ 0.25; R until grounded max 2
 R until x>=149.6 max 2; RJ 0.2; R until grounded max 2
 R until x>=154.4 max 2; RJ 0.2; R until grounded max 2
-R until x>=167.3 max 3; RJ 0.3; R until grounded max 2
-R until x>=178.4 max 4
+# the gorge: the crumble path over the nest
+R until x>=167.5 max 4; RJ 0.3; R until x>=170 max 1; W until grounded max 2
+R until x>=171.4 max 2; RJ 0.3; R until x>=176 max 1; W until grounded max 2
+R until x>=177.4 max 2; RJ 0.3; R until x>=182 max 1; W until grounded max 2
+R until x>=183.4 max 2; RJ 0.3; R until x>=188.5 max 1; W until grounded max 2
+R until x>=190.4 max 2; RJ 0.3; R until x>=195 max 1; W until grounded max 2
+R until x>=213.3 max 3; RJ 0.3; R until grounded max 2
+R until x>=224.4 max 4

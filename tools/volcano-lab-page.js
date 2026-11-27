@@ -124,7 +124,7 @@
     out.jumpFromTop = r2((top - pk) / T); out.totalReach = r2((13 * T - pk) / T);
     // walking into the column from the side while it holds: lifted onto it
     load(def, [6, 12]); const g3 = G().L.volcano.geysers[0];
-    until(() => g3.phase === 'hold', 6); keys('R'); until(() => p().carried === g3.body, 1.5); keys(''); out.sidePickup = p().carried === g3.body;
+    until(() => g3.phase === 'hold', 6); keys('R'); until(() => p().carried === g3.body, 1.5); keys(''); out.sidePickup = p().carried === g3.body; out.sideSmooth = true; { const l = load(def, [8, 12]).geysers[0]; until(() => l.phase === 'hold', 6); keys('R'); let prev = feet(), maxStep = 0; step(1, () => { const f = feet(); maxStep = Math.max(maxStep, Math.abs(f - prev)); prev = f; return p().carried === l.body; }); keys(''); out.sideMaxStep = r2(maxStep); out.sideSmooth = maxStep < 6 && p().carried === l.body; }
     // ledges reachable from the top: a ledge k tiles above the column top, right held
     out.ledge = {};
     for (const k of [2, 3, 4]) {
@@ -278,5 +278,21 @@
   // a level with the horizontal chase of the game: in this world a wall of lava (looks only)
   function chaseLook() { load({ map: field({ w: 60 }), chase: { speed: 120 } }, [10, 12]); G().L.chase.x = 6 * T; step(0.3); return { chase: !!G().L.chase }; }
 
-  window.__lab = { chaseLook, field, load, place, keys, step, until, landJump, lava, hot, basalt, geyser, plates, hopper, steam, rain, fall, rise, says, bodies, p, feet };
+
+  // ---------- picture series for the geyser column (tools/geyser-series.mjs): one sample per call ----------
+  const SER = { g: null };
+  function seriesInit(mode) {
+    const def = { map: field({ put: [[10, 12, 'G']] }) };
+    load(def, [mode === 'jump' ? 6 : 8, 12]); const g = SER.g = G().L.volcano.geysers[0];
+    until(() => g.phase === 'hold', 6); step(0.02); SER.mode = mode;
+    if (mode === 'walk') keys('R');
+    if (mode === 'jump') { keys('RJ'); step(0.05); keys('R'); }
+    return { phase: g.phase };
+  }
+  function seriesStep(secs, input) {
+    if (input != null) keys(input);
+    step(secs); const g = SER.g;
+    return { t: r2(now()), phase: g.phase, top: r2(g.body.y), feet: r2(feet()), vy: r2(p().vy), x: r2(p().x), carried: p().carried === g.body, grounded: p().grounded };
+  }
+  window.__lab = { seriesInit, seriesStep, chaseLook, field, load, place, keys, step, until, landJump, lava, hot, basalt, geyser, plates, hopper, steam, rain, fall, rise, says, bodies, p, feet };
 })();

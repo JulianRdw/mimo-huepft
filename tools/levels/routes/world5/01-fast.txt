@@ -1,25 +1,33 @@
 # Aschestrand fast
-R until x>=17.6; RJ 0.3; R until grounded max 2
-R until x>=27.5 max 3; R until grounded max 2
-R until x>=31 max 2; RJ 0.2; R until grounded max 2
-R until x>=35.2 max 2; RJ 0.25; R until grounded max 2
-R until x>=39.6 max 2; RJ 0.3; R until grounded max 2
-R until x>=45.4 max 2; RJ 0.3; R until grounded max 2
-R until x>=48.4 max 2; RJ 0.3; R until grounded max 2
-R until x>=51.6 max 2; RJ 0.35; R until grounded max 2
-R until x>=62 max 2; R until x>=64.4 max 2; RJ 0.3; R until grounded max 2
-R until x>=66.4 max 2; RJ 0.3; R until grounded max 2
-R until x>=67.8 max 2; RJ 0.3; R until grounded max 2
-R until x>=76.2 max 2; RJ 0.15; R until grounded max 2
-R until x>=95.0 max 5; R until grounded max 2
-R until x>=99.6 max 2; RJ 0.25; R until grounded max 2
-R until x>=104.4 max 2; RJ 0.3; R until grounded max 2
-R until x>=108.1 max 2; RJ 0.15; R until grounded max 2
-R until x>=112.4 max 2; RJ 0.1; R until grounded max 2
-R until x>=119.4 max 2; RJ 0.3; R until grounded max 2
-R until x>=124.3 max 1; RJ 0.35; R until grounded max 2
-R until x>=128.3 max 1; RJ 0.3; R until grounded max 2
-R until x>=133.4 max 1; RJ 0.3; R until grounded max 2
-R until x>=141.4 max 2; RJ 0.3; R until grounded max 2
-R until x>=146.3 max 2; RJ 0.3; R until x>=150.6 max 1; RJ 0.35; R until grounded max 2
-R until x>=159.3 max 2
+R until x>=25.6; RJ 0.3; R until grounded max 2
+R until x>=35.5 max 3; R until grounded max 2
+R until x>=39 max 2; RJ 0.2; R until grounded max 2
+R until x>=43.2 max 2; RJ 0.25; R until grounded max 2
+R until x>=47.6 max 2; RJ 0.3; R until grounded max 2
+R until x>=53.4 max 2; RJ 0.3; R until grounded max 2
+R until x>=56.4 max 2; RJ 0.3; R until grounded max 2
+R until x>=59.6 max 2; RJ 0.35; R until grounded max 2
+R until x>=70 max 2; R until x>=72.4 max 2; RJ 0.3; R until grounded max 2
+R until x>=74.4 max 2; RJ 0.3; R until grounded max 2
+R until x>=75.8 max 2; RJ 0.3; R until grounded max 2
+R until x>=84.2 max 2; RJ 0.15; R until grounded max 2
+R until x>=103 max 5; R until grounded max 2
+R until x>=107.6 max 2; RJ 0.25; R until grounded max 2
+R until x>=118.4 max 2; RJ 0.3; R until grounded max 2
+R until x>=122.1 max 2; RJ 0.15; R until grounded max 2
+R until x>=126.4 max 2; RJ 0.1; R until grounded max 2
+R until x>=133.4 max 2; RJ 0.3; R until grounded max 2
+R until x>=138.3 max 1; RJ 0.35; R until grounded max 2
+R until x>=142.3 max 1; RJ 0.3; R until grounded max 2
+R until x>=147.4 max 1; RJ 0.3; R until grounded max 2
+R until x>=155.4 max 2; RJ 0.3; R until grounded max 2
+R until x>=160.3 max 2; RJ 0.3; R until x>=164.6 max 1; RJ 0.35; R until grounded max 2
+R until x>=165.6 max 2; RJ 0.3; R until grounded max 2
+R until x>=170.4 max 2; RJ 0.3; R until grounded max 2
+R until x>=175.4 max 2; RJ 0.3; R until grounded max 2
+R until x>=178.3 max 2; RJ 0.45; R until grounded max 2
+R until x>=182.5 max 2; RJ 0.4; R until grounded max 2
+R until x>=187.4 max 2; RJ 0.3; R until x>=192.6 max 2; W until grounded max 2
+R until x>=194.4 max 2; RJ 0.35; R until grounded max 2
+R until x>=198.4 max 2; RJ 0.35; R until grounded max 2
+R until x>=206.3 max 3
