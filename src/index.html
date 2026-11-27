@@ -997,7 +997,7 @@ const STARWAY = false;
 // no songs, and the app build leaves their files out. They come after the released worlds, so holding them back moves
 // no saved index. To release a world, take its number out of this list (always the lowest one first: a world whose
 // predecessor is still held does not load, its firstLevel would not fit).
-const UNRELEASED_WORLDS = [5, 6];
+const UNRELEASED_WORLDS = [6];
 // Look at the held worlds anyway: the developer build, or the address parameter ?vorschau for one visit (it changes
 // nothing in the save and, like ?offen, never works on the published app). The level tools load the game with it.
 const PREVIEW_URL = /[?&]vorschau(=|&|$)/.test(location.search) && !/github\.io$/.test(location.hostname);

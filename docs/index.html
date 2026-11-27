@@ -943,6 +943,17 @@ input,textarea{-webkit-user-select:text;user-select:text}
 <script src="worlds/garden-caspar.js"></script>
 <script src="worlds/garden-pranks.js"></script>
 <script src="worlds/garden-ambient.js"></script>
+<script src="worlds/volcano.js"></script>
+<script src="worlds/volcano-things.js"></script>
+<script src="worlds/volcano-things-draw.js"></script>
+<script src="worlds/volcano-look.js"></script>
+<script src="worlds/volcano-levels.js"></script>
+<script src="worlds/volcano-boss-shape.js"></script>
+<script src="worlds/volcano-boss.js"></script>
+<script src="worlds/volcano-boss-scenes.js"></script>
+<script src="worlds/volcano-boss-draw.js"></script>
+<script src="worlds/volcano-boss-look.js"></script>
+<script src="worlds/volcano-boss-bot.js"></script>
 <!-- world files end -->
 <script>
 (() => {
@@ -974,7 +985,7 @@ const STARWAY = false;
 // no songs, and the app build leaves their files out. They come after the released worlds, so holding them back moves
 // no saved index. To release a world, take its number out of this list (always the lowest one first: a world whose
 // predecessor is still held does not load, its firstLevel would not fit).
-const UNRELEASED_WORLDS = [5, 6];
+const UNRELEASED_WORLDS = [6];
 // Look at the held worlds anyway: the developer build, or the address parameter ?vorschau for one visit (it changes
 // nothing in the save and, like ?offen, never works on the published app). The level tools load the game with it.
 const PREVIEW_URL = /[?&]vorschau(=|&|$)/.test(location.search) && !/github\.io$/.test(location.hostname);
